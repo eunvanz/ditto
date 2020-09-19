@@ -6,7 +6,7 @@ export type UiState = {
 };
 
 export const initialUiState: UiState = {
-  theme: THEMES.DARK,
+  theme: THEMES.LIGHT,
 };
 
 const UiSlice = createSlice({
