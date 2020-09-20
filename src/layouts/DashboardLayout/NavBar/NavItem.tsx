@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { FC, ReactNode } from "react";
 import { NavLink as RouterLink } from "react-router-dom";
 import clsx from "clsx";
@@ -8,13 +8,17 @@ import {
   ListItem,
   makeStyles,
   styled,
-  Badge,
+  Chip,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import SettingsIcon from "@material-ui/icons/Settings";
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { Theme } from "../../../theme";
 import { REQUEST_METHOD } from "../../../types";
 import Label from "../../../components/Label";
+import NewBadge from "../../../components/NewBadge";
+import { assertNotEmpty } from "../../../helpers/commonHelpers";
 
 export interface NavItemProps {
   children?: ReactNode;
@@ -26,7 +30,10 @@ export interface NavItemProps {
   isOpen?: boolean;
   requestMethod?: REQUEST_METHOD;
   hasNew?: boolean;
+  childrenCount?: number;
   title: string;
+  onClickConfig?: () => void;
+  type?: "api" | "project" | "group";
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -62,6 +69,10 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
     },
   },
+  insideButton: {
+    color: theme.palette.text.secondary,
+    minWidth: 24,
+  },
   icon: {
     display: "flex",
     alignItems: "center",
@@ -82,6 +93,15 @@ const useStyles = makeStyles((theme: Theme) => ({
       color: theme.palette.secondary.main,
     },
   },
+  chip: {
+    height: 18,
+    marginLeft: 2,
+    "&> span": {
+      fontSize: "0.725rem",
+      paddingLeft: 6,
+      paddingRight: 6,
+    },
+  },
 }));
 
 const NavItem: FC<NavItemProps> = ({
@@ -91,14 +111,17 @@ const NavItem: FC<NavItemProps> = ({
   href,
   icon: Icon,
   info: Info,
-  isOpen: initialIsOpen = false,
+  isOpen: isInitiallyOpen = false,
   title,
   requestMethod,
-  hasNew,
+  hasNew = false,
+  childrenCount,
+  onClickConfig,
+  type,
   ...restProps
 }) => {
   const classes = useStyles();
-  const [isOpen, setIsOpen] = useState<boolean>(initialIsOpen);
+  const [isOpen, setIsOpen] = useState<boolean>(isInitiallyOpen);
 
   const handleToggle = (): void => {
     setIsOpen((prevOpen) => !prevOpen);
@@ -112,6 +135,23 @@ const NavItem: FC<NavItemProps> = ({
 
   const style = { paddingLeft };
 
+  const handleOnClickConfig = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.stopPropagation();
+      onClickConfig?.();
+    },
+    [onClickConfig]
+  );
+
+  if (type === "group") {
+    assertNotEmpty(children);
+    assertNotEmpty(childrenCount);
+  } else if (type === "api") {
+    assertNotEmpty(requestMethod);
+  } else if (type === "project") {
+    assertNotEmpty(children);
+  }
+
   if (children) {
     return (
       <ListItem
@@ -123,8 +163,20 @@ const NavItem: FC<NavItemProps> = ({
         <Button className={classes.button} onClick={handleToggle} style={style}>
           {Icon && <Icon className={classes.icon} size="20" />}
           <span className={clsx(classes.title, hasNew ? "has-new" : undefined)}>
-            {title}
+            {title}{" "}
+            {childrenCount ? (
+              <Chip className={classes.chip} label={childrenCount} />
+            ) : null}
           </span>
+          {onClickConfig && (
+            <Button
+              className={classes.insideButton}
+              size="small"
+              onClick={handleOnClickConfig}
+            >
+              <SettingsIcon fontSize="small" />
+            </Button>
+          )}
           {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </Button>
         <Collapse in={isOpen}>{children}</Collapse>
@@ -149,9 +201,12 @@ const NavItem: FC<NavItemProps> = ({
       >
         {Icon && <Icon className={classes.icon} size="20" />}
         {requestMethod && <RequestMethodBadge requestMethod={requestMethod} />}
-        <Badge color="error" invisible={!hasNew} variant="dot">
+        <NewBadge isVisible={hasNew} className={classes.title}>
           <span className={classes.title}>{title}</span>
-        </Badge>
+        </NewBadge>
+        <Button className={classes.insideButton} size="small">
+          <MoreHorizIcon fontSize="small" />
+        </Button>
         {Info && <Info />}
       </Button>
     </ListItem>
@@ -174,9 +229,9 @@ const RequestMethodBadge: FC<RequestMethodBadgeProps> = ({ requestMethod }) => {
       case REQUEST_METHOD.GET:
         return { color: "success" as const, text: "GET" };
       case REQUEST_METHOD.POST:
-        return { color: "secondary" as const, text: "POST" };
+        return { color: "warning" as const, text: "POST" };
       case REQUEST_METHOD.PUT:
-        return { color: "warning" as const, text: "PUT" };
+        return { color: "secondary" as const, text: "PUT" };
       case REQUEST_METHOD.DELETE:
         return { color: "error" as const, text: "DEL" };
       case REQUEST_METHOD.PATCH:

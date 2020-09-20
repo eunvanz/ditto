@@ -21,11 +21,14 @@ const defaultProps: Partial<NavBarProps> = {
           icon: EmojiObjectsOutlinedIcon,
           title: "보험프로젝트",
           hasNew: true,
+          childrenCount: 5,
+          onClickConfig: () => {},
           items: [
             {
               icon: FolderOutlined,
               title: "보험메인",
               hasNew: true,
+              childrenCount: 5,
               items: [
                 {
                   title: "내보험 탭 데이터 조회",

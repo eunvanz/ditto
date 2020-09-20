@@ -30,7 +30,9 @@ interface Item {
   items?: Item[];
   requestMethod?: REQUEST_METHOD;
   hasNew?: boolean;
+  childrenCount?: number;
   title: string;
+  onClickConfig?: () => void;
 }
 
 export interface Section {
@@ -86,6 +88,8 @@ function reduceChildRoutes({
         isOpen={isPathMatched}
         title={item.title}
         hasNew={item.hasNew}
+        childrenCount={item.childrenCount}
+        onClickConfig={item.onClickConfig}
       >
         {renderNavItems({
           depth: depth + 1,
