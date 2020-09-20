@@ -1,17 +1,13 @@
 import React, { useEffect } from "react";
 import { FC, ReactNode } from "react";
 import { useLocation, matchPath } from "react-router-dom";
-import { Link as RouterLink } from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   Box,
-  Divider,
   Drawer,
   Hidden,
-  Link,
   List,
   ListSubheader,
-  Typography,
   makeStyles,
 } from "@material-ui/core";
 import NavItem from "./NavItem";
@@ -33,6 +29,7 @@ interface Item {
   childrenCount?: number;
   title: string;
   onClickConfig?: () => void;
+  type: "request" | "project" | "group";
 }
 
 export interface Section {
@@ -82,14 +79,13 @@ function reduceChildRoutes({
     acc.push(
       <NavItem
         depth={depth}
-        icon={item.icon}
-        info={item.info}
         key={key}
         isOpen={isPathMatched}
         title={item.title}
         hasNew={item.hasNew}
         childrenCount={item.childrenCount}
         onClickConfig={item.onClickConfig}
+        type={item.type}
       >
         {renderNavItems({
           depth: depth + 1,
@@ -103,12 +99,11 @@ function reduceChildRoutes({
       <NavItem
         depth={depth}
         href={item.href}
-        icon={item.icon}
-        info={item.info}
         key={key}
         title={item.title}
         requestMethod={item.requestMethod}
         hasNew={item.hasNew}
+        type={item.type}
       />
     );
   }

@@ -125,6 +125,7 @@ const themesOptions: ThemeOptions[] = [
       text: {
         primary: "#e6e5e8",
         secondary: "#adb0bb",
+        disabled: "rgba(255, 255, 255, 0.26)",
       },
     },
     shadows: strongShadows,
