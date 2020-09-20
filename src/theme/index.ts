@@ -120,7 +120,7 @@ const themesOptions: ThemeOptions[] = [
         main: "#8a85ff",
       },
       secondary: {
-        main: "#a67dff",
+        main: "#8a85ff",
       },
       text: {
         primary: "#e6e5e8",

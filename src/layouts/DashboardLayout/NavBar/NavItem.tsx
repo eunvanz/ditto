@@ -276,11 +276,11 @@ const RequestMethodBadge: FC<RequestMethodBadgeProps> = ({ requestMethod }) => {
       case REQUEST_METHOD.POST:
         return { color: "warning" as const, text: "POST" };
       case REQUEST_METHOD.PUT:
-        return { color: "secondary" as const, text: "PUT" };
+        return { color: "primary" as const, text: "PUT" };
       case REQUEST_METHOD.DELETE:
         return { color: "error" as const, text: "DEL" };
       case REQUEST_METHOD.PATCH:
-        return { color: "primary" as const, text: "PATCH" };
+        return { color: "secondary" as const, text: "PATCH" };
     }
   }, [requestMethod]);
 
