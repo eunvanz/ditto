@@ -7,7 +7,7 @@ export interface ProjectFormProps {
   isSubmitting: boolean;
 }
 
-interface ProjectFormValues {
+export interface ProjectFormValues {
   title: string;
   description: string;
 }
@@ -28,6 +28,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <Box mt={2}>
         <TextField
+          autoFocus
           label="프로젝트 이름"
           name="title"
           inputRef={register({
@@ -69,7 +70,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           type="submit"
           variant="contained"
         >
-          프로젝트 생성
+          프로젝트 만들기
         </Button>
       </Box>
     </form>
