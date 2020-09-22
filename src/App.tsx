@@ -1,17 +1,16 @@
 import React from "react";
 import "./App.css";
 import GlobalThemeProvider from "./components/GlobalThemeProvider";
-import { Provider } from "react-redux";
-import store from "./store";
 import { Button } from "@material-ui/core";
+import StoreProvider from "./components/StoreProvider";
 
 function App() {
   return (
-    <Provider store={store}>
+    <StoreProvider>
       <GlobalThemeProvider>
         <Button>test</Button>
       </GlobalThemeProvider>
-    </Provider>
+    </StoreProvider>
   );
 }
 

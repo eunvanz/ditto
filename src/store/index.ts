@@ -6,8 +6,10 @@ import ProjectFormSlice, {
   initialProjectFormState,
 } from "./ProjectForm/ProjectFormSlice";
 import watchAllActions from "./RootSaga";
+import FirebaseSlice, { initialFirebaseState } from "./Firebase";
 
 export const rootReducer = combineReducers({
+  firebase: FirebaseSlice.reducer,
   ui: UiSlice.reducer,
   progress: ProgressSlice.reducer,
   projectForm: ProjectFormSlice.reducer,
@@ -16,6 +18,7 @@ export const rootReducer = combineReducers({
 export type RootState = ReturnType<typeof rootReducer>;
 
 export const initialRootState: RootState = {
+  firebase: initialFirebaseState as any,
   ui: initialUiState,
   progress: initialProgressState,
   projectForm: initialProjectFormState,

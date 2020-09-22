@@ -1,20 +1,19 @@
 import React from "react";
 import GlobalThemeProvider from "../src/components/GlobalThemeProvider";
-import { Provider } from "react-redux";
 import StoryRouter from "storybook-react-router";
-import store from "../src/store";
 import ThemeWrapper from "../src/components/ThemeWrapper";
+import StoreProvider from "../src/components/StoreProvider";
 
 export const decorators = [
   StoryRouter(),
   (Story) => (
-    <Provider store={store}>
+    <StoreProvider>
       <ThemeWrapper>
         <GlobalThemeProvider>
           <Story />
         </GlobalThemeProvider>
       </ThemeWrapper>
-    </Provider>
+    </StoreProvider>
   ),
 ];
 
