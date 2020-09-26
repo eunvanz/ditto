@@ -87,7 +87,14 @@ const Account: FC<AccountProps> = ({ user, onLogout, onClickLogin }) => {
         <MenuItem component={RouterLink} to="/app/account">
           설정
         </MenuItem>
-        <MenuItem onClick={onLogout}>로그아웃</MenuItem>
+        <MenuItem
+          onClick={() => {
+            setOpen(false);
+            onLogout();
+          }}
+        >
+          로그아웃
+        </MenuItem>
       </Menu>
     </>
   );
