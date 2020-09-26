@@ -1,4 +1,5 @@
 import { fork, take, all, put, call, select } from "typed-redux-saga";
+import orderBy from "lodash/orderBy";
 import { ProjectActions } from "./ProjectSlice";
 import { ProgressActions } from "../Progress/ProgressSlice";
 import Firework from "../Firework";
@@ -104,7 +105,7 @@ export function createMyProjectsEventChannel(uid?: string) {
         querySnapshot.forEach((doc) => {
           projects.push({ id: doc.id, ...doc.data() } as ProjectDoc);
         });
-        emit(projects);
+        emit(orderBy(projects, [`settingsByMembers.${uid}.seq`], ["asc"]));
       });
     }
     return () => {

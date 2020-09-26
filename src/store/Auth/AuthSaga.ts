@@ -5,10 +5,12 @@ import Alert from "../../components/Alert";
 import history from "../../helpers/history";
 import ROUTE from "../../paths";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
+import { UiActions } from "../Ui/UiSlice";
 
 export function* signInWithGoogleFlow() {
   while (true) {
     yield* take(AuthActions.signInWithGoogle);
+    yield* put(UiActions.showLoading());
     const firebase = yield* call(getFirebase);
     yield* call(firebase.login, { provider: "google", type: "redirect" });
   }
