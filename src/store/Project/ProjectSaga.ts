@@ -45,6 +45,7 @@ export function* submitProjectFormFlow() {
           ...payload,
           updatedAt: timestamp,
           updatedBy: auth.uid,
+          [`updatedAtByMembers.${auth.uid}`]: timestamp,
         });
       } else {
         yield* call(Firework.addProject, {
@@ -61,6 +62,9 @@ export function* submitProjectFormFlow() {
           updatedAt: timestamp,
           createdBy: auth.uid,
           updatedBy: auth.uid,
+          updatedAtByMembers: {
+            [auth.uid]: timestamp,
+          },
         });
       }
       yield* all([

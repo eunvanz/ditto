@@ -109,6 +109,7 @@ export interface ProjectItem extends Recordable {
   owners: Record<string, boolean>;
   managers: Record<string, boolean>;
   guests: Record<string, boolean>;
+  updatedAtByMembers: Record<string, firebase.firestore.FieldValue>;
 }
 
 /**
