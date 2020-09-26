@@ -7,12 +7,14 @@ import ProjectFormSlice, {
 } from "./ProjectForm/ProjectFormSlice";
 import watchAllActions from "./RootSaga";
 import FirebaseSlice, { initialFirebaseState } from "./Firebase";
+import ErrorSlice, { initialErrorState } from "./Error/ErrorSlice";
 
 export const rootReducer = combineReducers({
   firebase: FirebaseSlice.reducer,
   ui: UiSlice.reducer,
   progress: ProgressSlice.reducer,
   projectForm: ProjectFormSlice.reducer,
+  error: ErrorSlice.reducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
@@ -22,6 +24,7 @@ export const initialRootState: RootState = {
   ui: initialUiState,
   progress: initialProgressState,
   projectForm: initialProjectFormState,
+  error: initialErrorState,
 };
 
 const sagaMiddleware = createSagaMiddleware();
