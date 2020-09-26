@@ -7,6 +7,8 @@ import AuthSelectors from "../Auth/AuthSelector";
 import Alert from "../../components/Alert";
 import { getTimestamp } from "../../firebase";
 import { ErrorActions } from "../Error/ErrorSlice";
+import { ProjectItem } from "../../types";
+import { eventChannel } from "redux-saga";
 
 export function* submitProjectFormFlow() {
   while (true) {
@@ -32,10 +34,13 @@ export function* submitProjectFormFlow() {
     try {
       yield* call(Firework.addProject, {
         ...payload,
+        members: {
+          [auth.uid]: true,
+        },
         owners: {
           [auth.uid]: true,
         },
-        members: {},
+        managers: {},
         guests: {},
         createdAt: timestamp,
         updatedAt: timestamp,
@@ -61,6 +66,44 @@ export function* submitProjectFormFlow() {
   }
 }
 
-export function* watchProjectFormActions() {
-  yield* all([fork(submitProjectFormFlow)]);
+export function createMyProjectsEventChannel(uid?: string) {
+  const listener = eventChannel((emit) => {
+    if (uid) {
+      const myProjectRef = Firework.getMyProjectsRef(uid);
+      myProjectRef.onSnapshot((querySnapshot) => {
+        const projects: ProjectItem[] = [];
+        querySnapshot.forEach((doc) => {
+          projects.push(doc.data() as ProjectItem);
+        });
+        emit(projects);
+      });
+    }
+    return () => {
+      if (!uid) {
+        listener.close();
+      }
+    };
+  });
+  return listener;
+}
+
+export function* watchOnMyProjectsEvent() {
+  const auth = yield* select(AuthSelectors.selectAuth);
+  const myProjectEventChannel = createMyProjectsEventChannel(auth.uid);
+  while (true) {
+    const myProjects = yield* take(myProjectEventChannel);
+
+    yield* put(ProjectActions.receiveMyProjects(myProjects as ProjectItem[]));
+  }
+}
+
+export function* listenToMyProjectsFlow() {
+  while (true) {
+    yield* take(ProjectActions.listenToMyProjects);
+    yield* fork(watchOnMyProjectsEvent);
+  }
+}
+
+export function* watchProjectActions() {
+  yield* all([fork(submitProjectFormFlow), fork(listenToMyProjectsFlow)]);
 }

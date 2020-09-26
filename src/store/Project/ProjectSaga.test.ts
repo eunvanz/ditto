@@ -1,7 +1,11 @@
-import { ProjectFormActions } from "./ProjectSlice";
+import { ProjectActions } from "./ProjectSlice";
 import { expectSaga } from "redux-saga-test-plan";
 import * as matchers from "redux-saga-test-plan/matchers";
-import { submitProjectFormFlow, watchProjectFormActions } from "./ProjectSaga";
+import {
+  submitProjectFormFlow,
+  watchProjectActions,
+  listenToMyProjectsFlow,
+} from "./ProjectSaga";
 import { ProjectFormValues } from "../../components/ProjectForm/ProjectForm";
 import { initialRootState, rootReducer } from "..";
 import { initialFirebaseState } from "../Firebase";
@@ -13,7 +17,7 @@ import Alert from "../../components/Alert";
 
 describe("ProjectFormSaga", () => {
   describe("submitProjectFormFlow", () => {
-    const actionCreator = ProjectFormActions.submitProjectForm;
+    const actionCreator = ProjectActions.submitProjectForm;
     const payload: ProjectFormValues = {
       title: "test",
       description: "test",
@@ -43,10 +47,13 @@ describe("ProjectFormSaga", () => {
         .take(actionCreator)
         .call(Firework.addProject, {
           ...payload,
+          members: {
+            [auth.uid]: true,
+          },
           owners: {
             [auth.uid]: true,
           },
-          members: {},
+          managers: {},
           guests: {},
           createdAt: timestamp,
           updatedAt: timestamp,
@@ -80,8 +87,9 @@ describe("ProjectFormSaga", () => {
 
   describe("watchProjectFormActions", () => {
     it("과 관련된 모든 액션들을 감시한다.", () => {
-      return expectSaga(watchProjectFormActions)
+      return expectSaga(watchProjectActions)
         .fork(submitProjectFormFlow)
+        .fork(listenToMyProjectsFlow)
         .silentRun();
     });
   });

@@ -6,6 +6,7 @@ import ProjectSlice, { initialProjectState } from "./Project/ProjectSlice";
 import watchAllActions from "./RootSaga";
 import FirebaseSlice, { initialFirebaseState } from "./Firebase";
 import ErrorSlice, { initialErrorState } from "./Error/ErrorSlice";
+import AuthSlice, { initialAuthState } from "./Auth/AuthSlice";
 
 export const rootReducer = combineReducers({
   firebase: FirebaseSlice.reducer,
@@ -13,6 +14,7 @@ export const rootReducer = combineReducers({
   progress: ProgressSlice.reducer,
   project: ProjectSlice.reducer,
   error: ErrorSlice.reducer,
+  auth: AuthSlice.reducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
@@ -23,6 +25,7 @@ export const initialRootState: RootState = {
   progress: initialProgressState,
   project: initialProjectState,
   error: initialErrorState,
+  auth: initialAuthState,
 };
 
 const sagaMiddleware = createSagaMiddleware();

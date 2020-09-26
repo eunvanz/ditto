@@ -11,18 +11,14 @@ function* addProject(data: ProjectItem) {
   yield call(addDocument, "projects", data);
 }
 
-function* listenToMyProjects<T>(path: string, uid: string) {
-  yield db
-    .collection("projects")
-    .where(`owners.${uid}`, "==", true)
-    .where(`members.${uid}`, "==", true)
-    .where(`guests.${uid}`, "==", true)
-    .get();
+function getMyProjectsRef(uid: string) {
+  return db.collection("projects").where(`members.${uid}`, "==", true);
 }
 
 export const realFirework = {
   addDocument,
   addProject,
+  getMyProjectsRef,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

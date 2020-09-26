@@ -1,13 +1,14 @@
 import React, { useCallback } from "react";
 import SignInForm from "./SignInForm";
-import { useFirebase } from "react-redux-firebase";
+import { useDispatch } from "react-redux";
+import { AuthActions } from "../../store/Auth/AuthSlice";
 
 const SignInFormContainer = () => {
-  const firebase = useFirebase();
+  const dispatch = useDispatch();
 
   const loginWithGoogle = useCallback(() => {
-    return firebase.login({ provider: "google", type: "redirect" });
-  }, [firebase]);
+    return dispatch(AuthActions.signInWithGoogle());
+  }, [dispatch]);
 
   return <SignInForm onClickGoogle={loginWithGoogle} />;
 };

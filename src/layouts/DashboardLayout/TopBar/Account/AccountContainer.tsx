@@ -1,20 +1,18 @@
 import React, { useCallback } from "react";
 import Account from "./Account";
 import useAuth from "../../../../hooks/useAuth";
-import { useFirebase } from "react-redux-firebase";
 import { useDispatch } from "react-redux";
 import { UiActions } from "../../../../store/Ui/UiSlice";
+import { AuthActions } from "../../../../store/Auth/AuthSlice";
 
 const AccountContainer = () => {
   const user = useAuth();
 
-  const firebase = useFirebase();
+  const dispatch = useDispatch();
 
   const logout = useCallback(() => {
-    return firebase.logout();
-  }, [firebase]);
-
-  const dispatch = useDispatch();
+    return dispatch(AuthActions.signOut());
+  }, [dispatch]);
 
   const showSignInModal = useCallback(() => {
     dispatch(UiActions.showSignInModal());

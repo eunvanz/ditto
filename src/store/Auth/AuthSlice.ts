@@ -9,7 +9,10 @@ const AuthSlice = createSlice({
   initialState: initialAuthState,
   reducers: {
     signInWithGoogle: (_, _action: PayloadAction<void>) => {},
+    signOut: (_, _action: PayloadAction<void>) => {},
   },
 });
+
+export const AuthActions = AuthSlice.actions;
 
 export default AuthSlice;

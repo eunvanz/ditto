@@ -102,7 +102,8 @@ export interface User {
 export interface ProjectItem extends Recordable {
   title: string;
   description: string;
-  members: Record<string, boolean>;
+  members: Record<string, boolean>; // owner, manager, guest포함 전체
   owners: Record<string, boolean>;
+  managers: Record<string, boolean>;
   guests: Record<string, boolean>;
 }
