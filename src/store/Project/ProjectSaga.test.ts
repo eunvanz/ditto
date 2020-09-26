@@ -59,6 +59,12 @@ describe("ProjectFormSaga", () => {
           updatedAt: timestamp,
           createdBy: auth.uid,
           updatedBy: auth.uid,
+          settingsByMembers: {
+            [auth.uid]: {
+              updatedAt: timestamp,
+              seq: 1,
+            },
+          },
         })
         .dispatch(action)
         .silentRun();

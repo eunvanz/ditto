@@ -11,6 +11,7 @@ import { ProjectItem, ProjectDoc } from "../../types";
 import { eventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
 import UiSelectors from "../Ui/UiSelectors";
+import { RootState } from "..";
 
 export function* submitProjectFormFlow() {
   while (true) {
@@ -39,13 +40,16 @@ export function* submitProjectFormFlow() {
       put(UiActions.showLoading()),
     ]);
     const timestamp = yield* call(getTimestamp);
+    const projectCount = yield* select(
+      (state: RootState) => state.data[DATA_KEY.PROJECTS]?.length
+    );
     try {
       if (isModification) {
         yield* call(Firework.updateProject, projectFormModalState.project!.id, {
           ...payload,
           updatedAt: timestamp,
           updatedBy: auth.uid,
-          [`updatedAtByMembers.${auth.uid}`]: timestamp,
+          [`settingsByMembers.${auth.uid}.updatedAt`]: timestamp,
         });
       } else {
         yield* call(Firework.addProject, {
@@ -62,8 +66,11 @@ export function* submitProjectFormFlow() {
           updatedAt: timestamp,
           createdBy: auth.uid,
           updatedBy: auth.uid,
-          updatedAtByMembers: {
-            [auth.uid]: timestamp,
+          settingsByMembers: {
+            [auth.uid]: {
+              updatedAt: timestamp,
+              seq: projectCount ? projectCount + 1 : 1,
+            },
           },
         });
       }
