@@ -1,9 +1,10 @@
-import { fork, take, all, call } from "typed-redux-saga";
+import { fork, take, all, call, put } from "typed-redux-saga";
 import { AuthActions } from "./AuthSlice";
 import { getFirebase } from "react-redux-firebase";
 import Alert from "../../components/Alert";
 import history from "../../helpers/history";
 import ROUTE from "../../paths";
+import { DataActions, DATA_KEY } from "../Data/DataSlice";
 
 export function* signInWithGoogleFlow() {
   while (true) {
@@ -25,6 +26,7 @@ export function* signOutFlow() {
     }
     const firebase = yield* call(getFirebase);
     yield* call(firebase.logout);
+    yield* all([put(DataActions.clearData(DATA_KEY.PROJECTS))]);
     yield* call(history.push, ROUTE.ROOT);
   }
 }

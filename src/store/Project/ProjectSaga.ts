@@ -9,6 +9,7 @@ import { getTimestamp } from "../../firebase";
 import { ErrorActions } from "../Error/ErrorSlice";
 import { ProjectItem } from "../../types";
 import { eventChannel } from "redux-saga";
+import { DataActions, DATA_KEY } from "../Data/DataSlice";
 
 export function* submitProjectFormFlow() {
   while (true) {
@@ -93,7 +94,12 @@ export function* watchOnMyProjectsEvent() {
   while (true) {
     const myProjects = yield* take(myProjectEventChannel);
 
-    yield* put(ProjectActions.receiveMyProjects(myProjects as ProjectItem[]));
+    yield* put(
+      DataActions.receiveData({
+        key: DATA_KEY.PROJECTS,
+        data: myProjects as ProjectItem[],
+      })
+    );
   }
 }
 
