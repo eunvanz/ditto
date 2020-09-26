@@ -100,8 +100,9 @@ export interface User {
 }
 
 export interface ProjectItem extends Recordable {
-  projectItemId: string;
   title: string;
-  members: User[];
-  owners: User[];
+  description: string;
+  members: Record<string, boolean>;
+  owners: Record<string, boolean>;
+  guests: Record<string, boolean>;
 }

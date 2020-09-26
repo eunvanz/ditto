@@ -1,4 +1,4 @@
-import { Firework } from ".";
+import { realFirework } from ".";
 
 const mockResponse = {
   addDocument: undefined,
@@ -17,4 +17,4 @@ Object.keys(mockResponse).forEach((key) => {
     });
 });
 
-export default mockFirework as typeof Firework;
+export default mockFirework as typeof realFirework;

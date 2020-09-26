@@ -5,10 +5,10 @@ function* addDocument<T>(path: string, data: T) {
   yield db.collection(path).add(data);
 }
 
-export const Firework = {
+export const realFirework = {
   addDocument,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";
 
-export default isMockMode ? mockFirework : Firework;
+export default isMockMode ? mockFirework : realFirework;
