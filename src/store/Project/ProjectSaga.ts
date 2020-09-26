@@ -50,7 +50,7 @@ export function* submitProjectFormFlow() {
           ...payload,
           updatedAt: timestamp,
           updatedBy: auth.uid,
-          [`settingsByMembers.${auth.uid}.updatedAt`]: timestamp,
+          [`settingsByMember.${auth.uid}.updatedAt`]: timestamp,
         });
       } else {
         yield* call(Firework.addProject, {
@@ -67,7 +67,7 @@ export function* submitProjectFormFlow() {
           updatedAt: timestamp,
           createdBy: auth.uid,
           updatedBy: auth.uid,
-          settingsByMembers: {
+          settingsByMember: {
             [auth.uid]: {
               updatedAt: timestamp,
               seq: projectCount ? projectCount + 1 : 1,
@@ -105,7 +105,7 @@ export function createMyProjectsEventChannel(uid?: string) {
         querySnapshot.forEach((doc) => {
           projects.push({ id: doc.id, ...doc.data() } as ProjectDoc);
         });
-        emit(orderBy(projects, [`settingsByMembers.${uid}.seq`], ["asc"]));
+        emit(orderBy(projects, [`settingsByMember.${uid}.seq`], ["asc"]));
       });
     }
     return () => {
