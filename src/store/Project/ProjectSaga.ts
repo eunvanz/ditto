@@ -7,7 +7,7 @@ import AuthSelectors from "../Auth/AuthSelector";
 import Alert from "../../components/Alert";
 import { getTimestamp } from "../../firebase";
 import { ErrorActions } from "../Error/ErrorSlice";
-import { ProjectItem } from "../../types";
+import { ProjectItem, ProjectDoc } from "../../types";
 import { eventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
 
@@ -74,7 +74,7 @@ export function createMyProjectsEventChannel(uid?: string) {
       myProjectRef.onSnapshot((querySnapshot) => {
         const projects: ProjectItem[] = [];
         querySnapshot.forEach((doc) => {
-          projects.push(doc.data() as ProjectItem);
+          projects.push({ id: doc.id, ...doc.data() } as ProjectDoc);
         });
         emit(projects);
       });

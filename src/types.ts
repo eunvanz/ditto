@@ -107,3 +107,7 @@ export interface ProjectItem extends Recordable {
   managers: Record<string, boolean>;
   guests: Record<string, boolean>;
 }
+
+export interface ProjectDoc extends ProjectItem {
+  id: string;
+}

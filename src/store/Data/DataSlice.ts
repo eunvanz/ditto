@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ProjectItem } from "../../types";
+import { ProjectDoc } from "../../types";
 
 export enum DATA_KEY {
   PROJECTS = "project",
@@ -11,7 +11,7 @@ export type DataPayload = {
 };
 
 export interface DataState {
-  [DATA_KEY.PROJECTS]?: ProjectItem[];
+  [DATA_KEY.PROJECTS]?: ProjectDoc[];
 }
 
 export const initialDataState: DataState = {};
