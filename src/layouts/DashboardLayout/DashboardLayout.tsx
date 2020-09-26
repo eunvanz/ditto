@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   content: {
     flex: "1 1 auto",
     height: "100%",
+    minHeight: "100vh",
     overflow: "auto",
   },
 }));
