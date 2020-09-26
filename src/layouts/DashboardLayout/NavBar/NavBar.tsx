@@ -20,11 +20,11 @@ export interface NavBarProps {
   onClickAddNewProject: () => void;
 }
 
-interface Item {
+export interface SectionItem {
   href?: string;
   icon?: ReactNode;
   info?: ReactNode;
-  items?: Item[];
+  items?: SectionItem[];
   requestMethod?: REQUEST_METHOD;
   hasNew?: boolean;
   childrenCount?: number;
@@ -34,7 +34,7 @@ interface Item {
 }
 
 export interface Section {
-  items: Item[];
+  items: SectionItem[];
   subheader: string;
 }
 
@@ -43,14 +43,14 @@ function renderNavItems({
   pathname,
   depth = 0,
 }: {
-  items: Item[];
+  items: SectionItem[];
   pathname: string;
   depth?: number;
 }) {
   return (
     <List disablePadding>
       {items.reduce(
-        (acc: any[], item: Item) =>
+        (acc: any[], item: SectionItem) =>
           reduceChildRoutes({ acc, item, pathname, depth }),
         []
       )}
@@ -65,7 +65,7 @@ function reduceChildRoutes({
   depth,
 }: {
   acc: any[];
-  item: Item;
+  item: SectionItem;
   pathname: string;
   depth: number;
 }) {
@@ -105,6 +105,7 @@ function reduceChildRoutes({
         requestMethod={item.requestMethod}
         hasNew={item.hasNew}
         type={item.type}
+        onClickConfig={item.onClickConfig}
       />
     );
   }

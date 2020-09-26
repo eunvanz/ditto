@@ -1,10 +1,12 @@
 import React, { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { TextField, Box, Button } from "@material-ui/core";
+import isEqual from "lodash/isEqual";
 
 export interface ProjectFormProps {
   onSubmit: (values: ProjectFormValues) => void;
   isSubmitting: boolean;
+  defaultValues?: ProjectFormValues;
 }
 
 export interface ProjectFormValues {
@@ -15,14 +17,22 @@ export interface ProjectFormValues {
 const ProjectForm: React.FC<ProjectFormProps> = ({
   onSubmit,
   isSubmitting,
+  defaultValues,
 }) => {
-  const { register, handleSubmit, errors } = useForm<ProjectFormValues>({
+  const { register, handleSubmit, errors, watch } = useForm<ProjectFormValues>({
     mode: "all",
+    defaultValues,
   });
+
+  const watchedValues = watch();
 
   const isSubmitDisabled = useMemo(() => {
     return isSubmitting;
   }, [isSubmitting]);
+
+  const isNotModified = useMemo(() => {
+    return isEqual(defaultValues, watchedValues);
+  }, [defaultValues, watchedValues]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -64,13 +74,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       <Box mt={2}>
         <Button
           color="secondary"
-          disabled={isSubmitDisabled}
+          disabled={isSubmitDisabled || isNotModified}
           fullWidth
           size="large"
           type="submit"
           variant="contained"
         >
-          프로젝트 만들기
+          {defaultValues ? "프로젝트 설정 저장" : "프로젝트 만들기"}
         </Button>
       </Box>
     </form>

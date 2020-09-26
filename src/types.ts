@@ -99,6 +99,9 @@ export interface User {
   auth: FirebaseReducer.AuthState;
 }
 
+/**
+ * 생성할 때의 프로젝트
+ */
 export interface ProjectItem extends Recordable {
   title: string;
   description: string;
@@ -108,6 +111,9 @@ export interface ProjectItem extends Recordable {
   guests: Record<string, boolean>;
 }
 
+/**
+ * 읽을 때의 프로젝트
+ */
 export interface ProjectDoc extends ProjectItem {
   id: string;
 }

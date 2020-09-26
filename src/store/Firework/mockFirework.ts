@@ -2,6 +2,7 @@ import { realFirework } from ".";
 
 const mockResponse = {
   addDocument: undefined,
+  addProject: undefined,
 };
 
 const mockFirework = {};

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { OptionsObject } from "notistack";
-import { THEMES } from "../../types";
+import { THEMES, ProjectDoc } from "../../types";
 
 export interface Notification {
   key: React.ReactText;
@@ -15,6 +15,7 @@ export type UiState = {
   isLoading: boolean;
   projectFormModal: {
     isVisible: boolean;
+    project?: ProjectDoc;
   };
   signInModal: {
     isVisible: boolean;
@@ -27,6 +28,7 @@ export const initialUiState: UiState = {
   isLoading: false,
   projectFormModal: {
     isVisible: false,
+    project: undefined,
   },
   signInModal: {
     isVisible: false,
@@ -61,11 +63,20 @@ const UiSlice = createSlice({
     hideLoading: (state, _: PayloadAction<void>) => {
       state.isLoading = false;
     },
-    showProjectFormModal: (state, _: PayloadAction<void>) => {
+    showProjectFormModal: (
+      state,
+      action: PayloadAction<ProjectDoc | undefined>
+    ) => {
+      if (action.payload) {
+        state.projectFormModal.project = action.payload;
+      }
       state.projectFormModal.isVisible = true;
     },
     hideProjectFormModal: (state, _: PayloadAction<void>) => {
       state.projectFormModal.isVisible = false;
+    },
+    clearProjectFormModal: (state, _action: PayloadAction<void>) => {
+      state.projectFormModal.project = undefined;
     },
     showSignInModal: (state, _: PayloadAction<void>) => {
       state.signInModal.isVisible = true;

@@ -138,12 +138,9 @@ const NavItem: FC<NavItemProps> = ({
   ...restProps
 }) => {
   if (type === "group") {
-    assertNotEmpty(children);
     assertNotEmpty(childrenCount);
   } else if (type === "request") {
     assertNotEmpty(requestMethod);
-  } else if (type === "project") {
-    assertNotEmpty(children);
   }
 
   const classes = useStyles();
@@ -198,15 +195,13 @@ const NavItem: FC<NavItemProps> = ({
               <Chip className={classes.countChip} label={childrenCount} />
             ) : null}
           </span>
-          {onClickConfig && (
-            <Button
-              className={classes.insideButton}
-              size="small"
-              onClick={handleOnClickConfig}
-            >
-              <SettingsIcon fontSize="small" />
-            </Button>
-          )}
+          <Button
+            className={classes.insideButton}
+            size="small"
+            onClick={handleOnClickConfig}
+          >
+            <SettingsIcon fontSize="small" />
+          </Button>
           {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </Button>
         <Collapse in={isOpen}>

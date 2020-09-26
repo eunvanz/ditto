@@ -10,6 +10,7 @@ import { ErrorActions } from "../Error/ErrorSlice";
 import { ProjectItem, ProjectDoc } from "../../types";
 import { eventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
+import UiSelectors from "../Ui/UiSelectors";
 
 export function* submitProjectFormFlow() {
   while (true) {
@@ -27,31 +28,47 @@ export function* submitProjectFormFlow() {
       continue;
     }
 
+    const projectFormModalState = yield* select(
+      UiSelectors.selectProjectFormModal
+    );
+
+    const isModification = !!projectFormModalState.project;
+
     yield* all([
       put(ProgressActions.startProgress(type)),
       put(UiActions.showLoading()),
     ]);
     const timestamp = yield* call(getTimestamp);
     try {
-      yield* call(Firework.addProject, {
-        ...payload,
-        members: {
-          [auth.uid]: true,
-        },
-        owners: {
-          [auth.uid]: true,
-        },
-        managers: {},
-        guests: {},
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        createdBy: auth.uid,
-        updatedBy: auth.uid,
-      });
+      if (isModification) {
+        yield* call(Firework.updateProject, projectFormModalState.project!.id, {
+          ...payload,
+          updatedAt: timestamp,
+          updatedBy: auth.uid,
+        });
+      } else {
+        yield* call(Firework.addProject, {
+          ...payload,
+          members: {
+            [auth.uid]: true,
+          },
+          owners: {
+            [auth.uid]: true,
+          },
+          managers: {},
+          guests: {},
+          createdAt: timestamp,
+          updatedAt: timestamp,
+          createdBy: auth.uid,
+          updatedBy: auth.uid,
+        });
+      }
       yield* all([
         put(
           UiActions.showNotification({
-            message: "새 프로젝트가 생성됐습니다.",
+            message: isModification
+              ? "프로젝트 설정이 변경되었습니다."
+              : "새 프로젝트가 생성됐습니다.",
           })
         ),
         put(UiActions.hideProjectFormModal()),

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import ProjectFormModal from "./ProjectFormModal";
 import { useSelector, useDispatch } from "react-redux";
 import UiSelectors from "../../store/Ui/UiSelectors";
@@ -13,10 +13,15 @@ const ProjectFormModalContainer = () => {
     dispatch(UiSlice.actions.hideProjectFormModal());
   }, [dispatch]);
 
+  const isModification = useMemo(() => {
+    return !!projectFormModalState?.project;
+  }, [projectFormModalState]);
+
   return (
     <ProjectFormModal
       isVisible={projectFormModalState.isVisible}
       onClose={closeProjectFormModal}
+      isModification={isModification}
     />
   );
 };
