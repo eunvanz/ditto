@@ -13,4 +13,6 @@ const ProjectFormSlice = createSlice({
   },
 });
 
+export const ProjectFormActions = ProjectFormSlice.actions;
+
 export default ProjectFormSlice;

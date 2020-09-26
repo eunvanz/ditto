@@ -7,7 +7,7 @@ import NavBar from "./NavBar";
 import TopBar from "./TopBar";
 import { Section } from "./NavBar/NavBar";
 
-interface DashboardLayoutProps {
+export interface DashboardLayoutProps {
   children?: ReactNode;
   sections: Section[];
 }

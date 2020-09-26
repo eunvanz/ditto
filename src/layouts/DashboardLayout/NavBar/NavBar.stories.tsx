@@ -36,7 +36,7 @@ const defaultProps: Partial<NavBarProps> = {
               onClickConfig: () => {},
               items: [
                 {
-                  title: "내보험 탭 데이터 조회",
+                  title: "내보험 탭 데이터 조회 내보험 탭 데이터 조회",
                   href: "/projects/insurances/main/1",
                   requestMethod: REQUEST_METHOD.GET,
                   type: "request",

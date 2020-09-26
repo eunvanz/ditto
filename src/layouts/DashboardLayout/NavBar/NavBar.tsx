@@ -17,6 +17,7 @@ export interface NavBarProps {
   onMobileClose: () => void;
   isOpenMobile: boolean;
   sections: Section[];
+  onClickAddNewProject: () => void;
 }
 
 interface Item {
@@ -113,10 +114,10 @@ function reduceChildRoutes({
 
 const useStyles = makeStyles(() => ({
   mobileDrawer: {
-    width: 320,
+    width: 300,
   },
   desktopDrawer: {
-    width: 320,
+    width: 300,
     top: 64,
     height: "calc(100% - 64px)",
   },
@@ -127,7 +128,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const NavBar: FC<NavBarProps> = ({ onMobileClose, isOpenMobile, sections }) => {
+const NavBar: FC<NavBarProps> = ({
+  onMobileClose,
+  isOpenMobile,
+  sections,
+  onClickAddNewProject,
+}) => {
   const classes = useStyles();
   const location = useLocation();
 
@@ -151,6 +157,12 @@ const NavBar: FC<NavBarProps> = ({ onMobileClose, isOpenMobile, sections }) => {
                 </ListSubheader>
               }
             >
+              <NavItem
+                type="add"
+                depth={0}
+                title="새로운 프로젝트 추가"
+                onClick={onClickAddNewProject}
+              />
               {renderNavItems({
                 items: section.items,
                 pathname: location.pathname,

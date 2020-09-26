@@ -17,4 +17,6 @@ const ProgressSlice = createSlice({
   },
 });
 
+export const ProgressActions = ProgressSlice.actions;
+
 export default ProgressSlice;

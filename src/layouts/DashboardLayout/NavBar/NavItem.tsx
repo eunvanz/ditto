@@ -35,6 +35,7 @@ export interface NavItemProps {
   childrenCount?: number;
   title?: string;
   onClickConfig?: () => void;
+  onClick?: () => void;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -81,9 +82,16 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   title: {
     marginRight: "auto",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    maxWidth: 160,
     "&.has-new": {
       color: theme.palette.error.main,
     },
+  },
+  newBadge: {
+    marginRight: "auto",
   },
   active: {
     color: theme.palette.secondary.main,
@@ -125,6 +133,7 @@ const NavItem: FC<NavItemProps> = ({
   hasNew = false,
   childrenCount,
   onClickConfig,
+  onClick,
   type,
   ...restProps
 }) => {
@@ -201,7 +210,7 @@ const NavItem: FC<NavItemProps> = ({
           {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </Button>
         <Collapse in={isOpen}>
-          <NavItem type="add" depth={depth + 1} />
+          <NavItem type="add" depth={depth + 1} title="새로운 아이템 추가" />
           {children}
         </Collapse>
       </ListItem>
@@ -223,7 +232,7 @@ const NavItem: FC<NavItemProps> = ({
           to={href!}
         >
           <RequestMethodBadge requestMethod={requestMethod!} />
-          <NewBadge isVisible={hasNew} className={classes.title}>
+          <NewBadge isVisible={hasNew} className={classes.newBadge}>
             <span className={classes.title}>{title}</span>
           </NewBadge>
           <Button className={classes.insideButton} size="small">
@@ -243,12 +252,13 @@ const NavItem: FC<NavItemProps> = ({
         <Button
           className={clsx(classes.buttonLeaf, `depth-${depth}`)}
           style={style}
+          onClick={onClick}
         >
           <Chip
             variant="outlined"
             className={classes.addNewChip}
             size="small"
-            label="새 아이템 추가"
+            label={title}
             icon={<Icon />}
           />
         </Button>

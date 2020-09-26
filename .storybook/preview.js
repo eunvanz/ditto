@@ -1,19 +1,18 @@
 import React from "react";
-import GlobalThemeProvider from "../src/components/GlobalThemeProvider";
 import StoryRouter from "storybook-react-router";
+import GlobalProviders from "../src/components/GlobalProviders";
+import GlobalComponents from "../src/components/GlobalComponents";
 import ThemeWrapper from "../src/components/ThemeWrapper";
-import StoreProvider from "../src/components/StoreProvider";
 
 export const decorators = [
   StoryRouter(),
   (Story) => (
-    <StoreProvider>
+    <GlobalProviders>
       <ThemeWrapper>
-        <GlobalThemeProvider>
-          <Story />
-        </GlobalThemeProvider>
+        <GlobalComponents />
+        <Story />
       </ThemeWrapper>
-    </StoreProvider>
+    </GlobalProviders>
   ),
 ];
 

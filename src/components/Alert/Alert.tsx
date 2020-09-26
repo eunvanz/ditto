@@ -28,7 +28,7 @@ const Alert = ({
   title,
   message,
   okText = "확인",
-  cancelText = "취소",
+  cancelText,
   onOk,
   onCancel,
 }: AlertProps) => {
@@ -42,7 +42,15 @@ const Alert = ({
         {cancelText && (
           <Button onClick={onCancel || onClose}>{cancelText}</Button>
         )}
-        {okText && <Button onClick={onOk || onClose}>{okText}</Button>}
+        {okText && (
+          <Button
+            onClick={onOk || onClose}
+            variant="contained"
+            color="secondary"
+          >
+            {okText}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
@@ -85,6 +93,7 @@ Alert.message = ({ title, message }: { title: string; message: string }) => {
           title={title}
           message={message}
           onOk={handleOnOk}
+          cancelText={undefined}
         />
       );
     };
@@ -97,7 +106,7 @@ Alert.confirm = ({
   title,
   message,
   okText,
-  cancelText,
+  cancelText = "취소",
 }: {
   title: string;
   message: string;

@@ -1,3 +1,5 @@
+import { FirebaseReducer } from "react-redux-firebase";
+
 export enum THEMES {
   LIGHT = "LIGHT",
   DARK = "DARK",
@@ -94,7 +96,7 @@ export interface RequestItem extends Recordable {
 }
 
 export interface User {
-  userId: string;
+  auth: FirebaseReducer.AuthState;
 }
 
 export interface ProjectItem extends Recordable {
