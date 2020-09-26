@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import ProjectForm, { ProjectFormValues } from "./ProjectForm";
 import { useDispatch, useSelector } from "react-redux";
-import ProjectFormSelectors from "../../store/ProjectForm/ProjectFormSelectors";
-import ProjectFormSlice from "../../store/ProjectForm/ProjectFormSlice";
+import ProjectFormSelectors from "../../store/Project/ProjectSelectors";
+import ProjectFormSlice from "../../store/Project/ProjectSlice";
 
 const ProjectFormContainer = () => {
   const dispatch = useDispatch();

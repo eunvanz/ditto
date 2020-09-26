@@ -1,8 +1,8 @@
 import { fork, take, all, put, call, select } from "typed-redux-saga";
-import ProjectFormSlice from "./ProjectFormSlice";
-import ProgressSlice from "../Progress/ProgressSlice";
+import { ProjectActions } from "./ProjectSlice";
+import { ProgressActions } from "../Progress/ProgressSlice";
 import Firework from "../Firework";
-import UiSlice, { UiActions } from "../Ui/UiSlice";
+import { UiActions } from "../Ui/UiSlice";
 import AuthSelectors from "../Auth/AuthSelector";
 import Alert from "../../components/Alert";
 import { getTimestamp } from "../../firebase";
@@ -10,9 +10,7 @@ import { ErrorActions } from "../Error/ErrorSlice";
 
 export function* submitProjectFormFlow() {
   while (true) {
-    const { type, payload } = yield* take(
-      ProjectFormSlice.actions.submitProjectForm
-    );
+    const { type, payload } = yield* take(ProjectActions.submitProjectForm);
     const auth = yield* select(AuthSelectors.selectAuth);
 
     // 로그인이 돼있지 않은 경우 로그인 유도
@@ -27,12 +25,12 @@ export function* submitProjectFormFlow() {
     }
 
     yield* all([
-      put(ProgressSlice.actions.startProgress(type)),
-      put(UiSlice.actions.showLoading()),
+      put(ProgressActions.startProgress(type)),
+      put(UiActions.showLoading()),
     ]);
     const timestamp = yield* call(getTimestamp);
     try {
-      yield* call(Firework.addDocument, "projects", {
+      yield* call(Firework.addProject, {
         ...payload,
         owners: {
           [auth.uid]: true,
@@ -46,18 +44,18 @@ export function* submitProjectFormFlow() {
       });
       yield* all([
         put(
-          UiSlice.actions.showNotification({
+          UiActions.showNotification({
             message: "새 프로젝트가 생성됐습니다.",
           })
         ),
-        put(UiSlice.actions.hideProjectFormModal()),
+        put(UiActions.hideProjectFormModal()),
       ]);
     } catch (error) {
       yield* put(ErrorActions.catchError({ error }));
     } finally {
       yield* all([
-        put(ProgressSlice.actions.finishProgress(type)),
-        put(UiSlice.actions.hideLoading()),
+        put(ProgressActions.finishProgress(type)),
+        put(UiActions.hideLoading()),
       ]);
     }
   }

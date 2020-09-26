@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import DashboardLayout from "./DashboardLayout";
+import { useFirebase } from "react-redux-firebase";
 
 export interface DashboardLayoutContainerProps {
   children: React.ReactNode;
@@ -8,6 +9,8 @@ export interface DashboardLayoutContainerProps {
 const DashboardLayoutContainer = ({
   children,
 }: DashboardLayoutContainerProps) => {
+  const firebase = useFirebase();
+
   const sections = useMemo(() => {
     return [
       {

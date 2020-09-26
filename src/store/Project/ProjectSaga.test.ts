@@ -1,10 +1,7 @@
-import { ProjectFormActions } from "./ProjectFormSlice";
+import { ProjectFormActions } from "./ProjectSlice";
 import { expectSaga } from "redux-saga-test-plan";
 import * as matchers from "redux-saga-test-plan/matchers";
-import {
-  submitProjectFormFlow,
-  watchProjectFormActions,
-} from "./ProjectFormSaga";
+import { submitProjectFormFlow, watchProjectFormActions } from "./ProjectSaga";
 import { ProjectFormValues } from "../../components/ProjectForm/ProjectForm";
 import { initialRootState, rootReducer } from "..";
 import { initialFirebaseState } from "../Firebase";
@@ -44,7 +41,7 @@ describe("ProjectFormSaga", () => {
         .withReducer(rootReducer)
         .withState(initialState)
         .take(actionCreator)
-        .call(Firework.addDocument, "projects", {
+        .call(Firework.addProject, {
           ...payload,
           owners: {
             [auth.uid]: true,

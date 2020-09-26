@@ -1,5 +1,5 @@
 import { all, fork } from "redux-saga/effects";
-import { watchProjectFormActions } from "./ProjectForm/ProjectFormSaga";
+import { watchProjectFormActions } from "./Project/ProjectSaga";
 import { watchUiActions } from "./Ui/UiSaga";
 import { watchErrorActions } from "./Error/ErrorSaga";
 

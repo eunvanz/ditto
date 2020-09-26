@@ -14,8 +14,8 @@ export enum REQUEST_METHOD {
 }
 
 export interface Recordable {
-  createdAt: string;
-  updatedAt: string;
+  createdAt: firebase.firestore.FieldValue;
+  updatedAt: firebase.firestore.FieldValue;
   createdBy: string;
   updatedBy: string;
 }
