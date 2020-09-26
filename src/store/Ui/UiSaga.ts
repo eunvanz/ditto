@@ -1,6 +1,7 @@
-import { all, takeEvery, put, delay } from "typed-redux-saga";
+import { all, takeEvery, put, delay, select } from "typed-redux-saga";
 import { UiActions } from "./UiSlice";
 import shortid from "shortid";
+import AuthSelectors from "../Auth/AuthSelector";
 
 export function* handleShowNotification(
   action: ReturnType<typeof UiActions.showNotification>
@@ -26,9 +27,27 @@ export function* handleHideProjectFormModal(
   yield* put(UiActions.clearProjectFormModal());
 }
 
+export function* handleShowProjectFormModal(
+  action: ReturnType<typeof UiActions.hideProjectFormModal>
+) {
+  const auth = yield* select(AuthSelectors.selectAuth);
+  if (auth.isEmpty) {
+    yield* put(UiActions.showSignInModal());
+  } else {
+    const { payload } = action;
+    yield* put(
+      UiActions.receiveProjectFormModal({
+        isVisible: true,
+        project: payload,
+      })
+    );
+  }
+}
+
 export function* watchUiActions() {
   yield* all([
     takeEvery(UiActions.showNotification, handleShowNotification),
     takeEvery(UiActions.hideProjectFormModal, handleHideProjectFormModal),
+    takeEvery(UiActions.showProjectFormModal, handleShowProjectFormModal),
   ]);
 }

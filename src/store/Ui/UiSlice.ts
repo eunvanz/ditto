@@ -13,14 +13,16 @@ export type UiState = {
   theme: THEMES;
   notifications: Notification[];
   isLoading: boolean;
-  projectFormModal: {
-    isVisible: boolean;
-    project?: ProjectDoc;
-  };
+  projectFormModal: ProjectFormModalState;
   signInModal: {
     isVisible: boolean;
   };
 };
+
+export interface ProjectFormModalState {
+  isVisible: boolean;
+  project?: ProjectDoc;
+}
 
 export const initialUiState: UiState = {
   theme: THEMES.LIGHT,
@@ -63,15 +65,16 @@ const UiSlice = createSlice({
     hideLoading: (state, _: PayloadAction<void>) => {
       state.isLoading = false;
     },
-    showProjectFormModal: (
+    receiveProjectFormModal: (
       state,
-      action: PayloadAction<ProjectDoc | undefined>
+      action: PayloadAction<ProjectFormModalState>
     ) => {
-      if (action.payload) {
-        state.projectFormModal.project = action.payload;
-      }
-      state.projectFormModal.isVisible = true;
+      state.projectFormModal = action.payload;
     },
+    showProjectFormModal: (
+      _,
+      _action: PayloadAction<ProjectDoc | undefined>
+    ) => {},
     hideProjectFormModal: (state, _: PayloadAction<void>) => {
       state.projectFormModal.isVisible = false;
     },
