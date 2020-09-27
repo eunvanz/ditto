@@ -23,11 +23,21 @@ function* updateProject(id: string, data: Partial<ProjectItem>) {
   yield call(updateDocument, "projects", id, data);
 }
 
+function* deleteDocument(path: string, id: string) {
+  yield db.collection(path).doc(id).delete();
+}
+
+function* deleteProject(id: string) {
+  yield call(deleteDocument, "projects", id);
+}
+
 export const realFirework = {
   addDocument,
   addProject,
   getMyProjectsRef,
   updateProject,
+  deleteDocument,
+  deleteProject,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

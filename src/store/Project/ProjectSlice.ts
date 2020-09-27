@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ProjectFormValues } from "../../components/ProjectForm/ProjectForm";
+import { ProjectDoc } from "../../types";
 
 export type ProjectState = {};
 
@@ -11,6 +12,7 @@ const ProjectSlice = createSlice({
   reducers: {
     submitProjectForm: (_, _action: PayloadAction<ProjectFormValues>) => {},
     listenToMyProjects: (_, _action: PayloadAction<void>) => {},
+    deleteProject: (_, _action: PayloadAction<ProjectDoc>) => {},
   },
 });
 

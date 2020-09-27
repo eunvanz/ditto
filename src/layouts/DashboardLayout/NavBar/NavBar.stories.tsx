@@ -19,7 +19,6 @@ const defaultProps: Partial<NavBarProps> = {
           title: "보험프로젝트",
           hasNew: true,
           childrenCount: 5,
-          onClickConfig: () => {},
           type: "project",
           items: [
             {
@@ -33,7 +32,6 @@ const defaultProps: Partial<NavBarProps> = {
               hasNew: true,
               childrenCount: 5,
               type: "group",
-              onClickConfig: () => {},
               items: [
                 {
                   title: "내보험 탭 데이터 조회 내보험 탭 데이터 조회",

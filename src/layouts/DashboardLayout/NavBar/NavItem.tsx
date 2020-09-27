@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import { FC, ReactNode } from "react";
 import { NavLink as RouterLink } from "react-router-dom";
 import clsx from "clsx";
@@ -9,6 +9,8 @@ import {
   makeStyles,
   styled,
   Chip,
+  Menu,
+  MenuItem,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
@@ -34,7 +36,8 @@ export interface NavItemProps {
   hasNew?: boolean;
   childrenCount?: number;
   title?: string;
-  onClickConfig?: () => void;
+  onClickEdit?: () => void;
+  onClickDelete?: () => void;
   onClick?: () => void;
 }
 
@@ -120,6 +123,11 @@ const useStyles = makeStyles((theme: Theme) => ({
       color: theme.palette.text.disabled,
     },
   },
+  configMenu: {
+    "& li": {
+      fontSize: "0.85rem",
+    },
+  },
 }));
 
 const NavItem: FC<NavItemProps> = ({
@@ -132,7 +140,8 @@ const NavItem: FC<NavItemProps> = ({
   requestMethod,
   hasNew = false,
   childrenCount,
-  onClickConfig,
+  onClickEdit,
+  onClickDelete,
   onClick,
   type,
   ...restProps
@@ -144,7 +153,10 @@ const NavItem: FC<NavItemProps> = ({
   }
 
   const classes = useStyles();
+
   const [isOpen, setIsOpen] = useState<boolean>(isInitiallyOpen);
+
+  const [isConfigMenuOpen, setIsConfigMenuOpen] = useState(false);
 
   const handleToggle = (): void => {
     setIsOpen((prevOpen) => !prevOpen);
@@ -161,9 +173,9 @@ const NavItem: FC<NavItemProps> = ({
   const handleOnClickConfig = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.stopPropagation();
-      onClickConfig?.();
+      setIsConfigMenuOpen(true);
     },
-    [onClickConfig]
+    []
   );
 
   const Icon = useMemo(() => {
@@ -178,6 +190,26 @@ const NavItem: FC<NavItemProps> = ({
         return undefined;
     }
   }, [type]);
+
+  const configButtonRef = useRef<HTMLButtonElement>(null);
+
+  const handleOnClickEdit = useCallback(
+    (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+      e.stopPropagation();
+      onClickEdit?.();
+      setIsConfigMenuOpen(false);
+    },
+    [onClickEdit]
+  );
+
+  const handleOnClickDelete = useCallback(
+    (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+      e.stopPropagation();
+      onClickDelete?.();
+      setIsConfigMenuOpen(false);
+    },
+    [onClickDelete]
+  );
 
   if (["project", "group"].includes(type)) {
     return (
@@ -199,9 +231,31 @@ const NavItem: FC<NavItemProps> = ({
             className={classes.insideButton}
             size="small"
             onClick={handleOnClickConfig}
+            ref={configButtonRef}
           >
             <SettingsIcon fontSize="small" />
           </Button>
+          <Menu
+            className={classes.configMenu}
+            keepMounted
+            open={isConfigMenuOpen}
+            onClose={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+              e.stopPropagation();
+              setIsConfigMenuOpen(false);
+            }}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            anchorEl={configButtonRef.current}
+          >
+            {type === "project" && (
+              <>
+                <MenuItem onClick={handleOnClickEdit}>수정</MenuItem>
+                <MenuItem onClick={handleOnClickDelete}>삭제</MenuItem>
+              </>
+            )}
+          </Menu>
           {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </Button>
         <Collapse in={isOpen}>

@@ -5,6 +5,7 @@ import { RootState } from "../../store";
 import { DATA_KEY } from "../../store/Data/DataSlice";
 import { UiActions } from "../../store/Ui/UiSlice";
 import { ProjectDoc } from "../../types";
+import { ProjectActions } from "../../store/Project/ProjectSlice";
 
 export interface DashboardLayoutContainerProps {
   children: React.ReactNode;
@@ -26,6 +27,13 @@ const DashboardLayoutContainer = ({
     [dispatch]
   );
 
+  const deleteProject = useCallback(
+    (project: ProjectDoc) => {
+      dispatch(ProjectActions.deleteProject(project));
+    },
+    [dispatch]
+  );
+
   const sections = useMemo(() => {
     return [
       {
@@ -35,13 +43,14 @@ const DashboardLayoutContainer = ({
             title: project.title,
             hasNew: false,
             childrenCount: 0,
-            onClickConfig: () => showProjectFormModal(project),
+            onClickEdit: () => showProjectFormModal(project),
+            onClickDelete: () => deleteProject(project),
             type: "project" as const,
             items: undefined,
           })) || [],
       },
     ];
-  }, [projects, showProjectFormModal]);
+  }, [deleteProject, projects, showProjectFormModal]);
 
   return <DashboardLayout sections={sections}>{children}</DashboardLayout>;
 };

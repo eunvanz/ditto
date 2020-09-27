@@ -10,8 +10,7 @@ import {
   ListSubheader,
   makeStyles,
 } from "@material-ui/core";
-import NavItem from "./NavItem";
-import { REQUEST_METHOD } from "../../../types";
+import NavItem, { NavItemProps } from "./NavItem";
 
 export interface NavBarProps {
   onMobileClose: () => void;
@@ -20,16 +19,12 @@ export interface NavBarProps {
   onClickAddNewProject: () => void;
 }
 
-export interface SectionItem {
-  href?: string;
+export interface SectionItem
+  extends Omit<NavItemProps, "depth" | "isOpen" | "children" | "onClick"> {
   icon?: ReactNode;
   info?: ReactNode;
   items?: SectionItem[];
-  requestMethod?: REQUEST_METHOD;
-  hasNew?: boolean;
-  childrenCount?: number;
   title: string;
-  onClickConfig?: () => void;
   type: "request" | "project" | "group";
 }
 
@@ -78,16 +73,7 @@ function reduceChildRoutes({
     });
 
     acc.push(
-      <NavItem
-        depth={depth}
-        key={key}
-        isOpen={isPathMatched}
-        title={item.title}
-        hasNew={item.hasNew}
-        childrenCount={item.childrenCount}
-        onClickConfig={item.onClickConfig}
-        type={item.type}
-      >
+      <NavItem depth={depth} key={key} isOpen={isPathMatched} {...item}>
         {renderNavItems({
           depth: depth + 1,
           pathname,
@@ -96,18 +82,7 @@ function reduceChildRoutes({
       </NavItem>
     );
   } else {
-    acc.push(
-      <NavItem
-        depth={depth}
-        href={item.href}
-        key={key}
-        title={item.title}
-        requestMethod={item.requestMethod}
-        hasNew={item.hasNew}
-        type={item.type}
-        onClickConfig={item.onClickConfig}
-      />
-    );
+    acc.push(<NavItem depth={depth} href={item.href} key={key} {...item} />);
   }
 
   return acc;

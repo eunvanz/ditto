@@ -139,6 +139,37 @@ export function* listenToMyProjectsFlow() {
   }
 }
 
+export function* deleteProjectFlow() {
+  while (true) {
+    const { payload: project } = yield* take(ProjectActions.deleteProject);
+    const isConfirmed = yield* call(Alert.confirm, {
+      title: "프로젝트 삭제",
+      message:
+        "프로젝트 하위의 작업들이 모두 삭제됩니다. 정말 프로젝트를 삭제하시겠습니까?",
+    });
+    if (isConfirmed) {
+      try {
+        yield* put(UiActions.showLoading());
+        yield* call(Firework.deleteProject, project.id);
+      } catch (error) {
+        yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+      } finally {
+        yield* put(UiActions.hideLoading());
+        yield* put(
+          UiActions.showNotification({
+            message: "프로젝트가 삭제됐습니다.",
+            type: "success",
+          })
+        );
+      }
+    }
+  }
+}
+
 export function* watchProjectActions() {
-  yield* all([fork(submitProjectFormFlow), fork(listenToMyProjectsFlow)]);
+  yield* all([
+    fork(submitProjectFormFlow),
+    fork(listenToMyProjectsFlow),
+    fork(deleteProjectFlow),
+  ]);
 }
