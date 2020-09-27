@@ -233,7 +233,10 @@ const NavItem: FC<NavItemProps> = ({
           <Button
             className={classes.insideButton}
             size="small"
-            onClick={onClickConfig}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClickConfig?.();
+            }}
           >
             <SettingsIcon fontSize="small" />
           </Button>
