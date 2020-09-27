@@ -313,9 +313,10 @@ const NavItem: FC<NavItemProps> = ({
               }}
               anchorOrigin={{
                 vertical: "bottom",
-                horizontal: "center",
+                horizontal: 45,
               }}
               anchorEl={addNewItemButtonRef.current}
+              getContentAnchorEl={null}
             >
               <MenuItem onClick={handleOnClickAddGroup}>그룹</MenuItem>
               <MenuItem onClick={handleOnClickAddRequest}>리퀘스트</MenuItem>
