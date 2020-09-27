@@ -18,7 +18,6 @@ const defaultProps: Partial<DashboardLayoutProps> = {
           title: "보험프로젝트",
           hasNew: true,
           childrenCount: 5,
-          onClickEdit: () => {},
           type: "project",
           items: [
             {
@@ -32,7 +31,6 @@ const defaultProps: Partial<DashboardLayoutProps> = {
               hasNew: true,
               childrenCount: 5,
               type: "group",
-              onClickEdit: () => {},
               items: [
                 {
                   title: "내보험 탭 데이터 조회 내보험 탭 데이터 조회",

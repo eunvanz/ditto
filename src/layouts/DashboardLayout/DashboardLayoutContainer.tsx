@@ -1,11 +1,11 @@
 import React, { useMemo, useCallback } from "react";
 import DashboardLayout from "./DashboardLayout";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { DATA_KEY } from "../../store/Data/DataSlice";
-import { UiActions } from "../../store/Ui/UiSlice";
 import { ProjectDoc } from "../../types";
-import { ProjectActions } from "../../store/Project/ProjectSlice";
+import { useHistory } from "react-router-dom";
+import ROUTE from "../../paths";
 
 export interface DashboardLayoutContainerProps {
   children: React.ReactNode;
@@ -14,25 +14,11 @@ export interface DashboardLayoutContainerProps {
 const DashboardLayoutContainer = ({
   children,
 }: DashboardLayoutContainerProps) => {
-  const dispatch = useDispatch();
-
   const projects = useSelector(
     (state: RootState) => state.data[DATA_KEY.PROJECTS]
   );
 
-  const showProjectFormModal = useCallback(
-    (project: ProjectDoc) => {
-      dispatch(UiActions.showProjectFormModal(project));
-    },
-    [dispatch]
-  );
-
-  const deleteProject = useCallback(
-    (project: ProjectDoc) => {
-      dispatch(ProjectActions.deleteProject(project));
-    },
-    [dispatch]
-  );
+  const history = useHistory();
 
   const navigateToNewRequest = useCallback(
     (project: ProjectDoc, group?: any) => {},
@@ -50,8 +36,8 @@ const DashboardLayoutContainer = ({
             title: project.title,
             hasNew: false,
             childrenCount: 0,
-            onClickEdit: () => showProjectFormModal(project),
-            onClickDelete: () => deleteProject(project),
+            onClickConfig: () =>
+              history.push(`${ROUTE.PROJECTS}/${project.id}`),
             onClickAddRequest: () => navigateToNewRequest(project),
             onClickAddGroup: () => showGroupFormModal(project),
             type: "project" as const,
@@ -59,13 +45,7 @@ const DashboardLayoutContainer = ({
           })) || [],
       },
     ];
-  }, [
-    deleteProject,
-    navigateToNewRequest,
-    projects,
-    showGroupFormModal,
-    showProjectFormModal,
-  ]);
+  }, [history, navigateToNewRequest, projects, showGroupFormModal]);
 
   return <DashboardLayout sections={sections}>{children}</DashboardLayout>;
 };

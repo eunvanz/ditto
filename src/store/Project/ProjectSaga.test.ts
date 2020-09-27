@@ -6,7 +6,6 @@ import {
   watchProjectActions,
   listenToMyProjectsFlow,
 } from "./ProjectSaga";
-import { ProjectFormValues } from "../../components/ProjectForm/ProjectForm";
 import { initialRootState, rootReducer } from "..";
 import { initialFirebaseState } from "../Firebase";
 import mockUser from "../../mocks/mockUser";
@@ -18,9 +17,12 @@ import Alert from "../../components/Alert";
 describe("ProjectFormSaga", () => {
   describe("submitProjectFormFlow", () => {
     const actionCreator = ProjectActions.submitProjectForm;
-    const payload: ProjectFormValues = {
-      title: "test",
-      description: "test",
+    const payload = {
+      data: {
+        title: "test",
+        description: "test",
+      },
+      type: "create" as const,
     };
     const action = actionCreator(payload);
 
@@ -46,7 +48,7 @@ describe("ProjectFormSaga", () => {
         .withState(initialState)
         .take(actionCreator)
         .call(Firework.addProject, {
-          ...payload,
+          ...payload.data,
           members: {
             [auth.uid]: true,
           },

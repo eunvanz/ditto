@@ -1,15 +1,15 @@
 import React, { useCallback, useMemo } from "react";
 import ProjectForm, { ProjectFormValues } from "./ProjectForm";
 import { useDispatch, useSelector } from "react-redux";
-import ProjectFormSelectors from "../../store/Project/ProjectSelectors";
-import ProjectFormSlice from "../../store/Project/ProjectSlice";
+import ProjectSelectors from "../../store/Project/ProjectSelectors";
+import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { RootState } from "../../store";
 
 const ProjectFormContainer = () => {
   const dispatch = useDispatch();
 
   const isSubmitting = useSelector(
-    ProjectFormSelectors.selectIsProjectFormSubmitting
+    ProjectSelectors.selectIsProjectFormSubmitting
   );
   const project = useSelector(
     (state: RootState) => state.ui.projectFormModal.project
@@ -17,7 +17,9 @@ const ProjectFormContainer = () => {
 
   const submitProjectForm = useCallback(
     (values: ProjectFormValues) => {
-      dispatch(ProjectFormSlice.actions.submitProjectForm(values));
+      dispatch(
+        ProjectActions.submitProjectForm({ data: values, type: "create" })
+      );
     },
     [dispatch]
   );

@@ -11,8 +11,8 @@ import { ErrorActions } from "../Error/ErrorSlice";
 import { ProjectItem, ProjectDoc } from "../../types";
 import { eventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
-import UiSelectors from "../Ui/UiSelectors";
 import { RootState } from "..";
+import DataSelectors from "../Data/DataSelectors";
 
 export function* submitProjectFormFlow() {
   while (true) {
@@ -30,11 +30,11 @@ export function* submitProjectFormFlow() {
       continue;
     }
 
-    const projectFormModalState = yield* select(
-      UiSelectors.selectProjectFormModal
+    const project = yield* select(
+      DataSelectors.createDataKeySelector(DATA_KEY.PROJECT)
     );
 
-    const isModification = !!projectFormModalState.project;
+    const isModification = payload.type === "modify";
 
     yield* all([
       put(ProgressActions.startProgress(type)),
@@ -46,15 +46,12 @@ export function* submitProjectFormFlow() {
     );
     try {
       if (isModification) {
-        yield* call(Firework.updateProject, projectFormModalState.project!.id, {
-          ...payload,
-          updatedAt: timestamp,
-          updatedBy: auth.uid,
-          [`settingsByMember.${auth.uid}.updatedAt`]: timestamp,
+        yield* call(Firework.updateProject, (project as ProjectDoc).id, {
+          ...payload.data,
         });
       } else {
         yield* call(Firework.addProject, {
-          ...payload,
+          ...payload.data,
           members: {
             [auth.uid]: true,
           },
@@ -101,7 +98,7 @@ export function createMyProjectsEventChannel(uid?: string) {
     if (uid) {
       const myProjectRef = Firework.getMyProjectsRef(uid);
       const unsubscribe = myProjectRef.onSnapshot((querySnapshot) => {
-        const projects: ProjectItem[] = [];
+        const projects: ProjectDoc[] = [];
         querySnapshot.forEach((doc) => {
           projects.push({ id: doc.id, ...doc.data() } as ProjectDoc);
         });

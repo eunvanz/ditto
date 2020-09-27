@@ -37,8 +37,7 @@ export interface NavItemProps {
   hasNew?: boolean;
   childrenCount?: number;
   title?: string;
-  onClickEdit?: () => void;
-  onClickDelete?: () => void;
+  onClickConfig?: () => void;
   onClickAddGroup?: () => void;
   onClickAddRequest?: () => void;
   onClick?: () => void;
@@ -143,8 +142,7 @@ const NavItem: FC<NavItemProps> = ({
   requestMethod,
   hasNew = false,
   childrenCount,
-  onClickEdit,
-  onClickDelete,
+  onClickConfig,
   onClickAddGroup,
   onClickAddRequest,
   onClick,
@@ -161,8 +159,6 @@ const NavItem: FC<NavItemProps> = ({
 
   const [isOpen, setIsOpen] = useState<boolean>(isInitiallyOpen);
 
-  const [isConfigMenuOpen, setIsConfigMenuOpen] = useState(false);
-
   const handleToggle = (): void => {
     setIsOpen((prevOpen) => !prevOpen);
   };
@@ -174,14 +170,6 @@ const NavItem: FC<NavItemProps> = ({
   }
 
   const style = { paddingLeft };
-
-  const handleOnClickConfig = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      e.stopPropagation();
-      setIsConfigMenuOpen(true);
-    },
-    []
-  );
 
   const Icon = useMemo(() => {
     switch (type) {
@@ -195,26 +183,6 @@ const NavItem: FC<NavItemProps> = ({
         return undefined;
     }
   }, [type]);
-
-  const configButtonRef = useRef<HTMLButtonElement>(null);
-
-  const handleOnClickEdit = useCallback(
-    (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-      e.stopPropagation();
-      onClickEdit?.();
-      setIsConfigMenuOpen(false);
-    },
-    [onClickEdit]
-  );
-
-  const handleOnClickDelete = useCallback(
-    (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-      e.stopPropagation();
-      onClickDelete?.();
-      setIsConfigMenuOpen(false);
-    },
-    [onClickDelete]
-  );
 
   const [isNewItemMenuOpen, setIsNewItemMenuOpen] = useState(false);
 
@@ -262,36 +230,13 @@ const NavItem: FC<NavItemProps> = ({
               <Chip className={classes.countChip} label={childrenCount} />
             ) : null}
           </span>
-          <RootRef rootRef={configButtonRef}>
-            <Button
-              className={classes.insideButton}
-              size="small"
-              onClick={handleOnClickConfig}
-            >
-              <SettingsIcon fontSize="small" />
-            </Button>
-          </RootRef>
-          <Menu
-            className={classes.configMenu}
-            keepMounted
-            open={isConfigMenuOpen}
-            onClose={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-              e.stopPropagation();
-              setIsConfigMenuOpen(false);
-            }}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-            anchorEl={configButtonRef.current}
+          <Button
+            className={classes.insideButton}
+            size="small"
+            onClick={onClickConfig}
           >
-            {type === "project" && (
-              <MenuItem onClick={handleOnClickEdit}>수정</MenuItem>
-            )}
-            {type === "project" && (
-              <MenuItem onClick={handleOnClickDelete}>삭제</MenuItem>
-            )}
-          </Menu>
+            <SettingsIcon fontSize="small" />
+          </Button>
           {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </Button>
         <Collapse in={isOpen}>

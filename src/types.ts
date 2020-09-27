@@ -117,9 +117,27 @@ export interface ProjectSettings {
   seq: number;
 }
 
+export interface DocTimestamp {
+  seconds: number;
+  nanoseconds: number;
+}
+
+export type Doc<T extends Recordable> = Omit<
+  T,
+  "updatedAt" | "createdAt" | "settingsByMember"
+> & {
+  id: string;
+  updatedAt: DocTimestamp;
+  createdAt: DocTimestamp;
+  settingsByMember: Record<
+    string,
+    Omit<ProjectSettings, "updatedAt"> & {
+      updatedAt: DocTimestamp;
+    }
+  >;
+};
+
 /**
  * 읽을 때의 프로젝트
  */
-export interface ProjectDoc extends ProjectItem {
-  id: string;
-}
+export type ProjectDoc = Doc<ProjectItem>;

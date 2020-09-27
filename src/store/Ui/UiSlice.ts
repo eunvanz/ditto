@@ -25,7 +25,7 @@ export interface ProjectFormModalState {
 }
 
 export const initialUiState: UiState = {
-  theme: window.matchMedia("(prefers-color-scheme: dark)").matches
+  theme: window.matchMedia?.("(prefers-color-scheme: dark)").matches
     ? THEMES.DARK
     : THEMES.LIGHT,
   notifications: [],
