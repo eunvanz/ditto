@@ -53,7 +53,7 @@ const DashboardLayoutContainer = ({
             onClickEdit: () => showProjectFormModal(project),
             onClickDelete: () => deleteProject(project),
             onClickAddRequest: () => navigateToNewRequest(project),
-            onClickAddNewGroup: () => showGroupFormModal(project),
+            onClickAddGroup: () => showGroupFormModal(project),
             type: "project" as const,
             items: undefined,
           })) || [],

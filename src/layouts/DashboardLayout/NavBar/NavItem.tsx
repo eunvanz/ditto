@@ -262,14 +262,15 @@ const NavItem: FC<NavItemProps> = ({
               <Chip className={classes.countChip} label={childrenCount} />
             ) : null}
           </span>
-          <Button
-            className={classes.insideButton}
-            size="small"
-            onClick={handleOnClickConfig}
-            ref={configButtonRef}
-          >
-            <SettingsIcon fontSize="small" />
-          </Button>
+          <RootRef rootRef={configButtonRef}>
+            <Button
+              className={classes.insideButton}
+              size="small"
+              onClick={handleOnClickConfig}
+            >
+              <SettingsIcon fontSize="small" />
+            </Button>
+          </RootRef>
           <Menu
             className={classes.configMenu}
             keepMounted
