@@ -20,7 +20,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   defaultValues,
 }) => {
   const { register, handleSubmit, errors, watch } = useForm<ProjectFormValues>({
-    mode: "all",
+    mode: "onChange",
     defaultValues,
   });
 
