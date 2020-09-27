@@ -42,10 +42,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           label="프로젝트 이름"
           name="title"
           inputRef={register({
-            required: "프로젝트 이름을 입력해주세요.",
+            required: "프로젝트 이름을 지어주세요.",
             maxLength: {
               value: 20,
-              message: "20자 이내로 입력해주세요.",
+              message: "이름이 너무 길어요.",
             },
           })}
           variant="outlined"
@@ -62,7 +62,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           inputRef={register({
             maxLength: {
               value: 50,
-              message: "50자 이내로 입력해주세요.",
+              message: "설명이 너무 길어요.",
             },
           })}
           variant="outlined"

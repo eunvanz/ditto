@@ -100,19 +100,17 @@ export function createMyProjectsEventChannel(uid?: string) {
   const listener = eventChannel((emit) => {
     if (uid) {
       const myProjectRef = Firework.getMyProjectsRef(uid);
-      myProjectRef.onSnapshot((querySnapshot) => {
+      const unsubscribe = myProjectRef.onSnapshot((querySnapshot) => {
         const projects: ProjectItem[] = [];
         querySnapshot.forEach((doc) => {
           projects.push({ id: doc.id, ...doc.data() } as ProjectDoc);
         });
         emit(orderBy(projects, [`settingsByMember.${uid}.seq`], ["asc"]));
       });
+      return unsubscribe;
+    } else {
+      return () => {};
     }
-    return () => {
-      if (!uid) {
-        listener.close();
-      }
-    };
   });
   return listener;
 }
