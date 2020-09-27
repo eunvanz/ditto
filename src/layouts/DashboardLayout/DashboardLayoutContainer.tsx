@@ -34,6 +34,13 @@ const DashboardLayoutContainer = ({
     [dispatch]
   );
 
+  const navigateToNewRequest = useCallback(
+    (project: ProjectDoc, group?: any) => {},
+    []
+  );
+
+  const showGroupFormModal = useCallback((project: ProjectDoc) => {}, []);
+
   const sections = useMemo(() => {
     return [
       {
@@ -45,12 +52,20 @@ const DashboardLayoutContainer = ({
             childrenCount: 0,
             onClickEdit: () => showProjectFormModal(project),
             onClickDelete: () => deleteProject(project),
+            onClickAddRequest: () => navigateToNewRequest(project),
+            onClickAddNewGroup: () => showGroupFormModal(project),
             type: "project" as const,
             items: undefined,
           })) || [],
       },
     ];
-  }, [deleteProject, projects, showProjectFormModal]);
+  }, [
+    deleteProject,
+    navigateToNewRequest,
+    projects,
+    showGroupFormModal,
+    showProjectFormModal,
+  ]);
 
   return <DashboardLayout sections={sections}>{children}</DashboardLayout>;
 };

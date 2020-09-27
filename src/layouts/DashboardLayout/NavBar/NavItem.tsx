@@ -11,6 +11,7 @@ import {
   Chip,
   Menu,
   MenuItem,
+  RootRef,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
@@ -38,6 +39,8 @@ export interface NavItemProps {
   title?: string;
   onClickEdit?: () => void;
   onClickDelete?: () => void;
+  onClickAddGroup?: () => void;
+  onClickAddRequest?: () => void;
   onClick?: () => void;
 }
 
@@ -142,6 +145,8 @@ const NavItem: FC<NavItemProps> = ({
   childrenCount,
   onClickEdit,
   onClickDelete,
+  onClickAddGroup,
+  onClickAddRequest,
   onClick,
   type,
   ...restProps
@@ -211,6 +216,36 @@ const NavItem: FC<NavItemProps> = ({
     [onClickDelete]
   );
 
+  const [isNewItemMenuOpen, setIsNewItemMenuOpen] = useState(false);
+
+  const handleOnClickNewItem = useCallback(() => {
+    if (type === "project") {
+      setIsNewItemMenuOpen(true);
+    } else {
+      // TODO: api 생성화면 이동
+    }
+  }, [type]);
+
+  const handleOnClickAddRequest = useCallback(
+    (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+      e.stopPropagation();
+      onClickAddRequest?.();
+      setIsNewItemMenuOpen(false);
+    },
+    [onClickAddRequest]
+  );
+
+  const handleOnClickAddGroup = useCallback(
+    (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+      e.stopPropagation();
+      onClickAddGroup?.();
+      setIsNewItemMenuOpen(false);
+    },
+    [onClickAddGroup]
+  );
+
+  const addNewItemButtonRef = useRef<HTMLDivElement>(null);
+
   if (["project", "group"].includes(type)) {
     return (
       <ListItem
@@ -250,16 +285,42 @@ const NavItem: FC<NavItemProps> = ({
             anchorEl={configButtonRef.current}
           >
             {type === "project" && (
-              <>
-                <MenuItem onClick={handleOnClickEdit}>수정</MenuItem>
-                <MenuItem onClick={handleOnClickDelete}>삭제</MenuItem>
-              </>
+              <MenuItem onClick={handleOnClickEdit}>수정</MenuItem>
+            )}
+            {type === "project" && (
+              <MenuItem onClick={handleOnClickDelete}>삭제</MenuItem>
             )}
           </Menu>
           {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </Button>
         <Collapse in={isOpen}>
-          <NavItem type="add" depth={depth + 1} title="새로운 아이템 추가" />
+          <RootRef rootRef={addNewItemButtonRef}>
+            <NavItem
+              type="add"
+              depth={depth + 1}
+              title="새로운 아이템 추가"
+              onClick={handleOnClickNewItem}
+            />
+          </RootRef>
+          {type === "project" && (
+            <Menu
+              className={classes.configMenu}
+              keepMounted
+              open={isNewItemMenuOpen}
+              onClose={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                e.stopPropagation();
+                setIsNewItemMenuOpen(false);
+              }}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              anchorEl={addNewItemButtonRef.current}
+            >
+              <MenuItem onClick={handleOnClickAddGroup}>그룹</MenuItem>
+              <MenuItem onClick={handleOnClickAddRequest}>리퀘스트</MenuItem>
+            </Menu>
+          )}
           {children}
         </Collapse>
       </ListItem>
