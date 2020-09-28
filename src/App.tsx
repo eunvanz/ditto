@@ -9,21 +9,27 @@ import DataInitializer from "./components/DataInitializer/DataInitializer";
 import ROUTE from "./paths";
 import Routes from "./routes";
 
+function RoutedApp() {
+  return (
+    <Router history={history}>
+      <DashboardLayout>
+        <Switch>
+          <Route
+            path={`${ROUTE.PROJECTS}/:projectId`}
+            component={Routes.ProjectManagement}
+          />
+        </Switch>
+      </DashboardLayout>
+    </Router>
+  );
+}
+
 function App() {
   return (
     <GlobalProviders>
+      <GlobalComponents />
       <DataInitializer>
-        <GlobalComponents />
-        <Router history={history}>
-          <DashboardLayout>
-            <Switch>
-              <Route
-                path={`${ROUTE.PROJECTS}/:projectId`}
-                component={Routes.ProjectManagement}
-              />
-            </Switch>
-          </DashboardLayout>
-        </Router>
+        <RoutedApp />
       </DataInitializer>
     </GlobalProviders>
   );

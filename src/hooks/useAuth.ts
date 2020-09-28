@@ -29,7 +29,7 @@ const useAuth = (options?: UseAuthOptions) => {
     }
   }, [auth.isLoaded, auth.isEmpty, options, dispatch, history]);
 
-  return user;
+  return { user, auth };
 };
 
 export default useAuth;
