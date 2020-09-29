@@ -9,10 +9,11 @@ import Alert from "../../components/Alert";
 import { getTimestamp } from "../../firebase";
 import { ErrorActions } from "../Error/ErrorSlice";
 import { ProjectItem, ProjectDoc } from "../../types";
-import { eventChannel } from "redux-saga";
+import { eventChannel, EventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
 import { RootState } from "..";
 import DataSelectors from "../Data/DataSelectors";
+import { AuthActions } from "../Auth/AuthSlice";
 
 export function* submitProjectFormFlow() {
   while (true) {
@@ -93,44 +94,56 @@ export function* submitProjectFormFlow() {
   }
 }
 
-export function createMyProjectsEventChannel(uid?: string) {
+export function createMyProjectsEventChannel(uid: string) {
   const listener = eventChannel((emit) => {
-    if (uid) {
-      const myProjectRef = Firework.getMyProjectsRef(uid);
-      const unsubscribe = myProjectRef.onSnapshot((querySnapshot) => {
-        const projects: ProjectDoc[] = [];
-        querySnapshot.forEach((doc) => {
-          projects.push({ id: doc.id, ...doc.data() } as ProjectDoc);
-        });
-        emit(orderBy(projects, [`settingsByMember.${uid}.seq`], ["asc"]));
+    const myProjectRef = Firework.getMyProjectsRef(uid);
+    const unsubscribe = myProjectRef.onSnapshot((querySnapshot) => {
+      const projects: ProjectDoc[] = [];
+      querySnapshot.forEach((doc) => {
+        projects.push({ id: doc.id, ...doc.data() } as ProjectDoc);
       });
-      return unsubscribe;
-    } else {
-      return () => {};
-    }
+      emit(orderBy(projects, [`settingsByMember.${uid}.seq`], ["asc"]));
+    });
+    return unsubscribe;
   });
   return listener;
-}
-
-export function* watchOnMyProjectsEvent() {
-  const auth = yield* select(AuthSelectors.selectAuth);
-  const myProjectEventChannel = createMyProjectsEventChannel(auth.uid);
-  while (true) {
-    const myProjects = yield* take(myProjectEventChannel);
-
-    yield* put(
-      DataActions.receiveData({
-        key: DATA_KEY.PROJECTS,
-        data: myProjects as ProjectItem[],
-      })
-    );
-  }
 }
 
 export function* listenToMyProjectsFlow() {
   while (true) {
     yield* take(ProjectActions.listenToMyProjects);
-    yield* fork(watchOnMyProjectsEvent);
+    const auth = yield* select(AuthSelectors.selectAuth);
+    if (auth.uid) {
+      const myProjectEventChannel = createMyProjectsEventChannel(auth.uid);
+      while (true) {
+        const myProjects = yield* take(myProjectEventChannel);
+
+        yield* put(
+          DataActions.receiveData({
+            key: DATA_KEY.PROJECTS,
+            data: myProjects as ProjectItem[],
+          })
+        );
+
+        yield* fork(waitForUnlistenToMyProject, myProjectEventChannel);
+      }
+    } else {
+      yield* put(
+        DataActions.receiveData({
+          key: DATA_KEY.PROJECTS,
+          data: [],
+        })
+      );
+    }
+  }
+}
+
+export function* waitForUnlistenToMyProject(
+  myProjectEventChannel: EventChannel<any>
+) {
+  while (true) {
+    yield* take(AuthActions.signOut);
+    yield* call(myProjectEventChannel.close);
   }
 }
 
