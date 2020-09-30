@@ -1,4 +1,4 @@
-import { fork, take, all, put, call, select } from "typed-redux-saga";
+import { fork, take, all, put, call, select, race } from "typed-redux-saga";
 import orderBy from "lodash/orderBy";
 import { ProjectActions } from "./ProjectSlice";
 import { ProgressActions } from "../Progress/ProgressSlice";
@@ -8,13 +8,14 @@ import AuthSelectors from "../Auth/AuthSelector";
 import Alert from "../../components/Alert";
 import { getTimestamp } from "../../firebase";
 import { ErrorActions } from "../Error/ErrorSlice";
-import { ProjectItem, ProjectDoc } from "../../types";
+import { ProjectItem, ProjectDoc, ProjectUrlDoc } from "../../types";
 import { eventChannel, EventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
 import { RootState } from "..";
 import DataSelectors from "../Data/DataSelectors";
 import { AuthActions } from "../Auth/AuthSlice";
 import { requireSignIn } from "../Auth/AuthSaga";
+import { assertNotEmpty } from "../../helpers/commonHelpers";
 
 export function* submitProjectFormFlow() {
   while (true) {
@@ -171,9 +172,7 @@ export function* deleteProjectFlow() {
 
 export function* submitProjectUrlFormFlow() {
   while (true) {
-    const {
-      payload: { data, targetId },
-    } = yield* take(ProjectActions.submitProjectUrlForm);
+    const { payload: data } = yield* take(ProjectActions.submitProjectUrlForm);
     const auth = yield* select(AuthSelectors.selectAuth);
 
     const isLogOn = yield* call(requireSignIn);
@@ -181,7 +180,7 @@ export function* submitProjectUrlFormFlow() {
       continue;
     }
 
-    const isModification = !!targetId;
+    const isModification = !!data.target;
 
     // @ts-ignore
     const { id: projectId }: ProjectDoc = yield* select(
@@ -189,12 +188,35 @@ export function* submitProjectUrlFormFlow() {
     );
     const timestamp = yield* call(getTimestamp);
 
-    if (isModification) {
-    } else {
-      yield* call(
-        Firework.addProjectUrl,
-        {
+    try {
+      if (isModification) {
+        assertNotEmpty(data.target);
+        // @ts-ignore
+        const newProjectUrl = {
           ...data,
+          projectId,
+          id: data.target.id,
+          updatedAt: timestamp,
+          updatedBy: auth.uid,
+          settingsByMember: {
+            [auth.uid]: {
+              updatedAt: timestamp,
+            },
+          },
+        };
+        delete newProjectUrl.target;
+        // @ts-ignore
+        yield* call(Firework.updateProjectUrl, newProjectUrl);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "URL 정보를 수정했습니다.",
+          })
+        );
+      } else {
+        const newProjectUrl = {
+          ...data,
+          projectId,
           createdAt: timestamp,
           updatedAt: timestamp,
           createdBy: auth.uid,
@@ -204,9 +226,116 @@ export function* submitProjectUrlFormFlow() {
               updatedAt: timestamp,
             },
           },
-        },
-        projectId
+        };
+        delete newProjectUrl.target;
+        yield* call(Firework.addProjectUrl, newProjectUrl);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "URL을 추가했습니다.",
+          })
+        );
+      }
+    } catch (error) {
+      yield* put(
+        ErrorActions.catchError({
+          error: new Error(
+            "데이터 처리 도중에 오류가 발생했습니다. 반복될 경우 고객센터에 문의해주세요."
+          ),
+          isAlertOnly: true,
+        })
       );
+    }
+  }
+}
+
+export function createProjectUrlEventChannel(projectId: string) {
+  const listener = eventChannel((emit) => {
+    const projectUrlRef = Firework.getProjectUrlRef(projectId);
+    const unsubscribe = projectUrlRef.onSnapshot((querySnapshot) => {
+      const projectUrls: ProjectUrlDoc[] = [];
+      querySnapshot.forEach((doc) => {
+        projectUrls.push({ id: doc.id, ...doc.data() } as ProjectUrlDoc);
+      });
+      emit(projectUrls);
+    });
+    return unsubscribe;
+  });
+  return listener;
+}
+
+export function* waitForUnlistenProjectUrl(
+  projectUrlEventChannel: EventChannel<any>
+) {
+  while (true) {
+    yield* race([
+      take(AuthActions.signOut),
+      take(ProjectActions.unlistenToProjectUrls),
+    ]);
+    yield* call(projectUrlEventChannel.close);
+  }
+}
+
+export function* listenToProjectUrlsFlow() {
+  while (true) {
+    yield* take(ProjectActions.listenToProjectUrls);
+    const project = yield* select(
+      DataSelectors.createDataKeySelector(DATA_KEY.PROJECT)
+    );
+    if (!project) {
+      yield* put(
+        ErrorActions.catchError({
+          error: new Error("선택되어있는 프로젝트가 없습니다."),
+          isAlertOnly: true,
+        })
+      );
+      continue;
+    }
+    const projectUrlEventChannel = createProjectUrlEventChannel(
+      (project as ProjectDoc).id
+    );
+    while (true) {
+      const projectUrls = yield* take(projectUrlEventChannel);
+
+      yield* put(
+        DataActions.receiveData({
+          key: DATA_KEY.PROJECT_URLS,
+          data: projectUrls as ProjectItem[],
+        })
+      );
+
+      yield* fork(waitForUnlistenProjectUrl, projectUrlEventChannel);
+    }
+  }
+}
+
+export function* deleteProjectUrlFlow() {
+  while (true) {
+    const { payload: projectUrl } = yield* take(
+      ProjectActions.deleteProjectUrl
+    );
+    const usingRequests = Object.keys(projectUrl.usedByRequest || {});
+    const isUsedBySome =
+      projectUrl.usedByRequest &&
+      usingRequests.some((item) => projectUrl.usedByRequest?.[item]);
+
+    if (isUsedBySome) {
+      yield* call(Alert.message, {
+        title: "삭제 불가",
+        message: "사용하고 있는 리퀘스트가 있어 삭제가 불가합니다.",
+      });
+      continue;
+    }
+    try {
+      yield* call(Firework.deleteProjectUrl, projectUrl);
+      yield* put(
+        UiActions.showNotification({
+          type: "success",
+          message: "URL이 삭제되었습니다.",
+        })
+      );
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     }
   }
 }
@@ -217,5 +346,7 @@ export function* watchProjectActions() {
     fork(listenToMyProjectsFlow),
     fork(deleteProjectFlow),
     fork(submitProjectUrlFormFlow),
+    fork(listenToProjectUrlsFlow),
+    fork(deleteProjectUrlFlow),
   ]);
 }

@@ -11,7 +11,6 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import AddIcon from "@material-ui/icons/Add";
 import { ProjectUrlDoc } from "../../../types";
 import {
-  TextField,
   makeStyles,
   Divider,
   Box,
@@ -22,81 +21,170 @@ import {
   Card,
   CardHeader,
   TableBody,
-  Typography,
+  IconButton,
+  SvgIcon,
+  Button,
 } from "@material-ui/core";
-import { regExps } from "../../../helpers/commonHelpers";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import ProjectUrlFormItem from "./ProjectUrlFormItem";
 
 const useStyles = makeStyles(() => ({
   root: {},
+  labelCell: {
+    width: 250,
+  },
+  urlCell: {
+    width: 350,
+  },
+  submit: {
+    display: "none",
+  },
+  addButton: {
+    justifyContent: "start",
+  },
 }));
 
 export interface ProjectUrlFormValues {
   label: string;
   url: string;
   description?: string;
+  target?: ProjectUrlDoc;
 }
 
 export interface ProjectUrlFormProps {
   onSubmit: (values: ProjectUrlFormValues) => void;
   onDelete: (projectUrl: ProjectUrlDoc) => void;
-  projectUrl?: ProjectUrlDoc;
+  projectUrls: ProjectUrlDoc[];
 }
 
 const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
   onSubmit,
   onDelete,
-  projectUrl,
+  projectUrls,
 }) => {
-  const defaultValues = useMemo(() => {
-    return {
-      title: projectUrl?.label,
-      url: projectUrl?.url,
-    };
-  }, [projectUrl]);
-
-  const { register, handleSubmit, errors, watch, reset, getValues } = useForm<
-    ProjectUrlFormValues
-  >({
-    mode: "all",
-    defaultValues,
+  const formProps = useForm<ProjectUrlFormValues>({
+    mode: "onChange",
+    defaultValues: {
+      target: undefined,
+    },
   });
 
-  useEffect(() => {
-    reset(defaultValues);
-  }, [defaultValues, reset]);
+  const { handleSubmit, errors, watch, getValues, setValue } = formProps;
 
-  const watchedValues = watch();
+  const classes = useStyles();
 
-  const isNotModified = useMemo(() => {
-    return isEqual(defaultValues, watchedValues);
-  }, [defaultValues, watchedValues]);
-
-  const [isFormVisible, setIsFormVisible] = useState(false);
+  const [isNewFormVisible, setIsNewFormVisible] = useState(false);
+  const [isEditFormVisible, setIsEditFormVisible] = useState(false);
+  const [currentProjectUrl, setCurrentProjectUrl] = useState<
+    ProjectUrlDoc | undefined
+  >(undefined);
+  const [fieldNameToFocus, setFieldNameToFocus] = useState<
+    keyof ProjectUrlFormValues | undefined
+  >(undefined);
 
   const isFocusingRef = useRef<boolean>(false);
 
+  const showNewForm = useCallback(() => {
+    setIsEditFormVisible(false);
+    setFieldNameToFocus(undefined);
+    setIsNewFormVisible(true);
+  }, []);
+
+  const handleOnSubmit = useCallback(
+    (e?: React.FormEvent<HTMLFormElement>) => {
+      e?.preventDefault();
+      setIsNewFormVisible(false);
+      setIsEditFormVisible(false);
+      handleSubmit((data) => {
+        onSubmit({ ...data, target: currentProjectUrl });
+      })();
+      setCurrentProjectUrl(undefined);
+    },
+    [currentProjectUrl, handleSubmit, onSubmit]
+  );
+
+  const watchedValues = watch();
+
+  const defaultValues = useMemo(() => {
+    return {
+      label: currentProjectUrl?.label,
+      url: currentProjectUrl?.url,
+      description: currentProjectUrl?.description,
+    };
+  }, [currentProjectUrl]);
+
+  const isModified = useMemo(() => {
+    if (!currentProjectUrl) {
+      return true;
+    }
+    return !isEqual(watchedValues, defaultValues);
+  }, [currentProjectUrl, defaultValues, watchedValues]);
+
+  const hideForms = useCallback(() => {
+    setIsEditFormVisible(false);
+    setIsNewFormVisible(false);
+    setCurrentProjectUrl(undefined);
+  }, []);
+
   const handleOnBlur = useCallback(() => {
     isFocusingRef.current = false;
+
     setTimeout(() => {
-      // 모든 필드가 비어있는 경우 작성 취소로 간주
-      const isCanceled = Object.entries(getValues()).every(
-        ([, value]) => !value
-      );
-      if (!Object.keys(errors).length && !isFocusingRef.current) {
-        handleSubmit(onSubmit)();
-        setIsFormVisible(false);
-      } else if (isCanceled) {
-        setIsFormVisible(false);
+      const hasError = !!Object.keys(errors).length;
+      if (!currentProjectUrl) {
+        // 모든 필드가 비어있는 경우 작성 취소로 간주
+        const isCanceled = Object.entries(getValues()).every(
+          ([, value]) => !value
+        );
+        if (isCanceled && !isFocusingRef.current) {
+          setIsNewFormVisible(false);
+          return;
+        }
+      }
+      if (!hasError && !isFocusingRef.current && isModified) {
+        handleOnSubmit();
+      } else if (!isFocusingRef.current && !hasError) {
+        hideForms();
       }
     }, 100);
-  }, [errors, getValues, handleSubmit, onSubmit]);
+  }, [
+    currentProjectUrl,
+    errors,
+    getValues,
+    handleOnSubmit,
+    hideForms,
+    isModified,
+  ]);
 
   const handleOnFocus = useCallback(() => {
     isFocusingRef.current = true;
   }, []);
 
+  const showEditForm = useCallback(
+    (projectUrl: ProjectUrlDoc, fieldName: keyof ProjectUrlFormValues) => {
+      if (isNewFormVisible) {
+        setIsNewFormVisible(false);
+      } else {
+        setCurrentProjectUrl(projectUrl);
+        setIsEditFormVisible(true);
+        setFieldNameToFocus(fieldName);
+      }
+    },
+    [isNewFormVisible]
+  );
+
+  useEffect(() => {
+    if (currentProjectUrl) {
+      setValue("label", currentProjectUrl.label, { shouldValidate: true });
+      setValue("url", currentProjectUrl.url, { shouldValidate: true });
+      setValue("description", currentProjectUrl.description, {
+        shouldValidate: true,
+      });
+    }
+  }, [currentProjectUrl, setValue]);
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form onSubmit={handleOnSubmit} noValidate>
       <Card>
         <CardHeader title="베이스URL" />
         <Divider />
@@ -108,94 +196,81 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
               </caption>
               <TableHead>
                 <TableRow>
-                  <TableCell component="th">라벨*</TableCell>
-                  <TableCell>URL*</TableCell>
+                  <TableCell component="th" className={classes.labelCell}>
+                    라벨*
+                  </TableCell>
+                  <TableCell className={classes.urlCell}>URL*</TableCell>
                   <TableCell>설명</TableCell>
-                  <TableCell />
+                  <TableCell align="right"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {isFormVisible ? (
-                  <>
-                    <TableCell>
-                      <TextField
-                        size="small"
-                        autoFocus
-                        name="label"
-                        inputRef={register({
-                          required: "이름표를 붙여주세요.",
-                          maxLength: {
-                            value: 20,
-                            message: "이름이 너무 길어요.",
-                          },
-                        })}
-                        fullWidth
-                        required
-                        error={!!errors.label}
-                        helperText={errors.label?.message}
+                {projectUrls.map((projectUrl) => (
+                  <TableRow key={projectUrl.id}>
+                    {isEditFormVisible &&
+                    currentProjectUrl?.id === projectUrl.id ? (
+                      <ProjectUrlFormItem
+                        formProps={formProps}
+                        autoFocusField={fieldNameToFocus}
                         onBlur={handleOnBlur}
                         onFocus={handleOnFocus}
                       />
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        size="small"
-                        name="url"
-                        inputRef={register({
-                          required: "URL을 입력해주세요.",
-                          maxLength: {
-                            value: 200,
-                            message: "URL이 너무 긴 것 같아요.",
-                          },
-                          pattern: {
-                            value: regExps.url,
-                            message: "URL형식으로 입력해주세요.",
-                          },
-                        })}
+                    ) : (
+                      <>
+                        <TableCell
+                          onClick={() => showEditForm(projectUrl, "label")}
+                        >
+                          {projectUrl.label}
+                        </TableCell>
+                        <TableCell
+                          onClick={() => showEditForm(projectUrl, "url")}
+                        >
+                          {projectUrl.url}
+                        </TableCell>
+                        <TableCell
+                          onClick={() =>
+                            showEditForm(projectUrl, "description")
+                          }
+                        >
+                          {projectUrl.description}
+                        </TableCell>
+                        <TableCell align="right">
+                          <IconButton onClick={() => onDelete(projectUrl)}>
+                            <SvgIcon fontSize="small">
+                              <DeleteOutlineIcon />
+                            </SvgIcon>
+                          </IconButton>
+                        </TableCell>
+                      </>
+                    )}
+                  </TableRow>
+                ))}
+                <TableRow>
+                  {isNewFormVisible ? (
+                    <ProjectUrlFormItem
+                      formProps={formProps}
+                      autoFocusField={fieldNameToFocus}
+                      onBlur={handleOnBlur}
+                      onFocus={handleOnFocus}
+                    />
+                  ) : (
+                    <TableCell colSpan={4} onClick={showNewForm}>
+                      <Button
+                        className={classes.addButton}
                         fullWidth
-                        required
-                        error={!!errors.url}
-                        helperText={errors.url?.message}
-                        onBlur={handleOnBlur}
-                        onFocus={handleOnFocus}
-                      />
+                        color="secondary"
+                      >
+                        <AddIcon fontSize="small" /> 새로운 베이스URL 등록
+                      </Button>
                     </TableCell>
-                    <TableCell>
-                      <TextField
-                        size="small"
-                        name="description"
-                        inputRef={register({
-                          maxLength: {
-                            value: 80,
-                            message: "설명이 너무 길어요.",
-                          },
-                        })}
-                        fullWidth
-                        error={!!errors.description}
-                        helperText={errors.description?.message}
-                        onBlur={handleOnBlur}
-                        onFocus={handleOnFocus}
-                      />
-                    </TableCell>
-                    <TableCell />
-                  </>
-                ) : (
-                  <TableCell colSpan={4}>
-                    <Typography
-                      color="textSecondary"
-                      variant="body2"
-                      onClick={() => setIsFormVisible(true)}
-                    >
-                      <AddIcon fontSize="small" />
-                      새로운 베이스URL 등록
-                    </Typography>
-                  </TableCell>
-                )}
+                  )}
+                </TableRow>
               </TableBody>
             </Table>
           </Box>
         </PerfectScrollbar>
       </Card>
+      <button className={classes.submit} type="submit" />
     </form>
   );
 };
