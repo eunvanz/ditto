@@ -1,8 +1,9 @@
 import { DATA_KEY } from "./DataSlice";
 import { RootState } from "..";
 
-const createDataKeySelector = (dataKey: DATA_KEY) => (state: RootState) =>
-  state.data[dataKey];
+function createDataKeySelector(dataKey: DATA_KEY) {
+  return (state: RootState) => state.data[dataKey];
+}
 
 const DataSelectors = {
   createDataKeySelector,

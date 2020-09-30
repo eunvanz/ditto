@@ -148,8 +148,9 @@ export type ProjectDoc = Doc<ProjectItem, ProjectSettings>;
 export interface ProjectUrlSettings extends BaseSettings {}
 
 export interface ProjectUrlItem extends Recordable {
-  title: string;
+  label: string;
   url: string;
+  description?: string;
   settingsByMember: Record<string, ProjectUrlSettings>;
 }
 

@@ -1,4 +1,4 @@
-import { fork, take, all, call, put } from "typed-redux-saga";
+import { fork, take, all, call, put, select } from "typed-redux-saga";
 import { AuthActions } from "./AuthSlice";
 import { getFirebase } from "react-redux-firebase";
 import history from "../../helpers/history";
@@ -6,6 +6,24 @@ import ROUTE from "../../paths";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
 import { UiActions } from "../Ui/UiSlice";
 import { ProgressActions } from "../Progress/ProgressSlice";
+import AuthSelectors from "./AuthSelector";
+import Alert from "../../components/Alert";
+
+export function* requireSignIn() {
+  const auth = yield* select(AuthSelectors.selectAuth);
+
+  // 로그인이 돼있지 않은 경우 로그인 유도
+  if (auth.isEmpty) {
+    yield* call(Alert.message, {
+      title: "로그인 필요",
+      message: "로그인이 필요한 기능입니다.",
+    });
+    yield* put(UiActions.hideProjectFormModal());
+    yield* put(UiActions.showSignInModal());
+    return false;
+  }
+  return true;
+}
 
 export function* signInWithGoogleFlow() {
   while (true) {

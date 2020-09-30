@@ -14,20 +14,15 @@ import { DataActions, DATA_KEY } from "../Data/DataSlice";
 import { RootState } from "..";
 import DataSelectors from "../Data/DataSelectors";
 import { AuthActions } from "../Auth/AuthSlice";
+import { requireSignIn } from "../Auth/AuthSaga";
 
 export function* submitProjectFormFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.submitProjectForm);
     const auth = yield* select(AuthSelectors.selectAuth);
 
-    // 로그인이 돼있지 않은 경우 로그인 유도
-    if (auth.isEmpty) {
-      yield* call(Alert.message, {
-        title: "로그인 필요",
-        message: "로그인이 필요한 기능입니다.",
-      });
-      yield* put(UiActions.hideProjectFormModal());
-      yield* put(UiActions.showSignInModal());
+    const isLogOn = yield* call(requireSignIn);
+    if (!isLogOn) {
       continue;
     }
 
@@ -174,10 +169,53 @@ export function* deleteProjectFlow() {
   }
 }
 
+export function* submitProjectUrlFormFlow() {
+  while (true) {
+    const {
+      payload: { data, targetId },
+    } = yield* take(ProjectActions.submitProjectUrlForm);
+    const auth = yield* select(AuthSelectors.selectAuth);
+
+    const isLogOn = yield* call(requireSignIn);
+    if (!isLogOn) {
+      continue;
+    }
+
+    const isModification = !!targetId;
+
+    // @ts-ignore
+    const { id: projectId }: ProjectDoc = yield* select(
+      DataSelectors.createDataKeySelector(DATA_KEY.PROJECT)
+    );
+    const timestamp = yield* call(getTimestamp);
+
+    if (isModification) {
+    } else {
+      yield* call(
+        Firework.addProjectUrl,
+        {
+          ...data,
+          createdAt: timestamp,
+          updatedAt: timestamp,
+          createdBy: auth.uid,
+          updatedBy: auth.uid,
+          settingsByMember: {
+            [auth.uid]: {
+              updatedAt: timestamp,
+            },
+          },
+        },
+        projectId
+      );
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
     fork(listenToMyProjectsFlow),
     fork(deleteProjectFlow),
+    fork(submitProjectUrlFormFlow),
   ]);
 }
