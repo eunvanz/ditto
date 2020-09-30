@@ -12,3 +12,7 @@ export function assertNotEmpty(value: any): asserts value {
     throw new Error("필수값이 없습니다.");
   }
 }
+
+export const regExps = {
+  url: /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/,
+};

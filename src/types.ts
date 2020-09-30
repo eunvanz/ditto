@@ -112,8 +112,11 @@ export interface ProjectItem extends Recordable {
   settingsByMember: Record<string, ProjectSettings>;
 }
 
-export interface ProjectSettings {
+export interface BaseSettings {
   updatedAt: firebase.firestore.FieldValue;
+}
+
+export interface ProjectSettings extends BaseSettings {
   seq: number;
 }
 
@@ -122,7 +125,7 @@ export interface DocTimestamp {
   nanoseconds: number;
 }
 
-export type Doc<T extends Recordable> = Omit<
+export type Doc<T extends Recordable, S extends BaseSettings> = Omit<
   T,
   "updatedAt" | "createdAt" | "settingsByMember"
 > & {
@@ -131,7 +134,7 @@ export type Doc<T extends Recordable> = Omit<
   createdAt: DocTimestamp;
   settingsByMember: Record<
     string,
-    Omit<ProjectSettings, "updatedAt"> & {
+    Omit<S, "updatedAt"> & {
       updatedAt: DocTimestamp;
     }
   >;
@@ -140,4 +143,14 @@ export type Doc<T extends Recordable> = Omit<
 /**
  * 읽을 때의 프로젝트
  */
-export type ProjectDoc = Doc<ProjectItem>;
+export type ProjectDoc = Doc<ProjectItem, ProjectSettings>;
+
+export interface ProjectUrlSettings extends BaseSettings {}
+
+export interface ProjectUrlItem extends Recordable {
+  title: string;
+  url: string;
+  settingsByMember: Record<string, ProjectUrlSettings>;
+}
+
+export type ProjectUrlDoc = Doc<ProjectUrlItem, ProjectUrlSettings>;

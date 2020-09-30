@@ -20,9 +20,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export interface SignInFormProps {
   onClickGoogle: () => void;
+  isSigningIn: boolean;
 }
 
-const SignInForm: React.FC<SignInFormProps> = ({ onClickGoogle }) => {
+const SignInForm: React.FC<SignInFormProps> = ({
+  onClickGoogle,
+  isSigningIn,
+}) => {
   const classes = useStyles();
 
   return (
@@ -33,6 +37,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ onClickGoogle }) => {
         onClick={onClickGoogle}
         size="large"
         variant="contained"
+        disabled={isSigningIn}
       >
         <img alt="Google" className={classes.providerIcon} src={googleImage} />
         구글 계정으로 로그인
