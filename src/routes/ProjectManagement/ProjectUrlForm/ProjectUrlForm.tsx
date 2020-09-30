@@ -54,7 +54,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
     };
   }, [projectUrl]);
 
-  const { register, handleSubmit, errors, watch, reset } = useForm<
+  const { register, handleSubmit, errors, watch, reset, getValues } = useForm<
     ProjectUrlFormValues
   >({
     mode: "all",
@@ -78,12 +78,18 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
   const handleOnBlur = useCallback(() => {
     isFocusingRef.current = false;
     setTimeout(() => {
+      // 모든 필드가 비어있는 경우 작성 취소로 간주
+      const isCanceled = Object.entries(getValues()).every(
+        ([, value]) => !value
+      );
       if (!Object.keys(errors).length && !isFocusingRef.current) {
         handleSubmit(onSubmit)();
         setIsFormVisible(false);
+      } else if (isCanceled) {
+        setIsFormVisible(false);
       }
-    }, 200);
-  }, [errors, handleSubmit, onSubmit]);
+    }, 100);
+  }, [errors, getValues, handleSubmit, onSubmit]);
 
   const handleOnFocus = useCallback(() => {
     isFocusingRef.current = true;
