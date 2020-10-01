@@ -126,10 +126,14 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
     setCurrentProjectUrl(undefined);
   }, []);
 
+  const onBlurTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
+
   const handleOnBlur = useCallback(() => {
     isFocusingRef.current = false;
 
-    setTimeout(() => {
+    onBlurTimeout.current = setTimeout(() => {
       const hasError = !!Object.keys(errors).length;
       if (!currentProjectUrl) {
         // 모든 필드가 비어있는 경우 작성 취소로 간주
@@ -183,10 +187,16 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
     }
   }, [currentProjectUrl, setValue]);
 
+  useEffect(() => {
+    return () => {
+      clearTimeout(onBlurTimeout.current);
+    };
+  }, []);
+
   return (
     <form onSubmit={handleOnSubmit} noValidate>
       <Card>
-        <CardHeader title="베이스URL" />
+        <CardHeader title="베이스 URL" />
         <Divider />
         <PerfectScrollbar>
           <Box minWidth={700}>
@@ -260,7 +270,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
                         fullWidth
                         color="secondary"
                       >
-                        <AddIcon fontSize="small" /> 새로운 베이스URL 등록
+                        <AddIcon fontSize="small" /> 새로운 베이스 URL 등록
                       </Button>
                     </TableCell>
                   )}

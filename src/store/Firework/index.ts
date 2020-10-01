@@ -49,11 +49,11 @@ function* deleteProjectUrl(projectUrl: ProjectUrlDoc) {
   );
 }
 
-function* updateProjectUrl(projectUrl: Partial<ProjectUrlDoc>) {
+function* updateProjectUrl(id: string, projectUrl: Partial<ProjectUrlItem>) {
   yield call(
     updateDocument,
-    `projects/${projectUrl.projectId!}/urls`,
-    projectUrl.id!,
+    `projects/${projectUrl.projectId}/urls`,
+    id,
     projectUrl
   );
 }

@@ -110,6 +110,7 @@ export interface ProjectItem extends Recordable {
   managers: Record<string, boolean>;
   guests: Record<string, boolean>;
   settingsByMember: Record<string, ProjectSettings>;
+  invitees?: Record<string, boolean>;
 }
 
 export interface BaseSettings {

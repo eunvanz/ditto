@@ -8,7 +8,7 @@ import AuthSelectors from "../Auth/AuthSelector";
 import Alert from "../../components/Alert";
 import { getTimestamp } from "../../firebase";
 import { ErrorActions } from "../Error/ErrorSlice";
-import { ProjectItem, ProjectDoc, ProjectUrlDoc } from "../../types";
+import { ProjectDoc, ProjectUrlDoc, ProjectUrlItem } from "../../types";
 import { eventChannel, EventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
 import { RootState } from "..";
@@ -16,6 +16,7 @@ import DataSelectors from "../Data/DataSelectors";
 import { AuthActions } from "../Auth/AuthSlice";
 import { requireSignIn } from "../Auth/AuthSaga";
 import { assertNotEmpty } from "../../helpers/commonHelpers";
+import { PayloadAction } from "@reduxjs/toolkit";
 
 export function* submitProjectFormFlow() {
   while (true) {
@@ -111,18 +112,16 @@ export function* listenToMyProjectsFlow() {
     const auth = yield* select(AuthSelectors.selectAuth);
     if (auth.uid) {
       const myProjectEventChannel = createMyProjectsEventChannel(auth.uid);
-      while (true) {
-        const myProjects = yield* take(myProjectEventChannel);
 
-        yield* put(
+      yield* fork(listenToEventChannel, {
+        eventChannel: myProjectEventChannel,
+        dataReceiverCreator: (data: ProjectDoc[]) =>
           DataActions.receiveData({
             key: DATA_KEY.PROJECTS,
-            data: myProjects as ProjectItem[],
-          })
-        );
-
-        yield* fork(waitForUnlistenToMyProject, myProjectEventChannel);
-      }
+            data,
+          }),
+        unlistenWaiter: waitForUnlistenToMyProject,
+      });
     } else {
       yield* put(
         DataActions.receiveData({
@@ -140,6 +139,7 @@ export function* waitForUnlistenToMyProject(
   while (true) {
     yield* take(AuthActions.signOut);
     yield* call(myProjectEventChannel.close);
+    break;
   }
 }
 
@@ -182,20 +182,21 @@ export function* submitProjectUrlFormFlow() {
 
     const isModification = !!data.target;
 
-    // @ts-ignore
-    const { id: projectId }: ProjectDoc = yield* select(
+    const project = yield* select(
       DataSelectors.createDataKeySelector(DATA_KEY.PROJECT)
     );
+    assertNotEmpty(project);
+    const { id: projectId } = project as ProjectDoc;
     const timestamp = yield* call(getTimestamp);
 
     try {
       if (isModification) {
         assertNotEmpty(data.target);
-        // @ts-ignore
+        const targetId = data.target?.id;
+        delete data.target;
         const newProjectUrl = {
           ...data,
           projectId,
-          id: data.target.id,
           updatedAt: timestamp,
           updatedBy: auth.uid,
           settingsByMember: {
@@ -204,9 +205,7 @@ export function* submitProjectUrlFormFlow() {
             },
           },
         };
-        delete newProjectUrl.target;
-        // @ts-ignore
-        yield* call(Firework.updateProjectUrl, newProjectUrl);
+        yield* call(Firework.updateProjectUrl, targetId, newProjectUrl);
         yield* put(
           UiActions.showNotification({
             type: "success",
@@ -273,6 +272,23 @@ export function* waitForUnlistenProjectUrl(
       take(ProjectActions.unlistenToProjectUrls),
     ]);
     yield* call(projectUrlEventChannel.close);
+    break;
+  }
+}
+
+export function* listenToEventChannel({
+  eventChannel,
+  unlistenWaiter,
+  dataReceiverCreator,
+}: {
+  eventChannel: EventChannel<any>;
+  unlistenWaiter: (eventChannel: EventChannel<any>) => Generator<any>;
+  dataReceiverCreator: (data: any) => PayloadAction<any>;
+}) {
+  while (true) {
+    const data = yield* take(eventChannel);
+    yield* put(dataReceiverCreator(data));
+    yield* fork(unlistenWaiter, eventChannel);
   }
 }
 
@@ -294,18 +310,13 @@ export function* listenToProjectUrlsFlow() {
     const projectUrlEventChannel = createProjectUrlEventChannel(
       (project as ProjectDoc).id
     );
-    while (true) {
-      const projectUrls = yield* take(projectUrlEventChannel);
 
-      yield* put(
-        DataActions.receiveData({
-          key: DATA_KEY.PROJECT_URLS,
-          data: projectUrls as ProjectItem[],
-        })
-      );
-
-      yield* fork(waitForUnlistenProjectUrl, projectUrlEventChannel);
-    }
+    yield* fork(listenToEventChannel, {
+      eventChannel: projectUrlEventChannel,
+      unlistenWaiter: waitForUnlistenProjectUrl,
+      dataReceiverCreator: (data) =>
+        DataActions.receiveData({ key: DATA_KEY.PROJECT_URLS, data }),
+    });
   }
 }
 
@@ -322,7 +333,7 @@ export function* deleteProjectUrlFlow() {
     if (isUsedBySome) {
       yield* call(Alert.message, {
         title: "삭제 불가",
-        message: "사용하고 있는 리퀘스트가 있어 삭제가 불가합니다.",
+        message: "사용하고 있는 리퀘스트가 있어서 삭제가 불가합니다.",
       });
       continue;
     }
