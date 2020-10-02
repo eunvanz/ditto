@@ -206,7 +206,11 @@ export interface ModelCell<T> extends Recordable {
   settingsByMember: Record<string, BaseSettings>;
 }
 
-export interface ModelFieldItem {
+export interface ModelFieldSettings extends BaseSettings {
+  seq: number;
+}
+
+export interface ModelFieldItem extends Recordable {
   seq: number;
   modelId: string;
   referenceModelId?: string;
@@ -216,6 +220,7 @@ export interface ModelFieldItem {
   format: ModelCell<string>;
   enum: ModelCell<string>;
   description: ModelCell<string>;
+  settingsByMember: Record<string, ModelFieldSettings>;
 }
 
 export interface ModelItem {
@@ -224,3 +229,5 @@ export interface ModelItem {
   description?: string;
   fields: ModelFieldItem[];
 }
+
+export type ModelFieldDoc = Doc<ModelFieldItem, ModelFieldSettings>;

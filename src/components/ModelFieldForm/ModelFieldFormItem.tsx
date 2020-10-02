@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import { UseFormMethods, Controller } from "react-hook-form";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { ModelFormValues } from "./ModelForm";
+import { ModelFieldFormValues } from "./ModelFieldForm";
 import { fieldTypes, formats, FIELD_TYPE } from "../../types";
 
 const useStyles = makeStyles(() => ({
@@ -19,16 +19,16 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export interface ModelFormItemProps {
-  formProps: UseFormMethods<ModelFormValues>;
-  autoFocusField?: keyof ModelFormValues;
+export interface ModelFieldFormItemProps {
+  formProps: UseFormMethods<ModelFieldFormValues>;
+  autoFocusField?: keyof ModelFieldFormValues;
   onBlur: () => void;
   onFocus: () => void;
 }
 
-const ModelFormItem: React.FC<ModelFormItemProps> = ({
+const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   formProps,
-  autoFocusField = "label",
+  autoFocusField = "fieldName",
   onBlur,
   onFocus,
 }) => {
@@ -73,7 +73,7 @@ const ModelFormItem: React.FC<ModelFormItemProps> = ({
         />
       </TableCell>
       <TableCell>
-        <Checkbox inputRef={register} name="isRequired" defaultChecked />
+        <Checkbox inputRef={register} name="isRequired" />
       </TableCell>
       <TableCell>
         <Autocomplete

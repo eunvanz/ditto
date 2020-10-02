@@ -261,11 +261,12 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
                       onFocus={handleOnFocus}
                     />
                   ) : (
-                    <TableCell colSpan={4} onClick={showNewForm}>
+                    <TableCell colSpan={4}>
                       <Button
                         className={classes.addButton}
                         fullWidth
                         color="secondary"
+                        onClick={showNewForm}
                       >
                         <AddIcon fontSize="small" /> 새로운 베이스 URL 등록
                       </Button>
