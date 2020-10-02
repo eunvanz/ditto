@@ -230,4 +230,16 @@ export interface ModelItem {
   fields: ModelFieldItem[];
 }
 
-export type ModelFieldDoc = Doc<ModelFieldItem, ModelFieldSettings>;
+export type ModelCellDoc<T> = Doc<ModelCell<T>, BaseSettings>;
+
+export type ModelFieldDoc = Omit<
+  Doc<ModelFieldItem, ModelFieldSettings>,
+  "fieldName" | "isRequired" | "fieldType" | "format" | "enum" | "description"
+> & {
+  fieldName: ModelCellDoc<string>;
+  isRequired: ModelCellDoc<boolean>;
+  fieldType: ModelCellDoc<string>;
+  format: ModelCellDoc<string>;
+  enum: ModelCellDoc<string>;
+  description: ModelCellDoc<string>;
+};

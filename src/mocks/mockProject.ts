@@ -1,3 +1,5 @@
+import { ModelFieldDoc } from "../types";
+
 const project = {
   id: "imIYYtrWFJjpU9aeTRlQ",
   members: {
@@ -109,9 +111,169 @@ const projectUrls = [
   },
 ];
 
+const modelFields: ModelFieldDoc[] = [
+  {
+    id: "mockId",
+    seq: 1,
+    modelId: "mockModelId",
+    updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    updatedAt: {
+      seconds: 1601466174,
+      nanoseconds: 963000000,
+    },
+    createdAt: {
+      seconds: 1601466174,
+      nanoseconds: 963000000,
+    },
+    settingsByMember: {
+      aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+        seq: 1,
+        updatedAt: {
+          seconds: 1601466203,
+          nanoseconds: 243000000,
+        },
+      },
+    },
+    fieldName: {
+      id: "mockId",
+      value: "mockField",
+      updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      updatedAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      createdAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      settingsByMember: {
+        aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+          updatedAt: {
+            seconds: 1601466174,
+            nanoseconds: 963000000,
+          },
+        },
+      },
+    },
+    isRequired: {
+      id: "mockId",
+      value: true,
+      updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      updatedAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      createdAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      settingsByMember: {
+        aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+          updatedAt: {
+            seconds: 1601466174,
+            nanoseconds: 963000000,
+          },
+        },
+      },
+    },
+    fieldType: {
+      id: "mockId",
+      value: "string",
+      updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      updatedAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      createdAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      settingsByMember: {
+        aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+          updatedAt: {
+            seconds: 1601466174,
+            nanoseconds: 963000000,
+          },
+        },
+      },
+    },
+    format: {
+      id: "mockId",
+      value: "date",
+      updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      updatedAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      createdAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      settingsByMember: {
+        aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+          updatedAt: {
+            seconds: 1601466174,
+            nanoseconds: 963000000,
+          },
+        },
+      },
+    },
+    enum: {
+      id: "mockId",
+      value: "없음",
+      updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      updatedAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      createdAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      settingsByMember: {
+        aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+          updatedAt: {
+            seconds: 1601466174,
+            nanoseconds: 963000000,
+          },
+        },
+      },
+    },
+    description: {
+      id: "mockId",
+      value: "ㅋㅋㅋㅋㅋㅋㅋㅋㅋ",
+      updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      updatedAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      createdAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      settingsByMember: {
+        aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+          updatedAt: {
+            seconds: 1601466174,
+            nanoseconds: 963000000,
+          },
+        },
+      },
+    },
+  },
+];
+
 const mockProject = {
   project,
   projectUrls,
+  modelFields,
 };
 
 export default mockProject;

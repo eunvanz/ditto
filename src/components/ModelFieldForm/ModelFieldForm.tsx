@@ -15,6 +15,8 @@ import {
   makeStyles,
   TableBody,
   Button,
+  IconButton,
+  SvgIcon,
 } from "@material-ui/core";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import AddIcon from "@material-ui/icons/Add";
@@ -22,6 +24,8 @@ import ModelFieldFormItem from "./ModelFieldFormItem";
 import { useForm } from "react-hook-form";
 import { ModelFieldDoc } from "../../types";
 import isEqual from "lodash/isEqual";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import CheckIcon from "@material-ui/icons/Check";
 
 const useStyles = makeStyles(() => ({
   fieldNameCell: {
@@ -56,9 +60,15 @@ export interface ModelFieldFormValues {
 
 export interface ModelFieldFormProps {
   onSubmit: (data: ModelFieldFormValues) => void;
+  modelFields: ModelFieldDoc[];
+  onDelete: (modelField: ModelFieldDoc) => void;
 }
 
-const ModelFieldForm: React.FC<ModelFieldFormProps> = ({ onSubmit }) => {
+const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
+  onSubmit,
+  modelFields,
+  onDelete,
+}) => {
   const classes = useStyles();
 
   const [isNewFormVisible, setIsNewFormVisible] = useState(false);
@@ -220,6 +230,66 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({ onSubmit }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
+                {modelFields.map((modelField) => (
+                  <TableRow key={modelField.id}>
+                    {isEditFormVisible &&
+                    currentModelField?.id === modelField.id ? (
+                      <ModelFieldFormItem
+                        formProps={formProps}
+                        autoFocusField={fieldNameToFocus}
+                        onBlur={handleOnBlur}
+                        onFocus={handleOnFocus}
+                        defaultValues={defaultValues}
+                      />
+                    ) : (
+                      <>
+                        <TableCell
+                          onClick={() => showEditForm(modelField, "fieldName")}
+                        >
+                          {modelField.fieldName.value}
+                        </TableCell>
+                        <TableCell
+                          onClick={() => showEditForm(modelField, "isRequired")}
+                        >
+                          {modelField.isRequired.value ? (
+                            <CheckIcon fontSize="small" />
+                          ) : (
+                            ""
+                          )}
+                        </TableCell>
+                        <TableCell
+                          onClick={() => showEditForm(modelField, "fieldType")}
+                        >
+                          {modelField.fieldType.value}
+                        </TableCell>
+                        <TableCell
+                          onClick={() => showEditForm(modelField, "format")}
+                        >
+                          {modelField.format.value}
+                        </TableCell>
+                        <TableCell
+                          onClick={() => showEditForm(modelField, "enum")}
+                        >
+                          {modelField.enum.value}
+                        </TableCell>
+                        <TableCell
+                          onClick={() =>
+                            showEditForm(modelField, "description")
+                          }
+                        >
+                          {modelField.description.value}
+                        </TableCell>
+                        <TableCell align="right">
+                          <IconButton onClick={() => onDelete(modelField)}>
+                            <SvgIcon fontSize="small">
+                              <DeleteOutlineIcon />
+                            </SvgIcon>
+                          </IconButton>
+                        </TableCell>
+                      </>
+                    )}
+                  </TableRow>
+                ))}
                 <TableRow>
                   {isNewFormVisible ? (
                     <ModelFieldFormItem
