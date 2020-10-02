@@ -8,7 +8,7 @@ import AuthSelectors from "../Auth/AuthSelector";
 import Alert from "../../components/Alert";
 import { getTimestamp } from "../../firebase";
 import { ErrorActions } from "../Error/ErrorSlice";
-import { ProjectDoc, ProjectUrlDoc, ProjectUrlItem } from "../../types";
+import { ProjectDoc, ProjectUrlDoc } from "../../types";
 import { eventChannel, EventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
 import { RootState } from "..";
@@ -139,6 +139,7 @@ export function* waitForUnlistenToMyProject(
   while (true) {
     yield* take(AuthActions.signOut);
     yield* call(myProjectEventChannel.close);
+    yield* put(DataActions.clearData(DATA_KEY.PROJECTS));
     break;
   }
 }
@@ -272,6 +273,7 @@ export function* waitForUnlistenProjectUrl(
       take(ProjectActions.unlistenToProjectUrls),
     ]);
     yield* call(projectUrlEventChannel.close);
+    yield* put(DataActions.clearData(DATA_KEY.PROJECT_URLS));
     break;
   }
 }

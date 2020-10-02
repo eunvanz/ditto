@@ -64,9 +64,6 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
 }) => {
   const formProps = useForm<ProjectUrlFormValues>({
     mode: "onChange",
-    defaultValues: {
-      target: undefined,
-    },
   });
 
   const { handleSubmit, errors, watch, getValues, setValue } = formProps;

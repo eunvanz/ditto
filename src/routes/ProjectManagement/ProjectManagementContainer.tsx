@@ -28,7 +28,7 @@ const ProjectManagementContainer = () => {
   }, [dispatch, project]);
 
   return project ? (
-    <ProjectManagementView project={project} />
+    <ProjectManagementView project={project} key={projectId} />
   ) : (
     <Redirect to={ROUTE.ROOT} />
   );

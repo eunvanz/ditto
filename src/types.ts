@@ -1,4 +1,5 @@
 import { FirebaseReducer } from "react-redux-firebase";
+import { FieldName } from "react-hook-form";
 
 export enum THEMES {
   LIGHT = "LIGHT",
@@ -158,3 +159,58 @@ export interface ProjectUrlItem extends Recordable {
 }
 
 export type ProjectUrlDoc = Doc<ProjectUrlItem, ProjectUrlSettings>;
+
+export enum FIELD_TYPE {
+  INTEGER = "integer",
+  NUMBER = "number",
+  STRING = "string",
+  BOOLEAN = "boolean",
+  OBJECT = "object",
+}
+
+export const fieldTypes = Object.keys(FIELD_TYPE).map(
+  // @ts-ignore
+  (key) => FIELD_TYPE[key as keyof FIELD_TYPE]
+);
+
+export enum FORMAT {
+  NONE = "없음",
+  INT32 = "int32",
+  INT64 = "int64",
+  FLOAT = "float",
+  DOUBLE = "double",
+  BYTE = "byte",
+  BINARY = "binary",
+  DATE = "date",
+  DATE_TIME = "date-time",
+  PASSWORD = "password",
+}
+
+export const formats: { [k in FIELD_TYPE]: (string | undefined)[] } = {
+  [FIELD_TYPE.INTEGER]: [FORMAT.INT32, FORMAT.INT64],
+  [FIELD_TYPE.NUMBER]: [FORMAT.NONE, FORMAT.FLOAT, FORMAT.DOUBLE],
+  [FIELD_TYPE.STRING]: [
+    FORMAT.NONE,
+    FORMAT.DATE,
+    FORMAT.DATE_TIME,
+    FORMAT.PASSWORD,
+    FORMAT.BYTE,
+    FORMAT.BINARY,
+  ],
+  [FIELD_TYPE.BOOLEAN]: [FORMAT.NONE],
+  [FIELD_TYPE.OBJECT]: [FORMAT.NONE],
+};
+
+export interface ModelCell<T> extends Recordable {
+  value: T;
+  settingsByMember: Record<string, BaseSettings>;
+}
+
+export interface ModelFieldItem {
+  fieldName: ModelCell<string>;
+  isRequired: ModelCell<boolean>;
+  fieldType: ModelCell<string>;
+  format: ModelCell<string>;
+  enum: ModelCell<string>;
+  description: ModelCell<string>;
+}
