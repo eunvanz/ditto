@@ -50,6 +50,7 @@ export interface ModelFieldFormValues {
   format: string;
   isRequired: boolean;
   description: string;
+  enum: string;
   target?: ModelFieldDoc;
 }
 
@@ -59,19 +60,6 @@ export interface ModelFieldFormProps {
 
 const ModelFieldForm: React.FC<ModelFieldFormProps> = ({ onSubmit }) => {
   const classes = useStyles();
-
-  const formProps = useForm<ModelFieldFormValues>({
-    mode: "onChange",
-  });
-
-  const {
-    handleSubmit,
-    errors,
-    watch,
-    getValues,
-    setValue,
-    register,
-  } = formProps;
 
   const [isNewFormVisible, setIsNewFormVisible] = useState(false);
   const [isEditFormVisible, setIsEditFormVisible] = useState(false);
@@ -90,31 +78,37 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({ onSubmit }) => {
     setIsNewFormVisible(true);
   }, []);
 
+  const defaultValues: ModelFieldFormValues = useMemo(() => {
+    return {
+      fieldName: currentModelField?.fieldName.value || "",
+      isRequired: currentModelField ? currentModelField.isRequired.value : true,
+      fieldType: currentModelField?.fieldType.value || "string",
+      format: currentModelField?.format.value || "없음",
+      enum: currentModelField?.enum.value || "없음",
+      description: currentModelField?.description.value || "",
+    };
+  }, [currentModelField]);
+
+  const formProps = useForm<ModelFieldFormValues>({
+    mode: "onChange",
+    defaultValues,
+  });
+
+  const { handleSubmit, errors, watch, getValues, setValue } = formProps;
+
+  const watchedValues = watch();
+
   const handleOnSubmit = useCallback(
-    (e?: React.FormEvent<HTMLFormElement>) => {
-      e?.preventDefault();
+    (values) => {
       setIsNewFormVisible(false);
       setIsEditFormVisible(false);
-      handleSubmit((data) => {
-        onSubmit({ ...data, target: currentModelField });
+      handleSubmit((_data) => {
+        onSubmit({ ...values, target: currentModelField });
       })();
       setCurrentModelField(undefined);
     },
     [currentModelField, handleSubmit, onSubmit]
   );
-
-  const watchedValues = watch();
-
-  const defaultValues = useMemo(() => {
-    return {
-      fieldName: currentModelField?.fieldName,
-      isRequired: currentModelField?.isRequired,
-      fieldType: currentModelField?.fieldType,
-      format: currentModelField?.format,
-      enum: currentModelField?.enum,
-      description: currentModelField?.description,
-    };
-  }, [currentModelField]);
 
   const isModified = useMemo(() => {
     if (!currentModelField) {
@@ -139,23 +133,21 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({ onSubmit }) => {
     onBlurTimeout.current = setTimeout(() => {
       const hasError = !!Object.keys(errors).length;
       if (!currentModelField) {
-        // 모든 필드가 비어있는 경우 작성 취소로 간주
-        const isCanceled = Object.entries(getValues()).every(
-          ([, value]) => !value
-        );
+        const isCanceled = isEqual(getValues(), defaultValues);
         if (isCanceled && !isFocusingRef.current) {
           setIsNewFormVisible(false);
           return;
         }
       }
       if (!hasError && !isFocusingRef.current && isModified) {
-        handleOnSubmit();
+        handleOnSubmit(getValues());
       } else if (!isFocusingRef.current && !hasError) {
         hideForms();
       }
     }, 100);
   }, [
     currentModelField,
+    defaultValues,
     errors,
     getValues,
     handleOnSubmit,
@@ -182,24 +174,18 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({ onSubmit }) => {
 
   useEffect(() => {
     if (currentModelField) {
-      setValue("fieldName", currentModelField.fieldName.value, {
+      setValue("fieldName", defaultValues.fieldName, { shouldValidate: true });
+      setValue("isRequired", defaultValues.isRequired, {
         shouldValidate: true,
       });
-      setValue("isRequired", currentModelField.isRequired.value, {
-        shouldValidate: true,
-      });
-      setValue("fieldType", currentModelField.fieldType.value, {
-        shouldValidate: true,
-      });
-      setValue("format", currentModelField.format.value, {
-        shouldValidate: true,
-      });
-      setValue("enum", currentModelField.enum.value, { shouldValidate: true });
-      setValue("description", currentModelField.description.value, {
+      setValue("fieldType", defaultValues.fieldType, { shouldValidate: true });
+      setValue("format", defaultValues.format, { shouldValidate: true });
+      setValue("enum", defaultValues.enum, { shouldValidate: true });
+      setValue("description", defaultValues.description, {
         shouldValidate: true,
       });
     }
-  }, [currentModelField, setValue]);
+  }, [currentModelField, defaultValues, setValue]);
 
   useEffect(() => {
     return () => {
@@ -207,13 +193,14 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({ onSubmit }) => {
     };
   }, []);
 
-  useEffect(() => {
-    register("fieldType", { required: "타입을 선택해주세요." });
-    register("format");
-  }, [register]);
-
   return (
-    <form onSubmit={handleOnSubmit} noValidate>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleOnSubmit(getValues());
+      }}
+      noValidate
+    >
       <Card>
         <PerfectScrollbar>
           <Box minWidth={700}>
@@ -240,6 +227,7 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({ onSubmit }) => {
                       onBlur={handleOnBlur}
                       onFocus={handleOnFocus}
                       autoFocusField={fieldNameToFocus}
+                      defaultValues={defaultValues}
                     />
                   ) : (
                     <TableCell colSpan={7}>

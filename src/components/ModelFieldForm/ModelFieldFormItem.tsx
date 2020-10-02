@@ -24,6 +24,7 @@ export interface ModelFieldFormItemProps {
   autoFocusField?: keyof ModelFieldFormValues;
   onBlur: () => void;
   onFocus: () => void;
+  defaultValues: ModelFieldFormValues;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -31,10 +32,11 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   autoFocusField = "fieldName",
   onBlur,
   onFocus,
+  defaultValues,
 }) => {
   const classes = useStyles();
 
-  const { register, errors, setValue, watch, control } = formProps;
+  const { errors, setValue, watch, control } = formProps;
 
   const watchedFieldType = watch("fieldType");
 
@@ -52,45 +54,29 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   return (
     <>
       <TableCell>
-        <TextField
-          size="small"
-          autoFocus={autoFocusField === "fieldName"}
+        <Controller
+          control={control}
           name="fieldName"
-          inputRef={register({
+          defaultValue={defaultValues.fieldName}
+          rules={{
             required: "필드명을 입력해주세요.",
             maxLength: {
-              value: 80,
-              message: "너무 긴 필드명은 좋지 않은 생각인 것 같아요.",
+              value: 40,
+              message: "너무 긴 필드명은 좋은 생각이 아닌 것 같아요.",
             },
-          })}
-          fullWidth
-          required
-          error={!!errors.fieldName}
-          helperText={errors.fieldName?.message}
-          onBlur={onBlur}
-          onFocus={onFocus}
-          placeholder="필드명"
-        />
-      </TableCell>
-      <TableCell>
-        <Checkbox inputRef={register} name="isRequired" />
-      </TableCell>
-      <TableCell>
-        <Autocomplete
-          openOnFocus
-          className={classes.autocomplete}
-          options={fieldTypes}
-          onChange={(_e, option) => {
-            setValue("fieldType", option, { shouldValidate: true });
           }}
-          disableClearable
-          renderInput={(params) => (
+          render={(props) => (
             <TextField
-              {...params}
+              {...props}
+              size="small"
+              autoFocus={autoFocusField === "fieldName"}
+              fullWidth
               required
-              placeholder="타입"
-              error={!!errors.fieldType}
-              helperText={errors.fieldType?.message}
+              error={!!errors.fieldName}
+              helperText={errors.fieldName?.message}
+              onBlur={onBlur}
+              onFocus={onFocus}
+              placeholder="필드명"
             />
           )}
         />
@@ -98,8 +84,59 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       <TableCell>
         <Controller
           control={control}
+          name="isRequired"
+          render={(props) => (
+            <Checkbox
+              {...props}
+              autoFocus={autoFocusField === "isRequired"}
+              defaultChecked={defaultValues.isRequired}
+              onBlur={onBlur}
+              onFocus={onFocus}
+            />
+          )}
+        />
+      </TableCell>
+      <TableCell>
+        <Controller
+          control={control}
+          name="fieldType"
+          defaultValue={defaultValues.fieldType}
+          rules={{ required: "타입을 선택해주세요." }}
+          render={({ value }) => {
+            return (
+              <Autocomplete
+                value={value}
+                openOnFocus
+                className={classes.autocomplete}
+                options={fieldTypes}
+                onInputChange={(_e, value) =>
+                  setValue("format", value, { shouldValidate: true })
+                }
+                onChange={(_e, value) => {
+                  setValue("fieldType", value, { shouldValidate: true });
+                }}
+                disableClearable
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    required
+                    placeholder="타입"
+                    error={!!errors.fieldType}
+                    helperText={errors.fieldType?.message}
+                    onBlur={onBlur}
+                    onFocus={onFocus}
+                  />
+                )}
+              />
+            );
+          }}
+        />
+      </TableCell>
+      <TableCell>
+        <Controller
+          control={control}
           name="format"
-          defaultValue={formatOptions[0]}
+          defaultValue={defaultValues.format || formatOptions[0]}
           render={({ value }) => {
             return (
               <Autocomplete
@@ -115,7 +152,12 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 }
                 disableClearable
                 renderInput={(params) => (
-                  <TextField {...params} placeholder="포맷" />
+                  <TextField
+                    {...params}
+                    placeholder="포맷"
+                    onBlur={onBlur}
+                    onFocus={onFocus}
+                  />
                 )}
               />
             );
@@ -123,30 +165,46 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         />
       </TableCell>
       <TableCell>
-        <Autocomplete
-          openOnFocus
-          className={classes.autocomplete}
-          options={["없음"]}
-          disableClearable
-          defaultValue={"없음"}
-          renderInput={(params) => (
-            <TextField {...params} placeholder="열거형" />
-          )}
+        <Controller
+          control={control}
+          name="enum"
+          defaultValue={defaultValues.enum}
+          render={({ value }) => {
+            return (
+              <Autocomplete
+                value={value}
+                openOnFocus
+                className={classes.autocomplete}
+                options={["없음"]}
+                disableClearable
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="열거형"
+                    onBlur={onBlur}
+                    onFocus={onFocus}
+                  />
+                )}
+              />
+            );
+          }}
         />
       </TableCell>
       <TableCell>
-        <TextField
+        <Controller
+          control={control}
+          as={TextField}
           size="small"
           autoFocus={autoFocusField === "description"}
           name="description"
-          inputRef={register({
+          defaultValue={defaultValues.description}
+          rules={{
             maxLength: {
               value: 200,
               message: "설명이 너무 길어요.",
             },
-          })}
+          }}
           fullWidth
-          required
           error={!!errors.description}
           helperText={errors.description?.message}
           onBlur={onBlur}
