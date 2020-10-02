@@ -207,10 +207,20 @@ export interface ModelCell<T> extends Recordable {
 }
 
 export interface ModelFieldItem {
+  seq: number;
+  modelId: string;
+  referenceModelId?: string;
   fieldName: ModelCell<string>;
   isRequired: ModelCell<boolean>;
   fieldType: ModelCell<string>;
   format: ModelCell<string>;
   enum: ModelCell<string>;
   description: ModelCell<string>;
+}
+
+export interface ModelItem {
+  name: string;
+  extends?: string;
+  description?: string;
+  fields: ModelFieldItem[];
 }
