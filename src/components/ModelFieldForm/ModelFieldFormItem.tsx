@@ -193,9 +193,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       <TableCell>
         <Controller
           control={control}
-          as={TextField}
-          size="small"
-          autoFocus={autoFocusField === "description"}
           name="description"
           defaultValue={defaultValues.description}
           rules={{
@@ -204,12 +201,19 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
               message: "설명이 너무 길어요.",
             },
           }}
-          fullWidth
-          error={!!errors.description}
-          helperText={errors.description?.message}
-          onBlur={onBlur}
-          onFocus={onFocus}
-          placeholder="설명"
+          render={(props) => (
+            <TextField
+              {...props}
+              size="small"
+              autoFocus={autoFocusField === "description"}
+              fullWidth
+              error={!!errors.description}
+              helperText={errors.description?.message}
+              onBlur={onBlur}
+              onFocus={onFocus}
+              placeholder="설명"
+            />
+          )}
         />
       </TableCell>
       <TableCell>
