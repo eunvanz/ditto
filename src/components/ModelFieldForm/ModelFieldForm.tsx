@@ -17,6 +17,11 @@ import {
   Button,
   IconButton,
   SvgIcon,
+  CardHeader,
+  Divider,
+  Grid,
+  TextField,
+  CardContent,
 } from "@material-ui/core";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import AddIcon from "@material-ui/icons/Add";
@@ -60,6 +65,8 @@ export interface ModelFieldFormValues {
   description: string;
   enum: string;
   target?: ModelFieldDoc;
+  modelName: string;
+  modelDescription: string;
 }
 
 export interface ModelFieldFormProps {
@@ -85,6 +92,7 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
   >(undefined);
 
   const isFocusingRef = useRef<boolean>(false);
+  const modelNameInputRef = useRef<any>(undefined);
 
   const showNewForm = useCallback(() => {
     setIsEditFormVisible(false);
@@ -102,6 +110,8 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
       enum: currentModelField?.enum.value || "없음",
       description: currentModelField?.description.value || "",
       isArray: currentModelField ? currentModelField.isArray.value : false,
+      modelName: "",
+      modelDescription: "",
     };
   }, [currentModelField]);
 
@@ -110,7 +120,15 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
     defaultValues,
   });
 
-  const { handleSubmit, errors, watch, getValues, setValue } = formProps;
+  const {
+    handleSubmit,
+    errors,
+    watch,
+    getValues,
+    setValue,
+    register,
+    trigger,
+  } = formProps;
 
   const watchedValues = watch();
 
@@ -177,8 +195,14 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
   ]);
 
   const handleOnFocus = useCallback(() => {
+    if (!getValues("modelName")) {
+      modelNameInputRef.current.focus();
+      trigger("modelName");
+      hideForms();
+      return;
+    }
     isFocusingRef.current = true;
-  }, []);
+  }, [getValues, hideForms, trigger]);
 
   const showEditForm = useCallback(
     (modelField: ModelFieldDoc, fieldName: keyof ModelFieldFormValues) => {
@@ -223,6 +247,53 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
       noValidate
     >
       <Card>
+        <CardHeader title="모델 편집" />
+        <Divider />
+        <CardContent>
+          <Grid container spacing={3}>
+            <Grid item sm={5}>
+              <TextField
+                label="모델명"
+                autoFocus
+                name="modelName"
+                inputRef={(e) => {
+                  modelNameInputRef.current = e;
+                  register(e, {
+                    required: "모델명을 입력해주세요.",
+                    maxLength: {
+                      value: 40,
+                      message: "별로 좋은 생각이 아닌 것 같아요.",
+                    },
+                  });
+                }}
+                variant="outlined"
+                fullWidth
+                required
+                error={!!errors.modelName}
+                helperText={errors.modelName?.message}
+                size="small"
+              />
+            </Grid>
+            <Grid item sm={7}>
+              <TextField
+                label="설명"
+                name="modelDescription"
+                inputRef={register({
+                  maxLength: {
+                    value: 100,
+                    message: "설명이 너무 길어요.",
+                  },
+                })}
+                variant="outlined"
+                fullWidth
+                error={!!errors.modelDescription}
+                helperText={errors.modelDescription?.message}
+                size="small"
+              />
+            </Grid>
+          </Grid>
+        </CardContent>
+        <Divider />
         <PerfectScrollbar>
           <Box minWidth={700}>
             <Table>
