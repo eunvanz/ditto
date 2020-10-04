@@ -99,6 +99,21 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       <TableCell>
         <Controller
           control={control}
+          name="isArray"
+          render={(props) => (
+            <Checkbox
+              {...props}
+              autoFocus={autoFocusField === "isArray"}
+              defaultChecked={defaultValues.isArray}
+              onBlur={onBlur}
+              onFocus={onFocus}
+            />
+          )}
+        />
+      </TableCell>
+      <TableCell>
+        <Controller
+          control={control}
           name="fieldType"
           defaultValue={defaultValues.fieldType}
           rules={{ required: "타입을 선택해주세요." }}
@@ -119,6 +134,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                       {...params}
                       required
                       placeholder="타입"
+                      autoFocus={autoFocusField === "fieldType"}
                       error={!!errors.fieldType}
                       helperText={errors.fieldType?.message}
                       onBlur={onBlur}
@@ -131,7 +147,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
           }}
         />
       </TableCell>
-      {console.log("===== defaultValues", defaultValues)}
+
       <TableCell>
         <Controller
           control={control}
@@ -151,6 +167,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 renderInput={(params) => (
                   <TextField
                     {...params}
+                    autoFocus={autoFocusField === "format"}
                     placeholder="포맷"
                     onBlur={onBlur}
                     onFocus={onFocus}
@@ -177,6 +194,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 renderInput={(params) => (
                   <TextField
                     {...params}
+                    autoFocus={autoFocusField === "enum"}
                     placeholder="열거형"
                     onBlur={onBlur}
                     onFocus={onFocus}

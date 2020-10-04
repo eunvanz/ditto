@@ -216,6 +216,7 @@ export interface ModelFieldItem extends Recordable {
   referenceModelId?: string;
   fieldName: ModelCell<string>;
   isRequired: ModelCell<boolean>;
+  isArray: ModelCell<boolean>;
   fieldType: ModelCell<string>;
   format: ModelCell<string>;
   enum: ModelCell<string>;
@@ -238,6 +239,7 @@ export type ModelFieldDoc = Omit<
 > & {
   fieldName: ModelCellDoc<string>;
   isRequired: ModelCellDoc<boolean>;
+  isArray: ModelCellDoc<boolean>;
   fieldType: ModelCellDoc<string>;
   format: ModelCellDoc<string>;
   enum: ModelCellDoc<string>;

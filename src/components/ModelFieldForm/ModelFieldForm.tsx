@@ -34,6 +34,9 @@ const useStyles = makeStyles(() => ({
   typeCell: {
     width: 100,
   },
+  arrayCell: {
+    width: 40,
+  },
   formatCell: {
     width: 120,
   },
@@ -53,6 +56,7 @@ export interface ModelFieldFormValues {
   fieldType: string;
   format: string;
   isRequired: boolean;
+  isArray: boolean;
   description: string;
   enum: string;
   target?: ModelFieldDoc;
@@ -97,6 +101,7 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
       format: currentModelField?.format.value || "없음",
       enum: currentModelField?.enum.value || "없음",
       description: currentModelField?.description.value || "",
+      isArray: currentModelField ? currentModelField.isArray.value : false,
     };
   }, [currentModelField]);
 
@@ -228,6 +233,7 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
                     필드명*
                   </TableCell>
                   <TableCell className={classes.requiredCell}>필수</TableCell>
+                  <TableCell className={classes.arrayCell}>배열</TableCell>
                   <TableCell className={classes.typeCell}>타입*</TableCell>
                   <TableCell className={classes.formatCell}>포맷</TableCell>
                   <TableCell className={classes.formatCell}>열거형</TableCell>
@@ -264,10 +270,20 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
                           )}
                         </TableCell>
                         <TableCell
+                          onClick={() => showEditForm(modelField, "isArray")}
+                        >
+                          {modelField.isArray.value ? (
+                            <CheckIcon fontSize="small" />
+                          ) : (
+                            ""
+                          )}
+                        </TableCell>
+                        <TableCell
                           onClick={() => showEditForm(modelField, "fieldType")}
                         >
                           {modelField.fieldType.value}
                         </TableCell>
+
                         <TableCell
                           onClick={() => showEditForm(modelField, "format")}
                         >
@@ -306,7 +322,7 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
                       defaultValues={defaultValues}
                     />
                   ) : (
-                    <TableCell colSpan={7}>
+                    <TableCell colSpan={8}>
                       <Button
                         className={classes.addButton}
                         fullWidth

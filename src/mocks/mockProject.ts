@@ -179,6 +179,28 @@ const modelFields: ModelFieldDoc[] = [
         },
       },
     },
+    isArray: {
+      id: "mockId",
+      value: false,
+      updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+      updatedAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      createdAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+      settingsByMember: {
+        aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+          updatedAt: {
+            seconds: 1601466174,
+            nanoseconds: 963000000,
+          },
+        },
+      },
+    },
     fieldType: {
       id: "mockId",
       value: "string",
