@@ -56,7 +56,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export interface ModelFieldFormValues {
+export interface ModelFormValues {
   fieldName: string;
   fieldType: string;
   format: string;
@@ -69,13 +69,13 @@ export interface ModelFieldFormValues {
   modelDescription: string;
 }
 
-export interface ModelFieldFormProps {
-  onSubmit: (data: ModelFieldFormValues) => void;
+export interface ModelFormProps {
+  onSubmit: (data: ModelFormValues) => void;
   modelFields: ModelFieldDoc[];
   onDelete: (modelField: ModelFieldDoc) => void;
 }
 
-const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
+const ModelForm: React.FC<ModelFormProps> = ({
   onSubmit,
   modelFields,
   onDelete,
@@ -88,7 +88,7 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
     ModelFieldDoc | undefined
   >(undefined);
   const [fieldNameToFocus, setFieldNameToFocus] = useState<
-    keyof ModelFieldFormValues | undefined
+    keyof ModelFormValues | undefined
   >(undefined);
 
   const isFocusingRef = useRef<boolean>(false);
@@ -101,7 +101,7 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
     setIsNewFormVisible(true);
   }, []);
 
-  const defaultValues: ModelFieldFormValues = useMemo(() => {
+  const defaultValues: ModelFormValues = useMemo(() => {
     return {
       fieldName: currentModelField?.fieldName.value || "",
       isRequired: currentModelField ? currentModelField.isRequired.value : true,
@@ -115,7 +115,7 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
     };
   }, [currentModelField]);
 
-  const formProps = useForm<ModelFieldFormValues>({
+  const formProps = useForm<ModelFormValues>({
     mode: "onChange",
     defaultValues,
   });
@@ -205,7 +205,7 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
   }, [getValues, hideForms, trigger]);
 
   const showEditForm = useCallback(
-    (modelField: ModelFieldDoc, fieldName: keyof ModelFieldFormValues) => {
+    (modelField: ModelFieldDoc, fieldName: keyof ModelFormValues) => {
       if (isNewFormVisible) {
         setIsNewFormVisible(false);
       } else {
@@ -415,4 +415,4 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
   );
 };
 
-export default ModelFieldForm;
+export default ModelForm;

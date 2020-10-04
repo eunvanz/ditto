@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import { UseFormMethods, Controller } from "react-hook-form";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { ModelFieldFormValues } from "./ModelFieldForm";
+import { ModelFormValues } from "./ModelForm";
 import { fieldTypes, formats, FIELD_TYPE } from "../../types";
 
 const useStyles = makeStyles(() => ({
@@ -20,11 +20,11 @@ const useStyles = makeStyles(() => ({
 }));
 
 export interface ModelFieldFormItemProps {
-  formProps: UseFormMethods<ModelFieldFormValues>;
-  autoFocusField?: keyof ModelFieldFormValues;
+  formProps: UseFormMethods<ModelFormValues>;
+  autoFocusField?: keyof ModelFormValues;
   onBlur: () => void;
   onFocus: () => void;
-  defaultValues: ModelFieldFormValues;
+  defaultValues: ModelFormValues;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({

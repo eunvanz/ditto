@@ -1,19 +1,19 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
 
-import ModelFieldForm, { ModelFieldFormProps } from "./ModelFieldForm";
+import ModelForm, { ModelFormProps } from "./ModelForm";
 import mockProject from "../../mocks/mockProject";
 
 export default {
-  title: "components/ModelFieldForm",
-  component: ModelFieldForm,
+  title: "components/ModelForm",
+  component: ModelForm,
   argTypes: {},
 } as Meta;
 
-const defaultProps: Partial<ModelFieldFormProps> = {};
+const defaultProps: Partial<ModelFormProps> = {};
 
-const Template: Story<ModelFieldFormProps> = (args) => (
-  <ModelFieldForm {...defaultProps} {...args} />
+const Template: Story<ModelFormProps> = (args) => (
+  <ModelForm {...defaultProps} {...args} />
 );
 
 export const 아이템있음 = Template.bind({});
