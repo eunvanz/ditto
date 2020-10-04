@@ -175,6 +175,7 @@ export const fieldTypes = Object.keys(FIELD_TYPE).map(
 
 export enum FORMAT {
   NONE = "없음",
+  NEW_MODEL = "새로운 모델",
   INT32 = "int32",
   INT64 = "int64",
   FLOAT = "float",
@@ -198,7 +199,7 @@ export const formats: { [k in FIELD_TYPE]: (string | undefined)[] } = {
     FORMAT.BINARY,
   ],
   [FIELD_TYPE.BOOLEAN]: [FORMAT.NONE],
-  [FIELD_TYPE.OBJECT]: [FORMAT.NONE],
+  [FIELD_TYPE.OBJECT]: [FORMAT.NEW_MODEL],
 };
 
 export interface ModelCell<T> extends Recordable {
