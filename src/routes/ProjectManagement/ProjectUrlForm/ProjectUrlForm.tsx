@@ -82,20 +82,25 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
   const isFocusingRef = useRef<boolean>(false);
 
   const showNewForm = useCallback(() => {
-    setIsEditFormVisible(false);
     setFieldNameToFocus(undefined);
+    setIsEditFormVisible(false);
     setIsNewFormVisible(true);
   }, []);
 
   const handleOnSubmit = useCallback(
-    (e?: React.FormEvent<HTMLFormElement>) => {
+    async (e?: React.FormEvent<HTMLFormElement>) => {
       e?.preventDefault();
-      setIsNewFormVisible(false);
-      setIsEditFormVisible(false);
-      handleSubmit((data) => {
+      setCurrentProjectUrl(undefined);
+      let isSubmitted = false;
+      await handleSubmit((data) => {
+        isSubmitted = true;
         onSubmit({ ...data, target: currentProjectUrl });
       })();
-      setCurrentProjectUrl(undefined);
+      if (!isSubmitted) {
+        return;
+      }
+      setIsNewFormVisible(false);
+      setIsEditFormVisible(false);
     },
     [currentProjectUrl, handleSubmit, onSubmit]
   );

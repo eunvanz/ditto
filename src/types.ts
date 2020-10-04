@@ -223,7 +223,7 @@ export interface ModelFieldItem extends Recordable {
   settingsByMember: Record<string, ModelFieldSettings>;
 }
 
-export interface ModelItem {
+export interface ModelItem extends Recordable {
   name: string;
   extends?: string;
   description?: string;

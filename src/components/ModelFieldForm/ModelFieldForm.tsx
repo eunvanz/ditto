@@ -85,6 +85,7 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
   const showNewForm = useCallback(() => {
     setIsEditFormVisible(false);
     setFieldNameToFocus(undefined);
+    setCurrentModelField(undefined);
     setIsNewFormVisible(true);
   }, []);
 
@@ -109,13 +110,18 @@ const ModelFieldForm: React.FC<ModelFieldFormProps> = ({
   const watchedValues = watch();
 
   const handleOnSubmit = useCallback(
-    (values) => {
-      setIsNewFormVisible(false);
-      setIsEditFormVisible(false);
-      handleSubmit((_data) => {
+    async (values) => {
+      setCurrentModelField(undefined);
+      let isSubmitted = false;
+      await handleSubmit((_data) => {
+        isSubmitted = true;
         onSubmit({ ...values, target: currentModelField });
       })();
-      setCurrentModelField(undefined);
+      if (!isSubmitted) {
+        return;
+      }
+      setIsNewFormVisible(false);
+      setIsEditFormVisible(false);
     },
     [currentModelField, handleSubmit, onSubmit]
   );

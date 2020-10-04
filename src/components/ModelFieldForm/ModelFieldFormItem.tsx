@@ -109,44 +109,41 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 openOnFocus
                 className={classes.autocomplete}
                 options={fieldTypes}
-                onInputChange={(_e, value) =>
-                  setValue("format", value, { shouldValidate: true })
-                }
                 onChange={(_e, value) => {
                   setValue("fieldType", value, { shouldValidate: true });
                 }}
                 disableClearable
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    required
-                    placeholder="타입"
-                    error={!!errors.fieldType}
-                    helperText={errors.fieldType?.message}
-                    onBlur={onBlur}
-                    onFocus={onFocus}
-                  />
-                )}
+                renderInput={(params) => {
+                  return (
+                    <TextField
+                      {...params}
+                      required
+                      placeholder="타입"
+                      error={!!errors.fieldType}
+                      helperText={errors.fieldType?.message}
+                      onBlur={onBlur}
+                      onFocus={onFocus}
+                    />
+                  );
+                }}
               />
             );
           }}
         />
       </TableCell>
+      {console.log("===== defaultValues", defaultValues)}
       <TableCell>
         <Controller
           control={control}
           name="format"
           defaultValue={defaultValues.format || formatOptions[0]}
-          render={({ value }) => {
+          render={({ value, name }) => {
             return (
               <Autocomplete
                 value={value}
                 openOnFocus
                 className={classes.autocomplete}
                 options={formatOptions}
-                onInputChange={(_e, value) =>
-                  setValue("format", value, { shouldValidate: true })
-                }
                 onChange={(_e, value) =>
                   setValue("format", value, { shouldValidate: true })
                 }
