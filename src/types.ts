@@ -236,7 +236,13 @@ export type ModelCellDoc<T> = Doc<ModelCell<T>, BaseSettings>;
 
 export type ModelFieldDoc = Omit<
   Doc<ModelFieldItem, ModelFieldSettings>,
-  "fieldName" | "isRequired" | "fieldType" | "format" | "enum" | "description"
+  | "fieldName"
+  | "isRequired"
+  | "fieldType"
+  | "format"
+  | "enum"
+  | "description"
+  | "isArray"
 > & {
   fieldName: ModelCellDoc<string>;
   isRequired: ModelCellDoc<boolean>;
