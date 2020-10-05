@@ -11,6 +11,7 @@ import Header from "./Header";
 import { ProjectDoc } from "../../types";
 import ProjectBasicForm from "./ProjectBasicForm";
 import { Theme } from "../../theme";
+import ProjectUrlForm from "./ProjectUrlForm";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -35,9 +36,9 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
   const tabs = useMemo(() => {
     return [
       { value: "basic", label: "기본정보" },
-      { value: "url", label: "URL관리" },
-      { value: "member", label: "맴버관리" },
-      { value: "model", label: "모델관리" },
+      { value: "urls", label: "URL" },
+      { value: "members", label: "맴버" },
+      { value: "models", label: "모델" },
     ];
   }, []);
 
@@ -64,9 +65,9 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
       <Divider />
       <Box mt={3}>
         {activeTab === "basic" && <ProjectBasicForm project={project} />}
-        {/* {activeTab === 'url' && <Subscription />}
-          {activeTab === 'member' && <Notifications />}
-          {activeTab === 'model' && <Security />} */}
+        {activeTab === "urls" && <ProjectUrlForm />}
+        {/* {activeTab === 'members' && <Notifications />}
+          {activeTab === 'models' && <Security />} */}
       </Box>
     </Container>
   );

@@ -1,4 +1,5 @@
 import { FirebaseReducer } from "react-redux-firebase";
+import { FieldName } from "react-hook-form";
 
 export enum THEMES {
   LIGHT = "LIGHT",
@@ -110,10 +111,14 @@ export interface ProjectItem extends Recordable {
   managers: Record<string, boolean>;
   guests: Record<string, boolean>;
   settingsByMember: Record<string, ProjectSettings>;
+  invitees?: Record<string, boolean>;
 }
 
-export interface ProjectSettings {
+export interface BaseSettings {
   updatedAt: firebase.firestore.FieldValue;
+}
+
+export interface ProjectSettings extends BaseSettings {
   seq: number;
 }
 
@@ -122,7 +127,7 @@ export interface DocTimestamp {
   nanoseconds: number;
 }
 
-export type Doc<T extends Recordable> = Omit<
+export type Doc<T extends Recordable, S extends BaseSettings> = Omit<
   T,
   "updatedAt" | "createdAt" | "settingsByMember"
 > & {
@@ -131,7 +136,7 @@ export type Doc<T extends Recordable> = Omit<
   createdAt: DocTimestamp;
   settingsByMember: Record<
     string,
-    Omit<ProjectSettings, "updatedAt"> & {
+    Omit<S, "updatedAt"> & {
       updatedAt: DocTimestamp;
     }
   >;
@@ -140,4 +145,104 @@ export type Doc<T extends Recordable> = Omit<
 /**
  * 읽을 때의 프로젝트
  */
-export type ProjectDoc = Doc<ProjectItem>;
+export type ProjectDoc = Doc<ProjectItem, ProjectSettings>;
+
+export interface ProjectUrlSettings extends BaseSettings {}
+
+export interface ProjectUrlItem extends Recordable {
+  projectId: string;
+  label: string;
+  url: string;
+  description?: string;
+  settingsByMember: Record<string, ProjectUrlSettings>;
+  usedByRequest?: Record<string, boolean>;
+}
+
+export type ProjectUrlDoc = Doc<ProjectUrlItem, ProjectUrlSettings>;
+
+export enum FIELD_TYPE {
+  INTEGER = "integer",
+  NUMBER = "number",
+  STRING = "string",
+  BOOLEAN = "boolean",
+  OBJECT = "object",
+}
+
+export const fieldTypes = Object.keys(FIELD_TYPE).map(
+  // @ts-ignore
+  (key) => FIELD_TYPE[key as keyof FIELD_TYPE]
+);
+
+export enum FORMAT {
+  NONE = "없음",
+  NEW_MODEL = "새로운 모델",
+  INT32 = "int32",
+  INT64 = "int64",
+  FLOAT = "float",
+  DOUBLE = "double",
+  BYTE = "byte",
+  BINARY = "binary",
+  DATE = "date",
+  DATE_TIME = "date-time",
+  PASSWORD = "password",
+}
+
+export const formats: { [k in FIELD_TYPE]: (string | undefined)[] } = {
+  [FIELD_TYPE.INTEGER]: [FORMAT.INT32, FORMAT.INT64],
+  [FIELD_TYPE.NUMBER]: [FORMAT.NONE, FORMAT.FLOAT, FORMAT.DOUBLE],
+  [FIELD_TYPE.STRING]: [
+    FORMAT.NONE,
+    FORMAT.DATE,
+    FORMAT.DATE_TIME,
+    FORMAT.PASSWORD,
+    FORMAT.BYTE,
+    FORMAT.BINARY,
+  ],
+  [FIELD_TYPE.BOOLEAN]: [FORMAT.NONE],
+  [FIELD_TYPE.OBJECT]: [FORMAT.NEW_MODEL],
+};
+
+export interface ModelCell<T> extends Recordable {
+  value: T;
+  settingsByMember: Record<string, BaseSettings>;
+}
+
+export interface ModelFieldSettings extends BaseSettings {
+  seq: number;
+}
+
+export interface ModelFieldItem extends Recordable {
+  seq: number;
+  modelId: string;
+  referenceModelId?: string;
+  fieldName: ModelCell<string>;
+  isRequired: ModelCell<boolean>;
+  isArray: ModelCell<boolean>;
+  fieldType: ModelCell<string>;
+  format: ModelCell<string>;
+  enum: ModelCell<string>;
+  description: ModelCell<string>;
+  settingsByMember: Record<string, ModelFieldSettings>;
+}
+
+export interface ModelItem extends Recordable {
+  name: string;
+  extends?: string;
+  description?: string;
+  fields: ModelFieldItem[];
+}
+
+export type ModelCellDoc<T> = Doc<ModelCell<T>, BaseSettings>;
+
+export type ModelFieldDoc = Omit<
+  Doc<ModelFieldItem, ModelFieldSettings>,
+  "fieldName" | "isRequired" | "fieldType" | "format" | "enum" | "description"
+> & {
+  fieldName: ModelCellDoc<string>;
+  isRequired: ModelCellDoc<boolean>;
+  isArray: ModelCellDoc<boolean>;
+  fieldType: ModelCellDoc<string>;
+  format: ModelCellDoc<string>;
+  enum: ModelCellDoc<string>;
+  description: ModelCellDoc<string>;
+};

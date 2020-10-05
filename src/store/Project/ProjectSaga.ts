@@ -1,4 +1,4 @@
-import { fork, take, all, put, call, select } from "typed-redux-saga";
+import { fork, take, all, put, call, select, race } from "typed-redux-saga";
 import orderBy from "lodash/orderBy";
 import { ProjectActions } from "./ProjectSlice";
 import { ProgressActions } from "../Progress/ProgressSlice";
@@ -8,26 +8,23 @@ import AuthSelectors from "../Auth/AuthSelector";
 import Alert from "../../components/Alert";
 import { getTimestamp } from "../../firebase";
 import { ErrorActions } from "../Error/ErrorSlice";
-import { ProjectItem, ProjectDoc } from "../../types";
+import { ProjectDoc, ProjectUrlDoc } from "../../types";
 import { eventChannel, EventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
 import { RootState } from "..";
 import DataSelectors from "../Data/DataSelectors";
 import { AuthActions } from "../Auth/AuthSlice";
+import { requireSignIn } from "../Auth/AuthSaga";
+import { assertNotEmpty } from "../../helpers/commonHelpers";
+import { PayloadAction } from "@reduxjs/toolkit";
 
 export function* submitProjectFormFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.submitProjectForm);
     const auth = yield* select(AuthSelectors.selectAuth);
 
-    // 로그인이 돼있지 않은 경우 로그인 유도
-    if (auth.isEmpty) {
-      yield* call(Alert.message, {
-        title: "로그인 필요",
-        message: "로그인이 필요한 기능입니다.",
-      });
-      yield* put(UiActions.hideProjectFormModal());
-      yield* put(UiActions.showSignInModal());
+    const isLogOn = yield* call(requireSignIn);
+    if (!isLogOn) {
       continue;
     }
 
@@ -115,18 +112,16 @@ export function* listenToMyProjectsFlow() {
     const auth = yield* select(AuthSelectors.selectAuth);
     if (auth.uid) {
       const myProjectEventChannel = createMyProjectsEventChannel(auth.uid);
-      while (true) {
-        const myProjects = yield* take(myProjectEventChannel);
 
-        yield* put(
+      yield* fork(listenToEventChannel, {
+        eventChannel: myProjectEventChannel,
+        dataReceiverCreator: (data: ProjectDoc[]) =>
           DataActions.receiveData({
             key: DATA_KEY.PROJECTS,
-            data: myProjects as ProjectItem[],
-          })
-        );
-
-        yield* fork(waitForUnlistenToMyProject, myProjectEventChannel);
-      }
+            data,
+          }),
+        unlistenWaiter: waitForUnlistenToMyProject,
+      });
     } else {
       yield* put(
         DataActions.receiveData({
@@ -144,6 +139,8 @@ export function* waitForUnlistenToMyProject(
   while (true) {
     yield* take(AuthActions.signOut);
     yield* call(myProjectEventChannel.close);
+    yield* put(DataActions.clearData(DATA_KEY.PROJECTS));
+    break;
   }
 }
 
@@ -174,10 +171,195 @@ export function* deleteProjectFlow() {
   }
 }
 
+export function* submitProjectUrlFormFlow() {
+  while (true) {
+    const { payload: data } = yield* take(ProjectActions.submitProjectUrlForm);
+    const auth = yield* select(AuthSelectors.selectAuth);
+
+    const isLogOn = yield* call(requireSignIn);
+    if (!isLogOn) {
+      continue;
+    }
+
+    const isModification = !!data.target;
+
+    const project = yield* select(
+      DataSelectors.createDataKeySelector(DATA_KEY.PROJECT)
+    );
+    assertNotEmpty(project);
+    const { id: projectId } = project as ProjectDoc;
+    const timestamp = yield* call(getTimestamp);
+
+    try {
+      if (isModification) {
+        assertNotEmpty(data.target);
+        const targetId = data.target?.id;
+        delete data.target;
+        const newProjectUrl = {
+          ...data,
+          projectId,
+          updatedAt: timestamp,
+          updatedBy: auth.uid,
+          settingsByMember: {
+            [auth.uid]: {
+              updatedAt: timestamp,
+            },
+          },
+        };
+        yield* call(Firework.updateProjectUrl, targetId, newProjectUrl);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "URL 정보를 수정했습니다.",
+          })
+        );
+      } else {
+        const newProjectUrl = {
+          ...data,
+          projectId,
+          createdAt: timestamp,
+          updatedAt: timestamp,
+          createdBy: auth.uid,
+          updatedBy: auth.uid,
+          settingsByMember: {
+            [auth.uid]: {
+              updatedAt: timestamp,
+            },
+          },
+        };
+        delete newProjectUrl.target;
+        yield* call(Firework.addProjectUrl, newProjectUrl);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "URL을 추가했습니다.",
+          })
+        );
+      }
+    } catch (error) {
+      yield* put(
+        ErrorActions.catchError({
+          error: new Error(
+            "데이터 처리 도중에 오류가 발생했습니다. 반복될 경우 고객센터에 문의해주세요."
+          ),
+          isAlertOnly: true,
+        })
+      );
+    }
+  }
+}
+
+export function createProjectUrlEventChannel(projectId: string) {
+  const listener = eventChannel((emit) => {
+    const projectUrlRef = Firework.getProjectUrlRef(projectId);
+    const unsubscribe = projectUrlRef.onSnapshot((querySnapshot) => {
+      const projectUrls: ProjectUrlDoc[] = [];
+      querySnapshot.forEach((doc) => {
+        projectUrls.push({ id: doc.id, ...doc.data() } as ProjectUrlDoc);
+      });
+      emit(projectUrls);
+    });
+    return unsubscribe;
+  });
+  return listener;
+}
+
+export function* waitForUnlistenProjectUrl(
+  projectUrlEventChannel: EventChannel<any>
+) {
+  while (true) {
+    yield* race([
+      take(AuthActions.signOut),
+      take(ProjectActions.unlistenToProjectUrls),
+    ]);
+    yield* call(projectUrlEventChannel.close);
+    yield* put(DataActions.clearData(DATA_KEY.PROJECT_URLS));
+    break;
+  }
+}
+
+export function* listenToEventChannel({
+  eventChannel,
+  unlistenWaiter,
+  dataReceiverCreator,
+}: {
+  eventChannel: EventChannel<any>;
+  unlistenWaiter: (eventChannel: EventChannel<any>) => Generator<any>;
+  dataReceiverCreator: (data: any) => PayloadAction<any>;
+}) {
+  while (true) {
+    const data = yield* take(eventChannel);
+    yield* put(dataReceiverCreator(data));
+    yield* fork(unlistenWaiter, eventChannel);
+  }
+}
+
+export function* listenToProjectUrlsFlow() {
+  while (true) {
+    yield* take(ProjectActions.listenToProjectUrls);
+    const project = yield* select(
+      DataSelectors.createDataKeySelector(DATA_KEY.PROJECT)
+    );
+    if (!project) {
+      yield* put(
+        ErrorActions.catchError({
+          error: new Error("선택되어있는 프로젝트가 없습니다."),
+          isAlertOnly: true,
+        })
+      );
+      continue;
+    }
+    const projectUrlEventChannel = createProjectUrlEventChannel(
+      (project as ProjectDoc).id
+    );
+
+    yield* fork(listenToEventChannel, {
+      eventChannel: projectUrlEventChannel,
+      unlistenWaiter: waitForUnlistenProjectUrl,
+      dataReceiverCreator: (data) =>
+        DataActions.receiveData({ key: DATA_KEY.PROJECT_URLS, data }),
+    });
+  }
+}
+
+export function* deleteProjectUrlFlow() {
+  while (true) {
+    const { payload: projectUrl } = yield* take(
+      ProjectActions.deleteProjectUrl
+    );
+    const usingRequests = Object.keys(projectUrl.usedByRequest || {});
+    const isUsedBySome =
+      projectUrl.usedByRequest &&
+      usingRequests.some((item) => projectUrl.usedByRequest?.[item]);
+
+    if (isUsedBySome) {
+      yield* call(Alert.message, {
+        title: "삭제 불가",
+        message: "사용하고 있는 리퀘스트가 있어서 삭제가 불가합니다.",
+      });
+      continue;
+    }
+    try {
+      yield* call(Firework.deleteProjectUrl, projectUrl);
+      yield* put(
+        UiActions.showNotification({
+          type: "success",
+          message: "URL이 삭제되었습니다.",
+        })
+      );
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
     fork(listenToMyProjectsFlow),
     fork(deleteProjectFlow),
+    fork(submitProjectUrlFormFlow),
+    fork(listenToProjectUrlsFlow),
+    fork(deleteProjectUrlFlow),
   ]);
 }

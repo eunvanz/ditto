@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ProjectFormValues } from "../../components/ProjectForm/ProjectForm";
-import { ProjectDoc } from "../../types";
+import { ProjectDoc, ProjectUrlDoc } from "../../types";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
+import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
 
 export type ProjectState = {};
 
@@ -22,6 +23,13 @@ const ProjectSlice = createSlice({
     ) => {},
     listenToMyProjects: (_, _action: PayloadAction<void>) => {},
     deleteProject: (_, _action: PayloadAction<ProjectDoc>) => {},
+    submitProjectUrlForm: (
+      _,
+      _action: PayloadAction<ProjectUrlFormValues>
+    ) => {},
+    listenToProjectUrls: (_, _action: PayloadAction<void>) => {},
+    unlistenToProjectUrls: (_, _action: PayloadAction<void>) => {},
+    deleteProjectUrl: (_, _action: PayloadAction<ProjectUrlDoc>) => {},
   },
 });
 

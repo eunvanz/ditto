@@ -14,9 +14,16 @@ import isEqual from "lodash/isEqual";
 import { ProjectDoc } from "../../../types";
 import { Theme } from "../../../theme";
 
-const useStyles = makeStyles((_theme: Theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   submitButton: {
     marginLeft: 8,
+  },
+  deleteButton: {
+    color: theme.palette.common.white,
+    backgroundColor: theme.palette.error.main,
+    "&:hover": {
+      backgroundColor: theme.palette.error.dark,
+    },
   },
 }));
 
@@ -114,7 +121,12 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
         </CardContent>
         <Divider />
         <Box p={2} display="flex" justifyContent="flex-end">
-          <Button disabled={isSubmitting} onClick={onDelete}>
+          <Button
+            className={classes.deleteButton}
+            disabled={isSubmitting}
+            onClick={onDelete}
+            variant="contained"
+          >
             프로젝트 삭제
           </Button>
           <Button
