@@ -150,11 +150,11 @@ const ModelForm: React.FC<ModelFormProps> = ({
   );
 
   const isModified = useMemo(() => {
-    if (!currentModelField) {
-      return true;
-    }
-    return !isEqual(watchedValues, defaultValues);
-  }, [currentModelField, defaultValues, watchedValues]);
+    return !isEqual(
+      { ...watchedValues, modelName: undefined, modelDescription: undefined },
+      { ...defaultValues, modelName: undefined, modelDescription: undefined }
+    );
+  }, [defaultValues, watchedValues]);
 
   const hideForms = useCallback(() => {
     setIsEditFormVisible(false);
