@@ -40,13 +40,13 @@ const useStyles = makeStyles(() => ({
     width: 100,
   },
   arrayCell: {
-    width: 40,
+    width: 50,
   },
   formatCell: {
     width: 120,
   },
   requiredCell: {
-    width: 40,
+    width: 50,
   },
   addButton: {
     justifyContent: "start",
@@ -149,7 +149,8 @@ const ModelForm: React.FC<ModelFormProps> = ({
     [currentModelField, handleSubmit, onSubmit]
   );
 
-  const isModified = useMemo(() => {
+  const isFieldModified = useMemo(() => {
+    // 모델 정보는 제외하고 비교
     return !isEqual(
       { ...watchedValues, modelName: undefined, modelDescription: undefined },
       { ...defaultValues, modelName: undefined, modelDescription: undefined }
@@ -178,7 +179,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
           return;
         }
       }
-      if (!hasError && !isFocusingRef.current && isModified) {
+      if (!hasError && !isFocusingRef.current && isFieldModified) {
         handleOnSubmit(getValues());
       } else if (!isFocusingRef.current && !hasError) {
         hideForms();
@@ -191,7 +192,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
     getValues,
     handleOnSubmit,
     hideForms,
-    isModified,
+    isFieldModified,
   ]);
 
   const handleOnFocus = useCallback(() => {
@@ -303,8 +304,12 @@ const ModelForm: React.FC<ModelFormProps> = ({
                   <TableCell component="th" className={classes.fieldNameCell}>
                     필드명*
                   </TableCell>
-                  <TableCell className={classes.requiredCell}>필수</TableCell>
-                  <TableCell className={classes.arrayCell}>배열</TableCell>
+                  <TableCell align="center" className={classes.requiredCell}>
+                    필수
+                  </TableCell>
+                  <TableCell align="center" className={classes.arrayCell}>
+                    배열
+                  </TableCell>
                   <TableCell className={classes.typeCell}>타입*</TableCell>
                   <TableCell className={classes.formatCell}>포맷</TableCell>
                   <TableCell className={classes.formatCell}>열거형</TableCell>
@@ -332,6 +337,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
                           {modelField.fieldName.value}
                         </TableCell>
                         <TableCell
+                          align="center"
                           onClick={() => showEditForm(modelField, "isRequired")}
                         >
                           {modelField.isRequired.value ? (
@@ -341,6 +347,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
                           )}
                         </TableCell>
                         <TableCell
+                          align="center"
                           onClick={() => showEditForm(modelField, "isArray")}
                         >
                           {modelField.isArray.value ? (
