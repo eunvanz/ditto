@@ -37,7 +37,7 @@ const ProjectUrlFormContainer = () => {
 
   useEffect(() => {
     if (!projectUrls) {
-      dispatch(UiActions.showLoading());
+      dispatch(UiActions.showDelayedLoading());
     } else {
       dispatch(UiActions.hideLoading());
     }

@@ -89,6 +89,7 @@ const UiSlice = createSlice({
     hideSignInModal: (state, _: PayloadAction<void>) => {
       state.signInModal.isVisible = false;
     },
+    showDelayedLoading: () => {},
   },
 });
 

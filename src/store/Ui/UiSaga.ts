@@ -1,4 +1,13 @@
-import { all, takeEvery, put, delay, select } from "typed-redux-saga";
+import {
+  all,
+  takeEvery,
+  put,
+  delay,
+  select,
+  race,
+  take,
+  call,
+} from "typed-redux-saga";
 import { UiActions } from "./UiSlice";
 import shortid from "shortid";
 import AuthSelectors from "../Auth/AuthSelector";
@@ -44,10 +53,24 @@ export function* handleShowProjectFormModal(
   }
 }
 
+/**
+ * 지연이 200ms 이상일 때에만 로딩 표시
+ */
+export function* handleShowDelayedLoading() {
+  const { isDelayed } = yield* race({
+    isDelayed: call(delay, 200),
+    isLoadingHidden: take(UiActions.hideLoading),
+  });
+  if (isDelayed) {
+    yield* put(UiActions.showLoading());
+  }
+}
+
 export function* watchUiActions() {
   yield* all([
     takeEvery(UiActions.showNotification, handleShowNotification),
     takeEvery(UiActions.hideProjectFormModal, handleHideProjectFormModal),
     takeEvery(UiActions.showProjectFormModal, handleShowProjectFormModal),
+    takeEvery(UiActions.showDelayedLoading, handleShowDelayedLoading),
   ]);
 }
