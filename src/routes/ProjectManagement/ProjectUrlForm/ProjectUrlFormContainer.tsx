@@ -2,16 +2,11 @@ import React, { useCallback, useEffect } from "react";
 import ProjectUrlForm, { ProjectUrlFormValues } from "./ProjectUrlForm";
 import { useDispatch, useSelector } from "react-redux";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
-import { ProjectUrlDoc, ProjectDoc } from "../../../types";
-import DataSelectors from "../../../store/Data/DataSelectors";
-import { DATA_KEY } from "../../../store/Data/DataSlice";
+import { ProjectUrlDoc } from "../../../types";
 import { UiActions } from "../../../store/Ui/UiSlice";
+import ProjectSelectors from "../../../store/Project/ProjectSelectors";
 
-export interface ProjectUrlFormContainerProps {
-  project: ProjectDoc;
-}
-
-const ProjectUrlFormContainer = ({ project }: ProjectUrlFormContainerProps) => {
+const ProjectUrlFormContainer = () => {
   const dispatch = useDispatch();
 
   const submitProjectUrlForm = useCallback(
@@ -28,12 +23,7 @@ const ProjectUrlFormContainer = ({ project }: ProjectUrlFormContainerProps) => {
     [dispatch]
   );
 
-  const projectUrls = useSelector(
-    DataSelectors.createRecordDataKeySelector({
-      dataKey: DATA_KEY.PROJECT_URLS,
-      recordKey: project.id,
-    })
-  );
+  const projectUrls = useSelector(ProjectSelectors.selectProjectUrls);
 
   useEffect(() => {
     dispatch(ProjectActions.listenToProjectUrls());

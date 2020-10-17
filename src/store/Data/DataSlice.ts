@@ -21,8 +21,17 @@ export type RecordDataPayload = {
 
 export interface DataState {
   [DATA_KEY.PROJECTS]?: ProjectDoc[];
+  /**
+   * 현재 선택된 프로젝트
+   */
   [DATA_KEY.PROJECT]?: ProjectDoc;
+  /**
+   * project id를 키로 사용하는 Record 형식
+   */
   [DATA_KEY.PROJECT_URLS]?: Record<string, ProjectUrlDoc[]>;
+  /**
+   * 현재 선택된 모델
+   */
   [DATA_KEY.MODEL]?: ModelDoc;
 }
 

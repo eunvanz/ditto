@@ -4,19 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
 import ProjectSelectors from "../../../store/Project/ProjectSelectors";
 import { assertNotEmpty } from "../../../helpers/commonHelpers";
-import { ProjectDoc } from "../../../types";
 
-export interface ProjectBasicFormContainerProps {
-  project: ProjectDoc;
-}
-
-const ProjectBasicFormContainer: React.FC<ProjectBasicFormContainerProps> = ({
-  project,
-}) => {
+const ProjectBasicFormContainer = () => {
   const dispatch = useDispatch();
 
-  const isSubmitting = useSelector(
-    ProjectSelectors.selectIsProjectFormSubmitting
+  const { isSubmitting, project } = useSelector(
+    ProjectSelectors.selectForProjectBasicForm
   );
 
   const submitProjectForm = useCallback(
@@ -33,14 +26,14 @@ const ProjectBasicFormContainer: React.FC<ProjectBasicFormContainerProps> = ({
     dispatch(ProjectActions.deleteProject(project));
   }, [dispatch, project]);
 
-  return (
+  return project ? (
     <ProjectBasicForm
       project={project}
       isSubmitting={isSubmitting}
       onSubmit={submitProjectForm}
       onDelete={deleteProject}
     />
-  );
+  ) : null;
 };
 
 export default ProjectBasicFormContainer;

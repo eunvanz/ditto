@@ -64,8 +64,8 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
       </Box>
       <Divider />
       <Box mt={3}>
-        {activeTab === "basic" && <ProjectBasicForm project={project} />}
-        {activeTab === "urls" && <ProjectUrlForm project={project} />}
+        {activeTab === "basic" && <ProjectBasicForm />}
+        {activeTab === "urls" && <ProjectUrlForm />}
         {/* {activeTab === 'members' && <Notifications />}
           {activeTab === 'models' && <Security />} */}
       </Box>
