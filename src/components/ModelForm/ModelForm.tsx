@@ -19,18 +19,16 @@ import {
   SvgIcon,
   CardHeader,
   Divider,
-  Grid,
-  TextField,
-  CardContent,
 } from "@material-ui/core";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import AddIcon from "@material-ui/icons/Add";
 import ModelFieldFormItem from "./ModelFieldFormItem";
 import { useForm } from "react-hook-form";
-import { ModelFieldDoc } from "../../types";
+import { ModelFieldDoc, ModelDoc } from "../../types";
 import isEqual from "lodash/isEqual";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import CheckIcon from "@material-ui/icons/Check";
+import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
 
 const useStyles = makeStyles(() => ({
   fieldNameCell: {
@@ -56,7 +54,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export interface ModelFormValues {
+export interface ModelFieldFormValues {
   fieldName: string;
   fieldType: string;
   format: string;
@@ -65,22 +63,26 @@ export interface ModelFormValues {
   description: string;
   enum: string;
   target?: ModelFieldDoc;
-  modelName: string;
-  modelDescription: string;
 }
 
 export interface ModelFormProps {
-  onSubmit: (data: ModelFormValues) => void;
-  modelFields: ModelFieldDoc[];
-  onDelete: (modelField: ModelFieldDoc) => void;
+  onSubmitModelField: (data: ModelFieldFormValues) => void;
+  model?: ModelDoc;
+  onDeleteModelField: (modelField: ModelFieldDoc) => void;
+  onSubmitModel: (data: ModelNameFormValues) => void;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
-  onSubmit,
-  modelFields,
-  onDelete,
+  onSubmitModelField,
+  model,
+  onDeleteModelField,
+  onSubmitModel,
 }) => {
   const classes = useStyles();
+
+  const modelFields = useMemo(() => {
+    return model ? model.fields : [];
+  }, [model]);
 
   const [isNewFormVisible, setIsNewFormVisible] = useState(false);
   const [isEditFormVisible, setIsEditFormVisible] = useState(false);
@@ -88,7 +90,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
     ModelFieldDoc | undefined
   >(undefined);
   const [fieldNameToFocus, setFieldNameToFocus] = useState<
-    keyof ModelFormValues | undefined
+    keyof ModelFieldFormValues | undefined
   >(undefined);
 
   const isFocusingRef = useRef<boolean>(false);
@@ -101,7 +103,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
     setIsNewFormVisible(true);
   }, []);
 
-  const defaultValues: ModelFormValues = useMemo(() => {
+  const defaultValues: ModelFieldFormValues = useMemo(() => {
     return {
       fieldName: currentModelField?.fieldName.value || "",
       isRequired: currentModelField ? currentModelField.isRequired.value : true,
@@ -110,12 +112,10 @@ const ModelForm: React.FC<ModelFormProps> = ({
       enum: currentModelField?.enum.value || "없음",
       description: currentModelField?.description.value || "",
       isArray: currentModelField ? currentModelField.isArray.value : false,
-      modelName: "",
-      modelDescription: "",
     };
   }, [currentModelField]);
 
-  const formProps = useForm<ModelFormValues>({
+  const formProps = useForm<ModelFieldFormValues>({
     mode: "onChange",
     defaultValues,
   });
@@ -126,7 +126,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
     watch,
     getValues,
     setValue,
-    register,
     trigger,
   } = formProps;
 
@@ -138,7 +137,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
       let isSubmitted = false;
       await handleSubmit((_data) => {
         isSubmitted = true;
-        onSubmit({ ...values, target: currentModelField });
+        onSubmitModelField({ ...values, target: currentModelField });
       })();
       if (!isSubmitted) {
         return;
@@ -146,7 +145,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
       setIsNewFormVisible(false);
       setIsEditFormVisible(false);
     },
-    [currentModelField, handleSubmit, onSubmit]
+    [currentModelField, handleSubmit, onSubmitModelField]
   );
 
   const isFieldModified = useMemo(() => {
@@ -206,7 +205,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   }, [getValues, hideForms, trigger]);
 
   const showEditForm = useCallback(
-    (modelField: ModelFieldDoc, fieldName: keyof ModelFormValues) => {
+    (modelField: ModelFieldDoc, fieldName: keyof ModelFieldFormValues) => {
       if (isNewFormVisible) {
         setIsNewFormVisible(false);
       } else {
@@ -250,50 +249,18 @@ const ModelForm: React.FC<ModelFormProps> = ({
       <Card>
         <CardHeader title="모델 편집" />
         <Divider />
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item sm={5}>
-              <TextField
-                label="모델명"
-                autoFocus
-                name="modelName"
-                inputRef={(e) => {
-                  modelNameInputRef.current = e;
-                  register(e, {
-                    required: "모델명을 입력해주세요.",
-                    maxLength: {
-                      value: 40,
-                      message: "별로 좋은 생각이 아닌 것 같아요.",
-                    },
-                  });
-                }}
-                variant="outlined"
-                fullWidth
-                required
-                error={!!errors.modelName}
-                helperText={errors.modelName?.message}
-                size="small"
-              />
-            </Grid>
-            <Grid item sm={7}>
-              <TextField
-                label="설명"
-                name="modelDescription"
-                inputRef={register({
-                  maxLength: {
-                    value: 100,
-                    message: "설명이 너무 길어요.",
-                  },
-                })}
-                variant="outlined"
-                fullWidth
-                error={!!errors.modelDescription}
-                helperText={errors.modelDescription?.message}
-                size="small"
-              />
-            </Grid>
-          </Grid>
-        </CardContent>
+        <ModelNameForm
+          nameInputRef={modelNameInputRef}
+          onSubmit={onSubmitModel}
+          defaultValues={
+            model
+              ? {
+                  name: model.name || "",
+                  description: model.description || "",
+                }
+              : undefined
+          }
+        />
         <Divider />
         <PerfectScrollbar>
           <Box minWidth={700}>
@@ -381,7 +348,9 @@ const ModelForm: React.FC<ModelFormProps> = ({
                           {modelField.description.value}
                         </TableCell>
                         <TableCell align="right">
-                          <IconButton onClick={() => onDelete(modelField)}>
+                          <IconButton
+                            onClick={() => onDeleteModelField(modelField)}
+                          >
                             <SvgIcon fontSize="small">
                               <DeleteOutlineIcon />
                             </SvgIcon>

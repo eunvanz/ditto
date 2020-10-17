@@ -18,7 +18,7 @@ const Template: Story<ModelFormProps> = (args) => (
 
 export const 아이템있음 = Template.bind({});
 아이템있음.args = {
-  modelFields: mockProject.modelFields,
+  model: mockProject.model,
 };
 
 export const 아이템없음 = Template.bind({});

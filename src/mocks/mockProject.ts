@@ -1,4 +1,4 @@
-import { ModelFieldDoc } from "../types";
+import { ModelFieldDoc, ModelDoc } from "../types";
 
 const project = {
   id: "imIYYtrWFJjpU9aeTRlQ",
@@ -114,7 +114,6 @@ const projectUrls = [
 const modelFields: ModelFieldDoc[] = [
   {
     id: "mockId",
-    seq: 1,
     modelId: "mockModelId",
     updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
     createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
@@ -128,7 +127,6 @@ const modelFields: ModelFieldDoc[] = [
     },
     settingsByMember: {
       aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
-        seq: 1,
         updatedAt: {
           seconds: 1601466203,
           nanoseconds: 243000000,
@@ -292,10 +290,35 @@ const modelFields: ModelFieldDoc[] = [
   },
 ];
 
+const model: ModelDoc = {
+  id: "mockId",
+  name: "mockModel",
+  fields: modelFields,
+  updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+  createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+  updatedAt: {
+    seconds: 1601466174,
+    nanoseconds: 963000000,
+  },
+  createdAt: {
+    seconds: 1601466174,
+    nanoseconds: 963000000,
+  },
+  settingsByMember: {
+    aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+      updatedAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+    },
+  },
+};
+
 const mockProject = {
   project,
   projectUrls,
   modelFields,
+  model,
 };
 
 export default mockProject;

@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import { UseFormMethods, Controller } from "react-hook-form";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { ModelFormValues } from "./ModelForm";
+import { ModelFieldFormValues } from "./ModelForm";
 import { fieldTypes, formats, FIELD_TYPE, ModelFieldDoc } from "../../types";
 
 const useStyles = makeStyles(() => ({
@@ -24,11 +24,11 @@ export interface ModelFieldFormItemProps {
    * 필드명 validation에 필요한 modelFields
    */
   modelFields: ModelFieldDoc[];
-  formProps: UseFormMethods<ModelFormValues>;
-  autoFocusField?: keyof ModelFormValues;
+  formProps: UseFormMethods<ModelFieldFormValues>;
+  autoFocusField?: keyof ModelFieldFormValues;
   onBlur: () => void;
   onFocus: () => void;
-  defaultValues: ModelFormValues;
+  defaultValues: ModelFieldFormValues;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({

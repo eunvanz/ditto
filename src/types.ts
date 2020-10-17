@@ -207,11 +207,11 @@ export interface ModelCell<T> extends Recordable {
 }
 
 export interface ModelFieldSettings extends BaseSettings {
-  seq: number;
+  next?: string;
 }
 
 export interface ModelFieldItem extends Recordable {
-  seq: number;
+  next?: string;
   modelId: string;
   referenceModelId?: string;
   fieldName: ModelCell<string>;
@@ -229,6 +229,7 @@ export interface ModelItem extends Recordable {
   extends?: string;
   description?: string;
   fields: ModelFieldItem[];
+  settingsByMember: Record<string, BaseSettings>;
 }
 
 export type ModelCellDoc<T> = Doc<ModelCell<T>, BaseSettings>;
@@ -250,4 +251,8 @@ export type ModelFieldDoc = Omit<
   format: ModelCellDoc<string>;
   enum: ModelCellDoc<string>;
   description: ModelCellDoc<string>;
+};
+
+export type ModelDoc = Omit<Doc<ModelItem, BaseSettings>, "fields"> & {
+  fields: ModelFieldDoc[];
 };
