@@ -2,12 +2,16 @@ import React, { useCallback, useEffect } from "react";
 import ProjectUrlForm, { ProjectUrlFormValues } from "./ProjectUrlForm";
 import { useDispatch, useSelector } from "react-redux";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
-import { ProjectUrlDoc } from "../../../types";
+import { ProjectUrlDoc, ProjectDoc } from "../../../types";
 import DataSelectors from "../../../store/Data/DataSelectors";
 import { DATA_KEY } from "../../../store/Data/DataSlice";
 import { UiActions } from "../../../store/Ui/UiSlice";
 
-const ProjectUrlFormContainer = () => {
+export interface ProjectUrlFormContainerProps {
+  project: ProjectDoc;
+}
+
+const ProjectUrlFormContainer = ({ project }: ProjectUrlFormContainerProps) => {
   const dispatch = useDispatch();
 
   const submitProjectUrlForm = useCallback(
@@ -25,7 +29,10 @@ const ProjectUrlFormContainer = () => {
   );
 
   const projectUrls = useSelector(
-    DataSelectors.createDataKeySelector(DATA_KEY.PROJECT_URLS)
+    DataSelectors.createRecordDataKeySelector({
+      dataKey: DATA_KEY.PROJECT_URLS,
+      recordKey: project.id,
+    })
   );
 
   useEffect(() => {
@@ -37,7 +44,7 @@ const ProjectUrlFormContainer = () => {
 
   useEffect(() => {
     if (!projectUrls) {
-      dispatch(UiActions.showDelayedLoading());
+      dispatch(UiActions.showLoading());
     } else {
       dispatch(UiActions.hideLoading());
     }

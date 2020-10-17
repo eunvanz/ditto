@@ -114,6 +114,7 @@ const projectUrls = [
 const modelFields: ModelFieldDoc[] = [
   {
     id: "mockId",
+    projectId: "mockProjectId",
     modelId: "mockModelId",
     updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
     createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
@@ -292,6 +293,7 @@ const modelFields: ModelFieldDoc[] = [
 
 const model: ModelDoc = {
   id: "mockId",
+  projectId: "mockProjectId",
   name: "mockModel",
   fields: modelFields,
   updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",

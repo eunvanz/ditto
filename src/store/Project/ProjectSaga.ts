@@ -268,13 +268,15 @@ export function* waitForUnlistenProjectUrl(
   projectUrlEventChannel: EventChannel<any>
 ) {
   while (true) {
-    yield* race([
+    const [isSignedOut] = yield* race([
       take(AuthActions.signOut),
       take(ProjectActions.unlistenToProjectUrls),
     ]);
     yield* call(projectUrlEventChannel.close);
     // 데이터를 클리어 하지 않는게 나을까?
-    yield* put(DataActions.clearData(DATA_KEY.PROJECT_URLS));
+    if (isSignedOut) {
+      yield* put(DataActions.clearData(DATA_KEY.PROJECT_URLS));
+    }
     break;
   }
 }
@@ -310,15 +312,18 @@ export function* listenToProjectUrlsFlow() {
       );
       continue;
     }
-    const projectUrlEventChannel = createProjectUrlEventChannel(
-      (project as ProjectDoc).id
-    );
+    const projectId = (project as ProjectDoc).id;
+    const projectUrlEventChannel = createProjectUrlEventChannel(projectId);
 
     yield* fork(listenToEventChannel, {
       eventChannel: projectUrlEventChannel,
       unlistenWaiter: waitForUnlistenProjectUrl,
       dataReceiverCreator: (data) =>
-        DataActions.receiveData({ key: DATA_KEY.PROJECT_URLS, data }),
+        DataActions.receiveRecordData({
+          key: DATA_KEY.PROJECT_URLS,
+          recordKey: projectId,
+          data,
+        }),
     });
   }
 }

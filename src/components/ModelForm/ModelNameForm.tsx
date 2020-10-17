@@ -34,6 +34,7 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
   const submit = useCallback(
     (e?: React.FormEvent<HTMLFormElement>) => {
       e?.preventDefault();
+      // @ts-ignore
       handleSubmit(onSubmit)();
     },
     [handleSubmit, onSubmit]

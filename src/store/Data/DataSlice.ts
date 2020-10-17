@@ -13,10 +13,16 @@ export type DataPayload = {
   data: any;
 };
 
+export type RecordDataPayload = {
+  key: DATA_KEY;
+  recordKey: string;
+  data: any;
+};
+
 export interface DataState {
   [DATA_KEY.PROJECTS]?: ProjectDoc[];
   [DATA_KEY.PROJECT]?: ProjectDoc;
-  [DATA_KEY.PROJECT_URLS]?: ProjectUrlDoc[];
+  [DATA_KEY.PROJECT_URLS]?: Record<string, ProjectUrlDoc[]>;
   [DATA_KEY.MODEL]?: ModelDoc;
 }
 
@@ -28,6 +34,15 @@ const DataSlice = createSlice({
   reducers: {
     receiveData: (state, action: PayloadAction<DataPayload>) => {
       state[action.payload.key] = action.payload.data;
+    },
+    receiveRecordData: (state, action: PayloadAction<RecordDataPayload>) => {
+      if (!state[action.payload.key]) {
+        // @ts-ignore
+        state[action.payload.key] = {};
+      }
+      (state[action.payload.key] as Record<string, any>)[
+        action.payload.recordKey
+      ] = action.payload.data;
     },
     receiveMultipleData: (state, action: PayloadAction<DataPayload[]>) => {
       const { payload } = action;
