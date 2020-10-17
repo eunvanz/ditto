@@ -328,6 +328,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
                         onBlur={handleOnBlur}
                         onFocus={handleOnFocus}
                         defaultValues={defaultValues}
+                        modelFields={modelFields}
                       />
                     ) : (
                       <>
@@ -398,6 +399,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
                       onFocus={handleOnFocus}
                       autoFocusField={fieldNameToFocus}
                       defaultValues={defaultValues}
+                      modelFields={modelFields}
                     />
                   ) : (
                     <TableCell colSpan={8}>

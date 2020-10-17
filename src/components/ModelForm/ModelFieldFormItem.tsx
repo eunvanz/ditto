@@ -9,7 +9,7 @@ import {
 import { UseFormMethods, Controller } from "react-hook-form";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { ModelFormValues } from "./ModelForm";
-import { fieldTypes, formats, FIELD_TYPE } from "../../types";
+import { fieldTypes, formats, FIELD_TYPE, ModelFieldDoc } from "../../types";
 
 const useStyles = makeStyles(() => ({
   autocomplete: {
@@ -20,6 +20,10 @@ const useStyles = makeStyles(() => ({
 }));
 
 export interface ModelFieldFormItemProps {
+  /**
+   * 필드명 validation에 필요한 modelFields
+   */
+  modelFields: ModelFieldDoc[];
   formProps: UseFormMethods<ModelFormValues>;
   autoFocusField?: keyof ModelFormValues;
   onBlur: () => void;
@@ -33,6 +37,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   onBlur,
   onFocus,
   defaultValues,
+  modelFields,
 }) => {
   const classes = useStyles();
 
@@ -63,6 +68,12 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             maxLength: {
               value: 40,
               message: "너무 긴 필드명은 좋은 생각이 아닌 것 같아요.",
+            },
+            validate: (data: string) => {
+              const isDup = modelFields.some(
+                (modelField) => modelField.fieldName.value === data
+              );
+              return isDup ? "중복되는 필드가 있어요." : true;
             },
           }}
           render={(props) => (

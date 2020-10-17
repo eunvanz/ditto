@@ -273,6 +273,7 @@ export function* waitForUnlistenProjectUrl(
       take(ProjectActions.unlistenToProjectUrls),
     ]);
     yield* call(projectUrlEventChannel.close);
+    // 데이터를 클리어 하지 않는게 나을까?
     yield* put(DataActions.clearData(DATA_KEY.PROJECT_URLS));
     break;
   }

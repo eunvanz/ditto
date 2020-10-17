@@ -1,5 +1,4 @@
 import { FirebaseReducer } from "react-redux-firebase";
-import { FieldName } from "react-hook-form";
 
 export enum THEMES {
   LIGHT = "LIGHT",
