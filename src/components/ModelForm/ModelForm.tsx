@@ -120,14 +120,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
     defaultValues,
   });
 
-  const {
-    handleSubmit,
-    errors,
-    watch,
-    getValues,
-    setValue,
-    trigger,
-  } = formProps;
+  const { handleSubmit, errors, watch, getValues, setValue } = formProps;
 
   const watchedValues = watch();
 
@@ -195,14 +188,13 @@ const ModelForm: React.FC<ModelFormProps> = ({
   ]);
 
   const handleOnFocus = useCallback(() => {
-    if (!getValues("modelName")) {
+    if (!model) {
       modelNameInputRef.current.focus();
-      trigger("modelName");
       hideForms();
       return;
     }
     isFocusingRef.current = true;
-  }, [getValues, hideForms, trigger]);
+  }, [hideForms, model]);
 
   const showEditForm = useCallback(
     (modelField: ModelFieldDoc, fieldName: keyof ModelFieldFormValues) => {

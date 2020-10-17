@@ -51,7 +51,7 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
           <Grid item sm={5}>
             <TextField
               label="모델명"
-              autoFocus
+              autoFocus={!defaultValues}
               name="name"
               inputRef={(e) => {
                 nameInputRef.current = e;

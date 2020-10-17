@@ -70,9 +70,12 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
               message: "너무 긴 필드명은 좋은 생각이 아닌 것 같아요.",
             },
             validate: (data: string) => {
-              const isDup = modelFields.some(
-                (modelField) => modelField.fieldName.value === data
-              );
+              const isDup = modelFields
+                .filter(
+                  // 현재 수정중인 필드는 제외
+                  (item) => item.fieldName.value !== defaultValues?.fieldName
+                )
+                .some((modelField) => modelField.fieldName.value === data);
               return isDup ? "중복되는 필드가 있어요." : true;
             },
           }}
