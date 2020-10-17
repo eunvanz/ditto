@@ -212,8 +212,9 @@ export interface ModelFieldSettings extends BaseSettings {
 
 export interface ModelFieldItem extends Recordable {
   next?: string;
+  projectId: string;
   modelId: string;
-  referenceModelId?: string;
+  referenceModelId?: string; // object인 경우 참조하는 모델
   fieldName: ModelCell<string>;
   isRequired: ModelCell<boolean>;
   isArray: ModelCell<boolean>;
@@ -225,6 +226,7 @@ export interface ModelFieldItem extends Recordable {
 }
 
 export interface ModelItem extends Recordable {
+  projectId: string;
   name: string;
   extends?: string;
   description?: string;

@@ -1,6 +1,12 @@
 import { db } from "../../firebase";
 import mockFirework from "./mockFirework";
-import { ProjectItem, ProjectUrlItem, ProjectUrlDoc } from "../../types";
+import {
+  ProjectItem,
+  ProjectUrlItem,
+  ProjectUrlDoc,
+  ModelItem,
+  ModelFieldItem,
+} from "../../types";
 import { call } from "typed-redux-saga";
 
 function* addDocument<T>(path: string, data: T) {
@@ -58,6 +64,18 @@ function* updateProjectUrl(id: string, projectUrl: Partial<ProjectUrlItem>) {
   );
 }
 
+function* addModel(data: ModelItem) {
+  yield call(addDocument, `projects/${data.projectId}/models`, data);
+}
+
+function* addModelField(data: ModelFieldItem) {
+  yield call(
+    addDocument,
+    `projects/${data.projectId}/models/${data.modelId}`,
+    data
+  );
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -69,6 +87,8 @@ export const realFirework = {
   getProjectUrlRef,
   deleteProjectUrl,
   updateProjectUrl,
+  addModel,
+  addModelField,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

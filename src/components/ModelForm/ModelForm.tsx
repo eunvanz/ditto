@@ -239,31 +239,31 @@ const ModelForm: React.FC<ModelFormProps> = ({
   }, []);
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleOnSubmit(getValues());
-      }}
-      noValidate
-    >
-      <Card>
-        <CardHeader title="모델 편집" />
-        <Divider />
-        <ModelNameForm
-          nameInputRef={modelNameInputRef}
-          onSubmit={onSubmitModel}
-          defaultValues={
-            model
-              ? {
-                  name: model.name || "",
-                  description: model.description || "",
-                }
-              : undefined
-          }
-        />
-        <Divider />
-        <PerfectScrollbar>
-          <Box minWidth={700}>
+    <Card>
+      <CardHeader title="모델 편집" />
+      <Divider />
+      <ModelNameForm
+        nameInputRef={modelNameInputRef}
+        onSubmit={onSubmitModel}
+        defaultValues={
+          model
+            ? {
+                name: model.name || "",
+                description: model.description || "",
+              }
+            : undefined
+        }
+      />
+      <Divider />
+      <PerfectScrollbar>
+        <Box minWidth={700}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleOnSubmit(getValues());
+            }}
+            noValidate
+          >
             <Table>
               <caption></caption>
               <TableHead>
@@ -385,11 +385,11 @@ const ModelForm: React.FC<ModelFormProps> = ({
                 </TableRow>
               </TableBody>
             </Table>
-          </Box>
-        </PerfectScrollbar>
-      </Card>
-      <button className={classes.submit} type="submit" />
-    </form>
+            <button className={classes.submit} type="submit" />
+          </form>
+        </Box>
+      </PerfectScrollbar>
+    </Card>
   );
 };
 
