@@ -39,11 +39,11 @@ export interface DataState {
   /**
    * { projectId: { modelId: data } } 형식
    */
-  [DATA_KEY.MODELS]?: Record<string, Record<string, ModelDoc[]>>;
+  [DATA_KEY.MODELS]?: Record<string, Record<string, ModelDoc>>;
   /**
    * { modelId: { modelFieldId: data } } 형식
    */
-  [DATA_KEY.FIELDS]?: Record<string, Record<string, ModelFieldDoc[]>>;
+  [DATA_KEY.FIELDS]?: Record<string, Record<string, ModelFieldDoc>>;
 }
 
 export const initialDataState: DataState = {};

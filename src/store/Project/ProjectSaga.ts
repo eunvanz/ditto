@@ -377,20 +377,6 @@ export function* getRecordableDocProps() {
   };
 }
 
-export function createModelEventChannel(
-  modelRef: firebase.firestore.DocumentReference<
-    firebase.firestore.DocumentData
-  >
-) {
-  const listener = eventChannel((emit) => {
-    const unsubscribe = modelRef.onSnapshot((querySnapshot) => {
-      emit({ id: querySnapshot.id, ...querySnapshot.data() });
-    });
-    return unsubscribe;
-  });
-  return listener;
-}
-
 export function createUnlistenWaiter({
   unlistenAction,
   cleanUpAction,
@@ -449,38 +435,56 @@ export function* submitModelNameFormFlow() {
         ...recordableDocProps,
       };
       // model document 생성
-      const modelRef = yield* call(Firework.addModel, newModel);
-      // model listening
-      const modelId = modelRef.id;
-      yield* put(
-        ProjectActions.listenToModel({ projectId: newModel.projectId, modelId })
-      );
+      yield* call(Firework.addModel, newModel);
     }
     yield* put(UiActions.hideLoading());
   }
 }
 
-export function* listenToModelFlow() {
+export function createProjectModelsEventChannel(projectId: string) {
+  const listener = eventChannel((emit) => {
+    const projectModelsRef = Firework.getProjectModelsRef(projectId);
+    const unsubscribe = projectModelsRef.onSnapshot((querySnapshot) => {
+      const record: Record<string, ModelDoc> = {};
+      querySnapshot.forEach((model) => {
+        record[model.id] = { id: model.id, ...model.data() } as ModelDoc;
+      });
+      emit(record);
+    });
+    return unsubscribe;
+  });
+  return listener;
+}
+
+export function* listenToProjectModelsFlow() {
   while (true) {
-    const {
-      payload: { projectId, modelId },
-    } = yield* take(ProjectActions.listenToModel);
-    const modelRef = yield* call(Firework.getModelRef, { projectId, modelId });
-    const modelEventChannel = createModelEventChannel(modelRef);
+    yield* take(ProjectActions.listenToProjectModels);
+    const project = yield* select(
+      (state: RootState) => state.data[DATA_KEY.PROJECT]
+    );
+
+    if (!project) {
+      yield* put(
+        ErrorActions.catchError({
+          error: new Error("작업 대상 프로젝트가 없습니다."),
+          isAlertOnly: true,
+        })
+      );
+      yield* call(history.push, ROUTE.ROOT);
+      continue;
+    }
+
     yield* fork(listenToEventChannel, {
-      eventChannel: modelEventChannel,
-      dataReceiverCreator: (data: ModelDoc) => {
-        return DataActions.receiveRecordData({
+      eventChannel: createProjectModelsEventChannel(project.id),
+      dataReceiverCreator: (data) =>
+        DataActions.receiveRecordData({
           key: DATA_KEY.MODELS,
-          recordKey: projectId,
-          subRecordKey: modelId,
+          recordKey: project.id,
           data,
-        });
-      },
+        }),
       unlistenWaiter: createUnlistenWaiter({
-        // 로그아웃 시 어차피 모든 모델들을 unlisten해야 하므로
         cleanUpAction: DataActions.clearData(DATA_KEY.MODELS),
-        unlistenAction: ProjectActions.unlistenToModel,
+        unlistenAction: ProjectActions.unlistenToProjectModels,
       }),
     });
   }
@@ -495,6 +499,6 @@ export function* watchProjectActions() {
     fork(listenToProjectUrlsFlow),
     fork(deleteProjectUrlFlow),
     fork(submitModelNameFormFlow),
-    fork(listenToModelFlow),
+    fork(listenToProjectModelsFlow),
   ]);
 }

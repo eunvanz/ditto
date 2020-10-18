@@ -3,7 +3,7 @@ import ModelForm from "./ModelForm";
 import { useDispatch } from "react-redux";
 import { ModelNameFormValues } from "./ModelNameForm";
 import { ModelDoc } from "../../types";
-import { useParams } from "react-router-dom";
+import { ProjectActions } from "../../store/Project/ProjectSlice";
 
 export interface ModelFormContainerProps {
   model?: ModelDoc;
@@ -12,16 +12,17 @@ export interface ModelFormContainerProps {
 const ModelFormContainer: React.FC<ModelFormContainerProps> = ({ model }) => {
   const dispatch = useDispatch();
 
-  // 가장 루트의 ModelForm은 이 modelId로 models의 model을 선택
-  const { modelId } = useParams();
-
-  const onSubmitModel = useCallback((data: ModelNameFormValues) => {
-    dispatch();
-  }, []);
+  const submitModel = useCallback(
+    (data: ModelNameFormValues) => {
+      dispatch(ProjectActions.submitModelNameForm(data));
+    },
+    [dispatch]
+  );
 
   return (
     <ModelForm
-      onSubmitModel={() => {}}
+      model={model}
+      onSubmitModel={submitModel}
       onDeleteModelField={() => {}}
       onSubmitModelField={() => {}}
     />

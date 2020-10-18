@@ -12,6 +12,7 @@ import { ProjectDoc } from "../../types";
 import ProjectBasicForm from "./ProjectBasicForm";
 import { Theme } from "../../theme";
 import ProjectUrlForm from "./ProjectUrlForm";
+import ModelList from "./ModelList";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -66,8 +67,8 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
       <Box mt={3}>
         {activeTab === "basic" && <ProjectBasicForm />}
         {activeTab === "urls" && <ProjectUrlForm />}
-        {/* {activeTab === 'members' && <Notifications />}
-          {activeTab === 'models' && <Security />} */}
+        {/* {activeTab === 'members' && <Notifications />} */}
+        {activeTab === "models" && <ModelList />}
       </Box>
     </Container>
   );

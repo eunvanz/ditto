@@ -40,6 +40,8 @@ const ProjectSlice = createSlice({
       }>
     ) => {},
     unlistenToModel: (_, _action: PayloadAction<void>) => {},
+    listenToProjectModels: (_, _action: PayloadAction<void>) => {},
+    unlistenToProjectModels: (_, _action: PayloadAction<void>) => {},
   },
 });
 

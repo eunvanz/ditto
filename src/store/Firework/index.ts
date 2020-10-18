@@ -86,6 +86,10 @@ function getModelRef({
   return db.doc(`projects/${projectId}/models/${modelId}`);
 }
 
+function getProjectModelsRef(projectId: string) {
+  return db.collection(`projects/${projectId}/models`);
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -100,6 +104,7 @@ export const realFirework = {
   addModel,
   addModelField,
   getModelRef,
+  getProjectModelsRef,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";
