@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { CardContent, Grid, TextField, makeStyles } from "@material-ui/core";
 import { useForm } from "react-hook-form";
+import { ModelDoc } from "../../types";
 
 const useStyles = makeStyles(() => ({
   submit: {
@@ -11,33 +12,42 @@ const useStyles = makeStyles(() => ({
 export interface ModelNameFormValues {
   name: string;
   description: string;
+  target?: ModelDoc;
 }
 
 export interface ModelNameFormProps {
-  defaultValues?: ModelNameFormValues;
+  model?: ModelDoc;
   nameInputRef: React.MutableRefObject<any>;
   onSubmit: (data: ModelNameFormValues) => void;
 }
 
 const ModelNameForm: React.FC<ModelNameFormProps> = ({
-  defaultValues,
+  model,
   nameInputRef,
   onSubmit,
 }) => {
   const classes = useStyles();
 
-  const { register, errors, handleSubmit } = useForm({
+  const { register, errors, handleSubmit, getValues } = useForm({
     mode: "onChange",
-    defaultValues,
+    defaultValues: {
+      name: model?.name,
+      description: model?.description,
+    },
   });
 
   const submit = useCallback(
     (e?: React.FormEvent<HTMLFormElement>) => {
       e?.preventDefault();
       // @ts-ignore
-      handleSubmit(onSubmit)();
+      handleSubmit(() =>
+        onSubmit({
+          ...(getValues() as ModelNameFormValues),
+          target: model,
+        })
+      )();
     },
-    [handleSubmit, onSubmit]
+    [getValues, handleSubmit, model, onSubmit]
   );
 
   const handleOnBlur = useCallback(() => {
@@ -51,7 +61,7 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
           <Grid item sm={5}>
             <TextField
               label="모델명"
-              autoFocus={!defaultValues}
+              autoFocus={!model}
               name="name"
               inputRef={(e) => {
                 nameInputRef.current = e;

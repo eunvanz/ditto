@@ -237,14 +237,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
       <ModelNameForm
         nameInputRef={modelNameInputRef}
         onSubmit={onSubmitModel}
-        defaultValues={
-          model
-            ? {
-                name: model.name || "",
-                description: model.description || "",
-              }
-            : undefined
-        }
+        model={model}
       />
       <Divider />
       <PerfectScrollbar>

@@ -3,6 +3,7 @@ import { ProjectFormValues } from "../../components/ProjectForm/ProjectForm";
 import { ProjectDoc, ProjectUrlDoc } from "../../types";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
+import { ModelNameFormValues } from "../../components/ModelForm/ModelNameForm";
 
 export type ProjectState = {};
 
@@ -30,6 +31,15 @@ const ProjectSlice = createSlice({
     listenToProjectUrls: (_, _action: PayloadAction<void>) => {},
     unlistenToProjectUrls: (_, _action: PayloadAction<void>) => {},
     deleteProjectUrl: (_, _action: PayloadAction<ProjectUrlDoc>) => {},
+    submitModelNameForm: (_, _action: PayloadAction<ModelNameFormValues>) => {},
+    listenToModel: (
+      _,
+      _action: PayloadAction<{
+        projectId: string;
+        modelId: string;
+      }>
+    ) => {},
+    unlistenToModel: (_, _action: PayloadAction<void>) => {},
   },
 });
 

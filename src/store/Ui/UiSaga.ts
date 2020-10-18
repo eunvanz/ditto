@@ -54,11 +54,13 @@ export function* handleShowProjectFormModal(
 }
 
 /**
- * 지연이 200ms 이상일 때에만 로딩 표시
+ * 지연시간 이상일 때에만 로딩 표시 (기본 200ms)
  */
-export function* handleShowDelayedLoading() {
+export function* handleShowDelayedLoading(
+  action: ReturnType<typeof UiActions.showDelayedLoading>
+) {
   const { isDelayed } = yield* race({
-    isDelayed: call(delay, 200),
+    isDelayed: call(delay, action.payload || 200),
     isLoadingHidden: take(UiActions.hideLoading),
   });
   if (isDelayed) {

@@ -9,36 +9,36 @@ import {
 } from "../../types";
 import { call } from "typed-redux-saga";
 
-function* addDocument<T>(path: string, data: T) {
-  yield db.collection(path).add(data);
+function addDocument<T>(path: string, data: T) {
+  return db.collection(path).add(data);
 }
 
 function* addProject(data: ProjectItem) {
-  yield call(addDocument, "projects", data);
+  return yield* call(addDocument, "projects", data);
 }
 
 function getMyProjectsRef(uid: string) {
   return db.collection("projects").where(`members.${uid}`, "==", true);
 }
 
-function* updateDocument<T>(path: string, id: string, data: Partial<T>) {
-  yield db.collection(path).doc(id).update(data);
+function updateDocument<T>(path: string, id: string, data: Partial<T>) {
+  return db.collection(path).doc(id).update(data);
 }
 
 function* updateProject(id: string, data: Partial<ProjectItem>) {
-  yield call(updateDocument, "projects", id, data);
+  yield* call(updateDocument, "projects", id, data);
 }
 
-function* deleteDocument(path: string, id: string) {
-  yield db.collection(path).doc(id).delete();
+function deleteDocument(path: string, id: string) {
+  return db.collection(path).doc(id).delete();
 }
 
 function* deleteProject(id: string) {
-  yield call(deleteDocument, "projects", id);
+  yield* call(deleteDocument, "projects", id);
 }
 
 function* addProjectUrl(data: ProjectUrlItem) {
-  yield call(addDocument, `projects/${data.projectId}/urls`, data);
+  return yield* call(addDocument, `projects/${data.projectId}/urls`, data);
 }
 
 function getProjectUrlRef(projectId: string) {
@@ -48,7 +48,7 @@ function getProjectUrlRef(projectId: string) {
 }
 
 function* deleteProjectUrl(projectUrl: ProjectUrlDoc) {
-  yield call(
+  yield* call(
     deleteDocument,
     `projects/${projectUrl.projectId}/urls/`,
     projectUrl.id
@@ -56,7 +56,7 @@ function* deleteProjectUrl(projectUrl: ProjectUrlDoc) {
 }
 
 function* updateProjectUrl(id: string, projectUrl: Partial<ProjectUrlItem>) {
-  yield call(
+  yield* call(
     updateDocument,
     `projects/${projectUrl.projectId}/urls`,
     id,
@@ -65,15 +65,25 @@ function* updateProjectUrl(id: string, projectUrl: Partial<ProjectUrlItem>) {
 }
 
 function* addModel(data: ModelItem) {
-  yield call(addDocument, `projects/${data.projectId}/models`, data);
+  return yield* call(addDocument, `projects/${data.projectId}/models`, data);
 }
 
 function* addModelField(data: ModelFieldItem) {
-  yield call(
+  return yield* call(
     addDocument,
     `projects/${data.projectId}/models/${data.modelId}`,
     data
   );
+}
+
+function getModelRef({
+  projectId,
+  modelId,
+}: {
+  projectId: string;
+  modelId: string;
+}) {
+  return db.doc(`projects/${projectId}/models/${modelId}`);
 }
 
 export const realFirework = {
@@ -89,6 +99,7 @@ export const realFirework = {
   updateProjectUrl,
   addModel,
   addModelField,
+  getModelRef,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

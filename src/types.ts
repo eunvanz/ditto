@@ -22,7 +22,7 @@ export interface Recordable {
 
 export interface DataRecord extends Recordable {
   dataRecordId: string;
-  seq: number;
+  next: string;
   key: string;
   type: DATA_TYPE;
   customEnumId?: string;
@@ -230,7 +230,6 @@ export interface ModelItem extends Recordable {
   name: string;
   extends?: string;
   description?: string;
-  fields: ModelFieldItem[];
   settingsByMember: Record<string, BaseSettings>;
 }
 

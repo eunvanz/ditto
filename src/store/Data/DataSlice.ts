@@ -1,23 +1,30 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ProjectDoc, ProjectUrlDoc, ModelDoc } from "../../types";
+import {
+  ProjectDoc,
+  ProjectUrlDoc,
+  ModelDoc,
+  ModelFieldDoc,
+} from "../../types";
 
 export enum DATA_KEY {
   PROJECTS = "projects",
   PROJECT = "project",
   PROJECT_URLS = "projectUrls",
-  MODEL = "model",
+  MODELS = "models",
+  FIELDS = "fields",
 }
 
-export type DataPayload = {
+export interface DataPayload {
   key: DATA_KEY;
   data: any;
-};
+}
 
-export type RecordDataPayload = {
+export interface RecordDataPayload {
   key: DATA_KEY;
   recordKey: string;
+  subRecordKey?: string;
   data: any;
-};
+}
 
 export interface DataState {
   [DATA_KEY.PROJECTS]?: ProjectDoc[];
@@ -30,9 +37,13 @@ export interface DataState {
    */
   [DATA_KEY.PROJECT_URLS]?: Record<string, ProjectUrlDoc[]>;
   /**
-   * 현재 선택된 모델
+   * { projectId: { modelId: data } } 형식
    */
-  [DATA_KEY.MODEL]?: ModelDoc;
+  [DATA_KEY.MODELS]?: Record<string, Record<string, ModelDoc[]>>;
+  /**
+   * { modelId: { modelFieldId: data } } 형식
+   */
+  [DATA_KEY.FIELDS]?: Record<string, Record<string, ModelFieldDoc[]>>;
 }
 
 export const initialDataState: DataState = {};
@@ -45,13 +56,19 @@ const DataSlice = createSlice({
       state[action.payload.key] = action.payload.data;
     },
     receiveRecordData: (state, action: PayloadAction<RecordDataPayload>) => {
-      if (!state[action.payload.key]) {
+      const { key, recordKey, subRecordKey, data } = action.payload;
+      if (!state[key]) {
         // @ts-ignore
-        state[action.payload.key] = {};
+        state[key] = {};
       }
-      (state[action.payload.key] as Record<string, any>)[
-        action.payload.recordKey
-      ] = action.payload.data;
+      if (!subRecordKey) {
+        (state[key] as Record<string, any>)[recordKey] = data;
+      } else {
+        if (!(state[key] as Record<string, any>)[recordKey]) {
+          (state[key] as Record<string, any>)[recordKey] = {};
+        }
+        (state[key] as Record<string, any>)[recordKey][subRecordKey] = data;
+      }
     },
     receiveMultipleData: (state, action: PayloadAction<DataPayload[]>) => {
       const { payload } = action;
