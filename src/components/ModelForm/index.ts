@@ -1,3 +1,3 @@
-import ModelForm from "./ModelForm";
+import ModelFormContainer from "./ModelFormContainer";
 
-export default ModelForm;
+export default ModelFormContainer;

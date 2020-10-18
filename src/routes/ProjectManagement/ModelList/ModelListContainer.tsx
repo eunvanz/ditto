@@ -1,15 +1,20 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import ModelList from "./ModelList";
 import { useDispatch, useSelector } from "react-redux";
 import ProjectSelectors from "../../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
 import { UiActions } from "../../../store/Ui/UiSlice";
 import { ModelDoc } from "../../../types";
+import ModelForm from "../../../components/ModelForm";
 
 const ModelListContainer = () => {
   const dispatch = useDispatch();
 
   const models = useSelector(ProjectSelectors.selectProjectModels);
+
+  const [model, setModel] = useState<ModelDoc | undefined>(undefined);
+
+  const [isModelFormVisible, setIsModelFormVisible] = useState(false);
 
   useEffect(() => {
     dispatch(ProjectActions.listenToProjectModels());
@@ -28,17 +33,30 @@ const ModelListContainer = () => {
 
   const deleteModel = useCallback((model: ModelDoc) => {}, []);
 
-  const showModelForm = useCallback((model: ModelDoc) => {}, []);
+  const showModelForm = useCallback((model: ModelDoc) => {
+    setModel(model);
+    setIsModelFormVisible(true);
+  }, []);
 
-  const showNewModelForm = useCallback(() => {}, []);
+  const showNewModelForm = useCallback(() => {
+    setModel(undefined);
+    setIsModelFormVisible(true);
+  }, []);
 
   return models ? (
-    <ModelList
-      models={models}
-      onDelete={deleteModel}
-      onClickName={showModelForm}
-      onClickAdd={showNewModelForm}
-    />
+    <>
+      <ModelList
+        models={models}
+        onDelete={deleteModel}
+        onClickName={showModelForm}
+        onClickAdd={showNewModelForm}
+      />
+      <ModelForm
+        isVisible={isModelFormVisible}
+        onClose={() => setIsModelFormVisible(false)}
+        model={model}
+      />
+    </>
   ) : null;
 };
 
