@@ -19,6 +19,7 @@ import {
   SvgIcon,
   CardHeader,
   Divider,
+  Dialog,
 } from "@material-ui/core";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import AddIcon from "@material-ui/icons/Add";
@@ -29,6 +30,7 @@ import isEqual from "lodash/isEqual";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import CheckIcon from "@material-ui/icons/Check";
 import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
+import CloseIcon from "@material-ui/icons/Close";
 
 const useStyles = makeStyles(() => ({
   fieldNameCell: {
@@ -70,6 +72,10 @@ export interface ModelFormProps {
   model?: ModelDoc;
   onDeleteModelField: (modelField: ModelFieldDoc) => void;
   onSubmitModel: (data: ModelNameFormValues) => void;
+  /**
+   * onClose가 전달되면 X 버튼이 생성
+   */
+  onClose?: () => void;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -77,6 +83,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   model,
   onDeleteModelField,
   onSubmitModel,
+  onClose,
 }) => {
   const classes = useStyles();
 
@@ -232,7 +239,16 @@ const ModelForm: React.FC<ModelFormProps> = ({
 
   return (
     <Card>
-      <CardHeader title="모델 편집" />
+      <CardHeader
+        title="모델 편집"
+        action={
+          onClose ? (
+            <IconButton size="small" onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          ) : undefined
+        }
+      />
       <Divider />
       <ModelNameForm
         nameInputRef={modelNameInputRef}
@@ -375,6 +391,23 @@ const ModelForm: React.FC<ModelFormProps> = ({
         </Box>
       </PerfectScrollbar>
     </Card>
+  );
+};
+
+export interface ModelFormModalProps extends ModelFormProps {
+  isVisible: boolean;
+  onClose: () => void;
+}
+
+export const ModelFormModal: React.FC<ModelFormModalProps> = ({
+  isVisible,
+  onClose,
+  ...restProps
+}) => {
+  return (
+    <Dialog open={isVisible} onClose={onClose} fullWidth maxWidth="xl">
+      <ModelForm {...restProps} onClose={onClose} />
+    </Dialog>
   );
 };
 

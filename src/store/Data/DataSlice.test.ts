@@ -35,7 +35,7 @@ describe("DataSlice", () => {
         const initialState: DataState = {
           ...initialDataState,
           [DATA_KEY.MODELS]: {
-            existingData: { existingData: [mockProject.model] },
+            existingData: { existingData: mockProject.model },
           },
         };
         const payload = {
