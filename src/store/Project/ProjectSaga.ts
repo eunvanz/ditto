@@ -426,8 +426,8 @@ export function* submitModelNameFormFlow() {
       // TODO: 수정인 경우
     } else {
       // 생성인 경우
-      // 모델을 생성하지 않고 필드를 수정할 수 없으므로 delayedLoading을 보여줌
-      yield* put(UiActions.showDelayedLoading(500));
+      // 모델을 생성하지 않고 필드를 수정할 수 없으므로 loading을 보여줌
+      yield* put(UiActions.showLoading());
       const recordableDocProps = yield* call(getRecordableDocProps);
       const newModel: ModelItem = {
         projectId: currentProject.id,

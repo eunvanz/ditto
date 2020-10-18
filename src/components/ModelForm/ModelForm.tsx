@@ -193,13 +193,13 @@ const ModelForm: React.FC<ModelFormProps> = ({
   ]);
 
   const handleOnFocus = useCallback(() => {
-    if (!model) {
+    if (!modelNameInputRef.current.value) {
       modelNameInputRef.current.focus();
       hideForms();
       return;
     }
     isFocusingRef.current = true;
-  }, [hideForms, model]);
+  }, [hideForms]);
 
   const showEditForm = useCallback(
     (modelField: ModelFieldDoc, fieldName: keyof ModelFieldFormValues) => {
