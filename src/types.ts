@@ -254,6 +254,4 @@ export type ModelFieldDoc = Omit<
   description: ModelCellDoc<string>;
 };
 
-export type ModelDoc = Omit<Doc<ModelItem, BaseSettings>, "fields"> & {
-  fields: ModelFieldDoc[];
-};
+export type ModelDoc = Doc<ModelItem, BaseSettings>;

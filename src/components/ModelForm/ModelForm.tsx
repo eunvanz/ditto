@@ -70,6 +70,7 @@ export interface ModelFieldFormValues {
 export interface ModelFormProps {
   onSubmitModelField: (data: ModelFieldFormValues) => void;
   model?: ModelDoc;
+  modelFields?: ModelFieldDoc[];
   onDeleteModelField: (modelField: ModelFieldDoc) => void;
   onSubmitModel: (data: ModelNameFormValues) => void;
   /**
@@ -84,12 +85,9 @@ const ModelForm: React.FC<ModelFormProps> = ({
   onDeleteModelField,
   onSubmitModel,
   onClose,
+  modelFields = [],
 }) => {
   const classes = useStyles();
-
-  const modelFields = useMemo(() => {
-    return model ? model.fields : [];
-  }, [model]);
 
   const [isNewFormVisible, setIsNewFormVisible] = useState(false);
   const [isEditFormVisible, setIsEditFormVisible] = useState(false);

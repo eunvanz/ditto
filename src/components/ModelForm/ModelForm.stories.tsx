@@ -1,7 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
 
-import ModelForm, { ModelFormProps, ModelFormModal } from "./ModelForm";
+import ModelForm, { ModelFormProps } from "./ModelForm";
 import mockProject from "../../mocks/mockProject";
 
 export default {
@@ -19,6 +19,7 @@ const Template: Story<ModelFormProps> = (args) => (
 export const 아이템있음 = Template.bind({});
 아이템있음.args = {
   model: mockProject.model,
+  modelFields: mockProject.modelFields,
 };
 
 export const 아이템없음 = Template.bind({});

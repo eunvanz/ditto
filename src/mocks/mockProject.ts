@@ -295,7 +295,6 @@ const model: ModelDoc = {
   id: "mockId",
   projectId: "mockProjectId",
   name: "mockModel",
-  fields: modelFields,
   updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
   createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
   updatedAt: {
