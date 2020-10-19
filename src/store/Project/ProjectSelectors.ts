@@ -38,7 +38,8 @@ const createModelFormSelector = (modelFormId?: string) =>
   createSelector(
     (state: RootState) => state.data[DATA_KEY.MODELS],
     (state: RootState) => state.data[DATA_KEY.PROJECT],
-    (state: RootState) => state.data[DATA_KEY.MODEL_FORMS]?.[modelFormId || ""],
+    (state: RootState) =>
+      modelFormId ? state.data[DATA_KEY.MODEL_FORMS]?.[modelFormId] : undefined,
     (models, project, modelId) => {
       const model =
         models && project && modelId ? models[project.id][modelId] : undefined;
