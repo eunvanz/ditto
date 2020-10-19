@@ -31,7 +31,12 @@ const ModelListContainer = () => {
     }
   }, [dispatch, models]);
 
-  const deleteModel = useCallback((model: ModelDoc) => {}, []);
+  const deleteModel = useCallback(
+    (model: ModelDoc) => {
+      dispatch(ProjectActions.deleteModel(model));
+    },
+    [dispatch]
+  );
 
   const showModelForm = useCallback((model: ModelDoc) => {
     setModel(model);
@@ -54,7 +59,7 @@ const ModelListContainer = () => {
       <ModelForm
         isVisible={isModelFormVisible}
         onClose={() => setIsModelFormVisible(false)}
-        model={model}
+        defaultModelId={model?.id}
       />
     </>
   ) : null;

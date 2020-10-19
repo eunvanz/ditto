@@ -1,28 +1,59 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo, useEffect } from "react";
 import ModelForm, { ModelFormModal } from "./ModelForm";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ModelNameFormValues } from "./ModelNameForm";
-import { ModelDoc } from "../../types";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
+import ProjectSelectors from "../../store/Project/ProjectSelectors";
+import shortId from "shortid";
+import { DataActions, DATA_KEY } from "../../store/Data/DataSlice";
 
 export interface ModelFormContainerProps {
-  model?: ModelDoc;
+  defaultModelId?: string;
   isVisible?: boolean;
   onClose?: () => void;
 }
 
 const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
-  model,
+  defaultModelId,
   isVisible,
   onClose,
 }) => {
   const dispatch = useDispatch();
 
+  const modelFormId = useMemo(() => {
+    return shortId.generate();
+  }, []);
+
+  useEffect(() => {
+    if (defaultModelId) {
+      dispatch(
+        DataActions.receiveRecordData({
+          key: DATA_KEY.MODEL_FORMS,
+          recordKey: modelFormId,
+          data: defaultModelId,
+        })
+      );
+    }
+    return () => {
+      dispatch(
+        DataActions.clearRecordData({
+          key: DATA_KEY.MODEL_FORMS,
+          recordKey: modelFormId,
+        })
+      );
+    };
+    // eslint-disable-next-line
+  }, []);
+
+  const { model } = useSelector(
+    ProjectSelectors.createModelFormSelector(modelFormId)
+  );
+
   const submitModel = useCallback(
     (data: ModelNameFormValues) => {
-      dispatch(ProjectActions.submitModelNameForm(data));
+      dispatch(ProjectActions.submitModelNameForm({ ...data, modelFormId }));
     },
-    [dispatch]
+    [dispatch, modelFormId]
   );
 
   return onClose ? (
@@ -34,6 +65,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       onSubmitModelField={() => {}}
       isVisible={isVisible || false}
       onClose={onClose}
+      existingModelNames={[]}
     />
   ) : (
     <ModelForm
@@ -42,6 +74,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       onSubmitModel={submitModel}
       onDeleteModelField={() => {}}
       onSubmitModelField={() => {}}
+      existingModelNames={[]}
     />
   );
 };

@@ -12,6 +12,7 @@ export enum DATA_KEY {
   PROJECT_URLS = "projectUrls",
   MODELS = "models",
   FIELDS = "fields",
+  MODEL_FORMS = "modelForms",
 }
 
 export interface DataPayload {
@@ -44,6 +45,10 @@ export interface DataState {
    * { modelId: { modelFieldId: data } } 형식
    */
   [DATA_KEY.FIELDS]?: Record<string, Record<string, ModelFieldDoc>>;
+  /**
+   * { modelFormId: modelId } 형식
+   */
+  [DATA_KEY.MODEL_FORMS]?: Record<string, string>;
 }
 
 export const initialDataState: DataState = {};
@@ -75,6 +80,19 @@ const DataSlice = createSlice({
       payload.forEach((item: DataPayload) => {
         state[item.key] = item.data;
       });
+    },
+    clearRecordData: (
+      state,
+      action: PayloadAction<Omit<RecordDataPayload, "data">>
+    ) => {
+      const { key, recordKey, subRecordKey } = action.payload;
+      if (subRecordKey) {
+        // @ts-ignore
+        delete state[key][recordKey];
+      } else {
+        // @ts-ignore
+        delete state[key][recordKey][subRecordKey];
+      }
     },
     clearData: (state, action: PayloadAction<DATA_KEY>) => {
       delete state[action.payload];

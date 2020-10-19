@@ -422,22 +422,39 @@ export function* submitModelNameFormFlow() {
 
     const { target } = payload;
 
-    if (!!target) {
-      // TODO: 수정인 경우
-    } else {
-      // 생성인 경우
-      // 모델을 생성하지 않고 필드를 수정할 수 없으므로 loading을 보여줌
-      yield* put(UiActions.showLoading());
-      const recordableDocProps = yield* call(getRecordableDocProps);
-      const newModel: ModelItem = {
-        projectId: currentProject.id,
-        name: payload.name,
-        ...recordableDocProps,
-      };
-      // model document 생성
-      yield* call(Firework.addModel, newModel);
+    try {
+      if (!!target) {
+        // TODO: 수정인 경우
+      } else {
+        // 생성인 경우
+        // 모델을 생성하지 않고 필드를 수정할 수 없으므로 loading을 보여줌
+        yield* put(UiActions.showLoading());
+        const recordableDocProps = yield* call(getRecordableDocProps);
+        const newModel: ModelItem = {
+          projectId: currentProject.id,
+          name: payload.name,
+          ...recordableDocProps,
+        };
+        // model document 생성
+        const newModelRef = yield* call(Firework.addModel, newModel);
+        yield* put(
+          DataActions.receiveRecordData({
+            key: DATA_KEY.MODEL_FORMS,
+            recordKey: payload.modelFormId,
+            data: newModelRef.id,
+          })
+        );
+      }
+    } catch (error) {
+      yield* put(
+        ErrorActions.catchError({
+          error,
+          isAlertOnly: true,
+        })
+      );
+    } finally {
+      yield* put(UiActions.hideLoading());
     }
-    yield* put(UiActions.hideLoading());
   }
 }
 
@@ -490,6 +507,38 @@ export function* listenToProjectModelsFlow() {
   }
 }
 
+export function* deleteModelFlow() {
+  while (true) {
+    const { payload } = yield* take(ProjectActions.deleteModel);
+    // TODO: 다른곳에서 참조하고 있을 경우 삭제를 막는 로직 필요
+    const isConfirmed = yield* call(Alert.confirm, {
+      title: "모델 삭제",
+      message: `정말 ${payload.name} 모델을 삭제하시겠습니까?`,
+    });
+    if (isConfirmed) {
+      try {
+        yield* put(UiActions.showDelayedLoading());
+        yield* call(Firework.deleteModel, payload);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "모델이 삭제되었습니다.",
+          })
+        );
+      } catch (error) {
+        yield* put(
+          ErrorActions.catchError({
+            error,
+            isAlertOnly: true,
+          })
+        );
+      } finally {
+        yield* put(UiActions.hideLoading());
+      }
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -500,5 +549,6 @@ export function* watchProjectActions() {
     fork(deleteProjectUrlFlow),
     fork(submitModelNameFormFlow),
     fork(listenToProjectModelsFlow),
+    fork(deleteModelFlow),
   ]);
 }

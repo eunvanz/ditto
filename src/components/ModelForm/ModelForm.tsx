@@ -77,6 +77,8 @@ export interface ModelFormProps {
    * onClose가 전달되면 X 버튼이 생성
    */
   onClose?: () => void;
+  // TODO: 겹치는 모델명 방지 로직 작성
+  existingModelNames: string[];
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -403,7 +405,7 @@ export const ModelFormModal: React.FC<ModelFormModalProps> = ({
   ...restProps
 }) => {
   return (
-    <Dialog open={isVisible} onClose={onClose} fullWidth maxWidth="xl">
+    <Dialog open={isVisible} fullWidth maxWidth="xl">
       <ModelForm {...restProps} onClose={onClose} />
     </Dialog>
   );

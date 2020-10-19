@@ -6,6 +6,7 @@ import {
   ProjectUrlDoc,
   ModelItem,
   ModelFieldItem,
+  ModelDoc,
 } from "../../types";
 import { call } from "typed-redux-saga";
 
@@ -90,6 +91,10 @@ function getProjectModelsRef(projectId: string) {
   return db.collection(`projects/${projectId}/models`);
 }
 
+function* deleteModel(model: ModelDoc) {
+  yield* call(deleteDocument, `projects/${model.projectId}/models/`, model.id);
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -105,6 +110,7 @@ export const realFirework = {
   addModelField,
   getModelRef,
   getProjectModelsRef,
+  deleteModel,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

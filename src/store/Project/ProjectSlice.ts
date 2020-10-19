@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ProjectFormValues } from "../../components/ProjectForm/ProjectForm";
-import { ProjectDoc, ProjectUrlDoc } from "../../types";
+import { ProjectDoc, ProjectUrlDoc, ModelDoc } from "../../types";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
 import { ModelNameFormValues } from "../../components/ModelForm/ModelNameForm";
@@ -31,7 +31,10 @@ const ProjectSlice = createSlice({
     listenToProjectUrls: (_, _action: PayloadAction<void>) => {},
     unlistenToProjectUrls: (_, _action: PayloadAction<void>) => {},
     deleteProjectUrl: (_, _action: PayloadAction<ProjectUrlDoc>) => {},
-    submitModelNameForm: (_, _action: PayloadAction<ModelNameFormValues>) => {},
+    submitModelNameForm: (
+      _,
+      _action: PayloadAction<ModelNameFormValues & { modelFormId: string }>
+    ) => {},
     listenToModel: (
       _,
       _action: PayloadAction<{
@@ -42,6 +45,7 @@ const ProjectSlice = createSlice({
     unlistenToModel: (_, _action: PayloadAction<void>) => {},
     listenToProjectModels: (_, _action: PayloadAction<void>) => {},
     unlistenToProjectModels: (_, _action: PayloadAction<void>) => {},
+    deleteModel: (_, _action: PayloadAction<ModelDoc>) => {},
   },
 });
 

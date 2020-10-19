@@ -44,11 +44,32 @@ const selectForProjectBasicForm = createSelector(
   })
 );
 
+const createModelFormSelector = (modelFormId?: string) =>
+  createSelector(
+    DataSelectors.createDataKeySelector(DATA_KEY.MODELS),
+    DataSelectors.createDataKeySelector(DATA_KEY.PROJECT),
+    DataSelectors.createRecordDataKeySelector({
+      dataKey: DATA_KEY.MODEL_FORMS,
+      recordKey: modelFormId || "",
+    }),
+    (models, project, modelId) => {
+      return {
+        model:
+          models && project && modelId
+            ? (models as Record<string, any>)[
+                (project as ProjectDoc).id as string
+              ][modelId as string]
+            : undefined,
+      };
+    }
+  );
+
 const ProjectSelectors = {
   selectIsProjectFormSubmitting,
   selectProjectUrls,
   selectForProjectBasicForm,
   selectProjectModels,
+  createModelFormSelector,
 };
 
 export default ProjectSelectors;
