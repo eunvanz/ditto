@@ -444,6 +444,12 @@ export function* submitModelNameFormFlow() {
             data: newModelRef.id,
           })
         );
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "모델이 생성됐습니다.",
+          })
+        );
       }
     } catch (error) {
       yield* put(
