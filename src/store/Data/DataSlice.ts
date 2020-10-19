@@ -88,10 +88,10 @@ const DataSlice = createSlice({
       const { key, recordKey, subRecordKey } = action.payload;
       if (subRecordKey) {
         // @ts-ignore
-        delete state[key][recordKey];
+        delete state[key]?.[recordKey];
       } else {
         // @ts-ignore
-        delete state[key][recordKey][subRecordKey];
+        delete state[key]?.[recordKey]?.[subRecordKey];
       }
     },
     clearData: (state, action: PayloadAction<DATA_KEY>) => {

@@ -57,6 +57,7 @@ const ModelListContainer = () => {
         onClickAdd={showNewModelForm}
       />
       <ModelForm
+        key={model?.id}
         isVisible={isModelFormVisible}
         onClose={() => setIsModelFormVisible(false)}
         defaultModelId={model?.id}
