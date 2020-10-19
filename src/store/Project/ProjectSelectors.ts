@@ -53,13 +53,27 @@ const createModelFormSelector = (modelFormId?: string) =>
       recordKey: modelFormId || "",
     }),
     (models, project, modelId) => {
+      const model =
+        models && project && modelId
+          ? (models as Record<string, any>)[
+              (project as ProjectDoc).id as string
+            ][modelId as string]
+          : undefined;
+      const existingModelNames: string[] = [];
+      if (models) {
+        const projectModels = (models as Record<
+          string,
+          Record<string, ModelDoc>
+        >)[(project as ProjectDoc).id];
+        convertRecordToArray(projectModels).forEach((item) => {
+          if (!modelId || item.id !== modelId) {
+            existingModelNames.push(item.name);
+          }
+        });
+      }
       return {
-        model:
-          models && project && modelId
-            ? (models as Record<string, any>)[
-                (project as ProjectDoc).id as string
-              ][modelId as string]
-            : undefined,
+        model,
+        existingModelNames,
       };
     }
   );

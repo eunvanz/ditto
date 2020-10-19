@@ -19,12 +19,14 @@ export interface ModelNameFormProps {
   model?: ModelDoc;
   nameInputRef: React.MutableRefObject<any>;
   onSubmit: (data: ModelNameFormValues) => void;
+  existingModelNames: string[];
 }
 
 const ModelNameForm: React.FC<ModelNameFormProps> = ({
   model,
   nameInputRef,
   onSubmit,
+  existingModelNames,
 }) => {
   const classes = useStyles();
 
@@ -70,6 +72,12 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
                   maxLength: {
                     value: 40,
                     message: "별로 좋은 생각이 아닌 것 같아요.",
+                  },
+                  validate: (data: string) => {
+                    const isDup = existingModelNames.some(
+                      (item) => item === data
+                    );
+                    return isDup ? "중복되는 모델명이 있어요." : true;
                   },
                 });
               }}

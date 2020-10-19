@@ -45,7 +45,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
     // eslint-disable-next-line
   }, []);
 
-  const { model } = useSelector(
+  const { model, existingModelNames } = useSelector(
     ProjectSelectors.createModelFormSelector(modelFormId)
   );
 
@@ -65,7 +65,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       onSubmitModelField={() => {}}
       isVisible={isVisible || false}
       onClose={onClose}
-      existingModelNames={[]}
+      existingModelNames={existingModelNames}
     />
   ) : (
     <ModelForm
@@ -74,7 +74,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       onSubmitModel={submitModel}
       onDeleteModelField={() => {}}
       onSubmitModelField={() => {}}
-      existingModelNames={[]}
+      existingModelNames={existingModelNames}
     />
   );
 };
