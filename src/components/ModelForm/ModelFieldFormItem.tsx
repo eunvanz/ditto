@@ -104,6 +104,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
               {...props}
               autoFocus={autoFocusField === "isRequired"}
               defaultChecked={defaultValues.isRequired}
+              checked={props.value}
+              onChange={(e) => props.onChange(e.target.checked)}
               onBlur={onBlur}
               onFocus={onFocus}
             />
@@ -119,6 +121,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
               {...props}
               autoFocus={autoFocusField === "isArray"}
               defaultChecked={defaultValues.isArray}
+              checked={props.value}
+              onChange={(e) => props.onChange(e.target.checked)}
               onBlur={onBlur}
               onFocus={onFocus}
             />
