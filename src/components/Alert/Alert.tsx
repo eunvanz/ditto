@@ -32,6 +32,24 @@ const Alert = ({
   onOk,
   onCancel,
 }: AlertProps) => {
+  const handleOnKeyup = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        onOk?.();
+      } else if (e.key === "Escape") {
+        onCancel?.();
+      }
+    },
+    [onCancel, onOk]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keyup", handleOnKeyup);
+    return () => {
+      window.removeEventListener("keyup", handleOnKeyup);
+    };
+  }, [handleOnKeyup]);
+
   return (
     <Dialog fullWidth maxWidth="xs" open={isVisible} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
@@ -140,24 +158,9 @@ Alert.confirm = ({
         handleResolve(false);
       }, []);
 
-      const handleOnKeyup = useCallback(
-        (e: KeyboardEvent) => {
-          if (e.key === "Enter") {
-            confirm();
-          } else if (e.key === "Escape") {
-            cancel();
-          }
-        },
-        [cancel, confirm]
-      );
-
       useEffect(() => {
         setIsAlertVisible(true);
-        window.addEventListener("keyup", handleOnKeyup);
-        return () => {
-          window.removeEventListener("keyup", handleOnKeyup);
-        };
-      }, [handleOnKeyup]);
+      }, []);
 
       return (
         <ProvidedAlert
