@@ -13,6 +13,7 @@ export enum DATA_KEY {
   MODELS = "models",
   FIELDS = "fields",
   MODEL_FORMS = "modelForms",
+  MODEL_FIELDS = "modelFields",
 }
 
 export interface DataPayload {
@@ -49,6 +50,10 @@ export interface DataState {
    * { modelFormId: modelId } 형식
    */
   [DATA_KEY.MODEL_FORMS]?: Record<string, string>;
+  /**
+   * 현재 수정하고 있는 모델 필드들
+   */
+  [DATA_KEY.MODEL_FIELDS]?: ModelFieldDoc[];
 }
 
 export const initialDataState: DataState = {};

@@ -1,9 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ProjectFormValues } from "../../components/ProjectForm/ProjectForm";
-import { ProjectDoc, ProjectUrlDoc, ModelDoc } from "../../types";
+import {
+  ProjectDoc,
+  ProjectUrlDoc,
+  ModelDoc,
+  ModelFieldDoc,
+} from "../../types";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
 import { ModelNameFormValues } from "../../components/ModelForm/ModelNameForm";
+import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
 
 export type ProjectState = {};
 
@@ -35,6 +41,10 @@ const ProjectSlice = createSlice({
       _,
       _action: PayloadAction<ModelNameFormValues & { modelFormId: string }>
     ) => {},
+    submitModelFieldForm: (
+      _,
+      _action: PayloadAction<ModelFieldFormValues & { modelFormId: string }>
+    ) => {},
     listenToModel: (
       _,
       _action: PayloadAction<{
@@ -45,7 +55,10 @@ const ProjectSlice = createSlice({
     unlistenToModel: (_, _action: PayloadAction<void>) => {},
     listenToProjectModels: (_, _action: PayloadAction<void>) => {},
     unlistenToProjectModels: (_, _action: PayloadAction<void>) => {},
+    listenToModelFields: (_, _action: PayloadAction<ModelDoc>) => {},
+    unlistenToModelFields: (_, _action: PayloadAction<ModelDoc>) => {},
     deleteModel: (_, _action: PayloadAction<ModelDoc>) => {},
+    deleteModelField: (_, _action: PayloadAction<ModelFieldDoc>) => {},
   },
 });
 

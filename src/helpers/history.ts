@@ -1,6 +1,8 @@
 import { createBrowserHistory } from "history";
 
-const history = createBrowserHistory();
+export const BASE_NAME = ""
+
+const history = createBrowserHistory({ basename: BASE_NAME });
 
 history.listen((_, action) => {
   if (action !== "POP") {

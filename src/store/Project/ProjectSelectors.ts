@@ -40,7 +40,8 @@ const createModelFormSelector = (modelFormId?: string) =>
     (state: RootState) => state.data[DATA_KEY.PROJECT],
     (state: RootState) =>
       modelFormId ? state.data[DATA_KEY.MODEL_FORMS]?.[modelFormId] : undefined,
-    (models, project, modelId) => {
+    (state: RootState) => state.data[DATA_KEY.MODEL_FIELDS],
+    (models, project, modelId, modelFields) => {
       const model =
         models && project && modelId ? models[project.id][modelId] : undefined;
       const existingModelNames: string[] = [];
@@ -55,6 +56,7 @@ const createModelFormSelector = (modelFormId?: string) =>
       return {
         model,
         existingModelNames,
+        modelFields,
       };
     }
   );

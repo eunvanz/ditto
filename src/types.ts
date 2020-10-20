@@ -206,10 +206,6 @@ export interface ModelCell<T> extends Recordable {
   settingsByMember: Record<string, BaseSettings>;
 }
 
-export interface ModelFieldSettings extends BaseSettings {
-  next?: string;
-}
-
 export interface ModelFieldItem extends Recordable {
   next?: string;
   projectId: string;
@@ -222,7 +218,27 @@ export interface ModelFieldItem extends Recordable {
   format: ModelCell<string>;
   enum: ModelCell<string>;
   description: ModelCell<string>;
-  settingsByMember: Record<string, ModelFieldSettings>;
+  settingsByMember: Record<string, BaseSettings>;
+}
+
+export interface ModifiableModelFieldItem
+  extends Omit<
+    Partial<ModelFieldItem>,
+    | "fieldName"
+    | "isRequired"
+    | "isArray"
+    | "fieldType"
+    | "format"
+    | "enum"
+    | "description"
+  > {
+  fieldName: Partial<ModelCell<string>>;
+  isRequired: Partial<ModelCell<boolean>>;
+  isArray: Partial<ModelCell<boolean>>;
+  fieldType: Partial<ModelCell<string>>;
+  format: Partial<ModelCell<string>>;
+  enum: Partial<ModelCell<string>>;
+  description: Partial<ModelCell<string>>;
 }
 
 export interface ModelItem extends Recordable {
@@ -230,13 +246,15 @@ export interface ModelItem extends Recordable {
   name: string;
   extends?: string;
   description?: string;
+  referencedByModelField?: Record<string, boolean>;
+  extendedByByModel?: Record<string, boolean>;
   settingsByMember: Record<string, BaseSettings>;
 }
 
 export type ModelCellDoc<T> = Doc<ModelCell<T>, BaseSettings>;
 
 export type ModelFieldDoc = Omit<
-  Doc<ModelFieldItem, ModelFieldSettings>,
+  Doc<ModelFieldItem, BaseSettings>,
   | "fieldName"
   | "isRequired"
   | "fieldType"

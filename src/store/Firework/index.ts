@@ -7,6 +7,8 @@ import {
   ModelItem,
   ModelFieldItem,
   ModelDoc,
+  ModelFieldDoc,
+  ModifiableModelFieldItem,
 } from "../../types";
 import { call } from "typed-redux-saga";
 
@@ -65,6 +67,19 @@ function* updateProjectUrl(id: string, projectUrl: Partial<ProjectUrlItem>) {
   );
 }
 
+function* updateModel(id: string, model: Partial<ModelItem>) {
+  yield* call(updateDocument, `projects/${model.projectId}/models`, id, model);
+}
+
+function* updateModelField(id: string, modelField: ModifiableModelFieldItem) {
+  yield* call(
+    updateDocument,
+    `projects/${modelField.projectId}/models/${modelField.modelId}/modelFields`,
+    id,
+    modelField
+  );
+}
+
 function* addModel(data: ModelItem) {
   return yield* call(addDocument, `projects/${data.projectId}/models`, data);
 }
@@ -72,7 +87,7 @@ function* addModel(data: ModelItem) {
 function* addModelField(data: ModelFieldItem) {
   return yield* call(
     addDocument,
-    `projects/${data.projectId}/models/${data.modelId}`,
+    `projects/${data.projectId}/models/${data.modelId}/modelFields`,
     data
   );
 }
@@ -95,6 +110,20 @@ function* deleteModel(model: ModelDoc) {
   yield* call(deleteDocument, `projects/${model.projectId}/models/`, model.id);
 }
 
+function getModelFieldsRef(model: ModelDoc) {
+  return db.collection(
+    `projects/${model.projectId}/models/${model.id}/modelFields`
+  );
+}
+
+function* deleteModelField(modelField: ModelFieldDoc) {
+  yield* call(
+    deleteDocument,
+    `projects/${modelField.projectId}/models/${modelField.modelId}/modelFields/`,
+    modelField.id
+  );
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -111,6 +140,10 @@ export const realFirework = {
   getModelRef,
   getProjectModelsRef,
   deleteModel,
+  getModelFieldsRef,
+  deleteModelField,
+  updateModel,
+  updateModelField,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

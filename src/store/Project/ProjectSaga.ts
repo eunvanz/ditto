@@ -8,14 +8,25 @@ import AuthSelectors from "../Auth/AuthSelector";
 import Alert from "../../components/Alert";
 import { getTimestamp } from "../../firebase";
 import { ErrorActions } from "../Error/ErrorSlice";
-import { ProjectDoc, ProjectUrlDoc, ModelItem, ModelDoc } from "../../types";
+import {
+  ProjectDoc,
+  ProjectUrlDoc,
+  ModelItem,
+  ModelDoc,
+  ModelFieldItem,
+  ModelFieldDoc,
+  ModifiableModelFieldItem,
+} from "../../types";
 import { eventChannel, EventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
 import { RootState } from "..";
 import DataSelectors from "../Data/DataSelectors";
 import { AuthActions } from "../Auth/AuthSlice";
 import { requireSignIn } from "../Auth/AuthSaga";
-import { assertNotEmpty } from "../../helpers/commonHelpers";
+import {
+  assertNotEmpty,
+  getPathFromLocation,
+} from "../../helpers/commonHelpers";
 import { PayloadAction, ActionCreator, Action } from "@reduxjs/toolkit";
 import history from "../../helpers/history";
 import ROUTE from "../../paths";
@@ -113,17 +124,26 @@ export function* listenToMyProjectsFlow() {
     yield* take(ProjectActions.listenToMyProjects);
     const auth = yield* select(AuthSelectors.selectAuth);
     if (auth.uid) {
-      const myProjectEventChannel = createMyProjectsEventChannel(auth.uid);
+      try {
+        const myProjectEventChannel = createMyProjectsEventChannel(auth.uid);
 
-      yield* fork(listenToEventChannel, {
-        eventChannel: myProjectEventChannel,
-        dataReceiverCreator: (data: ProjectDoc[]) =>
-          DataActions.receiveData({
-            key: DATA_KEY.PROJECTS,
-            data,
-          }),
-        unlistenWaiter: waitForUnlistenToMyProject,
-      });
+        yield* fork(listenToEventChannel, {
+          eventChannel: myProjectEventChannel,
+          dataReceiverCreator: (data: ProjectDoc[]) =>
+            DataActions.receiveData({
+              key: DATA_KEY.PROJECTS,
+              data,
+            }),
+          unlistenWaiter: waitForUnlistenToMyProject,
+        });
+      } catch (error) {
+        yield* put(
+          ErrorActions.catchError({
+            error,
+            retryPath: getPathFromLocation(window.location),
+          })
+        );
+      }
     } else {
       yield* put(
         DataActions.receiveData({
@@ -348,6 +368,7 @@ export function* deleteProjectUrlFlow() {
       continue;
     }
     try {
+      yield* put(UiActions.showDelayedLoading());
       yield* call(Firework.deleteProjectUrl, projectUrl);
       yield* put(
         UiActions.showNotification({
@@ -357,11 +378,40 @@ export function* deleteProjectUrlFlow() {
       );
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    } finally {
+      yield* put(UiActions.hideLoading());
     }
   }
 }
 
-export function* getRecordableDocProps() {
+export function* deleteModelFieldFlow() {
+  while (true) {
+    const { payload: modelField } = yield* take(
+      ProjectActions.deleteModelField
+    );
+    try {
+      yield* put(UiActions.showDelayedLoading());
+      yield* call(Firework.deleteModelField, modelField);
+      yield* put(
+        UiActions.showNotification({
+          type: "success",
+          message: "필드가 삭제되었습니다.",
+        })
+      );
+    } catch (error) {
+      yield* put(
+        ErrorActions.catchError({
+          error,
+          isAlertOnly: true,
+        })
+      );
+    } finally {
+      yield* put(UiActions.hideLoading());
+    }
+  }
+}
+
+export function* getRecordableDocProps<T>(additionalSettings?: T) {
   const auth = yield* select(AuthSelectors.selectAuth);
   const timestamp = yield* call(getTimestamp);
   return {
@@ -372,6 +422,7 @@ export function* getRecordableDocProps() {
     settingsByMember: {
       [auth.uid]: {
         updatedAt: timestamp,
+        ...additionalSettings,
       },
     },
   };
@@ -404,19 +455,9 @@ export function createUnlistenWaiter({
 export function* submitModelNameFormFlow() {
   while (true) {
     const { payload } = yield* take(ProjectActions.submitModelNameForm);
-    const { currentProject } = yield* select((state: RootState) => ({
-      currentProject: state.data[DATA_KEY.PROJECT],
-    }));
 
-    // currentProject가 없을경우 오류
+    const currentProject = yield* call(selectAndCheckProject);
     if (!currentProject) {
-      yield* put(
-        ErrorActions.catchError({
-          error: new Error("선택되어있는 프로젝트가 없습니다."),
-          isAlertOnly: true,
-        })
-      );
-      yield* call(history.push, ROUTE.ROOT);
       continue;
     }
 
@@ -424,7 +465,17 @@ export function* submitModelNameFormFlow() {
 
     try {
       if (!!target) {
-        // TODO: 수정인 경우
+        // 수정인 경우
+        yield* put(UiActions.showDelayedLoading());
+        delete payload.target;
+        delete payload.modelFormId;
+        const updatedRecordProps = yield* call(getUpdatedRecordProps);
+        const newModel: Partial<ModelItem> = {
+          projectId: currentProject.id,
+          ...payload,
+          ...updatedRecordProps,
+        };
+        yield* call(Firework.updateModel, target.id, newModel);
       } else {
         // 생성인 경우
         // 모델을 생성하지 않고 필드를 수정할 수 없으므로 loading을 보여줌
@@ -482,18 +533,8 @@ export function createProjectModelsEventChannel(projectId: string) {
 export function* listenToProjectModelsFlow() {
   while (true) {
     yield* take(ProjectActions.listenToProjectModels);
-    const project = yield* select(
-      (state: RootState) => state.data[DATA_KEY.PROJECT]
-    );
-
+    const project = yield* call(selectAndCheckProject);
     if (!project) {
-      yield* put(
-        ErrorActions.catchError({
-          error: new Error("작업 대상 프로젝트가 없습니다."),
-          isAlertOnly: true,
-        })
-      );
-      yield* call(history.push, ROUTE.ROOT);
       continue;
     }
 
@@ -508,6 +549,48 @@ export function* listenToProjectModelsFlow() {
       unlistenWaiter: createUnlistenWaiter({
         cleanUpAction: DataActions.clearData(DATA_KEY.MODELS),
         unlistenAction: ProjectActions.unlistenToProjectModels,
+      }),
+    });
+  }
+}
+
+export function createModelFieldsEventChannel(model: ModelDoc) {
+  const listener = eventChannel((emit) => {
+    const modelFieldsRef = Firework.getModelFieldsRef(model);
+    const unsubscribe = modelFieldsRef.onSnapshot((querySnapshot) => {
+      const result: ModelFieldDoc[] = [];
+      querySnapshot.forEach((modelField) => {
+        result.push({
+          id: modelField.id,
+          ...modelField.data(),
+        } as ModelFieldDoc);
+      });
+      emit(result);
+    });
+    return unsubscribe;
+  });
+  return listener;
+}
+
+export function* listenToModelFieldsFlow() {
+  while (true) {
+    const { payload: model } = yield* take(ProjectActions.listenToModelFields);
+    const project = yield* call(selectAndCheckProject);
+    if (!project) {
+      continue;
+    }
+
+    yield* fork(listenToEventChannel, {
+      eventChannel: createModelFieldsEventChannel(model),
+      dataReceiverCreator: (data) =>
+        DataActions.receiveData({
+          key: DATA_KEY.MODEL_FIELDS,
+          data,
+        }),
+      unlistenWaiter: createUnlistenWaiter({
+        cleanUpAction: DataActions.clearData(DATA_KEY.MODEL_FIELDS),
+        unlistenAction: ProjectActions.unlistenToModelFields,
+        hasToCleanUpOnUnlisten: true,
       }),
     });
   }
@@ -545,6 +628,155 @@ export function* deleteModelFlow() {
   }
 }
 
+export function* selectAndCheckProject() {
+  const { currentProject } = yield* select((state: RootState) => ({
+    currentProject: state.data[DATA_KEY.PROJECT],
+  }));
+
+  // currentProject가 없을경우 오류
+  if (!currentProject) {
+    yield* put(
+      ErrorActions.catchError({
+        error: new Error("선택되어있는 프로젝트가 없습니다."),
+        isAlertOnly: true,
+      })
+    );
+    yield* call(history.push, ROUTE.ROOT);
+    return undefined;
+  }
+  return currentProject;
+}
+
+export function* getUpdatedRecordProps() {
+  const auth = yield* select(AuthSelectors.selectAuth);
+  const timestamp = yield* call(getTimestamp);
+  return {
+    updatedAt: timestamp,
+    updatedBy: auth.uid,
+    settingsByMember: {
+      [auth.uid]: {
+        updatedAt: timestamp,
+      },
+    },
+  };
+}
+
+export function* submitModelFieldFormFlow() {
+  while (true) {
+    const { payload } = yield* take(ProjectActions.submitModelFieldForm);
+
+    const modelId = yield* select(
+      (state: RootState) => state.data.modelForms?.[payload.modelFormId]
+    );
+
+    if (!modelId) {
+      yield* put(
+        ErrorActions.catchError({
+          error: new Error("선택되어 있는 모델이 없습니다."),
+          isAlertOnly: true,
+        })
+      );
+      continue;
+    }
+
+    const currentProject = yield* call(selectAndCheckProject);
+    if (!currentProject) {
+      continue;
+    }
+
+    const { target } = payload;
+
+    try {
+      yield* put(UiActions.showDelayedLoading(500));
+      if (!!target) {
+        delete payload.target;
+        delete payload.modelFormId;
+        const updatedRecordProps = yield* call(getUpdatedRecordProps);
+        const newModelField: ModifiableModelFieldItem = {
+          projectId: currentProject.id,
+          modelId,
+          fieldName: {
+            value: payload.fieldName,
+            ...updatedRecordProps,
+          },
+          isRequired: {
+            value: payload.isRequired,
+            ...updatedRecordProps,
+          },
+          isArray: {
+            value: payload.isArray,
+            ...updatedRecordProps,
+          },
+          fieldType: {
+            value: payload.fieldType,
+            ...updatedRecordProps,
+          },
+          format: {
+            value: payload.format,
+            ...updatedRecordProps,
+          },
+          enum: {
+            value: payload.format,
+            ...updatedRecordProps,
+          },
+          description: {
+            value: payload.description,
+            ...updatedRecordProps,
+          },
+          ...updatedRecordProps,
+        };
+        yield* call(Firework.updateModelField, target.id, newModelField);
+      } else {
+        const recordableDocProps = yield* call(getRecordableDocProps);
+        const newModelField: ModelFieldItem = {
+          projectId: currentProject.id,
+          modelId,
+          fieldName: {
+            value: payload.fieldName,
+            ...recordableDocProps,
+          },
+          isRequired: {
+            value: payload.isRequired,
+            ...recordableDocProps,
+          },
+          isArray: {
+            value: payload.isArray,
+            ...recordableDocProps,
+          },
+          fieldType: {
+            value: payload.fieldType,
+            ...recordableDocProps,
+          },
+          format: {
+            value: payload.format,
+            ...recordableDocProps,
+          },
+          enum: {
+            value: payload.format,
+            ...recordableDocProps,
+          },
+          description: {
+            value: payload.description,
+            ...recordableDocProps,
+          },
+          ...recordableDocProps,
+        };
+        // modelField 생성
+        yield* call(Firework.addModelField, newModelField);
+      }
+    } catch (error) {
+      yield* put(
+        ErrorActions.catchError({
+          error,
+          isAlertOnly: true,
+        })
+      );
+    } finally {
+      yield* put(UiActions.hideLoading());
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -556,5 +788,8 @@ export function* watchProjectActions() {
     fork(submitModelNameFormFlow),
     fork(listenToProjectModelsFlow),
     fork(deleteModelFlow),
+    fork(submitModelFieldFormFlow),
+    fork(listenToModelFieldsFlow),
+    fork(deleteModelFieldFlow),
   ]);
 }
