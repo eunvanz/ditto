@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -123,14 +123,41 @@ Alert.confirm = ({
       const handleResolve = (isConfirmed: boolean) => {
         setIsAlertVisible(false);
         setTimeout(() => {
-          document.body.removeChild(container);
+          try {
+            document.body.removeChild(container);
+          } catch (error) {
+            // FIXME: 두번 연속 실행되는 시점부터 오류가 남 (원인 불명)
+          }
           resolve(isConfirmed);
-        }, 500);
+        }, 200);
       };
+
+      const confirm = useCallback(() => {
+        handleResolve(true);
+      }, []);
+
+      const cancel = useCallback(() => {
+        handleResolve(false);
+      }, []);
+
+      const handleOnKeyup = useCallback(
+        (e: KeyboardEvent) => {
+          if (e.key === "Enter") {
+            confirm();
+          } else if (e.key === "Escape") {
+            cancel();
+          }
+        },
+        [cancel, confirm]
+      );
 
       useEffect(() => {
         setIsAlertVisible(true);
-      }, []);
+        window.addEventListener("keyup", handleOnKeyup);
+        return () => {
+          window.removeEventListener("keyup", handleOnKeyup);
+        };
+      }, [handleOnKeyup]);
 
       return (
         <ProvidedAlert
@@ -138,8 +165,8 @@ Alert.confirm = ({
           onClose={() => setIsAlertVisible(false)}
           title={title}
           message={message}
-          onOk={() => handleResolve(true)}
-          onCancel={() => handleResolve(false)}
+          onOk={confirm}
+          onCancel={cancel}
           okText={okText}
           cancelText={cancelText}
         />
