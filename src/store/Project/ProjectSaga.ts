@@ -716,7 +716,7 @@ export function* submitModelFieldFormFlow() {
             ...updatedRecordProps,
           },
           enum: {
-            value: payload.format,
+            value: payload.enum,
             ...updatedRecordProps,
           },
           description: {
@@ -752,7 +752,7 @@ export function* submitModelFieldFormFlow() {
             ...recordableDocProps,
           },
           enum: {
-            value: payload.format,
+            value: payload.enum,
             ...recordableDocProps,
           },
           description: {
