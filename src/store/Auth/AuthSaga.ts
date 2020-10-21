@@ -8,6 +8,7 @@ import { UiActions } from "../Ui/UiSlice";
 import { ProgressActions } from "../Progress/ProgressSlice";
 import AuthSelectors from "./AuthSelector";
 import Alert from "../../components/Alert";
+import { ErrorActions } from "../Error/ErrorSlice";
 
 export function* requireSignIn() {
   const auth = yield* select(AuthSelectors.selectAuth);
@@ -30,10 +31,20 @@ export function* signInWithGoogleFlow() {
     const { type } = yield* take(AuthActions.signInWithGoogle);
     yield* put(ProgressActions.startProgress(type));
     yield* put(UiActions.showLoading());
-    const firebase = yield* call(getFirebase);
-    yield* call(firebase.login, { provider: "google", type: "redirect" });
-    yield* put(ProgressActions.finishProgress(type));
-    yield* put(UiActions.hideLoading());
+    try {
+      const firebase = yield* call(getFirebase);
+      yield* call(firebase.login, { provider: "google", type: "redirect" });
+    } catch (error) {
+      yield* put(
+        ErrorActions.catchError({
+          error,
+          isAlertOnly: true,
+        })
+      );
+    } finally {
+      yield* put(ProgressActions.finishProgress(type));
+      yield* put(UiActions.hideLoading());
+    }
   }
 }
 
@@ -41,10 +52,19 @@ export function* signOutFlow() {
   while (true) {
     yield* take(AuthActions.signOut);
     yield* put(UiActions.showLoading());
-    const firebase = yield* call(getFirebase);
-    yield* call(firebase.logout);
-    yield* all([put(DataActions.clearData(DATA_KEY.PROJECTS))]);
-    yield* call(history.push, ROUTE.ROOT);
+    try {
+      const firebase = yield* call(getFirebase);
+      yield* call(firebase.logout);
+      yield* all([put(DataActions.clearData(DATA_KEY.PROJECTS))]);
+      yield* call(history.push, ROUTE.ROOT);
+    } catch (error) {
+      yield* put(
+        ErrorActions.catchError({
+          error,
+          isAlertOnly: true,
+        })
+      );
+    }
     yield* put(UiActions.hideLoading());
   }
 }

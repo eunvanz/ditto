@@ -107,13 +107,18 @@ export function* submitProjectFormFlow() {
 export function createMyProjectsEventChannel(uid: string) {
   const listener = eventChannel((emit) => {
     const myProjectRef = Firework.getMyProjectsRef(uid);
-    const unsubscribe = myProjectRef.onSnapshot((querySnapshot) => {
-      const projects: ProjectDoc[] = [];
-      querySnapshot.forEach((doc) => {
-        projects.push({ id: doc.id, ...doc.data() } as ProjectDoc);
-      });
-      emit(orderBy(projects, [`settingsByMember.${uid}.seq`], ["asc"]));
-    });
+    const unsubscribe = myProjectRef.onSnapshot(
+      (querySnapshot) => {
+        const projects: ProjectDoc[] = [];
+        querySnapshot.forEach((doc) => {
+          projects.push({ id: doc.id, ...doc.data() } as ProjectDoc);
+        });
+        emit(orderBy(projects, [`settingsByMember.${uid}.seq`], ["asc"]));
+      },
+      (error) => {
+        emit(error);
+      }
+    );
     return unsubscribe;
   });
   return listener;
@@ -313,9 +318,18 @@ export function* listenToEventChannel({
   dataReceiverCreator: (data: any) => PayloadAction<any>;
 }) {
   while (true) {
-    const data = yield* take(eventChannel);
-    yield* put(dataReceiverCreator(data));
-    yield* fork(unlistenWaiter, eventChannel);
+    try {
+      const data = yield* take(eventChannel);
+      yield* put(dataReceiverCreator(data));
+      yield* fork(unlistenWaiter, eventChannel);
+    } catch (error) {
+      put(
+        ErrorActions.catchError({
+          error,
+          isAlertOnly: true,
+        })
+      );
+    }
   }
 }
 
@@ -518,13 +532,18 @@ export function* submitModelNameFormFlow() {
 export function createProjectModelsEventChannel(projectId: string) {
   const listener = eventChannel((emit) => {
     const projectModelsRef = Firework.getProjectModelsRef(projectId);
-    const unsubscribe = projectModelsRef.onSnapshot((querySnapshot) => {
-      const record: Record<string, ModelDoc> = {};
-      querySnapshot.forEach((model) => {
-        record[model.id] = { id: model.id, ...model.data() } as ModelDoc;
-      });
-      emit(record);
-    });
+    const unsubscribe = projectModelsRef.onSnapshot(
+      (querySnapshot) => {
+        const record: Record<string, ModelDoc> = {};
+        querySnapshot.forEach((model) => {
+          record[model.id] = { id: model.id, ...model.data() } as ModelDoc;
+        });
+        emit(record);
+      },
+      (error) => {
+        emit(error);
+      }
+    );
     return unsubscribe;
   });
   return listener;
@@ -557,16 +576,21 @@ export function* listenToProjectModelsFlow() {
 export function createModelFieldsEventChannel(model: ModelDoc) {
   const listener = eventChannel((emit) => {
     const modelFieldsRef = Firework.getModelFieldsRef(model);
-    const unsubscribe = modelFieldsRef.onSnapshot((querySnapshot) => {
-      const result: ModelFieldDoc[] = [];
-      querySnapshot.forEach((modelField) => {
-        result.push({
-          id: modelField.id,
-          ...modelField.data(),
-        } as ModelFieldDoc);
-      });
-      emit(result);
-    });
+    const unsubscribe = modelFieldsRef.onSnapshot(
+      (querySnapshot) => {
+        const result: ModelFieldDoc[] = [];
+        querySnapshot.forEach((modelField) => {
+          result.push({
+            id: modelField.id,
+            ...modelField.data(),
+          } as ModelFieldDoc);
+        });
+        emit(result);
+      },
+      (error) => {
+        emit(error);
+      }
+    );
     return unsubscribe;
   });
   return listener;
