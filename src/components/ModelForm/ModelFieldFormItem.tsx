@@ -171,7 +171,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
           control={control}
           name="format"
           defaultValue={defaultValues.format || formatOptions[0]}
-          render={({ value, name }) => {
+          render={({ value }) => {
             return (
               <Autocomplete
                 value={value}

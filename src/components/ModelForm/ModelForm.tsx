@@ -149,11 +149,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   );
 
   const isFieldModified = useMemo(() => {
-    // 모델 정보는 제외하고 비교
-    return !isEqual(
-      { ...watchedValues, modelName: undefined, modelDescription: undefined },
-      { ...defaultValues, modelName: undefined, modelDescription: undefined }
-    );
+    return !isEqual(watchedValues, defaultValues);
   }, [defaultValues, watchedValues]);
 
   const hideForms = useCallback(() => {
