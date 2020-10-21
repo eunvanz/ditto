@@ -218,6 +218,9 @@ const ModelForm: React.FC<ModelFormProps> = ({
       setValue("isRequired", defaultValues.isRequired, {
         shouldValidate: true,
       });
+      setValue("isArray", defaultValues.isArray, {
+        shouldValidate: true,
+      });
       setValue("fieldType", defaultValues.fieldType, { shouldValidate: true });
       setValue("format", defaultValues.format, { shouldValidate: true });
       setValue("enum", defaultValues.enum, { shouldValidate: true });
