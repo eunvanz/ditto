@@ -102,6 +102,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
 
   const isFocusingRef = useRef<boolean>(false);
   const modelNameInputRef = useRef<any>(undefined);
+  const isCancelingRef = useRef<boolean>(false);
 
   const showNewForm = useCallback(() => {
     setIsEditFormVisible(false);
@@ -236,6 +237,32 @@ const ModelForm: React.FC<ModelFormProps> = ({
     };
   }, []);
 
+  const cancelTask = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        // ModelNameForm 에서의 참조를 위해
+        isCancelingRef.current = true;
+        if (
+          (!isEditFormVisible && !isNewFormVisible) ||
+          !modelNameInputRef.current?.value
+        ) {
+          onClose?.();
+        } else {
+          setIsEditFormVisible(false);
+          setIsNewFormVisible(false);
+        }
+      }
+    },
+    [isEditFormVisible, isNewFormVisible, onClose]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keyup", cancelTask);
+    return () => {
+      window.removeEventListener("keyup", cancelTask);
+    };
+  }, [cancelTask]);
+
   return (
     <Card>
       <CardHeader
@@ -250,6 +277,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
       />
       <Divider />
       <ModelNameForm
+        isCancelingRef={isCancelingRef}
         nameInputRef={modelNameInputRef}
         onSubmit={onSubmitModel}
         model={model}

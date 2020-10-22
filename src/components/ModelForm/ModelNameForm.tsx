@@ -18,6 +18,7 @@ export interface ModelNameFormValues {
 export interface ModelNameFormProps {
   model?: ModelDoc;
   nameInputRef: React.MutableRefObject<any>;
+  isCancelingRef: React.MutableRefObject<boolean>;
   onSubmit: (data: ModelNameFormValues) => void;
   existingModelNames: string[];
 }
@@ -25,6 +26,7 @@ export interface ModelNameFormProps {
 const ModelNameForm: React.FC<ModelNameFormProps> = ({
   model,
   nameInputRef,
+  isCancelingRef,
   onSubmit,
   existingModelNames,
 }) => {
@@ -53,8 +55,11 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
   );
 
   const handleOnBlur = useCallback(() => {
+    if (isCancelingRef.current) {
+      return;
+    }
     submit();
-  }, [submit]);
+  }, [isCancelingRef, submit]);
 
   return (
     <form onSubmit={submit}>
