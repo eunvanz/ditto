@@ -585,7 +585,7 @@ export function createModelFieldsEventChannel(model: ModelDoc) {
             ...modelField.data(),
           } as ModelFieldDoc);
         });
-        emit(result);
+        emit(orderBy(result, ["createdAt.seconds", "asc"]));
       },
       (error) => {
         emit(error);

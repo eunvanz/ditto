@@ -207,7 +207,6 @@ export interface ModelCell<T> extends Recordable {
 }
 
 export interface ModelFieldItem extends Recordable {
-  next?: string;
   projectId: string;
   modelId: string;
   referenceModelId?: string; // object인 경우 참조하는 모델

@@ -3,6 +3,7 @@ import { ProjectActions } from "./ProjectSlice";
 import { createSelector } from "@reduxjs/toolkit";
 import { DATA_KEY } from "../Data/DataSlice";
 import { convertRecordToArray } from "../../helpers/commonHelpers";
+import orderBy from "lodash/orderBy";
 
 const selectIsProjectFormSubmitting = (state: RootState) =>
   state.progress.includes(ProjectActions.submitProjectForm.type);
@@ -20,7 +21,10 @@ const selectProjectModels = createSelector(
   (state: RootState) => state.data[DATA_KEY.MODELS],
   (project, models) => {
     return models && project
-      ? convertRecordToArray(models[project.id])
+      ? orderBy(convertRecordToArray(models[project.id]), [
+          "createdAt.seconds",
+          "asc",
+        ])
       : undefined;
   }
 );
