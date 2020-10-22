@@ -195,6 +195,20 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
     };
   }, []);
 
+  const cancelTask = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setIsEditFormVisible(false);
+      setIsNewFormVisible(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("keyup", cancelTask);
+    return () => {
+      window.removeEventListener("keyup", cancelTask);
+    };
+  }, [cancelTask]);
+
   return (
     <form onSubmit={handleOnSubmit} noValidate>
       <Card>
