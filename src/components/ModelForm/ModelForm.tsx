@@ -78,7 +78,6 @@ export interface ModelFormProps {
    */
   onClose?: () => void;
   existingModelNames: string[];
-  isNested?: boolean;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -89,7 +88,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
   onClose,
   modelFields = [],
   existingModelNames,
-  isNested = false,
 }) => {
   const classes = useStyles();
 
@@ -265,30 +263,18 @@ const ModelForm: React.FC<ModelFormProps> = ({
     };
   }, [cancelTask]);
 
-  const Wrapper = useMemo(() => {
-    if (isNested) {
-      return ({ children }: { children: React.ReactNode }) => <>{children}</>;
-    } else {
-      return ({ children }: { children: React.ReactNode }) => (
-        <Card>
-          <CardHeader
-            title="모델 편집"
-            action={
-              onClose ? (
-                <IconButton size="small" onClick={onClose}>
-                  <CloseIcon />
-                </IconButton>
-              ) : undefined
-            }
-          />
-          {children}
-        </Card>
-      );
-    }
-  }, [isNested, onClose]);
-
   return (
-    <Wrapper>
+    <Card>
+      <CardHeader
+        title="모델 편집"
+        action={
+          onClose ? (
+            <IconButton size="small" onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          ) : undefined
+        }
+      />
       <Divider />
       <ModelNameForm
         isCancelingRef={isCancelingRef}
@@ -432,7 +418,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
           </form>
         </Box>
       </PerfectScrollbar>
-    </Wrapper>
+    </Card>
   );
 };
 
