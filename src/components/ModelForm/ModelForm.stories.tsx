@@ -29,3 +29,9 @@ export const X버튼없음 = Template.bind({});
 X버튼없음.args = {
   onClose: undefined,
 };
+
+export const 네스티드 = Template.bind({});
+네스티드.args = {
+  onClose: undefined,
+  isNested: true,
+};
