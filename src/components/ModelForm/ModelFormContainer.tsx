@@ -12,14 +12,12 @@ export interface ModelFormContainerProps {
   defaultModelId?: string;
   isVisible?: boolean;
   onClose?: () => void;
-  isNested?: boolean;
 }
 
 const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
   defaultModelId,
   isVisible,
   onClose,
-  isNested,
 }) => {
   const dispatch = useDispatch();
 
@@ -102,7 +100,6 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       onDeleteModelField={deleteModelField}
       onSubmitModelField={submitModelField}
       existingModelNames={existingModelNames}
-      isNested={isNested}
     />
   );
 };
