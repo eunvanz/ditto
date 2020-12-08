@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useCallback } from "react";
 import {
   TableCell,
   TextField,
@@ -6,7 +6,7 @@ import {
   makeStyles,
   Checkbox,
 } from "@material-ui/core";
-import { UseFormMethods, Controller } from "react-hook-form";
+import { UseFormMethods, Controller, useForm } from "react-hook-form";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { ModelFieldFormValues } from "./ModelForm";
 import { fieldTypes, formats, FIELD_TYPE, ModelFieldDoc } from "../../types";
@@ -24,22 +24,26 @@ export interface ModelFieldFormItemProps {
    * 필드명 validation에 필요한 modelFields
    */
   modelFields: ModelFieldDoc[];
-  formProps: UseFormMethods<ModelFieldFormValues>;
+  // formProps: UseFormMethods<ModelFieldFormValues>;
   autoFocusField?: keyof ModelFieldFormValues;
-  onBlur: () => void;
-  onFocus: () => void;
+  // onBlur: () => void;
+  // onFocus: () => void;
   defaultValues: ModelFieldFormValues;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
-  formProps,
   autoFocusField = "fieldName",
-  onBlur,
-  onFocus,
+  // onBlur,
+  // onFocus,
   defaultValues,
   modelFields,
 }) => {
   const classes = useStyles();
+
+  const formProps = useForm<ModelFieldFormValues>({
+    mode: "onChange",
+    defaultValues,
+  });
 
   const { errors, setValue, watch, control } = formProps;
 
@@ -55,6 +59,35 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   useEffect(() => {
     setValue("format", formatOptions[0], { shouldValidate: true });
   }, [formatOptions, setValue]);
+
+  const handleOnBlur = useCallback(() => {
+    isFocusingRef.current = false;
+
+    onBlurTimeout.current = setTimeout(() => {
+      const hasError = !!Object.keys(errors).length;
+      if (!currentModelField) {
+        const isCanceled = isEqual(getValues(), defaultValues);
+        if (isCanceled && !isFocusingRef.current) {
+          setIsNewFormVisible(false);
+          return;
+        }
+      }
+      if (!hasError && !isFocusingRef.current && isFieldModified) {
+        handleOnSubmit(getValues());
+      } else if (!isFocusingRef.current && !hasError) {
+        hideForms();
+      }
+    }, 100);
+  }, [defaultValues, errors]);
+
+  const handleOnFocus = useCallback(() => {
+    if (!modelNameInputRef.current.value) {
+      modelNameInputRef.current.focus();
+      hideForms();
+      return;
+    }
+    isFocusingRef.current = true;
+  }, [hideForms]);
 
   return (
     <>
@@ -165,7 +198,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
           }}
         />
       </TableCell>
-
       <TableCell>
         <Controller
           control={control}

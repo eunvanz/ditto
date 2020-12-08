@@ -123,14 +123,14 @@ const ModelForm: React.FC<ModelFormProps> = ({
     };
   }, [currentModelField]);
 
-  const formProps = useForm<ModelFieldFormValues>({
-    mode: "onChange",
-    defaultValues,
-  });
+  // const formProps = useForm<ModelFieldFormValues>({
+  //   mode: "onChange",
+  //   defaultValues,
+  // });
 
-  const { handleSubmit, errors, watch, getValues, setValue } = formProps;
+  // const { handleSubmit, errors, watch, getValues, setValue } = formProps;
 
-  const watchedValues = watch();
+  // const watchedValues = watch();
 
   const handleOnSubmit = useCallback(
     async (values) => {
@@ -163,42 +163,42 @@ const ModelForm: React.FC<ModelFormProps> = ({
     undefined
   );
 
-  const handleOnBlur = useCallback(() => {
-    isFocusingRef.current = false;
+  // const handleOnBlur = useCallback(() => {
+  //   isFocusingRef.current = false;
 
-    onBlurTimeout.current = setTimeout(() => {
-      const hasError = !!Object.keys(errors).length;
-      if (!currentModelField) {
-        const isCanceled = isEqual(getValues(), defaultValues);
-        if (isCanceled && !isFocusingRef.current) {
-          setIsNewFormVisible(false);
-          return;
-        }
-      }
-      if (!hasError && !isFocusingRef.current && isFieldModified) {
-        handleOnSubmit(getValues());
-      } else if (!isFocusingRef.current && !hasError) {
-        hideForms();
-      }
-    }, 100);
-  }, [
-    currentModelField,
-    defaultValues,
-    errors,
-    getValues,
-    handleOnSubmit,
-    hideForms,
-    isFieldModified,
-  ]);
+  //   onBlurTimeout.current = setTimeout(() => {
+  //     const hasError = !!Object.keys(errors).length;
+  //     if (!currentModelField) {
+  //       const isCanceled = isEqual(getValues(), defaultValues);
+  //       if (isCanceled && !isFocusingRef.current) {
+  //         setIsNewFormVisible(false);
+  //         return;
+  //       }
+  //     }
+  //     if (!hasError && !isFocusingRef.current && isFieldModified) {
+  //       handleOnSubmit(getValues());
+  //     } else if (!isFocusingRef.current && !hasError) {
+  //       hideForms();
+  //     }
+  //   }, 100);
+  // }, [
+  //   currentModelField,
+  //   defaultValues,
+  //   errors,
+  //   getValues,
+  //   handleOnSubmit,
+  //   hideForms,
+  //   isFieldModified,
+  // ]);
 
-  const handleOnFocus = useCallback(() => {
-    if (!modelNameInputRef.current.value) {
-      modelNameInputRef.current.focus();
-      hideForms();
-      return;
-    }
-    isFocusingRef.current = true;
-  }, [hideForms]);
+  // const handleOnFocus = useCallback(() => {
+  //   if (!modelNameInputRef.current.value) {
+  //     modelNameInputRef.current.focus();
+  //     hideForms();
+  //     return;
+  //   }
+  //   isFocusingRef.current = true;
+  // }, [hideForms]);
 
   const showEditForm = useCallback(
     (modelField: ModelFieldDoc, fieldName: keyof ModelFieldFormValues) => {
@@ -286,136 +286,133 @@ const ModelForm: React.FC<ModelFormProps> = ({
       <Divider />
       <PerfectScrollbar>
         <Box minWidth={700}>
-          <form
+          {/* <form
             onSubmit={(e) => {
               e.preventDefault();
               handleOnSubmit(getValues());
             }}
             noValidate
-          >
-            <Table>
-              <caption></caption>
-              <TableHead>
-                <TableRow>
-                  <TableCell component="th" className={classes.fieldNameCell}>
-                    필드명*
-                  </TableCell>
-                  <TableCell align="center" className={classes.requiredCell}>
-                    필수
-                  </TableCell>
-                  <TableCell align="center" className={classes.arrayCell}>
-                    배열
-                  </TableCell>
-                  <TableCell className={classes.typeCell}>타입*</TableCell>
-                  <TableCell className={classes.formatCell}>포맷</TableCell>
-                  <TableCell className={classes.formatCell}>열거형</TableCell>
-                  <TableCell>설명</TableCell>
-                  <TableCell align="right"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {modelFields.map((modelField) => (
-                  <TableRow key={modelField.id}>
-                    {isEditFormVisible &&
-                    currentModelField?.id === modelField.id ? (
-                      <ModelFieldFormItem
-                        formProps={formProps}
-                        autoFocusField={fieldNameToFocus}
-                        onBlur={handleOnBlur}
-                        onFocus={handleOnFocus}
-                        defaultValues={defaultValues}
-                        modelFields={modelFields}
-                      />
-                    ) : (
-                      <>
-                        <TableCell
-                          onClick={() => showEditForm(modelField, "fieldName")}
-                        >
-                          {modelField.fieldName.value}
-                        </TableCell>
-                        <TableCell
-                          align="center"
-                          onClick={() => showEditForm(modelField, "isRequired")}
-                        >
-                          {modelField.isRequired.value ? (
-                            <CheckIcon fontSize="small" />
-                          ) : (
-                            ""
-                          )}
-                        </TableCell>
-                        <TableCell
-                          align="center"
-                          onClick={() => showEditForm(modelField, "isArray")}
-                        >
-                          {modelField.isArray.value ? (
-                            <CheckIcon fontSize="small" />
-                          ) : (
-                            ""
-                          )}
-                        </TableCell>
-                        <TableCell
-                          onClick={() => showEditForm(modelField, "fieldType")}
-                        >
-                          {modelField.fieldType.value}
-                        </TableCell>
-
-                        <TableCell
-                          onClick={() => showEditForm(modelField, "format")}
-                        >
-                          {modelField.format.value}
-                        </TableCell>
-                        <TableCell
-                          onClick={() => showEditForm(modelField, "enum")}
-                        >
-                          {modelField.enum.value}
-                        </TableCell>
-                        <TableCell
-                          onClick={() =>
-                            showEditForm(modelField, "description")
-                          }
-                        >
-                          {modelField.description.value}
-                        </TableCell>
-                        <TableCell align="right">
-                          <IconButton
-                            onClick={() => onDeleteModelField(modelField)}
-                          >
-                            <SvgIcon fontSize="small">
-                              <DeleteOutlineIcon />
-                            </SvgIcon>
-                          </IconButton>
-                        </TableCell>
-                      </>
-                    )}
-                  </TableRow>
-                ))}
-                <TableRow>
-                  {isNewFormVisible ? (
+          > */}
+          <Table>
+            <caption></caption>
+            <TableHead>
+              <TableRow>
+                <TableCell component="th" className={classes.fieldNameCell}>
+                  필드명*
+                </TableCell>
+                <TableCell align="center" className={classes.requiredCell}>
+                  필수
+                </TableCell>
+                <TableCell align="center" className={classes.arrayCell}>
+                  배열
+                </TableCell>
+                <TableCell className={classes.typeCell}>타입*</TableCell>
+                <TableCell className={classes.formatCell}>포맷</TableCell>
+                <TableCell className={classes.formatCell}>열거형</TableCell>
+                <TableCell>설명</TableCell>
+                <TableCell align="right"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {modelFields.map((modelField) => (
+                <TableRow key={modelField.id}>
+                  {isEditFormVisible &&
+                  currentModelField?.id === modelField.id ? (
                     <ModelFieldFormItem
-                      formProps={formProps}
+                      autoFocusField={fieldNameToFocus}
                       onBlur={handleOnBlur}
                       onFocus={handleOnFocus}
-                      autoFocusField={fieldNameToFocus}
                       defaultValues={defaultValues}
                       modelFields={modelFields}
                     />
                   ) : (
-                    <TableCell colSpan={8}>
-                      <Button
-                        className={classes.addButton}
-                        fullWidth
-                        color="secondary"
-                        onClick={showNewForm}
+                    <>
+                      <TableCell
+                        onClick={() => showEditForm(modelField, "fieldName")}
                       >
-                        <AddIcon fontSize="small" /> 새로운 필드 추가
-                      </Button>
-                    </TableCell>
+                        {modelField.fieldName.value}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        onClick={() => showEditForm(modelField, "isRequired")}
+                      >
+                        {modelField.isRequired.value ? (
+                          <CheckIcon fontSize="small" />
+                        ) : (
+                          ""
+                        )}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        onClick={() => showEditForm(modelField, "isArray")}
+                      >
+                        {modelField.isArray.value ? (
+                          <CheckIcon fontSize="small" />
+                        ) : (
+                          ""
+                        )}
+                      </TableCell>
+                      <TableCell
+                        onClick={() => showEditForm(modelField, "fieldType")}
+                      >
+                        {modelField.fieldType.value}
+                      </TableCell>
+
+                      <TableCell
+                        onClick={() => showEditForm(modelField, "format")}
+                      >
+                        {modelField.format.value}
+                      </TableCell>
+                      <TableCell
+                        onClick={() => showEditForm(modelField, "enum")}
+                      >
+                        {modelField.enum.value}
+                      </TableCell>
+                      <TableCell
+                        onClick={() => showEditForm(modelField, "description")}
+                      >
+                        {modelField.description.value}
+                      </TableCell>
+                      <TableCell align="right">
+                        <IconButton
+                          onClick={() => onDeleteModelField(modelField)}
+                        >
+                          <SvgIcon fontSize="small">
+                            <DeleteOutlineIcon />
+                          </SvgIcon>
+                        </IconButton>
+                      </TableCell>
+                    </>
                   )}
                 </TableRow>
-              </TableBody>
-            </Table>
-            <button className={classes.submit} type="submit" />
-          </form>
+              ))}
+              <TableRow>
+                {isNewFormVisible ? (
+                  <ModelFieldFormItem
+                    formProps={formProps}
+                    onBlur={handleOnBlur}
+                    onFocus={handleOnFocus}
+                    autoFocusField={fieldNameToFocus}
+                    defaultValues={defaultValues}
+                    modelFields={modelFields}
+                  />
+                ) : (
+                  <TableCell colSpan={8}>
+                    <Button
+                      className={classes.addButton}
+                      fullWidth
+                      color="secondary"
+                      onClick={showNewForm}
+                    >
+                      <AddIcon fontSize="small" /> 새로운 필드 추가
+                    </Button>
+                  </TableCell>
+                )}
+              </TableRow>
+            </TableBody>
+          </Table>
+          {/* <button className={classes.submit} type="submit" /> */}
+          {/* </form> */}
         </Box>
       </PerfectScrollbar>
     </Card>
