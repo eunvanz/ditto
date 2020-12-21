@@ -1,9 +1,9 @@
 import React, {
   useCallback,
-  useEffect,
+  // useEffect,
   useState,
   useRef,
-  useMemo,
+  // useMemo,
 } from "react";
 import {
   Card,
@@ -16,7 +16,7 @@ import {
   TableBody,
   Button,
   IconButton,
-  SvgIcon,
+  // SvgIcon,
   CardHeader,
   Divider,
   Dialog,
@@ -24,11 +24,9 @@ import {
 import PerfectScrollbar from "react-perfect-scrollbar";
 import AddIcon from "@material-ui/icons/Add";
 import ModelFieldFormItem from "./ModelFieldFormItem";
-import { useForm } from "react-hook-form";
 import { ModelFieldDoc, ModelDoc } from "../../types";
-import isEqual from "lodash/isEqual";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import CheckIcon from "@material-ui/icons/Check";
+// import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+// import CheckIcon from "@material-ui/icons/Check";
 import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
 import CloseIcon from "@material-ui/icons/Close";
 
@@ -92,36 +90,36 @@ const ModelForm: React.FC<ModelFormProps> = ({
   const classes = useStyles();
 
   const [isNewFormVisible, setIsNewFormVisible] = useState(false);
-  const [isEditFormVisible, setIsEditFormVisible] = useState(false);
-  const [currentModelField, setCurrentModelField] = useState<
-    ModelFieldDoc | undefined
-  >(undefined);
-  const [fieldNameToFocus, setFieldNameToFocus] = useState<
-    keyof ModelFieldFormValues | undefined
-  >(undefined);
+  // const [isEditFormVisible, setIsEditFormVisible] = useState(false);
+  // const [currentModelField, setCurrentModelField] = useState<
+  //   ModelFieldDoc | undefined
+  // >(undefined);
+  // const [fieldNameToFocus, setFieldNameToFocus] = useState<
+  //   keyof ModelFieldFormValues | undefined
+  // >(undefined);
 
-  const isFocusingRef = useRef<boolean>(false);
+  // const isFocusingRef = useRef<boolean>(false);
   const modelNameInputRef = useRef<any>(undefined);
   const isCancelingRef = useRef<boolean>(false);
 
   const showNewForm = useCallback(() => {
-    setIsEditFormVisible(false);
-    setFieldNameToFocus(undefined);
-    setCurrentModelField(undefined);
+    // setIsEditFormVisible(false);
+    // setFieldNameToFocus(undefined);
+    // setCurrentModelField(undefined);
     setIsNewFormVisible(true);
   }, []);
 
-  const defaultValues: ModelFieldFormValues = useMemo(() => {
-    return {
-      fieldName: currentModelField?.fieldName.value || "",
-      isRequired: currentModelField ? currentModelField.isRequired.value : true,
-      fieldType: currentModelField?.fieldType.value || "string",
-      format: currentModelField?.format.value || "없음",
-      enum: currentModelField?.enum.value || "없음",
-      description: currentModelField?.description.value || "",
-      isArray: currentModelField ? currentModelField.isArray.value : false,
-    };
-  }, [currentModelField]);
+  // const defaultValues: ModelFieldFormValues = useMemo(() => {
+  //   return {
+  //     fieldName: currentModelField?.fieldName.value || "",
+  //     isRequired: currentModelField ? currentModelField.isRequired.value : true,
+  //     fieldType: currentModelField?.fieldType.value || "string",
+  //     format: currentModelField?.format.value || "없음",
+  //     enum: currentModelField?.enum.value || "없음",
+  //     description: currentModelField?.description.value || "",
+  //     isArray: currentModelField ? currentModelField.isArray.value : false,
+  //   };
+  // }, [currentModelField]);
 
   // const formProps = useForm<ModelFieldFormValues>({
   //   mode: "onChange",
@@ -132,36 +130,36 @@ const ModelForm: React.FC<ModelFormProps> = ({
 
   // const watchedValues = watch();
 
-  const handleOnSubmit = useCallback(
-    async (values) => {
-      setCurrentModelField(undefined);
-      let isSubmitted = false;
-      await handleSubmit((_data) => {
-        isSubmitted = true;
-        onSubmitModelField({ ...values, target: currentModelField });
-      })();
-      if (!isSubmitted) {
-        return;
-      }
-      setIsNewFormVisible(false);
-      setIsEditFormVisible(false);
-    },
-    [currentModelField, handleSubmit, onSubmitModelField]
-  );
+  // const handleOnSubmit = useCallback(
+  //   async (values) => {
+  //     setCurrentModelField(undefined);
+  //     let isSubmitted = false;
+  //     await handleSubmit((_data) => {
+  //       isSubmitted = true;
+  //       onSubmitModelField({ ...values, target: currentModelField });
+  //     })();
+  //     if (!isSubmitted) {
+  //       return;
+  //     }
+  //     setIsNewFormVisible(false);
+  //     setIsEditFormVisible(false);
+  //   },
+  //   [currentModelField, handleSubmit, onSubmitModelField]
+  // );
 
-  const isFieldModified = useMemo(() => {
-    return !isEqual(watchedValues, defaultValues);
-  }, [defaultValues, watchedValues]);
+  // const isFieldModified = useMemo(() => {
+  //   return !isEqual(watchedValues, defaultValues);
+  // }, [defaultValues, watchedValues]);
 
-  const hideForms = useCallback(() => {
-    setIsEditFormVisible(false);
-    setIsNewFormVisible(false);
-    setCurrentModelField(undefined);
-  }, []);
+  // const hideForms = useCallback(() => {
+  //   setIsEditFormVisible(false);
+  //   setIsNewFormVisible(false);
+  //   setCurrentModelField(undefined);
+  // }, []);
 
-  const onBlurTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined
-  );
+  // const onBlurTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
+  //   undefined
+  // );
 
   // const handleOnBlur = useCallback(() => {
   //   isFocusingRef.current = false;
@@ -200,68 +198,68 @@ const ModelForm: React.FC<ModelFormProps> = ({
   //   isFocusingRef.current = true;
   // }, [hideForms]);
 
-  const showEditForm = useCallback(
-    (modelField: ModelFieldDoc, fieldName: keyof ModelFieldFormValues) => {
-      if (isNewFormVisible) {
-        setIsNewFormVisible(false);
-      } else {
-        setCurrentModelField(modelField);
-        setIsEditFormVisible(true);
-        setFieldNameToFocus(fieldName);
-      }
-    },
-    [isNewFormVisible]
-  );
+  // const showEditForm = useCallback(
+  //   (modelField: ModelFieldDoc, fieldName: keyof ModelFieldFormValues) => {
+  //     if (isNewFormVisible) {
+  //       setIsNewFormVisible(false);
+  //     } else {
+  //       setCurrentModelField(modelField);
+  //       setIsEditFormVisible(true);
+  //       setFieldNameToFocus(fieldName);
+  //     }
+  //   },
+  //   [isNewFormVisible]
+  // );
 
-  useEffect(() => {
-    if (currentModelField) {
-      setValue("fieldName", defaultValues.fieldName, { shouldValidate: true });
-      setValue("isRequired", defaultValues.isRequired, {
-        shouldValidate: true,
-      });
-      setValue("isArray", defaultValues.isArray, {
-        shouldValidate: true,
-      });
-      setValue("fieldType", defaultValues.fieldType, { shouldValidate: true });
-      setValue("format", defaultValues.format, { shouldValidate: true });
-      setValue("enum", defaultValues.enum, { shouldValidate: true });
-      setValue("description", defaultValues.description, {
-        shouldValidate: true,
-      });
-    }
-  }, [currentModelField, defaultValues, setValue]);
+  // useEffect(() => {
+  //   if (currentModelField) {
+  //     setValue("fieldName", defaultValues.fieldName, { shouldValidate: true });
+  //     setValue("isRequired", defaultValues.isRequired, {
+  //       shouldValidate: true,
+  //     });
+  //     setValue("isArray", defaultValues.isArray, {
+  //       shouldValidate: true,
+  //     });
+  //     setValue("fieldType", defaultValues.fieldType, { shouldValidate: true });
+  //     setValue("format", defaultValues.format, { shouldValidate: true });
+  //     setValue("enum", defaultValues.enum, { shouldValidate: true });
+  //     setValue("description", defaultValues.description, {
+  //       shouldValidate: true,
+  //     });
+  //   }
+  // }, [currentModelField, defaultValues, setValue]);
 
-  useEffect(() => {
-    return () => {
-      clearTimeout(onBlurTimeout.current);
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     clearTimeout(onBlurTimeout.current);
+  //   };
+  // }, []);
 
-  const cancelTask = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        // ModelNameForm 에서의 참조를 위해
-        isCancelingRef.current = true;
-        if (
-          (!isEditFormVisible && !isNewFormVisible) ||
-          !modelNameInputRef.current?.value
-        ) {
-          onClose?.();
-        } else {
-          setIsEditFormVisible(false);
-          setIsNewFormVisible(false);
-        }
-      }
-    },
-    [isEditFormVisible, isNewFormVisible, onClose]
-  );
+  // const cancelTask = useCallback(
+  //   (e: KeyboardEvent) => {
+  //     if (e.key === "Escape") {
+  //       // ModelNameForm 에서의 참조를 위해
+  //       isCancelingRef.current = true;
+  //       if (
+  //         (!isEditFormVisible && !isNewFormVisible) ||
+  //         !modelNameInputRef.current?.value
+  //       ) {
+  //         onClose?.();
+  //       } else {
+  //         setIsEditFormVisible(false);
+  //         setIsNewFormVisible(false);
+  //       }
+  //     }
+  //   },
+  //   [isEditFormVisible, isNewFormVisible, onClose]
+  // );
 
-  useEffect(() => {
-    window.addEventListener("keyup", cancelTask);
-    return () => {
-      window.removeEventListener("keyup", cancelTask);
-    };
-  }, [cancelTask]);
+  // useEffect(() => {
+  //   window.addEventListener("keyup", cancelTask);
+  //   return () => {
+  //     window.removeEventListener("keyup", cancelTask);
+  //   };
+  // }, [cancelTask]);
 
   return (
     <Card>
@@ -315,88 +313,22 @@ const ModelForm: React.FC<ModelFormProps> = ({
             </TableHead>
             <TableBody>
               {modelFields.map((modelField) => (
-                <TableRow key={modelField.id}>
-                  {isEditFormVisible &&
-                  currentModelField?.id === modelField.id ? (
-                    <ModelFieldFormItem
-                      autoFocusField={fieldNameToFocus}
-                      onBlur={handleOnBlur}
-                      onFocus={handleOnFocus}
-                      defaultValues={defaultValues}
-                      modelFields={modelFields}
-                    />
-                  ) : (
-                    <>
-                      <TableCell
-                        onClick={() => showEditForm(modelField, "fieldName")}
-                      >
-                        {modelField.fieldName.value}
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        onClick={() => showEditForm(modelField, "isRequired")}
-                      >
-                        {modelField.isRequired.value ? (
-                          <CheckIcon fontSize="small" />
-                        ) : (
-                          ""
-                        )}
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        onClick={() => showEditForm(modelField, "isArray")}
-                      >
-                        {modelField.isArray.value ? (
-                          <CheckIcon fontSize="small" />
-                        ) : (
-                          ""
-                        )}
-                      </TableCell>
-                      <TableCell
-                        onClick={() => showEditForm(modelField, "fieldType")}
-                      >
-                        {modelField.fieldType.value}
-                      </TableCell>
-
-                      <TableCell
-                        onClick={() => showEditForm(modelField, "format")}
-                      >
-                        {modelField.format.value}
-                      </TableCell>
-                      <TableCell
-                        onClick={() => showEditForm(modelField, "enum")}
-                      >
-                        {modelField.enum.value}
-                      </TableCell>
-                      <TableCell
-                        onClick={() => showEditForm(modelField, "description")}
-                      >
-                        {modelField.description.value}
-                      </TableCell>
-                      <TableCell align="right">
-                        <IconButton
-                          onClick={() => onDeleteModelField(modelField)}
-                        >
-                          <SvgIcon fontSize="small">
-                            <DeleteOutlineIcon />
-                          </SvgIcon>
-                        </IconButton>
-                      </TableCell>
-                    </>
-                  )}
-                </TableRow>
+                <ModelFieldFormItem
+                  key={modelField.id}
+                  modelFields={modelFields}
+                  modelField={modelField}
+                  onSubmit={onSubmitModelField}
+                  onDelete={() => onDeleteModelField(modelField)}
+                />
               ))}
-              <TableRow>
-                {isNewFormVisible ? (
-                  <ModelFieldFormItem
-                    formProps={formProps}
-                    onBlur={handleOnBlur}
-                    onFocus={handleOnFocus}
-                    autoFocusField={fieldNameToFocus}
-                    defaultValues={defaultValues}
-                    modelFields={modelFields}
-                  />
-                ) : (
+              {isNewFormVisible ? (
+                <ModelFieldFormItem
+                  modelFields={modelFields}
+                  onSubmit={onSubmitModelField}
+                  isNew
+                />
+              ) : (
+                <TableRow>
                   <TableCell colSpan={8}>
                     <Button
                       className={classes.addButton}
@@ -407,8 +339,8 @@ const ModelForm: React.FC<ModelFormProps> = ({
                       <AddIcon fontSize="small" /> 새로운 필드 추가
                     </Button>
                   </TableCell>
-                )}
-              </TableRow>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
           {/* <button className={classes.submit} type="submit" /> */}

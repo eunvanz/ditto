@@ -10,7 +10,9 @@ export default {
   argTypes: {},
 } as Meta;
 
-const defaultProps: Partial<ModelFormProps> = {};
+const defaultProps: Partial<ModelFormProps> = {
+  existingModelNames: [],
+};
 
 const Template: Story<ModelFormProps> = (args) => (
   <ModelForm {...defaultProps} {...args} />
