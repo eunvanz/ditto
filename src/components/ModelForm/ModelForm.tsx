@@ -81,152 +81,15 @@ const ModelForm: React.FC<ModelFormProps> = ({
   const classes = useStyles();
 
   const [isNewFormVisible, setIsNewFormVisible] = useState(false);
-  // const [isEditFormVisible, setIsEditFormVisible] = useState(false);
-  // const [currentModelField, setCurrentModelField] = useState<
-  //   ModelFieldDoc | undefined
-  // >(undefined);
-  // const [fieldNameToFocus, setFieldNameToFocus] = useState<
-  //   keyof ModelFieldFormValues | undefined
-  // >(undefined);
 
-  // const isFocusingRef = useRef<boolean>(false);
   const modelNameInputRef = useRef<any>(undefined);
   const isCancelingRef = useRef<boolean>(false);
 
   const showNewForm = useCallback(() => {
-    // setIsEditFormVisible(false);
-    // setFieldNameToFocus(undefined);
-    // setCurrentModelField(undefined);
     if (!!modelNameInputRef.current.value) {
       setIsNewFormVisible(true);
     }
   }, []);
-
-  // const defaultValues: ModelFieldFormValues = useMemo(() => {
-  //   return {
-  //     fieldName: currentModelField?.fieldName.value || "",
-  //     isRequired: currentModelField ? currentModelField.isRequired.value : true,
-  //     fieldType: currentModelField?.fieldType.value || "string",
-  //     format: currentModelField?.format.value || "없음",
-  //     enum: currentModelField?.enum.value || "없음",
-  //     description: currentModelField?.description.value || "",
-  //     isArray: currentModelField ? currentModelField.isArray.value : false,
-  //   };
-  // }, [currentModelField]);
-
-  // const formProps = useForm<ModelFieldFormValues>({
-  //   mode: "onChange",
-  //   defaultValues,
-  // });
-
-  // const { handleSubmit, errors, watch, getValues, setValue } = formProps;
-
-  // const watchedValues = watch();
-
-  // const handleOnSubmit = useCallback(
-  //   async (values) => {
-  //     setCurrentModelField(undefined);
-  //     let isSubmitted = false;
-  //     await handleSubmit((_data) => {
-  //       isSubmitted = true;
-  //       onSubmitModelField({ ...values, target: currentModelField });
-  //     })();
-  //     if (!isSubmitted) {
-  //       return;
-  //     }
-  //     setIsNewFormVisible(false);
-  //     setIsEditFormVisible(false);
-  //   },
-  //   [currentModelField, handleSubmit, onSubmitModelField]
-  // );
-
-  // const isFieldModified = useMemo(() => {
-  //   return !isEqual(watchedValues, defaultValues);
-  // }, [defaultValues, watchedValues]);
-
-  // const hideForms = useCallback(() => {
-  //   setIsEditFormVisible(false);
-  //   setIsNewFormVisible(false);
-  //   setCurrentModelField(undefined);
-  // }, []);
-
-  // const onBlurTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
-  //   undefined
-  // );
-
-  // const handleOnBlur = useCallback(() => {
-  //   isFocusingRef.current = false;
-
-  //   onBlurTimeout.current = setTimeout(() => {
-  //     const hasError = !!Object.keys(errors).length;
-  //     if (!currentModelField) {
-  //       const isCanceled = isEqual(getValues(), defaultValues);
-  //       if (isCanceled && !isFocusingRef.current) {
-  //         setIsNewFormVisible(false);
-  //         return;
-  //       }
-  //     }
-  //     if (!hasError && !isFocusingRef.current && isFieldModified) {
-  //       handleOnSubmit(getValues());
-  //     } else if (!isFocusingRef.current && !hasError) {
-  //       hideForms();
-  //     }
-  //   }, 100);
-  // }, [
-  //   currentModelField,
-  //   defaultValues,
-  //   errors,
-  //   getValues,
-  //   handleOnSubmit,
-  //   hideForms,
-  //   isFieldModified,
-  // ]);
-
-  // const handleOnFocus = useCallback(() => {
-  //   if (!modelNameInputRef.current.value) {
-  //     modelNameInputRef.current.focus();
-  //     hideForms();
-  //     return;
-  //   }
-  //   isFocusingRef.current = true;
-  // }, [hideForms]);
-
-  // const showEditForm = useCallback(
-  //   (modelField: ModelFieldDoc, fieldName: keyof ModelFieldFormValues) => {
-  //     if (isNewFormVisible) {
-  //       setIsNewFormVisible(false);
-  //     } else {
-  //       setCurrentModelField(modelField);
-  //       setIsEditFormVisible(true);
-  //       setFieldNameToFocus(fieldName);
-  //     }
-  //   },
-  //   [isNewFormVisible]
-  // );
-
-  // useEffect(() => {
-  //   if (currentModelField) {
-  //     setValue("fieldName", defaultValues.fieldName, { shouldValidate: true });
-  //     setValue("isRequired", defaultValues.isRequired, {
-  //       shouldValidate: true,
-  //     });
-  //     setValue("isArray", defaultValues.isArray, {
-  //       shouldValidate: true,
-  //     });
-  //     setValue("fieldType", defaultValues.fieldType, { shouldValidate: true });
-  //     setValue("format", defaultValues.format, { shouldValidate: true });
-  //     setValue("enum", defaultValues.enum, { shouldValidate: true });
-  //     setValue("description", defaultValues.description, {
-  //       shouldValidate: true,
-  //     });
-  //   }
-  // }, [currentModelField, defaultValues, setValue]);
-
-  // useEffect(() => {
-  //   return () => {
-  //     clearTimeout(onBlurTimeout.current);
-  //   };
-  // }, []);
 
   const cancelTask = useCallback(
     (e: KeyboardEvent) => {
@@ -273,13 +136,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
       <Divider />
       <PerfectScrollbar>
         <Box minWidth={700}>
-          {/* <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleOnSubmit(getValues());
-            }}
-            noValidate
-          > */}
           <Table>
             <caption></caption>
             <TableHead>
@@ -335,8 +191,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
               )}
             </TableBody>
           </Table>
-          {/* <button className={classes.submit} type="submit" /> */}
-          {/* </form> */}
         </Box>
       </PerfectScrollbar>
     </Card>
