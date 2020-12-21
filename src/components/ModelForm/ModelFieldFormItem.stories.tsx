@@ -7,12 +7,6 @@ import ModelFieldFormItem, {
 } from "./ModelFieldFormItem";
 import mockProject from "../../mocks/mockProject";
 
-export default {
-  title: "components/ModelFieldFormItem",
-  component: ModelFieldFormItem,
-  argTypes: {},
-} as Meta;
-
 const defaultProps: Partial<ModelFieldFormItemProps> = {
   modelFields: mockProject.modelFields,
   // Template에서 주입이 안되어 직접 주입
@@ -20,8 +14,17 @@ const defaultProps: Partial<ModelFieldFormItemProps> = {
   onSubmit: action("onSubmit"),
 };
 
+export default {
+  title: "components/ModelFieldFormItem",
+  component: ModelFieldFormItem,
+  argTypes: {},
+  args: {
+    ...defaultProps,
+  },
+} as Meta;
+
 const Template: Story<ModelFieldFormItemProps> = (args) => (
-  <ModelFieldFormItem {...defaultProps} {...args} />
+  <ModelFieldFormItem {...args} />
 );
 
 export const 기존필드수정 = Template.bind({});

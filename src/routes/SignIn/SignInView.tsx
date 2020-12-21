@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export interface SignInViewProps {}
 
-const SignInView: React.FC<SignInViewProps> = ({}) => {
+const SignInView: React.FC<SignInViewProps> = () => {
   const classes = useStyles();
 
   return (
