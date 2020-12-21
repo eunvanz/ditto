@@ -123,10 +123,9 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     isFocusingRef.current = false;
     onBlurTimeoutRef.current = setTimeout(() => {
       const hasError = !!Object.keys(errors).length;
-      if (!modelField) {
+      if (isNew) {
         const isCanceled = isEqual(getValues(), defaultValues);
         if (isCanceled && !isFocusingRef.current) {
-          setIsFormVisible(false);
           return;
         }
       }
@@ -138,7 +137,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     }, 100);
   }, [
     errors,
-    modelField,
+    isNew,
     isFieldModified,
     getValues,
     defaultValues,

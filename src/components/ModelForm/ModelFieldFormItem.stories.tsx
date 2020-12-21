@@ -24,7 +24,13 @@ const Template: Story<ModelFieldFormItemProps> = (args) => (
   <ModelFieldFormItem {...defaultProps} {...args} />
 );
 
-export const 기본 = Template.bind({});
-기본.args = {
+export const 기존필드수정 = Template.bind({});
+기존필드수정.args = {
   modelField: mockProject.modelFields[0],
+};
+
+export const 새필드작성 = Template.bind({});
+새필드작성.args = {
+  modelField: undefined,
+  isNew: true,
 };

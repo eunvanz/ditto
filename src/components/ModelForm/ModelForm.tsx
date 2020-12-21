@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  // useEffect,
-  useState,
-  useRef,
-  // useMemo,
-} from "react";
+import React, { useCallback, useState, useRef } from "react";
 import {
   Card,
   Box,
@@ -16,7 +10,6 @@ import {
   TableBody,
   Button,
   IconButton,
-  // SvgIcon,
   CardHeader,
   Divider,
   Dialog,
@@ -25,8 +18,6 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import AddIcon from "@material-ui/icons/Add";
 import ModelFieldFormItem from "./ModelFieldFormItem";
 import { ModelFieldDoc, ModelDoc } from "../../types";
-// import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-// import CheckIcon from "@material-ui/icons/Check";
 import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
 import CloseIcon from "@material-ui/icons/Close";
 
