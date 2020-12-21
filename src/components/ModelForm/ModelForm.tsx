@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useRef } from "react";
+import React, { useCallback, useState, useRef, useEffect } from "react";
 import {
   Card,
   Box,
@@ -97,7 +97,9 @@ const ModelForm: React.FC<ModelFormProps> = ({
     // setIsEditFormVisible(false);
     // setFieldNameToFocus(undefined);
     // setCurrentModelField(undefined);
-    setIsNewFormVisible(true);
+    if (!!modelNameInputRef.current.value) {
+      setIsNewFormVisible(true);
+    }
   }, []);
 
   // const defaultValues: ModelFieldFormValues = useMemo(() => {
@@ -226,31 +228,27 @@ const ModelForm: React.FC<ModelFormProps> = ({
   //   };
   // }, []);
 
-  // const cancelTask = useCallback(
-  //   (e: KeyboardEvent) => {
-  //     if (e.key === "Escape") {
-  //       // ModelNameForm 에서의 참조를 위해
-  //       isCancelingRef.current = true;
-  //       if (
-  //         (!isEditFormVisible && !isNewFormVisible) ||
-  //         !modelNameInputRef.current?.value
-  //       ) {
-  //         onClose?.();
-  //       } else {
-  //         setIsEditFormVisible(false);
-  //         setIsNewFormVisible(false);
-  //       }
-  //     }
-  //   },
-  //   [isEditFormVisible, isNewFormVisible, onClose]
-  // );
+  const cancelTask = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        // ModelNameForm과 ModelFieldFormItem에서의 에서의 참조를 위해
+        isCancelingRef.current = true;
+        if (!isNewFormVisible) {
+          onClose?.();
+        } else {
+          setIsNewFormVisible(false);
+        }
+      }
+    },
+    [isNewFormVisible, onClose]
+  );
 
-  // useEffect(() => {
-  //   window.addEventListener("keyup", cancelTask);
-  //   return () => {
-  //     window.removeEventListener("keyup", cancelTask);
-  //   };
-  // }, [cancelTask]);
+  useEffect(() => {
+    window.addEventListener("keyup", cancelTask);
+    return () => {
+      window.removeEventListener("keyup", cancelTask);
+    };
+  }, [cancelTask]);
 
   return (
     <Card>
@@ -315,7 +313,10 @@ const ModelForm: React.FC<ModelFormProps> = ({
               {isNewFormVisible ? (
                 <ModelFieldFormItem
                   modelFields={modelFields}
-                  onSubmit={onSubmitModelField}
+                  onSubmit={(data) => {
+                    onSubmitModelField(data);
+                    setIsNewFormVisible(false);
+                  }}
                   isNew
                 />
               ) : (

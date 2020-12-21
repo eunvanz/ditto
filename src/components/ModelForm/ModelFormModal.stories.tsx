@@ -12,6 +12,7 @@ export default {
 
 const defaultProps: Partial<ModelFormModalProps> = {
   isVisible: true,
+  existingModelNames: [],
 };
 
 const Template: Story<ModelFormModalProps> = (args) => (
