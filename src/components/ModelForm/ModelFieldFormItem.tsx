@@ -91,6 +91,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     watch,
     control,
     handleSubmit,
+    reset,
   } = formProps;
 
   const watchedFieldType = watch("fieldType");
@@ -107,11 +108,14 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [formatOptions, setValue]);
 
   const handleOnSubmit = useCallback(async () => {
+    const values = getValues();
     await handleSubmit((_data) => {
-      onSubmit({ ...getValues(), target: modelField });
+      onSubmit({ ...values, target: modelField });
     })();
+    // form의 값이 초기로 돌아가는 현상이 있어서 직접 리셋해줌
+    reset(values);
     setIsFormVisible(false);
-  }, [getValues, handleSubmit, modelField, onSubmit]);
+  }, [getValues, handleSubmit, modelField, onSubmit, reset]);
 
   const watchedValues = watch();
 
@@ -163,12 +167,12 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   const handleOnPressEnter = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Enter") {
-        handleOnSubmit();
+        handleOnBlur();
       } else if (e.key === "Escape") {
         setIsFormVisible(false);
       }
     },
-    [handleOnSubmit]
+    [handleOnBlur]
   );
 
   useEffect(() => {
@@ -210,20 +214,22 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 return isDup ? "중복되는 필드가 있어요." : true;
               },
             }}
-            render={(props) => (
-              <TextField
-                {...props}
-                size="small"
-                autoFocus={autoFocusField === "fieldName"}
-                fullWidth
-                required
-                error={!!errors.fieldName}
-                helperText={errors.fieldName?.message}
-                onBlur={handleOnBlur}
-                onFocus={handleOnFocus}
-                placeholder="필드명"
-              />
-            )}
+            render={(props) => {
+              return (
+                <TextField
+                  {...props}
+                  size="small"
+                  autoFocus={autoFocusField === "fieldName"}
+                  fullWidth
+                  required
+                  error={!!errors.fieldName}
+                  helperText={errors.fieldName?.message}
+                  onBlur={handleOnBlur}
+                  onFocus={handleOnFocus}
+                  placeholder="필드명"
+                />
+              );
+            }}
           />
         ) : (
           modelField?.fieldName.value
