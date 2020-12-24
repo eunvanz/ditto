@@ -62,7 +62,7 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
   }, [isCancelingRef, submit]);
 
   return (
-    <form onSubmit={submit}>
+    <form onSubmit={submit} noValidate>
       <CardContent>
         <Grid container spacing={3}>
           <Grid item sm={5}>
