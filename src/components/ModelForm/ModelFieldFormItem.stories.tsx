@@ -6,6 +6,7 @@ import ModelFieldFormItem, {
   ModelFieldFormItemProps,
 } from "./ModelFieldFormItem";
 import mockProject from "../../mocks/mockProject";
+import { Table, TableBody } from "@material-ui/core";
 
 const defaultProps: Partial<ModelFieldFormItemProps> = {
   modelFields: mockProject.modelFields,
@@ -24,7 +25,11 @@ export default {
 } as Meta;
 
 const Template: Story<ModelFieldFormItemProps> = (args) => (
-  <ModelFieldFormItem {...args} />
+  <Table>
+    <TableBody>
+      <ModelFieldFormItem {...args} />
+    </TableBody>
+  </Table>
 );
 
 export const 기존필드수정 = Template.bind({});
@@ -36,4 +41,10 @@ export const 새필드작성 = Template.bind({});
 새필드작성.args = {
   modelField: undefined,
   isNew: true,
+};
+
+export const 뎁스 = Template.bind({});
+뎁스.args = {
+  modelField: mockProject.modelFields[0],
+  depth: 2,
 };

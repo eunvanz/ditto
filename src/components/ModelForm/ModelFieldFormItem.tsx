@@ -47,6 +47,7 @@ export interface ModelFieldFormItemProps {
    */
   isNew?: boolean;
   onDelete?: () => void;
+  depth?: number;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -55,6 +56,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   onSubmit,
   isNew = false,
   onDelete,
+  depth,
 }) => {
   const classes = useStyles();
 
@@ -191,9 +193,16 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     }
   }, [handleOnPressEnter, isFormVisible]);
 
+  const indentionPadding = useMemo(() => {
+    return depth ? depth * 16 : undefined;
+  }, [depth]);
+
   return (
     <TableRow>
-      <TableCell onClick={createCellClickHandler("fieldName")}>
+      <TableCell
+        onClick={createCellClickHandler("fieldName")}
+        style={{ paddingLeft: indentionPadding }}
+      >
         {isFormVisible ? (
           <Controller
             control={control}
