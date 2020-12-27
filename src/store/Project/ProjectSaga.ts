@@ -491,6 +491,7 @@ export function* submitModelNameFormFlow() {
         };
         yield* call(Firework.updateModel, target.id, newModel);
       } else {
+        assertNotEmpty(payload.modelFormId);
         // 생성인 경우
         // 모델을 생성하지 않고 필드를 수정할 수 없으므로 loading을 보여줌
         yield* put(UiActions.showLoading());
@@ -690,7 +691,7 @@ export function* submitModelFieldFormFlow() {
     const { payload } = yield* take(ProjectActions.submitModelFieldForm);
 
     const modelId = yield* select(
-      (state: RootState) => state.data.modelForms?.[payload.modelFormId]
+      (state: RootState) => state.data.modelForms?.[payload.modelFormId!]
     );
 
     if (!modelId) {

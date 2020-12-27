@@ -39,11 +39,11 @@ const ProjectSlice = createSlice({
     deleteProjectUrl: (_, _action: PayloadAction<ProjectUrlDoc>) => {},
     submitModelNameForm: (
       _,
-      _action: PayloadAction<ModelNameFormValues & { modelFormId: string }>
+      _action: PayloadAction<ModelNameFormValues & { modelFormId?: string }>
     ) => {},
     submitModelFieldForm: (
       _,
-      _action: PayloadAction<ModelFieldFormValues & { modelFormId: string }>
+      _action: PayloadAction<ModelFieldFormValues & { modelFormId?: string }>
     ) => {},
     listenToModel: (
       _,
