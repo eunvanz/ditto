@@ -22,6 +22,7 @@ import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import isEqual from "lodash/isEqual";
 import { ModelFieldFormValues } from "./ModelForm";
 import { fieldTypes, formats, FIELD_TYPE, ModelFieldDoc } from "../../types";
+import { patterns } from "../../helpers/projectHelpers";
 
 const useStyles = makeStyles(() => ({
   autocomplete: {
@@ -213,6 +214,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                   .some((modelField) => modelField.fieldName.value === data);
                 return isDup ? "중복되는 필드가 있어요." : true;
               },
+              pattern: patterns.wordsWithNoSpace,
             }}
             render={(props) => {
               return (

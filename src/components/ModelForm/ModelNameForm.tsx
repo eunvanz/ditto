@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { CardContent, Grid, TextField, makeStyles } from "@material-ui/core";
 import { useForm } from "react-hook-form";
 import { ModelDoc } from "../../types";
+import { patterns } from "../../helpers/projectHelpers";
 
 const useStyles = makeStyles(() => ({
   submit: {
@@ -84,6 +85,7 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
                     );
                     return isDup ? "중복되는 모델명이 있어요." : true;
                   },
+                  pattern: patterns.wordsWithNoSpace,
                 });
               }}
               variant="outlined"

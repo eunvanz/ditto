@@ -21,7 +21,7 @@ export const regExps = {
 
 /**
  * record형태를 array형태로 변경하여 반환
- * @param record 
+ * @param record
  */
 export function convertRecordToArray<T>(record: Record<string, T>) {
   const keys = Object.keys(record);
