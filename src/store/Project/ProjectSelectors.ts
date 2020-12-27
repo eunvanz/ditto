@@ -20,7 +20,7 @@ const selectProjectModels = createSelector(
   (state: RootState) => state.data[DATA_KEY.PROJECT],
   (state: RootState) => state.data[DATA_KEY.MODELS],
   (project, models) => {
-    return models && project
+    return project && models?.[project?.id]
       ? orderBy(convertRecordToArray(models[project.id]), [
           "createdAt.seconds",
           "asc",
