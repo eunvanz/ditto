@@ -608,12 +608,16 @@ export function* listenToModelFieldsFlow() {
     yield* fork(listenToEventChannel, {
       eventChannel: createModelFieldsEventChannel(model),
       dataReceiverCreator: (data) =>
-        DataActions.receiveData({
+        DataActions.receiveRecordData({
           key: DATA_KEY.MODEL_FIELDS,
+          recordKey: model.id,
           data,
         }),
       unlistenWaiter: createUnlistenWaiter({
-        cleanUpAction: DataActions.clearData(DATA_KEY.MODEL_FIELDS),
+        cleanUpAction: DataActions.clearRecordData({
+          key: DATA_KEY.MODEL_FIELDS,
+          recordKey: model.id,
+        }),
         unlistenAction: ProjectActions.unlistenToModelFields,
         hasToCleanUpOnUnlisten: true,
       }),

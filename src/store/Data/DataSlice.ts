@@ -51,9 +51,9 @@ export interface DataState {
    */
   [DATA_KEY.MODEL_FORMS]?: Record<string, string>;
   /**
-   * 현재 수정하고 있는 모델 필드들
+   * { modelId: data } 형식
    */
-  [DATA_KEY.MODEL_FIELDS]?: ModelFieldDoc[];
+  [DATA_KEY.MODEL_FIELDS]?: Record<string, ModelFieldDoc[]>;
 }
 
 export const initialDataState: DataState = {};
