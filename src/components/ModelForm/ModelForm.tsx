@@ -1,4 +1,10 @@
-import React, { useCallback, useState, useRef, useEffect } from "react";
+import React, {
+  useCallback,
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+} from "react";
 import {
   Card,
   Box,
@@ -66,7 +72,10 @@ export interface ModelFormProps {
    * onClose가 전달되면 X 버튼이 생성
    */
   onClose?: () => void;
-  existingModelNames: string[];
+  /**
+   * 같은 프로젝트 내의 모델들
+   */
+  projectModels: ModelDoc[];
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -76,7 +85,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   onSubmitModel,
   onClose,
   modelFields = [],
-  existingModelNames,
+  projectModels,
 }) => {
   const classes = useStyles();
 
@@ -84,6 +93,19 @@ const ModelForm: React.FC<ModelFormProps> = ({
 
   const modelNameInputRef = useRef<any>(undefined);
   const isCancelingRef = useRef<boolean>(false);
+
+  /**
+   * 자기 자신이 아닌 프로젝트내의 사용중인 모델 명들
+   */
+  const existingModelNames = useMemo(() => {
+    const result: string[] = [];
+    projectModels.forEach((item) => {
+      if (!model || item.id !== model.id) {
+        result.push(item.name);
+      }
+    });
+    return result;
+  }, [model, projectModels]);
 
   const showNewForm = useCallback(() => {
     if (!!modelNameInputRef.current.value) {
@@ -164,6 +186,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
                   modelField={modelField}
                   onSubmit={onSubmitModelField}
                   onDelete={() => onDeleteModelField(modelField)}
+                  projectModels={projectModels}
                 />
               ))}
               {isNewFormVisible ? (
@@ -174,6 +197,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
                     setIsNewFormVisible(false);
                   }}
                   isNew
+                  projectModels={projectModels}
                 />
               ) : (
                 <TableRow>

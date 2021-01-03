@@ -202,7 +202,7 @@ const modelFields: ModelFieldDoc[] = [
     },
     fieldType: {
       id: "mockId",
-      value: "string",
+      value: "object",
       updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
       createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
       updatedAt: {
@@ -224,7 +224,7 @@ const modelFields: ModelFieldDoc[] = [
     },
     format: {
       id: "mockId",
-      value: "date",
+      value: "mockModelSub",
       updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
       createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
       updatedAt: {
@@ -315,11 +315,61 @@ const model: ModelDoc = {
   },
 };
 
+const models: ModelDoc[] = [
+  {
+    id: "mockId",
+    projectId: "mockProjectId",
+    name: "mockModel",
+    updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    updatedAt: {
+      seconds: 1601466174,
+      nanoseconds: 963000000,
+    },
+    createdAt: {
+      seconds: 1601466174,
+      nanoseconds: 963000000,
+    },
+    settingsByMember: {
+      aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+        updatedAt: {
+          seconds: 1601466174,
+          nanoseconds: 963000000,
+        },
+      },
+    },
+  },
+  {
+    id: "mockId2",
+    projectId: "mockProjectId2",
+    name: "mockModelSub",
+    updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    updatedAt: {
+      seconds: 1601466174,
+      nanoseconds: 963000000,
+    },
+    createdAt: {
+      seconds: 1601466174,
+      nanoseconds: 963000000,
+    },
+    settingsByMember: {
+      aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+        updatedAt: {
+          seconds: 1601466174,
+          nanoseconds: 963000000,
+        },
+      },
+    },
+  },
+];
+
 const mockProject = {
   project,
   projectUrls,
   modelFields,
   model,
+  models,
 };
 
 export default mockProject;

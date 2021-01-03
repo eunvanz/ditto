@@ -13,6 +13,7 @@ const defaultProps: Partial<ModelFieldFormItemProps> = {
   // Template에서 주입이 안되어 직접 주입
   onDelete: action("onDelete"),
   onSubmit: action("onSubmit"),
+  projectModels: mockProject.models,
 };
 
 export default {

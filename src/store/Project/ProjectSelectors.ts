@@ -4,6 +4,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { DATA_KEY } from "../Data/DataSlice";
 import { convertRecordToArray } from "../../helpers/commonHelpers";
 import orderBy from "lodash/orderBy";
+import { ModelDoc } from "../../types";
 
 const selectIsProjectFormSubmitting = (state: RootState) =>
   state.progress.includes(ProjectActions.submitProjectForm.type);
@@ -48,19 +49,14 @@ const createModelFormSelector = (modelFormId?: string) =>
     (models, project, modelId, modelFields) => {
       const model =
         models && project && modelId ? models[project.id][modelId] : undefined;
-      const existingModelNames: string[] = [];
+      let projectModels: ModelDoc[] = [];
       if (models && project) {
-        const projectModels = models[project.id];
-        convertRecordToArray(projectModels).forEach((item) => {
-          if (!modelId || item.id !== modelId) {
-            existingModelNames.push(item.name);
-          }
-        });
+        projectModels = convertRecordToArray(models[project.id]);
       }
       return {
         model,
-        existingModelNames,
         modelFields,
+        projectModels,
       };
     }
   );

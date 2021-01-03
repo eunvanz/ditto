@@ -21,7 +21,14 @@ import CheckIcon from "@material-ui/icons/Check";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import isEqual from "lodash/isEqual";
 import { ModelFieldFormValues } from "./ModelForm";
-import { fieldTypes, formats, FIELD_TYPE, ModelFieldDoc } from "../../types";
+import {
+  fieldTypes,
+  formats,
+  FIELD_TYPE,
+  ModelFieldDoc,
+  ModelDoc,
+  FORMAT,
+} from "../../types";
 import { patterns } from "../../helpers/projectHelpers";
 
 const useStyles = makeStyles(() => ({
@@ -48,6 +55,10 @@ export interface ModelFieldFormItemProps {
   isNew?: boolean;
   onDelete?: () => void;
   depth?: number;
+  /**
+   * 같은 프로젝트 내의 모델들
+   */
+  projectModels: ModelDoc[];
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -57,6 +68,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   isNew = false,
   onDelete,
   depth,
+  projectModels,
 }) => {
   const classes = useStyles();
 
@@ -100,11 +112,18 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   const watchedFieldType = watch("fieldType");
 
   const formatOptions = useMemo(() => {
-    if (watchedFieldType) {
-      return formats[watchedFieldType as FIELD_TYPE];
+    switch (watchedFieldType) {
+      case FIELD_TYPE.BOOLEAN:
+      case FIELD_TYPE.INTEGER:
+      case FIELD_TYPE.NUMBER:
+      case FIELD_TYPE.STRING:
+        return formats[watchedFieldType as FIELD_TYPE];
+      case FIELD_TYPE.OBJECT:
+        return [FORMAT.NEW_MODEL, ...projectModels.map((model) => model.name)];
+      default:
+        return ["없음"];
     }
-    return ["없음"];
-  }, [watchedFieldType]);
+  }, [projectModels, watchedFieldType]);
 
   useEffect(() => {
     setValue("format", formatOptions[0], { shouldValidate: true });

@@ -11,7 +11,7 @@ export default {
 } as Meta;
 
 const defaultProps: Partial<ModelFormProps> = {
-  existingModelNames: [],
+  projectModels: mockProject.models,
 };
 
 const Template: Story<ModelFormProps> = (args) => (
