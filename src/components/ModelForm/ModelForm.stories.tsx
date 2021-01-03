@@ -3,6 +3,7 @@ import { Story, Meta } from "@storybook/react/types-6-0";
 
 import ModelForm, { ModelFormProps } from "./ModelForm";
 import mockProject from "../../mocks/mockProject";
+import StoreProvider from "../StoreProvider";
 
 export default {
   title: "components/ModelForm",
@@ -15,7 +16,9 @@ const defaultProps: Partial<ModelFormProps> = {
 };
 
 const Template: Story<ModelFormProps> = (args) => (
-  <ModelForm {...defaultProps} {...args} />
+  <StoreProvider>
+    <ModelForm {...defaultProps} {...args} />
+  </StoreProvider>
 );
 
 export const 아이템있음 = Template.bind({});

@@ -209,6 +209,10 @@ const ModelForm: React.FC<ModelFormProps> = ({
     return getIntentionPaddingByDepth(depth);
   }, [depth]);
 
+  const addText = useMemo(() => {
+    return depth ? `${model?.name}에 새로운 필드 추가` : "새로운 필드 추가";
+  }, [depth, model]);
+
   return (
     <Wrapper>
       {modelFields.map((modelField) => (
@@ -242,7 +246,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
               color="secondary"
               onClick={showNewForm}
             >
-              <AddIcon fontSize="small" /> 새로운 필드 추가
+              <AddIcon fontSize="small" /> {addText}
             </Button>
           </TableCell>
         </TableRow>

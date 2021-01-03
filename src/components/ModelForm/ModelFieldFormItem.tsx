@@ -21,6 +21,7 @@ import CheckIcon from "@material-ui/icons/Check";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import isEqual from "lodash/isEqual";
 import { ModelFieldFormValues } from "./ModelForm";
+import ModelForm from "./index";
 import {
   fieldTypes,
   formats,
@@ -219,248 +220,273 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     return getIntentionPaddingByDepth(depth);
   }, [depth]);
 
+  const subModelId = useMemo(() => {
+    const subModel = projectModels.find(
+      (model) => watchedValues.format === model.name
+    );
+    return subModel?.id;
+  }, [projectModels, watchedValues.format]);
+
+  const subModelForm = useMemo(() => {
+    switch (watchedFieldType) {
+      case FIELD_TYPE.OBJECT:
+        return subModelId ? (
+          <ModelForm depth={(depth || 1) + 1} defaultModelId={subModelId} />
+        ) : null;
+      default:
+        return null;
+    }
+  }, [depth, subModelId, watchedFieldType]);
+
   return (
-    <TableRow>
-      <TableCell
-        onClick={createCellClickHandler("fieldName")}
-        style={{ paddingLeft: indentionPadding }}
-      >
-        {isFormVisible ? (
-          <Controller
-            control={control}
-            name="fieldName"
-            defaultValue={defaultValues.fieldName}
-            rules={{
-              required: "필드명을 입력해주세요.",
-              maxLength: {
-                value: 40,
-                message: "너무 긴 필드명은 좋은 생각이 아닌 것 같아요.",
-              },
-              validate: (data: string) => {
-                const isDup = modelFields
-                  .filter(
-                    // 현재 수정중인 필드는 제외
-                    (item) => item.fieldName.value !== defaultValues?.fieldName
-                  )
-                  .some((modelField) => modelField.fieldName.value === data);
-                return isDup ? "중복되는 필드가 있어요." : true;
-              },
-              pattern: patterns.wordsWithNoSpace,
-            }}
-            render={(props) => {
-              return (
-                <TextField
+    <>
+      <TableRow>
+        <TableCell
+          onClick={createCellClickHandler("fieldName")}
+          style={{ paddingLeft: indentionPadding }}
+        >
+          {isFormVisible ? (
+            <Controller
+              control={control}
+              name="fieldName"
+              defaultValue={defaultValues.fieldName}
+              rules={{
+                required: "필드명을 입력해주세요.",
+                maxLength: {
+                  value: 40,
+                  message: "너무 긴 필드명은 좋은 생각이 아닌 것 같아요.",
+                },
+                validate: (data: string) => {
+                  const isDup = modelFields
+                    .filter(
+                      // 현재 수정중인 필드는 제외
+                      (item) =>
+                        item.fieldName.value !== defaultValues?.fieldName
+                    )
+                    .some((modelField) => modelField.fieldName.value === data);
+                  return isDup ? "중복되는 필드가 있어요." : true;
+                },
+                pattern: patterns.wordsWithNoSpace,
+              }}
+              render={(props) => {
+                return (
+                  <TextField
+                    {...props}
+                    size="small"
+                    autoFocus={autoFocusField === "fieldName"}
+                    fullWidth
+                    required
+                    error={!!errors.fieldName}
+                    helperText={errors.fieldName?.message}
+                    onBlur={handleOnBlur}
+                    onFocus={handleOnFocus}
+                    placeholder="필드명"
+                  />
+                );
+              }}
+            />
+          ) : (
+            modelField?.fieldName.value
+          )}
+        </TableCell>
+        <TableCell
+          align="center"
+          onClick={createCellClickHandler("isRequired")}
+        >
+          {isFormVisible ? (
+            <Controller
+              control={control}
+              name="isRequired"
+              render={(props) => (
+                <Checkbox
                   {...props}
-                  size="small"
-                  autoFocus={autoFocusField === "fieldName"}
-                  fullWidth
-                  required
-                  error={!!errors.fieldName}
-                  helperText={errors.fieldName?.message}
+                  autoFocus={autoFocusField === "isRequired"}
+                  defaultChecked={defaultValues.isRequired}
+                  checked={props.value}
+                  onChange={(e) => props.onChange(e.target.checked)}
                   onBlur={handleOnBlur}
                   onFocus={handleOnFocus}
-                  placeholder="필드명"
                 />
-              );
-            }}
-          />
-        ) : (
-          modelField?.fieldName.value
-        )}
-      </TableCell>
-      <TableCell align="center" onClick={createCellClickHandler("isRequired")}>
-        {isFormVisible ? (
-          <Controller
-            control={control}
-            name="isRequired"
-            render={(props) => (
-              <Checkbox
-                {...props}
-                autoFocus={autoFocusField === "isRequired"}
-                defaultChecked={defaultValues.isRequired}
-                checked={props.value}
-                onChange={(e) => props.onChange(e.target.checked)}
-                onBlur={handleOnBlur}
-                onFocus={handleOnFocus}
-              />
-            )}
-          />
-        ) : modelField?.isRequired.value ? (
-          <CheckIcon fontSize="small" />
-        ) : (
-          ""
-        )}
-      </TableCell>
-      <TableCell align="center" onClick={createCellClickHandler("isArray")}>
-        {isFormVisible ? (
-          <Controller
-            control={control}
-            name="isArray"
-            render={(props) => (
-              <Checkbox
-                {...props}
-                autoFocus={autoFocusField === "isArray"}
-                defaultChecked={defaultValues.isArray}
-                checked={props.value}
-                onChange={(e) => props.onChange(e.target.checked)}
-                onBlur={handleOnBlur}
-                onFocus={handleOnFocus}
-              />
-            )}
-          />
-        ) : modelField?.isArray.value ? (
-          <CheckIcon fontSize="small" />
-        ) : (
-          ""
-        )}
-      </TableCell>
-      <TableCell onClick={createCellClickHandler("fieldType")}>
-        {isFormVisible ? (
-          <Controller
-            control={control}
-            name="fieldType"
-            defaultValue={defaultValues.fieldType}
-            rules={{ required: "타입을 선택해주세요." }}
-            render={({ value }) => {
-              return (
-                <Autocomplete
-                  value={value}
-                  openOnFocus
-                  className={classes.autocomplete}
-                  options={fieldTypes}
-                  onChange={(_e, value) => {
-                    setValue("fieldType", value, { shouldValidate: true });
-                  }}
-                  disableClearable
-                  renderInput={(params) => {
-                    return (
+              )}
+            />
+          ) : modelField?.isRequired.value ? (
+            <CheckIcon fontSize="small" />
+          ) : (
+            ""
+          )}
+        </TableCell>
+        <TableCell align="center" onClick={createCellClickHandler("isArray")}>
+          {isFormVisible ? (
+            <Controller
+              control={control}
+              name="isArray"
+              render={(props) => (
+                <Checkbox
+                  {...props}
+                  autoFocus={autoFocusField === "isArray"}
+                  defaultChecked={defaultValues.isArray}
+                  checked={props.value}
+                  onChange={(e) => props.onChange(e.target.checked)}
+                  onBlur={handleOnBlur}
+                  onFocus={handleOnFocus}
+                />
+              )}
+            />
+          ) : modelField?.isArray.value ? (
+            <CheckIcon fontSize="small" />
+          ) : (
+            ""
+          )}
+        </TableCell>
+        <TableCell onClick={createCellClickHandler("fieldType")}>
+          {isFormVisible ? (
+            <Controller
+              control={control}
+              name="fieldType"
+              defaultValue={defaultValues.fieldType}
+              rules={{ required: "타입을 선택해주세요." }}
+              render={({ value }) => {
+                return (
+                  <Autocomplete
+                    value={value}
+                    openOnFocus
+                    className={classes.autocomplete}
+                    options={fieldTypes}
+                    onChange={(_e, value) => {
+                      setValue("fieldType", value, { shouldValidate: true });
+                    }}
+                    disableClearable
+                    renderInput={(params) => {
+                      return (
+                        <TextField
+                          {...params}
+                          required
+                          placeholder="타입"
+                          autoFocus={autoFocusField === "fieldType"}
+                          error={!!errors.fieldType}
+                          helperText={errors.fieldType?.message}
+                          onBlur={handleOnBlur}
+                          onFocus={handleOnFocus}
+                        />
+                      );
+                    }}
+                  />
+                );
+              }}
+            />
+          ) : (
+            modelField?.fieldType.value
+          )}
+        </TableCell>
+        <TableCell onClick={createCellClickHandler("format")}>
+          {isFormVisible ? (
+            <Controller
+              control={control}
+              name="format"
+              defaultValue={defaultValues.format || formatOptions[0]}
+              render={({ value }) => {
+                return (
+                  <Autocomplete
+                    value={value}
+                    openOnFocus
+                    className={classes.autocomplete}
+                    options={formatOptions}
+                    onChange={(_e, value) =>
+                      setValue("format", value, { shouldValidate: true })
+                    }
+                    disableClearable
+                    renderInput={(params) => (
                       <TextField
                         {...params}
-                        required
-                        placeholder="타입"
-                        autoFocus={autoFocusField === "fieldType"}
-                        error={!!errors.fieldType}
-                        helperText={errors.fieldType?.message}
+                        autoFocus={autoFocusField === "format"}
+                        placeholder="포맷"
                         onBlur={handleOnBlur}
                         onFocus={handleOnFocus}
                       />
-                    );
-                  }}
+                    )}
+                  />
+                );
+              }}
+            />
+          ) : (
+            modelField?.format.value
+          )}
+        </TableCell>
+        <TableCell onClick={createCellClickHandler("enum")}>
+          {isFormVisible ? (
+            <Controller
+              control={control}
+              name="enum"
+              defaultValue={defaultValues.enum}
+              render={({ value }) => {
+                return (
+                  <Autocomplete
+                    value={value}
+                    openOnFocus
+                    className={classes.autocomplete}
+                    options={["없음"]}
+                    disableClearable
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        autoFocus={autoFocusField === "enum"}
+                        placeholder="열거형"
+                        onBlur={handleOnBlur}
+                        onFocus={handleOnFocus}
+                      />
+                    )}
+                  />
+                );
+              }}
+            />
+          ) : (
+            modelField?.enum.value
+          )}
+        </TableCell>
+        <TableCell onClick={createCellClickHandler("description")}>
+          {isFormVisible ? (
+            <Controller
+              control={control}
+              name="description"
+              defaultValue={defaultValues.description}
+              rules={{
+                maxLength: {
+                  value: 200,
+                  message: "설명이 너무 길어요.",
+                },
+              }}
+              render={(props) => (
+                <TextField
+                  {...props}
+                  size="small"
+                  autoFocus={autoFocusField === "description"}
+                  fullWidth
+                  error={!!errors.description}
+                  helperText={errors.description?.message}
+                  onBlur={handleOnBlur}
+                  onFocus={handleOnFocus}
+                  placeholder="설명"
                 />
-              );
-            }}
-          />
-        ) : (
-          modelField?.fieldType.value
-        )}
-      </TableCell>
-      <TableCell onClick={createCellClickHandler("format")}>
-        {isFormVisible ? (
-          <Controller
-            control={control}
-            name="format"
-            defaultValue={defaultValues.format || formatOptions[0]}
-            render={({ value }) => {
-              return (
-                <Autocomplete
-                  value={value}
-                  openOnFocus
-                  className={classes.autocomplete}
-                  options={formatOptions}
-                  onChange={(_e, value) =>
-                    setValue("format", value, { shouldValidate: true })
-                  }
-                  disableClearable
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      autoFocus={autoFocusField === "format"}
-                      placeholder="포맷"
-                      onBlur={handleOnBlur}
-                      onFocus={handleOnFocus}
-                    />
-                  )}
-                />
-              );
-            }}
-          />
-        ) : (
-          modelField?.format.value
-        )}
-      </TableCell>
-      <TableCell onClick={createCellClickHandler("enum")}>
-        {isFormVisible ? (
-          <Controller
-            control={control}
-            name="enum"
-            defaultValue={defaultValues.enum}
-            render={({ value }) => {
-              return (
-                <Autocomplete
-                  value={value}
-                  openOnFocus
-                  className={classes.autocomplete}
-                  options={["없음"]}
-                  disableClearable
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      autoFocus={autoFocusField === "enum"}
-                      placeholder="열거형"
-                      onBlur={handleOnBlur}
-                      onFocus={handleOnFocus}
-                    />
-                  )}
-                />
-              );
-            }}
-          />
-        ) : (
-          modelField?.enum.value
-        )}
-      </TableCell>
-      <TableCell onClick={createCellClickHandler("description")}>
-        {isFormVisible ? (
-          <Controller
-            control={control}
-            name="description"
-            defaultValue={defaultValues.description}
-            rules={{
-              maxLength: {
-                value: 200,
-                message: "설명이 너무 길어요.",
-              },
-            }}
-            render={(props) => (
-              <TextField
-                {...props}
-                size="small"
-                autoFocus={autoFocusField === "description"}
-                fullWidth
-                error={!!errors.description}
-                helperText={errors.description?.message}
-                onBlur={handleOnBlur}
-                onFocus={handleOnFocus}
-                placeholder="설명"
-              />
-            )}
-          />
-        ) : (
-          modelField?.description.value
-        )}
-      </TableCell>
-      <TableCell align="right">
-        {isFormVisible ? (
-          <Box padding={3} />
-        ) : (
-          <IconButton onClick={onDelete}>
-            <SvgIcon fontSize="small">
-              <DeleteOutlineIcon />
-            </SvgIcon>
-          </IconButton>
-        )}
-      </TableCell>
-    </TableRow>
+              )}
+            />
+          ) : (
+            modelField?.description.value
+          )}
+        </TableCell>
+        <TableCell align="right">
+          {isFormVisible ? (
+            <Box padding={3} />
+          ) : (
+            <IconButton onClick={onDelete}>
+              <SvgIcon fontSize="small">
+                <DeleteOutlineIcon />
+              </SvgIcon>
+            </IconButton>
+          )}
+        </TableCell>
+      </TableRow>
+      {subModelForm}
+    </>
   );
 };
 
