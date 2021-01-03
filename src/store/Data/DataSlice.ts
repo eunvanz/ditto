@@ -91,7 +91,7 @@ const DataSlice = createSlice({
       action: PayloadAction<Omit<RecordDataPayload, "data">>
     ) => {
       const { key, recordKey, subRecordKey } = action.payload;
-      if (subRecordKey) {
+      if (!subRecordKey) {
         // @ts-ignore
         if (state[key]?.[recordKey]) {
           // @ts-ignore

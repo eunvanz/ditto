@@ -48,6 +48,11 @@ const ModelListContainer = () => {
     setIsModelFormVisible(true);
   }, []);
 
+  const hideModelForm = useCallback(() => {
+    setModel(undefined);
+    setIsModelFormVisible(false);
+  }, []);
+
   return models ? (
     <>
       <ModelList
@@ -59,7 +64,7 @@ const ModelListContainer = () => {
       <ModelForm
         key={model?.id}
         isVisible={isModelFormVisible}
-        onClose={() => setIsModelFormVisible(false)}
+        onClose={hideModelForm}
         defaultModelId={model?.id}
       />
     </>
