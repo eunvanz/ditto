@@ -29,7 +29,10 @@ import {
   ModelDoc,
   FORMAT,
 } from "../../types";
-import { patterns } from "../../helpers/projectHelpers";
+import {
+  getIntentionPaddingByDepth,
+  patterns,
+} from "../../helpers/projectHelpers";
 
 const useStyles = makeStyles(() => ({
   autocomplete: {
@@ -213,7 +216,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [handleOnPressEnter, isFormVisible]);
 
   const indentionPadding = useMemo(() => {
-    return depth ? depth * 16 : undefined;
+    return getIntentionPaddingByDepth(depth);
   }, [depth]);
 
   return (

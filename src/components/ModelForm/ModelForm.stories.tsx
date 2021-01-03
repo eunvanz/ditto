@@ -31,3 +31,10 @@ export const X버튼없음 = Template.bind({});
 X버튼없음.args = {
   onClose: undefined,
 };
+
+export const 뎁스있음 = Template.bind({});
+뎁스있음.args = {
+  model: mockProject.model,
+  modelFields: mockProject.modelFields,
+  depth: 2,
+};

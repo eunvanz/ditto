@@ -12,12 +12,14 @@ export interface ModelFormContainerProps {
   defaultModelId?: string;
   isVisible?: boolean;
   onClose?: () => void;
+  depth?: number;
 }
 
 const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
   defaultModelId,
   isVisible,
   onClose,
+  depth,
 }) => {
   const dispatch = useDispatch();
 
@@ -103,6 +105,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       onDeleteModelField={deleteModelField}
       onSubmitModelField={submitModelField}
       projectModels={projectModels}
+      depth={depth}
     />
   );
 };
