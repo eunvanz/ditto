@@ -46,6 +46,7 @@ const useStyles = makeStyles(() => ({
   },
   addButton: {
     justifyContent: "start",
+    textTransform: "unset",
   },
   submit: {
     display: "none",
@@ -95,7 +96,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
 
   const [isNewFormVisible, setIsNewFormVisible] = useState(false);
 
-  const modelNameInputRef = useRef<any>(undefined);
+  const modelNameInputRef = useRef<any | undefined>(undefined);
   const isCancelingRef = useRef<boolean>(false);
 
   /**
@@ -112,7 +113,10 @@ const ModelForm: React.FC<ModelFormProps> = ({
   }, [model, projectModels]);
 
   const showNewForm = useCallback(() => {
-    if (!!modelNameInputRef.current.value) {
+    if (
+      modelNameInputRef.current === undefined || // modelNameInput이 없는 경우 (depth 존재)
+      !!modelNameInputRef.current.value
+    ) {
       setIsNewFormVisible(true);
     }
   }, []);
