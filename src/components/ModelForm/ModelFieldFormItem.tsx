@@ -63,6 +63,7 @@ export interface ModelFieldFormItemProps {
    * 같은 프로젝트 내의 모델들
    */
   projectModels: ModelDoc[];
+  onCancel?: () => void;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -73,6 +74,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   onDelete,
   depth,
   projectModels,
+  onCancel,
 }) => {
   const classes = useStyles();
 
@@ -156,6 +158,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       if (isNew) {
         const isCanceled = isEqual(getValues(), defaultValues);
         if (isCanceled && !isFocusingRef.current) {
+          onCancel?.();
           return;
         }
       }
@@ -171,6 +174,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     isFieldModified,
     getValues,
     defaultValues,
+    onCancel,
     handleOnSubmit,
   ]);
 
@@ -190,7 +194,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     [isFormVisible, showForm]
   );
 
-  const handleOnPressEnter = useCallback(
+  const handleOnPressKey = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Enter") {
         handleOnBlur();
@@ -209,12 +213,12 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
 
   useEffect(() => {
     if (isFormVisible) {
-      document.addEventListener("keyup", handleOnPressEnter);
+      document.addEventListener("keyup", handleOnPressKey);
       return () => {
-        document.removeEventListener("keyup", handleOnPressEnter);
+        document.removeEventListener("keyup", handleOnPressKey);
       };
     }
-  }, [handleOnPressEnter, isFormVisible]);
+  }, [handleOnPressKey, isFormVisible]);
 
   const indentionPadding = useMemo(() => {
     return getIntentionPaddingByDepth(depth);

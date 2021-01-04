@@ -182,6 +182,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
           isNew
           projectModels={projectModels}
           depth={depth}
+          onCancel={() => setIsNewFormVisible(false)}
         />
       ) : (
         <TableRow>
