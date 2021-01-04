@@ -139,72 +139,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
     };
   }, [cancelTask]);
 
-  const Wrapper = useMemo(() => {
-    if (!depth) {
-      return ({ children }: { children: React.ReactNode }) => (
-        <Card>
-          <CardHeader
-            title="모델 편집"
-            action={
-              onClose ? (
-                <IconButton size="small" onClick={onClose}>
-                  <CloseIcon />
-                </IconButton>
-              ) : undefined
-            }
-          />
-          <Divider />
-          <ModelNameForm
-            isCancelingRef={isCancelingRef}
-            nameInputRef={modelNameInputRef}
-            onSubmit={onSubmitModel}
-            model={model}
-            existingModelNames={existingModelNames}
-          />
-          <Divider />
-          <PerfectScrollbar>
-            <Box minWidth={700}>
-              <Table>
-                <caption></caption>
-                <TableHead>
-                  <TableRow>
-                    <TableCell component="th" className={classes.fieldNameCell}>
-                      필드명*
-                    </TableCell>
-                    <TableCell align="center" className={classes.requiredCell}>
-                      필수
-                    </TableCell>
-                    <TableCell align="center" className={classes.arrayCell}>
-                      배열
-                    </TableCell>
-                    <TableCell className={classes.typeCell}>타입*</TableCell>
-                    <TableCell className={classes.formatCell}>포맷</TableCell>
-                    <TableCell className={classes.formatCell}>열거형</TableCell>
-                    <TableCell>설명</TableCell>
-                    <TableCell align="right"></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>{children}</TableBody>
-              </Table>
-            </Box>
-          </PerfectScrollbar>
-        </Card>
-      );
-    }
-    return ({ children }: { children: React.ReactNode }) => <>{children}</>;
-  }, [
-    classes.arrayCell,
-    classes.fieldNameCell,
-    classes.formatCell,
-    classes.requiredCell,
-    classes.typeCell,
-    depth,
-    existingModelNames,
-    model,
-    onClose,
-    onSubmitModel,
-  ]);
-
   const indentionPadding = useMemo(() => {
     return getIntentionPaddingByDepth(depth);
   }, [depth]);
@@ -214,7 +148,15 @@ const ModelForm: React.FC<ModelFormProps> = ({
   }, [depth, model]);
 
   return (
-    <Wrapper>
+    <Wrapper
+      existingModelNames={existingModelNames}
+      onSubmitModel={onSubmitModel}
+      depth={depth}
+      model={model}
+      onClose={onClose}
+      isCancelingRef={isCancelingRef}
+      modelNameInputRef={modelNameInputRef}
+    >
       {modelFields.map((modelField) => (
         <ModelFieldFormItem
           key={modelField.id}
@@ -253,6 +195,83 @@ const ModelForm: React.FC<ModelFormProps> = ({
       )}
     </Wrapper>
   );
+};
+
+type WrapperProps = Pick<
+  ModelFormProps,
+  "depth" | "model" | "onClose" | "onSubmitModel"
+> & {
+  existingModelNames: string[];
+  children: React.ReactNode;
+  isCancelingRef: React.MutableRefObject<boolean>;
+  modelNameInputRef: React.MutableRefObject<any>;
+};
+
+const Wrapper: React.FC<WrapperProps> = ({
+  depth,
+  model,
+  onClose,
+  onSubmitModel,
+  existingModelNames,
+  children,
+  isCancelingRef,
+  modelNameInputRef,
+}) => {
+  const classes = useStyles();
+
+  if (!depth) {
+    return (
+      <Card>
+        <CardHeader
+          title="모델 편집"
+          action={
+            onClose ? (
+              <IconButton size="small" onClick={onClose}>
+                <CloseIcon />
+              </IconButton>
+            ) : undefined
+          }
+        />
+        <Divider />
+        <ModelNameForm
+          isCancelingRef={isCancelingRef}
+          nameInputRef={modelNameInputRef}
+          onSubmit={onSubmitModel}
+          model={model}
+          existingModelNames={existingModelNames}
+        />
+        <Divider />
+        <PerfectScrollbar>
+          <Box minWidth={700}>
+            <Table>
+              <caption></caption>
+              <TableHead>
+                <TableRow>
+                  <TableCell component="th" className={classes.fieldNameCell}>
+                    필드명*
+                  </TableCell>
+                  <TableCell align="center" className={classes.requiredCell}>
+                    필수
+                  </TableCell>
+                  <TableCell align="center" className={classes.arrayCell}>
+                    배열
+                  </TableCell>
+                  <TableCell className={classes.typeCell}>타입*</TableCell>
+                  <TableCell className={classes.formatCell}>포맷</TableCell>
+                  <TableCell className={classes.formatCell}>열거형</TableCell>
+                  <TableCell>설명</TableCell>
+                  <TableCell align="right"></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{children}</TableBody>
+            </Table>
+          </Box>
+        </PerfectScrollbar>
+      </Card>
+    );
+  } else {
+    return <>{children}</>;
+  }
 };
 
 export interface ModelFormModalProps extends ModelFormProps {

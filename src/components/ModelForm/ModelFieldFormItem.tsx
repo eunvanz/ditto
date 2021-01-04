@@ -227,17 +227,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     return subModel?.id;
   }, [projectModels, watchedValues.format]);
 
-  const subModelForm = useMemo(() => {
-    switch (watchedFieldType) {
-      case FIELD_TYPE.OBJECT:
-        return subModelId ? (
-          <ModelForm depth={(depth || 1) + 1} defaultModelId={subModelId} />
-        ) : null;
-      default:
-        return null;
-    }
-  }, [depth, subModelId, watchedFieldType]);
-
   return (
     <>
       <TableRow>
@@ -485,9 +474,34 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
           )}
         </TableCell>
       </TableRow>
-      {subModelForm}
+      <SubModelForm
+        fieldType={watchedFieldType}
+        subModelId={subModelId}
+        depth={depth}
+      />
     </>
   );
+};
+
+interface SubModelFormProps {
+  fieldType: string;
+  subModelId?: string;
+  depth?: number;
+}
+
+const SubModelForm: React.FC<SubModelFormProps> = ({
+  fieldType,
+  subModelId,
+  depth,
+}) => {
+  switch (fieldType) {
+    case FIELD_TYPE.OBJECT:
+      return subModelId ? (
+        <ModelForm depth={(depth || 1) + 1} defaultModelId={subModelId} />
+      ) : null;
+    default:
+      return null;
+  }
 };
 
 export default ModelFormItem;

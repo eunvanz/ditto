@@ -39,15 +39,15 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
           data: defaultModelId,
         })
       );
+      return () => {
+        dispatch(
+          DataActions.clearRecordData({
+            key: DATA_KEY.MODEL_FORMS,
+            recordKey: modelFormId,
+          })
+        );
+      };
     }
-    return () => {
-      dispatch(
-        DataActions.clearRecordData({
-          key: DATA_KEY.MODEL_FORMS,
-          recordKey: modelFormId,
-        })
-      );
-    };
     // eslint-disable-next-line
   }, []);
 
@@ -80,6 +80,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
     if (model) {
       dispatch(ProjectActions.listenToModelFields(model));
       return () => {
+        console.log("===== unlisten", model.id);
         dispatch(ProjectActions.unlistenToModelFields(model));
       };
     }
