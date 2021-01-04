@@ -64,6 +64,10 @@ export interface ModelFieldFormItemProps {
    */
   projectModels: ModelDoc[];
   onCancel?: () => void;
+  /**
+   * ModelForm 모달에서 닫기 버튼을 클릭시 취소동작으로 인식하기 위한 플래그
+   */
+  isCancelingRef: React.MutableRefObject<boolean>;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -75,6 +79,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   depth,
   projectModels,
   onCancel,
+  isCancelingRef,
 }) => {
   const classes = useStyles();
 
@@ -152,6 +157,9 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [defaultValues, watchedValues]);
 
   const handleOnBlur = useCallback(() => {
+    if (isCancelingRef.current) {
+      return;
+    }
     isFocusingRef.current = false;
     onBlurTimeoutRef.current = setTimeout(() => {
       const hasError = !!Object.keys(errors).length;
@@ -169,6 +177,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       }
     }, 100);
   }, [
+    isCancelingRef,
     errors,
     isNew,
     isFieldModified,
@@ -199,6 +208,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       if (e.key === "Enter") {
         handleOnBlur();
       } else if (e.key === "Escape") {
+        e.stopPropagation();
         setIsFormVisible(false);
       }
     },

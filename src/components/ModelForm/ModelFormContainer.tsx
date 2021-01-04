@@ -80,7 +80,6 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
     if (model) {
       dispatch(ProjectActions.listenToModelFields(model));
       return () => {
-        console.log("===== unlisten", model.id);
         dispatch(ProjectActions.unlistenToModelFields(model));
       };
     }
