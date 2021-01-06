@@ -27,6 +27,7 @@ import { ModelFieldDoc, ModelDoc } from "../../types";
 import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
 import CloseIcon from "@material-ui/icons/Close";
 import { getIntentionPaddingByDepth } from "../../helpers/projectHelpers";
+import { ExpandLess, ExpandMore } from "@material-ui/icons";
 
 const useStyles = makeStyles(() => ({
   fieldNameCell: {
@@ -226,6 +227,12 @@ const Wrapper: React.FC<WrapperProps> = ({
 }) => {
   const classes = useStyles();
 
+  const [isDetailVisible, setIsDetailVisible] = useState(false);
+
+  const indentionPadding = useMemo(() => {
+    return getIntentionPaddingByDepth(depth);
+  }, [depth]);
+
   if (!depth) {
     return (
       <Card>
@@ -277,7 +284,32 @@ const Wrapper: React.FC<WrapperProps> = ({
       </Card>
     );
   } else {
-    return <>{children}</>;
+    return (
+      <>
+        <TableRow>
+          <TableCell colSpan={8} style={{ paddingLeft: indentionPadding }}>
+            <Button
+              className={classes.addButton}
+              fullWidth
+              color="secondary"
+              onClick={() => setIsDetailVisible(!isDetailVisible)}
+            >
+              {!isDetailVisible && (
+                <>
+                  <ExpandMore fontSize="small" /> {model?.name} 펼치기
+                </>
+              )}
+              {isDetailVisible && (
+                <>
+                  <ExpandLess fontSize="small" /> {model?.name} 접기
+                </>
+              )}
+            </Button>
+          </TableCell>
+        </TableRow>
+        {isDetailVisible ? children : null}
+      </>
+    );
   }
 };
 

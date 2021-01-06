@@ -202,7 +202,7 @@ const modelFields: ModelFieldDoc[] = [
     },
     fieldType: {
       id: "mockId",
-      value: "object",
+      value: "string",
       updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
       createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
       updatedAt: {
@@ -224,7 +224,7 @@ const modelFields: ModelFieldDoc[] = [
     },
     format: {
       id: "mockId",
-      value: "mockModelSub",
+      value: "없음",
       updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
       createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
       updatedAt: {
