@@ -30,6 +30,7 @@ import {
 import { PayloadAction, ActionCreator, Action } from "@reduxjs/toolkit";
 import history from "../../helpers/history";
 import ROUTE from "../../paths";
+import ProjectSelectors from "./ProjectSelectors";
 
 export function* submitProjectFormFlow() {
   while (true) {
@@ -558,6 +559,14 @@ export function* listenToProjectModelsFlow() {
       continue;
     }
 
+    const listeningModelsProjectIds = yield* select(
+      ProjectSelectors.selectListeningModelsProjectIds
+    );
+
+    if (listeningModelsProjectIds.includes(project.id)) {
+      continue;
+    }
+
     yield* fork(listenToEventChannel, {
       eventChannel: createProjectModelsEventChannel(project.id),
       dataReceiverCreator: (data) =>
@@ -602,6 +611,14 @@ export function* listenToModelFieldsFlow() {
     const { payload: model } = yield* take(ProjectActions.listenToModelFields);
     const project = yield* call(selectAndCheckProject);
     if (!project) {
+      continue;
+    }
+
+    const listeningFieldsModelIds = yield* select(
+      ProjectSelectors.selectListeningFieldsModelIds
+    );
+
+    if (listeningFieldsModelIds.includes(model.id)) {
       continue;
     }
 

@@ -64,12 +64,34 @@ const createModelFormSelector = (modelFormId?: string) =>
     }
   );
 
+const selectListeningFieldsModelIds = createSelector(
+  (state: RootState) => state.data[DATA_KEY.MODEL_FIELDS],
+  (modelFields) => {
+    if (modelFields) {
+      return Object.keys(modelFields);
+    }
+    return [];
+  }
+);
+
+const selectListeningModelsProjectIds = createSelector(
+  (state: RootState) => state.data[DATA_KEY.MODELS],
+  (models) => {
+    if (models) {
+      return Object.keys(models);
+    }
+    return [];
+  }
+);
+
 const ProjectSelectors = {
   selectIsProjectFormSubmitting,
   selectProjectUrls,
   selectForProjectBasicForm,
   selectProjectModels,
   createModelFormSelector,
+  selectListeningFieldsModelIds,
+  selectListeningModelsProjectIds,
 };
 
 export default ProjectSelectors;
