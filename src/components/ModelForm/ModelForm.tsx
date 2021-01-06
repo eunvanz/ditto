@@ -257,7 +257,7 @@ const Wrapper: React.FC<WrapperProps> = ({
         <Divider />
         <PerfectScrollbar>
           <Box minWidth={700}>
-            <Table>
+            <Table stickyHeader>
               <caption></caption>
               <TableHead>
                 <TableRow>
@@ -324,7 +324,7 @@ export const ModelFormModal: React.FC<ModelFormModalProps> = ({
   ...restProps
 }) => {
   return (
-    <Dialog open={isVisible} fullWidth maxWidth="xl">
+    <Dialog open={isVisible} fullWidth maxWidth="xl" scroll="body">
       <ModelForm {...restProps} onClose={onClose} />
     </Dialog>
   );
