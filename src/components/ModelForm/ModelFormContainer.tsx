@@ -55,6 +55,10 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
     ProjectSelectors.createModelFormSelector(modelFormId)
   );
 
+  const listeningModelIds = useSelector(
+    ProjectSelectors.selectListeningFieldsModelIds
+  );
+
   const submitModel = useCallback(
     (data: ModelNameFormValues) => {
       dispatch(ProjectActions.submitModelNameForm({ ...data, modelFormId }));
@@ -77,7 +81,8 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
   );
 
   useEffect(() => {
-    if (model) {
+    // 이미 listening을 하고 있는 모델에 데애서는 수행하지 않음
+    if (model && !listeningModelIds.includes(model.id)) {
       dispatch(ProjectActions.listenToModelFields(model));
       return () => {
         dispatch(ProjectActions.unlistenToModelFields(model));
