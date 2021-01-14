@@ -447,19 +447,27 @@ export function createUnlistenWaiter({
   unlistenAction,
   cleanUpAction,
   hasToCleanUpOnUnlisten,
+  checkCondition,
 }: {
   unlistenAction: ActionCreator<any>;
+  checkCondition?: (payload: any) => boolean;
   cleanUpAction: Action<any>;
   hasToCleanUpOnUnlisten?: boolean;
 }) {
   return function* (eventChannel: EventChannel<any>) {
     while (true) {
-      const [isSignedOut] = yield* race([
+      const [isSignedOut, { payload }] = yield* race([
         take(AuthActions.signOut),
         take(unlistenAction),
       ]);
+      console.log("===== payload", payload);
       yield* call(eventChannel.close);
-      if (isSignedOut || hasToCleanUpOnUnlisten) {
+      if (isSignedOut) {
+        yield* put(cleanUpAction);
+      } else if (
+        hasToCleanUpOnUnlisten &&
+        (checkCondition ? checkCondition(payload) : true)
+      ) {
         yield* put(cleanUpAction);
       }
       break;
@@ -635,6 +643,7 @@ export function* listenToModelFieldsFlow() {
           key: DATA_KEY.MODEL_FIELDS,
           recordKey: model.id,
         }),
+        checkCondition: (payload: ModelDoc) => payload.id === model.id,
         unlistenAction: ProjectActions.unlistenToModelFields,
         hasToCleanUpOnUnlisten: true,
       }),

@@ -48,8 +48,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
         );
       };
     }
-    // eslint-disable-next-line
-  }, []);
+  }, [defaultModelId, dispatch, modelFormId]);
 
   const { model, modelFields, projectModels } = useSelector(
     ProjectSelectors.createModelFormSelector(modelFormId)
@@ -81,7 +80,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
   );
 
   useEffect(() => {
-    // 이미 listening을 하고 있는 모델에 데애서는 수행하지 않음
+    // 이미 listening을 하고 있는 모델에 대해서는 수행하지 않음
     if (model && !listeningModelIds.includes(model.id)) {
       dispatch(ProjectActions.listenToModelFields(model));
       return () => {

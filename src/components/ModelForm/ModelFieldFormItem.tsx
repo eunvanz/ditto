@@ -488,11 +488,13 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
           )}
         </TableCell>
       </TableRow>
-      <SubModelForm
-        fieldType={watchedFieldType}
-        subModelId={subModelId}
-        depth={depth}
-      />
+      {!isFormVisible && (
+        <SubModelForm
+          fieldType={watchedFieldType}
+          subModelId={subModelId}
+          depth={depth}
+        />
+      )}
     </>
   );
 };
@@ -510,9 +512,10 @@ const SubModelForm: React.FC<SubModelFormProps> = ({
 }) => {
   switch (fieldType) {
     case FIELD_TYPE.OBJECT:
-      return subModelId ? (
-        <ModelForm depth={(depth || 1) + 1} defaultModelId={subModelId} />
-      ) : null;
+      return <ModelForm depth={(depth || 1) + 1} defaultModelId={subModelId} />;
+    // return subModelId ? (
+    //   <ModelForm depth={(depth || 1) + 1} defaultModelId={subModelId} />
+    // ) : null;
     default:
       return null;
   }
