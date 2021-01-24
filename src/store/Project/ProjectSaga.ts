@@ -460,14 +460,14 @@ export function createUnlistenWaiter({
         take(AuthActions.signOut),
         take(unlistenAction),
       ]);
-      console.log("===== payload", payload);
-      yield* call(eventChannel.close);
       if (isSignedOut) {
+        yield* call(eventChannel.close);
         yield* put(cleanUpAction);
       } else if (
         hasToCleanUpOnUnlisten &&
         (checkCondition ? checkCondition(payload) : true)
       ) {
+        yield* call(eventChannel.close);
         yield* put(cleanUpAction);
       }
       break;
