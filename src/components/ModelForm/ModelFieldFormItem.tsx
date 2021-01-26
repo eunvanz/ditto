@@ -208,11 +208,14 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       if (e.key === "Enter") {
         handleOnBlur();
       } else if (e.key === "Escape") {
-        e.stopPropagation();
+        if (!!modelField) {
+          // 새로운 필드를 추가중이 아닐 때에는 ModelForm에 이벤트 전파 하지 않음
+          e.stopPropagation();
+        }
         setIsFormVisible(false);
       }
     },
-    [handleOnBlur]
+    [handleOnBlur, modelField]
   );
 
   useEffect(() => {
@@ -257,7 +260,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 required: "필드명을 입력해주세요.",
                 maxLength: {
                   value: 40,
-                  message: "너무 긴 필드명은 좋은 생각이 아닌 것 같아요.",
+                  message: "필드명이 너무 길어요.",
                 },
                 validate: (data: string) => {
                   const isDup = modelFields
@@ -394,9 +397,9 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                     openOnFocus
                     className={classes.autocomplete}
                     options={formatOptions}
-                    onChange={(_e, value) =>
-                      setValue("format", value, { shouldValidate: true })
-                    }
+                    onChange={(_e, value) => {
+                      setValue("format", value, { shouldValidate: true });
+                    }}
                     disableClearable
                     renderInput={(params) => (
                       <TextField
