@@ -1,36 +1,35 @@
 import React, { useMemo } from "react";
+import { Box, Button, TextField } from "@material-ui/core";
 import { useForm } from "react-hook-form";
-import { TextField, Box, Button } from "@material-ui/core";
 import isEqual from "lodash/isEqual";
+import { patterns } from "../../helpers/projectHelpers";
 
-export interface ProjectFormProps {
-  onSubmit: (values: ProjectFormValues) => void;
+export interface QuickModelNameFormProps {
+  onSubmit: (values: QuickModelNameFormValues) => void;
   isSubmitting: boolean;
-  defaultValues?: ProjectFormValues;
+  defaultValues?: QuickModelNameFormValues;
+  existingModelNames: string[];
 }
 
-export interface ProjectFormValues {
-  title: string;
+export interface QuickModelNameFormValues {
+  name: string;
   description: string;
 }
 
-const ProjectForm: React.FC<ProjectFormProps> = ({
+const QuickModelNameForm: React.FC<QuickModelNameFormProps> = ({
   onSubmit,
   isSubmitting,
   defaultValues,
+  existingModelNames,
 }) => {
   const { register, handleSubmit, errors, watch, formState } = useForm<
-    ProjectFormValues
+    QuickModelNameFormValues
   >({
     mode: "onChange",
     defaultValues,
   });
 
   const watchedValues = watch();
-
-  const isSubmitDisabled = useMemo(() => {
-    return isSubmitting;
-  }, [isSubmitting]);
 
   const isNotModified = useMemo(() => {
     return isEqual(defaultValues, watchedValues);
@@ -41,29 +40,34 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       <Box mt={2}>
         <TextField
           autoFocus
-          label="프로젝트 이름"
-          name="title"
+          label="모델명"
+          name="name"
           inputRef={register({
-            required: "프로젝트 이름을 지어주세요.",
+            required: "모델명을 입력해주세요.",
             maxLength: {
-              value: 20,
-              message: "이름이 너무 길어요.",
+              value: 40,
+              message: "모델명이 너무 길어요.",
             },
+            validate: (data: string) => {
+              const isDup = existingModelNames.some((item) => item === data);
+              return isDup ? "중복되는 모델이 있어요." : true;
+            },
+            pattern: patterns.wordsWithNoSpace,
           })}
           variant="outlined"
           fullWidth
           required
-          error={!!errors.title}
-          helperText={errors.title?.message}
+          error={!!errors.name}
+          helperText={errors.name?.message}
         />
       </Box>
       <Box mt={2}>
         <TextField
-          label="프로젝트 설명"
+          label="설명"
           name="description"
           inputRef={register({
             maxLength: {
-              value: 50,
+              value: 100,
               message: "설명이 너무 길어요.",
             },
           })}
@@ -76,17 +80,17 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       <Box mt={2}>
         <Button
           color="secondary"
-          disabled={isSubmitDisabled || isNotModified || !formState.isValid}
+          disabled={isSubmitting || isNotModified || !formState.isValid}
           fullWidth
           size="large"
           type="submit"
           variant="contained"
         >
-          {defaultValues ? "프로젝트 설정 저장" : "프로젝트 만들기"}
+          {defaultValues ? "변경사항 저장" : "모델 생성"}
         </Button>
       </Box>
     </form>
   );
 };
 
-export default ProjectForm;
+export default QuickModelNameForm;

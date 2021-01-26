@@ -77,8 +77,7 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
                   required: "모델명을 입력해주세요.",
                   maxLength: {
                     value: 40,
-                    message:
-                      "너무 긴 모델명은 별로 좋은 생각이 아닌 것 같아요.",
+                    message: "모델명이 너무 길어요.",
                   },
                   validate: (data: string) => {
                     const isDup = existingModelNames.some(
