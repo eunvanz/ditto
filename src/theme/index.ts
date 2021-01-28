@@ -1,5 +1,9 @@
 import _ from "lodash";
-import { colors, createMuiTheme, responsiveFontSizes } from "@material-ui/core";
+import {
+  colors,
+  unstable_createMuiStrictModeTheme as createMuiTheme,
+  responsiveFontSizes,
+} from "@material-ui/core";
 import { Theme as MuiTheme } from "@material-ui/core/styles/createMuiTheme";
 import { Shadows as MuiShadows } from "@material-ui/core/styles/shadows";
 import {
