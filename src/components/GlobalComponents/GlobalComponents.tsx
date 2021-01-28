@@ -3,6 +3,7 @@ import Notifier from "../Notifier";
 import GlobalLoading from "../GlobalLoading";
 import SignInModal from "../SignInModal";
 import ProjectFormModal from "../ProjectFormModal";
+import QuickModelNameFormModal from "../QuickModelNameFormModal";
 
 const GlobalComponents: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ const GlobalComponents: React.FC = () => {
       <GlobalLoading />
       <ProjectFormModal />
       <SignInModal />
+      <QuickModelNameFormModal />
     </>
   );
 };

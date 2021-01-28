@@ -1,3 +1,3 @@
-import QuickModelNameFormModal from "./QuickModelNameFormModal";
+import QuickModelNameFormModalContainer from "./QuickModelNameFormModalContainer";
 
-export default QuickModelNameFormModal;
+export default QuickModelNameFormModalContainer;

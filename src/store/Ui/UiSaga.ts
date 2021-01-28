@@ -68,11 +68,44 @@ export function* handleShowDelayedLoading(
   }
 }
 
+export function* handleShowQuickModelNameFormModal(
+  action: ReturnType<typeof UiActions.showQuickModelNameFormModal>
+) {
+  const auth = yield* select(AuthSelectors.selectAuth);
+  if (auth.isEmpty) {
+    yield* put(UiActions.showSignInModal());
+  } else {
+    const { payload } = action;
+    yield* put(
+      UiActions.receiveQuickModelNameFormModal({
+        isVisible: true,
+        model: payload,
+      })
+    );
+  }
+}
+
+export function* handleHideQuickModelNameFormModal(
+  _: ReturnType<typeof UiActions.hideQuickModelNameFormModal>
+) {
+  // 모달이 완전히 닫힌 후에 project를 undefined로 세팅
+  yield* delay(100);
+  yield* put(UiActions.clearQuickModelNameFormModal());
+}
+
 export function* watchUiActions() {
   yield* all([
     takeEvery(UiActions.showNotification, handleShowNotification),
     takeEvery(UiActions.hideProjectFormModal, handleHideProjectFormModal),
     takeEvery(UiActions.showProjectFormModal, handleShowProjectFormModal),
     takeEvery(UiActions.showDelayedLoading, handleShowDelayedLoading),
+    takeEvery(
+      UiActions.showQuickModelNameFormModal,
+      handleShowQuickModelNameFormModal
+    ),
+    takeEvery(
+      UiActions.hideQuickModelNameFormModal,
+      handleHideQuickModelNameFormModal
+    ),
   ]);
 }

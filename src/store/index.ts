@@ -34,11 +34,15 @@ export const initialRootState: RootState = {
 const sagaMiddleware = createSagaMiddleware();
 const middleware = [sagaMiddleware];
 
-const store = configureStore({
-  reducer: rootReducer,
-  middleware,
-  devTools: true,
-});
+export const createStore = (preloadedState: RootState = initialRootState) =>
+  configureStore({
+    reducer: rootReducer,
+    middleware,
+    devTools: true,
+    preloadedState,
+  });
+
+const store = createStore();
 
 sagaMiddleware.run(watchAllActions);
 

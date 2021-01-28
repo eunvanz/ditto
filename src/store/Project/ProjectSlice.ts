@@ -10,8 +10,11 @@ import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBa
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
 import { ModelNameFormValues } from "../../components/ModelForm/ModelNameForm";
 import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
+import { QuickModelNameFormValues } from "../../components/QuickModelNameForm/QuickModelNameForm";
 
-export type ProjectState = {};
+export type ProjectState = {
+  pendingModelField?: ModelFieldDoc;
+};
 
 export const initialProjectState: ProjectState = {};
 
@@ -59,6 +62,10 @@ const ProjectSlice = createSlice({
     unlistenToModelFields: (_, _action: PayloadAction<ModelDoc>) => {},
     deleteModel: (_, _action: PayloadAction<ModelDoc>) => {},
     deleteModelField: (_, _action: PayloadAction<ModelFieldDoc>) => {},
+    submitQuickModelNameForm: (
+      _,
+      _action: PayloadAction<QuickModelNameFormValues>
+    ) => {},
   },
 });
 

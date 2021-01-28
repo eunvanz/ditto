@@ -832,6 +832,15 @@ export function* submitModelFieldFormFlow() {
   }
 }
 
+export function* submitQuickModelNameFormFlow() {
+  while (true) {
+    const { type, payload } = yield* take(
+      ProjectActions.submitQuickModelNameForm
+    );
+    yield* put(ProgressActions.startProgress(type));
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -846,5 +855,6 @@ export function* watchProjectActions() {
     fork(submitModelFieldFormFlow),
     fork(listenToModelFieldsFlow),
     fork(deleteModelFieldFlow),
+    fork(submitQuickModelNameFormFlow),
   ]);
 }

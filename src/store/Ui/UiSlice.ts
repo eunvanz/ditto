@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { OptionsObject } from "notistack";
-import { THEMES, ProjectDoc } from "../../types";
+import { THEMES, ProjectDoc, ModelDoc } from "../../types";
 
 export interface Notification {
   key: React.ReactText;
@@ -17,7 +17,13 @@ export type UiState = {
   signInModal: {
     isVisible: boolean;
   };
+  quickModelNameFormModal: QuickModelNameFormModalState;
 };
+
+export interface QuickModelNameFormModalState {
+  isVisible: boolean;
+  model?: ModelDoc;
+}
 
 export interface ProjectFormModalState {
   isVisible: boolean;
@@ -36,6 +42,10 @@ export const initialUiState: UiState = {
   },
   signInModal: {
     isVisible: false,
+  },
+  quickModelNameFormModal: {
+    isVisible: false,
+    model: undefined,
   },
 };
 
@@ -90,6 +100,22 @@ const UiSlice = createSlice({
       state.signInModal.isVisible = false;
     },
     showDelayedLoading: (_, _action: PayloadAction<number | undefined>) => {},
+    receiveQuickModelNameFormModal: (
+      state,
+      action: PayloadAction<QuickModelNameFormModalState>
+    ) => {
+      state.quickModelNameFormModal = action.payload;
+    },
+    showQuickModelNameFormModal: (
+      _,
+      _action: PayloadAction<ModelDoc | undefined>
+    ) => {},
+    hideQuickModelNameFormModal: (state, _: PayloadAction<void>) => {
+      state.quickModelNameFormModal.isVisible = false;
+    },
+    clearQuickModelNameFormModal: (state, _action: PayloadAction<void>) => {
+      state.quickModelNameFormModal.model = undefined;
+    },
   },
 });
 
