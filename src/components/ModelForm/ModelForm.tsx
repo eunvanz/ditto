@@ -171,7 +171,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
           onDelete={() => onDeleteModelField(modelField)}
           projectModels={projectModels}
           depth={depth}
-          isCancelingRef={isCancelingRef}
         />
       ))}
       {isNewFormVisible ? (
@@ -185,7 +184,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
           projectModels={projectModels}
           depth={depth}
           onCancel={() => setIsNewFormVisible(false)}
-          isCancelingRef={isCancelingRef}
         />
       ) : (
         <TableRow>

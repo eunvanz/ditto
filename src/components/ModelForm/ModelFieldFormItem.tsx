@@ -1,10 +1,4 @@
-import React, {
-  useMemo,
-  useEffect,
-  useCallback,
-  useState,
-  useRef,
-} from "react";
+import React, { useMemo, useEffect, useCallback, useState } from "react";
 import {
   TableCell,
   TextField,
@@ -19,7 +13,7 @@ import { Controller, useForm } from "react-hook-form";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CheckIcon from "@material-ui/icons/Check";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import isEqual from "lodash/isEqual";
+import ClearIcon from "@material-ui/icons/Clear";
 import { ModelFieldFormValues } from "./ModelForm";
 import ModelForm from "./index";
 import {
@@ -64,10 +58,6 @@ export interface ModelFieldFormItemProps {
    */
   projectModels: ModelDoc[];
   onCancel?: () => void;
-  /**
-   * ModelForm 모달에서 닫기 버튼을 클릭시 취소동작으로 인식하기 위한 플래그
-   */
-  isCancelingRef: React.MutableRefObject<boolean>;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -79,7 +69,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   depth,
   projectModels,
   onCancel,
-  isCancelingRef,
 }) => {
   const classes = useStyles();
 
@@ -100,11 +89,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     keyof ModelFieldFormValues
   >("fieldName");
 
-  const isFocusingRef = useRef<boolean>(false);
-  const onBlurTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined
-  );
-
   const formProps = useForm<ModelFieldFormValues>({
     mode: "onChange",
     defaultValues,
@@ -113,11 +97,11 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   const {
     errors,
     setValue,
-    getValues,
     watch,
     control,
     handleSubmit,
     reset,
+    trigger,
   } = formProps;
 
   const watchedFieldType = watch("fieldType");
@@ -141,55 +125,21 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [formatOptions, setValue]);
 
   const handleOnSubmit = useCallback(async () => {
-    const values = getValues();
-    await handleSubmit((_data) => {
-      onSubmit({ ...values, target: modelField });
+    trigger();
+    await handleSubmit((data) => {
+      onSubmit({ ...data, target: modelField });
+      reset(data);
+      setIsFormVisible(false);
     })();
     // form의 값이 초기로 돌아가는 현상이 있어서 직접 리셋해줌
-    reset(values);
-    setIsFormVisible(false);
-  }, [getValues, handleSubmit, modelField, onSubmit, reset]);
+  }, [handleSubmit, modelField, onSubmit, reset, trigger]);
 
   const watchedValues = watch();
 
-  const isFieldModified = useMemo(() => {
-    return !isEqual(watchedValues, defaultValues);
-  }, [defaultValues, watchedValues]);
-
-  const handleOnBlur = useCallback(() => {
-    if (isCancelingRef.current) {
-      return;
-    }
-    isFocusingRef.current = false;
-    onBlurTimeoutRef.current = setTimeout(() => {
-      const hasError = !!Object.keys(errors).length;
-      if (isNew) {
-        const isCanceled = isEqual(getValues(), defaultValues);
-        if (isCanceled && !isFocusingRef.current) {
-          onCancel?.();
-          return;
-        }
-      }
-      if (!hasError && !isFocusingRef.current && isFieldModified) {
-        handleOnSubmit();
-      } else if (!isFocusingRef.current && !hasError) {
-        setIsFormVisible(false);
-      }
-    }, 100);
-  }, [
-    isCancelingRef,
-    errors,
-    isNew,
-    isFieldModified,
-    getValues,
-    defaultValues,
-    onCancel,
-    handleOnSubmit,
-  ]);
-
-  const handleOnFocus = useCallback(() => {
-    isFocusingRef.current = true;
-  }, []);
+  const handleOnCancel = useCallback(() => {
+    setIsFormVisible(false);
+    onCancel?.();
+  }, [onCancel]);
 
   const showForm = useCallback((focusField) => {
     setIsFormVisible(true);
@@ -206,23 +156,17 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   const handleOnPressKey = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Enter") {
-        handleOnBlur();
+        handleOnSubmit();
       } else if (e.key === "Escape") {
         if (!!modelField) {
           // 새로운 필드를 추가중이 아닐 때에는 ModelForm에 이벤트 전파 하지 않음
           e.stopPropagation();
         }
-        setIsFormVisible(false);
+        handleOnCancel();
       }
     },
-    [handleOnBlur, modelField]
+    [handleOnCancel, handleOnSubmit, modelField]
   );
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(onBlurTimeoutRef.current);
-    };
-  }, []);
 
   useEffect(() => {
     if (isFormVisible) {
@@ -284,8 +228,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                     required
                     error={!!errors.fieldName}
                     helperText={errors.fieldName?.message}
-                    onBlur={handleOnBlur}
-                    onFocus={handleOnFocus}
                     placeholder="필드명"
                   />
                 );
@@ -310,8 +252,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                   defaultChecked={defaultValues.isRequired}
                   checked={props.value}
                   onChange={(e) => props.onChange(e.target.checked)}
-                  onBlur={handleOnBlur}
-                  onFocus={handleOnFocus}
                 />
               )}
             />
@@ -333,8 +273,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                   defaultChecked={defaultValues.isArray}
                   checked={props.value}
                   onChange={(e) => props.onChange(e.target.checked)}
-                  onBlur={handleOnBlur}
-                  onFocus={handleOnFocus}
                 />
               )}
             />
@@ -371,8 +309,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                           autoFocus={autoFocusField === "fieldType"}
                           error={!!errors.fieldType}
                           helperText={errors.fieldType?.message}
-                          onBlur={handleOnBlur}
-                          onFocus={handleOnFocus}
                         />
                       );
                     }}
@@ -406,8 +342,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                         {...params}
                         autoFocus={autoFocusField === "format"}
                         placeholder="포맷"
-                        onBlur={handleOnBlur}
-                        onFocus={handleOnFocus}
                       />
                     )}
                   />
@@ -437,8 +371,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                         {...params}
                         autoFocus={autoFocusField === "enum"}
                         placeholder="열거형"
-                        onBlur={handleOnBlur}
-                        onFocus={handleOnFocus}
                       />
                     )}
                   />
@@ -469,8 +401,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                   fullWidth
                   error={!!errors.description}
                   helperText={errors.description?.message}
-                  onBlur={handleOnBlur}
-                  onFocus={handleOnFocus}
                   placeholder="설명"
                 />
               )}
@@ -481,7 +411,18 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         </TableCell>
         <TableCell align="right">
           {isFormVisible ? (
-            <Box padding={3} />
+            <Box>
+              <IconButton onClick={handleOnSubmit}>
+                <SvgIcon fontSize="small">
+                  <CheckIcon />
+                </SvgIcon>
+              </IconButton>
+              <IconButton onClick={handleOnCancel}>
+                <SvgIcon fontSize="small">
+                  <ClearIcon />
+                </SvgIcon>
+              </IconButton>
+            </Box>
           ) : (
             <IconButton onClick={onDelete}>
               <SvgIcon fontSize="small">
