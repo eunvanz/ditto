@@ -85,6 +85,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       isArray: modelField ? modelField.isArray.value : false,
     };
   }, [modelField]);
+  console.log("===== defaultValues", defaultValues);
 
   const [isFormVisible, setIsFormVisible] = useState(isNew);
   const [autoFocusField, setAutoFocusField] = useState<
@@ -137,9 +138,9 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   useEffect(() => {
     if (isSubmitting) {
       return () => {
+        setIsFormVisible(false);
         // form의 값이 초기로 돌아가는 현상이 있어서 직접 리셋해줌
         reset(getValues());
-        setIsFormVisible(false);
       };
     }
   }, [getValues, isSubmitting, reset]);
@@ -259,7 +260,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 <Checkbox
                   {...props}
                   autoFocus={autoFocusField === "isRequired"}
-                  defaultChecked={defaultValues.isRequired}
                   checked={props.value}
                   onChange={(e) => props.onChange(e.target.checked)}
                 />
@@ -280,7 +280,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 <Checkbox
                   {...props}
                   autoFocus={autoFocusField === "isArray"}
-                  defaultChecked={defaultValues.isArray}
                   checked={props.value}
                   onChange={(e) => props.onChange(e.target.checked)}
                 />
