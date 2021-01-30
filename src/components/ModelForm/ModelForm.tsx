@@ -81,6 +81,7 @@ export interface ModelFormProps {
    */
   projectModels: ModelDoc[];
   depth?: number;
+  isSubmittingModelField: boolean;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -92,6 +93,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   modelFields = [],
   projectModels,
   depth,
+  isSubmittingModelField,
 }) => {
   const classes = useStyles();
 
@@ -125,7 +127,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   const cancelTask = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        // ModelNameForm과 ModelFieldFormItem에서의 에서의 참조를 위해
+        // ModelNameForm에서의 에서의 참조를 위해
         isCancelingRef.current = true;
         if (!isNewFormVisible) {
           onClose?.();
@@ -171,6 +173,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
           onDelete={() => onDeleteModelField(modelField)}
           projectModels={projectModels}
           depth={depth}
+          isSubmitting={isSubmittingModelField}
         />
       ))}
       {isNewFormVisible ? (
@@ -184,6 +187,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
           projectModels={projectModels}
           depth={depth}
           onCancel={() => setIsNewFormVisible(false)}
+          isSubmitting={isSubmittingModelField}
         />
       ) : (
         <TableRow>

@@ -7,6 +7,7 @@ import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import shortId from "shortid";
 import { DataActions, DATA_KEY } from "../../store/Data/DataSlice";
 import { ModelFieldDoc } from "../../types";
+import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 
 export interface ModelFormContainerProps {
   defaultModelId?: string;
@@ -58,6 +59,12 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
     ProjectSelectors.selectListeningFieldsModelIds
   );
 
+  const isSubmittingModelField = useSelector(
+    ProgressSelectors.createInProgressSelector(
+      ProjectActions.submitModelFieldForm.type
+    )
+  );
+
   const submitModel = useCallback(
     (data: ModelNameFormValues) => {
       dispatch(ProjectActions.submitModelNameForm({ ...data, modelFormId }));
@@ -100,6 +107,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       isVisible={isVisible || false}
       onClose={onClose}
       projectModels={projectModels}
+      isSubmittingModelField={isSubmittingModelField}
     />
   ) : (
     <ModelForm
@@ -110,6 +118,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       onSubmitModelField={submitModelField}
       projectModels={projectModels}
       depth={depth}
+      isSubmittingModelField={isSubmittingModelField}
     />
   );
 };

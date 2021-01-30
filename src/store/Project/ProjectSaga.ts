@@ -718,7 +718,8 @@ export function* getUpdatedRecordProps() {
 
 export function* submitModelFieldFormFlow() {
   while (true) {
-    const { payload } = yield* take(ProjectActions.submitModelFieldForm);
+    const { type, payload } = yield* take(ProjectActions.submitModelFieldForm);
+    yield* put(ProgressActions.startProgress(type));
 
     const modelId = yield* select(
       (state: RootState) => state.data.modelForms?.[payload.modelFormId!]
@@ -780,7 +781,20 @@ export function* submitModelFieldFormFlow() {
           },
           ...updatedRecordProps,
         };
-        yield* call(Firework.updateModelField, target.id, newModelField);
+        const isNewModel =
+          payload.fieldType === "object" && payload.format === "새로운 모델";
+        if (isNewModel) {
+          yield* put(UiActions.showQuickModelNameFormModal());
+          // const [{ payload: quickModelNameFormValues }, isCanceled] = yield* race([
+          //   take(), // 모델 생성 액션
+          //   take(ProjectActions.cancelQuickModelNameForm()) // 모델 생성 취소 액션
+          // ])
+          // if (isCanceled) {
+          //   continue;
+          // }
+        } else {
+          yield* call(Firework.updateModelField, target.id, newModelField);
+        }
       } else {
         const recordableDocProps = yield* call(getRecordableDocProps);
         const newModelField: ModelFieldItem = {
@@ -827,6 +841,7 @@ export function* submitModelFieldFormFlow() {
         })
       );
     } finally {
+      yield* put(ProgressActions.finishProgress(type));
       yield* put(UiActions.hideLoading());
     }
   }

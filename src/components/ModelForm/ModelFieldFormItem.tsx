@@ -58,6 +58,7 @@ export interface ModelFieldFormItemProps {
    */
   projectModels: ModelDoc[];
   onCancel?: () => void;
+  isSubmitting: boolean;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -69,6 +70,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   depth,
   projectModels,
   onCancel,
+  isSubmitting,
 }) => {
   const classes = useStyles();
 
@@ -102,6 +104,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     handleSubmit,
     reset,
     trigger,
+    getValues,
   } = formProps;
 
   const watchedFieldType = watch("fieldType");
@@ -128,11 +131,18 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     trigger();
     await handleSubmit((data) => {
       onSubmit({ ...data, target: modelField });
-      reset(data);
-      setIsFormVisible(false);
     })();
-    // form의 값이 초기로 돌아가는 현상이 있어서 직접 리셋해줌
-  }, [handleSubmit, modelField, onSubmit, reset, trigger]);
+  }, [handleSubmit, modelField, onSubmit, trigger]);
+
+  useEffect(() => {
+    if (isSubmitting) {
+      return () => {
+        // form의 값이 초기로 돌아가는 현상이 있어서 직접 리셋해줌
+        reset(getValues());
+        setIsFormVisible(false);
+      };
+    }
+  }, [getValues, isSubmitting, reset]);
 
   const watchedValues = watch();
 
