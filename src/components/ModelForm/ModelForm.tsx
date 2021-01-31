@@ -82,6 +82,9 @@ export interface ModelFormProps {
   projectModels: ModelDoc[];
   depth?: number;
   checkIsSubmittingModelField: (modelId?: string) => boolean;
+  onSetEditingModelField: (modelFieldId?: string) => void;
+  editingModelFieldId?: string;
+  modelFormId: string;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -94,6 +97,9 @@ const ModelForm: React.FC<ModelFormProps> = ({
   projectModels,
   depth,
   checkIsSubmittingModelField,
+  onSetEditingModelField,
+  editingModelFieldId,
+  modelFormId,
 }) => {
   const classes = useStyles();
 
@@ -174,6 +180,9 @@ const ModelForm: React.FC<ModelFormProps> = ({
           projectModels={projectModels}
           depth={depth}
           isSubmitting={checkIsSubmittingModelField(modelField.id)}
+          onClickCell={() => onSetEditingModelField(modelField.id)}
+          isFormVisible={editingModelFieldId === modelField.id}
+          onCancel={() => onSetEditingModelField(undefined)}
         />
       ))}
       {isNewFormVisible ? (
@@ -183,7 +192,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
             onSubmitModelField(data);
             setIsNewFormVisible(false);
           }}
-          isNew
+          isFormVisible
           projectModels={projectModels}
           depth={depth}
           onCancel={() => setIsNewFormVisible(false)}

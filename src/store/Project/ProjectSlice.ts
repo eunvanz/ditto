@@ -13,7 +13,10 @@ import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
 import { QuickModelNameFormValues } from "../../components/QuickModelNameForm/QuickModelNameForm";
 
 export type ProjectState = {
-  pendingModelField?: ModelFieldDoc;
+  editingModelField?: {
+    modelFormId: string;
+    modelFieldId: string;
+  };
 };
 
 export const initialProjectState: ProjectState = {};
@@ -27,6 +30,14 @@ const ProjectSlice = createSlice({
   name: "Project",
   initialState: initialProjectState,
   reducers: {
+    receiveEditingModelField: (
+      state,
+      action: PayloadAction<
+        { modelFormId: string; modelFieldId: string } | undefined
+      >
+    ) => {
+      state.editingModelField = action.payload;
+    },
     submitProjectForm: (
       _,
       _action: PayloadAction<SubmitProjectFormPayload>

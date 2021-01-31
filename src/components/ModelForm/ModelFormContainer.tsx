@@ -51,7 +51,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
     }
   }, [defaultModelId, dispatch, modelFormId]);
 
-  const { model, modelFields, projectModels } = useSelector(
+  const { model, modelFields, projectModels, editingModelField } = useSelector(
     ProjectSelectors.createModelFormSelector(modelFormId)
   );
 
@@ -104,6 +104,28 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
     [submittingModelFieldActionsInProgress]
   );
 
+  const handleOnSetEditingModelField = useCallback(
+    (modelFieldId?: string) => {
+      if (modelFieldId) {
+        dispatch(
+          ProjectActions.receiveEditingModelField({
+            modelFieldId,
+            modelFormId,
+          })
+        );
+      } else {
+        dispatch(ProjectActions.receiveEditingModelField(undefined));
+      }
+    },
+    [dispatch, modelFormId]
+  );
+
+  const editingModelFieldId = useMemo(() => {
+    return editingModelField?.modelFormId === modelFormId
+      ? editingModelField.modelFieldId
+      : undefined;
+  }, [editingModelField, modelFormId]);
+
   return onClose ? (
     <ModelFormModal
       model={model}
@@ -115,6 +137,9 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       onClose={onClose}
       projectModels={projectModels}
       checkIsSubmittingModelField={checkIsSubmittingModelField}
+      onSetEditingModelField={handleOnSetEditingModelField}
+      editingModelFieldId={editingModelFieldId}
+      modelFormId={modelFormId}
     />
   ) : (
     <ModelForm
@@ -126,6 +151,9 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       projectModels={projectModels}
       depth={depth}
       checkIsSubmittingModelField={checkIsSubmittingModelField}
+      onSetEditingModelField={handleOnSetEditingModelField}
+      editingModelFieldId={editingModelFieldId}
+      modelFormId={modelFormId}
     />
   );
 };

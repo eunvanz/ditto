@@ -47,30 +47,29 @@ export interface ModelFieldFormItemProps {
    */
   modelField?: ModelFieldDoc;
   onSubmit: (data: ModelFieldFormValues) => void;
-  /**
-   * 새로운 필드 생성을 위한 폼일 경우 true
-   */
-  isNew?: boolean;
   onDelete?: () => void;
   depth?: number;
   /**
    * 같은 프로젝트 내의 모델들
    */
   projectModels: ModelDoc[];
-  onCancel?: () => void;
+  onCancel: () => void;
   isSubmitting: boolean;
+  isFormVisible: boolean;
+  onClickCell?: () => void;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   modelFields,
   modelField,
   onSubmit,
-  isNew = false,
   onDelete,
   depth,
   projectModels,
   onCancel,
   isSubmitting,
+  isFormVisible,
+  onClickCell,
 }) => {
   const classes = useStyles();
 
@@ -86,7 +85,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     };
   }, [modelField]);
 
-  const [isFormVisible, setIsFormVisible] = useState(isNew);
   const [autoFocusField, setAutoFocusField] = useState<
     keyof ModelFieldFormValues
   >("fieldName");
@@ -137,7 +135,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   useEffect(() => {
     if (isSubmitting) {
       return () => {
-        setIsFormVisible(false);
         // form의 값이 초기로 돌아가는 현상이 있어서 직접 리셋해줌
         reset(getValues());
       };
@@ -147,14 +144,16 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   const watchedValues = watch();
 
   const handleOnCancel = useCallback(() => {
-    setIsFormVisible(false);
-    onCancel?.();
+    onCancel();
   }, [onCancel]);
 
-  const showForm = useCallback((focusField) => {
-    setIsFormVisible(true);
-    setAutoFocusField(focusField);
-  }, []);
+  const showForm = useCallback(
+    (focusField) => {
+      onClickCell?.();
+      setAutoFocusField(focusField);
+    },
+    [onClickCell]
+  );
 
   const createCellClickHandler = useCallback(
     (focusField) => {

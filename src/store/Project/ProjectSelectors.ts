@@ -46,7 +46,8 @@ const createModelFormSelector = (modelFormId?: string) =>
     (state: RootState) =>
       modelFormId ? state.data[DATA_KEY.MODEL_FORMS]?.[modelFormId] : undefined,
     (state: RootState) => state.data[DATA_KEY.MODEL_FIELDS],
-    (models, project, modelId, allModelFields) => {
+    (state: RootState) => state.project.editingModelField,
+    (models, project, modelId, allModelFields, editingModelField) => {
       const model =
         models && project && modelId ? models[project.id][modelId] : undefined;
       let projectModels: ModelDoc[] = [];
@@ -60,6 +61,7 @@ const createModelFormSelector = (modelFormId?: string) =>
         model,
         modelFields,
         projectModels,
+        editingModelField,
       };
     }
   );
