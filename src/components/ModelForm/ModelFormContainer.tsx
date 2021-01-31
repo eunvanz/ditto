@@ -139,7 +139,6 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       checkIsSubmittingModelField={checkIsSubmittingModelField}
       onSetEditingModelField={handleOnSetEditingModelField}
       editingModelFieldId={editingModelFieldId}
-      modelFormId={modelFormId}
     />
   ) : (
     <ModelForm
@@ -153,7 +152,6 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       checkIsSubmittingModelField={checkIsSubmittingModelField}
       onSetEditingModelField={handleOnSetEditingModelField}
       editingModelFieldId={editingModelFieldId}
-      modelFormId={modelFormId}
     />
   );
 };

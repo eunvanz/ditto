@@ -84,7 +84,6 @@ export interface ModelFormProps {
   checkIsSubmittingModelField: (modelId?: string) => boolean;
   onSetEditingModelField: (modelFieldId?: string) => void;
   editingModelFieldId?: string;
-  modelFormId: string;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -99,11 +98,16 @@ const ModelForm: React.FC<ModelFormProps> = ({
   checkIsSubmittingModelField,
   onSetEditingModelField,
   editingModelFieldId,
-  modelFormId,
 }) => {
   const classes = useStyles();
 
-  const [isNewFormVisible, setIsNewFormVisible] = useState(false);
+  const isNewFormVisible = useMemo(() => {
+    return editingModelFieldId === "NEW";
+  }, [editingModelFieldId]);
+
+  const resetEditingModelField = useCallback(() => {
+    onSetEditingModelField(undefined);
+  }, [onSetEditingModelField]);
 
   const modelNameInputRef = useRef<any | undefined>(undefined);
   const isCancelingRef = useRef<boolean>(false);
@@ -126,9 +130,9 @@ const ModelForm: React.FC<ModelFormProps> = ({
       modelNameInputRef.current === undefined || // modelNameInput이 없는 경우 (depth 존재)
       !!modelNameInputRef.current.value
     ) {
-      setIsNewFormVisible(true);
+      onSetEditingModelField("NEW");
     }
-  }, []);
+  }, [onSetEditingModelField]);
 
   const cancelTask = useCallback(
     (e: KeyboardEvent) => {
@@ -138,11 +142,11 @@ const ModelForm: React.FC<ModelFormProps> = ({
         if (!isNewFormVisible) {
           onClose?.();
         } else {
-          setIsNewFormVisible(false);
+          onSetEditingModelField(undefined);
         }
       }
     },
-    [isNewFormVisible, onClose]
+    [isNewFormVisible, onClose, onSetEditingModelField]
   );
 
   useEffect(() => {
@@ -182,7 +186,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
           isSubmitting={checkIsSubmittingModelField(modelField.id)}
           onClickCell={() => onSetEditingModelField(modelField.id)}
           isFormVisible={editingModelFieldId === modelField.id}
-          onCancel={() => onSetEditingModelField(undefined)}
+          onCancel={resetEditingModelField}
         />
       ))}
       {isNewFormVisible ? (
@@ -190,12 +194,12 @@ const ModelForm: React.FC<ModelFormProps> = ({
           modelFields={modelFields}
           onSubmit={(data) => {
             onSubmitModelField(data);
-            setIsNewFormVisible(false);
+            resetEditingModelField();
           }}
           isFormVisible
           projectModels={projectModels}
           depth={depth}
-          onCancel={() => setIsNewFormVisible(false)}
+          onCancel={resetEditingModelField}
           isSubmitting={checkIsSubmittingModelField()}
         />
       ) : (
