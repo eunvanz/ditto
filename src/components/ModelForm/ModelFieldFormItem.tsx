@@ -122,8 +122,14 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [projectModels, watchedFieldType]);
 
   useEffect(() => {
-    setValue("format", formatOptions[0], { shouldValidate: true });
-  }, [formatOptions, setValue]);
+    if (watchedFieldType === FIELD_TYPE.OBJECT) {
+      const format =
+        modelField && modelField.fieldType.value === FIELD_TYPE.OBJECT
+          ? modelField?.format.value
+          : formatOptions[0];
+      setValue("format", format, { shouldValidate: true });
+    }
+  }, [formatOptions, modelField, setValue, watchedFieldType]);
 
   const handleOnSubmit = useCallback(async () => {
     trigger();
@@ -167,14 +173,14 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       if (e.key === "Enter") {
         handleOnSubmit();
       } else if (e.key === "Escape") {
-        if (!!modelField) {
+        if (isFormVisible) {
           // 새로운 필드를 추가중이 아닐 때에는 ModelForm에 이벤트 전파 하지 않음
           e.stopPropagation();
         }
         handleOnCancel();
       }
     },
-    [handleOnCancel, handleOnSubmit, modelField]
+    [handleOnCancel, handleOnSubmit, isFormVisible]
   );
 
   useEffect(() => {

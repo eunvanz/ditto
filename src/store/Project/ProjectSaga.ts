@@ -845,6 +845,7 @@ export function* submitModelFieldFormFlow() {
       yield* put(
         ProgressActions.finishProgress(submitModelFieldFormActionType)
       );
+      yield* put(ProjectActions.receiveEditingModelField(undefined));
       yield* put(UiActions.hideLoading());
     }
   }
