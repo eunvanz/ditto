@@ -81,7 +81,7 @@ export interface ModelFormProps {
    */
   projectModels: ModelDoc[];
   depth?: number;
-  isSubmittingModelField: boolean;
+  checkIsSubmittingModelField: (modelId?: string) => boolean;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -93,7 +93,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   modelFields = [],
   projectModels,
   depth,
-  isSubmittingModelField,
+  checkIsSubmittingModelField,
 }) => {
   const classes = useStyles();
 
@@ -173,7 +173,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
           onDelete={() => onDeleteModelField(modelField)}
           projectModels={projectModels}
           depth={depth}
-          isSubmitting={isSubmittingModelField}
+          isSubmitting={checkIsSubmittingModelField(modelField.id)}
         />
       ))}
       {isNewFormVisible ? (
@@ -187,7 +187,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
           projectModels={projectModels}
           depth={depth}
           onCancel={() => setIsNewFormVisible(false)}
-          isSubmitting={isSubmittingModelField}
+          isSubmitting={checkIsSubmittingModelField()}
         />
       ) : (
         <TableRow>

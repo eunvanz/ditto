@@ -719,7 +719,8 @@ export function* getUpdatedRecordProps() {
 export function* submitModelFieldFormFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.submitModelFieldForm);
-    yield* put(ProgressActions.startProgress(type));
+    const submitModelFieldFormActionType = `${type}-${payload.target?.id}`;
+    yield* put(ProgressActions.startProgress(submitModelFieldFormActionType));
 
     const modelId = yield* select(
       (state: RootState) => state.data.modelForms?.[payload.modelFormId!]
@@ -841,7 +842,9 @@ export function* submitModelFieldFormFlow() {
         })
       );
     } finally {
-      yield* put(ProgressActions.finishProgress(type));
+      yield* put(
+        ProgressActions.finishProgress(submitModelFieldFormActionType)
+      );
       yield* put(UiActions.hideLoading());
     }
   }

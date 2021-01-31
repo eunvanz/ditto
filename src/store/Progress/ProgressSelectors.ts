@@ -1,4 +1,6 @@
+import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "..";
+import { ProjectActions } from "../Project/ProjectSlice";
 
 const createInProgressSelector = (actionTypes: string[] | string) => (
   state: RootState
@@ -10,8 +12,17 @@ const createInProgressSelector = (actionTypes: string[] | string) => (
   }
 };
 
+const selectSubmitModelFieldFormItemActions = createSelector(
+  (state: RootState) =>
+    state.progress.filter((item) =>
+      item.startsWith(ProjectActions.submitModelFieldForm.type)
+    ),
+  (submitModelFieldFormActions) => submitModelFieldFormActions
+);
+
 const ProgressSelectors = {
   createInProgressSelector,
+  selectSubmitModelFieldFormItemActions,
 };
 
 export default ProgressSelectors;

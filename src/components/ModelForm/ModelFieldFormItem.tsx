@@ -85,7 +85,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       isArray: modelField ? modelField.isArray.value : false,
     };
   }, [modelField]);
-  console.log("===== defaultValues", defaultValues);
 
   const [isFormVisible, setIsFormVisible] = useState(isNew);
   const [autoFocusField, setAutoFocusField] = useState<

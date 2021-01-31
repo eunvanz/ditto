@@ -59,10 +59,8 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
     ProjectSelectors.selectListeningFieldsModelIds
   );
 
-  const isSubmittingModelField = useSelector(
-    ProgressSelectors.createInProgressSelector(
-      ProjectActions.submitModelFieldForm.type
-    )
+  const submittingModelFieldActionsInProgress = useSelector(
+    ProgressSelectors.selectSubmitModelFieldFormItemActions
   );
 
   const submitModel = useCallback(
@@ -97,6 +95,15 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
     // eslint-disable-next-line
   }, [dispatch, model?.id]);
 
+  const checkIsSubmittingModelField = useCallback(
+    (modelId?: string) => {
+      return submittingModelFieldActionsInProgress.includes(
+        `${ProjectActions.submitModelFieldForm}-${modelId}`
+      );
+    },
+    [submittingModelFieldActionsInProgress]
+  );
+
   return onClose ? (
     <ModelFormModal
       model={model}
@@ -107,7 +114,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       isVisible={isVisible || false}
       onClose={onClose}
       projectModels={projectModels}
-      isSubmittingModelField={isSubmittingModelField}
+      checkIsSubmittingModelField={checkIsSubmittingModelField}
     />
   ) : (
     <ModelForm
@@ -118,7 +125,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       onSubmitModelField={submitModelField}
       projectModels={projectModels}
       depth={depth}
-      isSubmittingModelField={isSubmittingModelField}
+      checkIsSubmittingModelField={checkIsSubmittingModelField}
     />
   );
 };
