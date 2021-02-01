@@ -243,11 +243,16 @@ const NavItem: FC<NavItemProps> = ({
           {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </Button>
         <Collapse in={isOpen}>
+          {children}
           <RootRef rootRef={addNewItemButtonRef}>
             <NavItem
               type="add"
               depth={depth + 1}
-              title="새로운 아이템 추가"
+              title={
+                depth === 0
+                  ? "새로운 그룹 또는 리퀘스트 추가"
+                  : "새로운 리퀘스트 추가"
+              }
               onClick={handleOnClickNewItem}
             />
           </RootRef>
@@ -271,7 +276,6 @@ const NavItem: FC<NavItemProps> = ({
               <MenuItem onClick={handleOnClickAddRequest}>리퀘스트</MenuItem>
             </Menu>
           )}
-          {children}
         </Collapse>
       </ListItem>
     );

@@ -133,16 +133,16 @@ const NavBar: FC<NavBarProps> = ({
                 </ListSubheader>
               }
             >
+              {renderNavItems({
+                items: section.items,
+                pathname: location.pathname,
+              })}
               <NavItem
                 type="add"
                 depth={0}
                 title="새로운 프로젝트 추가"
                 onClick={onClickAddNewProject}
               />
-              {renderNavItems({
-                items: section.items,
-                pathname: location.pathname,
-              })}
             </List>
           ))}
         </Box>
