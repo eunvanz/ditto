@@ -192,10 +192,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
       {isNewFormVisible ? (
         <ModelFieldFormItem
           modelFields={modelFields}
-          onSubmit={(data) => {
-            onSubmitModelField(data);
-            resetEditingModelField();
-          }}
+          onSubmit={onSubmitModelField}
           isFormVisible
           projectModels={projectModels}
           depth={depth}

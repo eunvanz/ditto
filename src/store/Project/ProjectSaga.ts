@@ -1,4 +1,13 @@
-import { fork, take, all, put, call, select, race } from "typed-redux-saga";
+import {
+  fork,
+  take,
+  all,
+  put,
+  call,
+  select,
+  race,
+  putResolve,
+} from "typed-redux-saga";
 import orderBy from "lodash/orderBy";
 import { ProjectActions } from "./ProjectSlice";
 import { ProgressActions } from "../Progress/ProgressSlice";
@@ -500,7 +509,6 @@ export function* submitModelNameFormFlow() {
         };
         yield* call(Firework.updateModel, target.id, newModel);
       } else {
-        assertNotEmpty(payload.modelFormId);
         // 생성인 경우
         // 모델을 생성하지 않고 필드를 수정할 수 없으므로 loading을 보여줌
         yield* put(UiActions.showLoading());
@@ -512,13 +520,16 @@ export function* submitModelNameFormFlow() {
         };
         // model document 생성
         const newModelRef = yield* call(Firework.addModel, newModel);
-        yield* put(
-          DataActions.receiveRecordData({
-            key: DATA_KEY.MODEL_FORMS,
-            recordKey: payload.modelFormId,
-            data: newModelRef.id,
-          })
-        );
+        if (payload.modelFormId) {
+          // QuickModelNameForm일 경우에는 modelFormId가 없음
+          yield* put(
+            DataActions.receiveRecordData({
+              key: DATA_KEY.MODEL_FORMS,
+              recordKey: payload.modelFormId,
+              data: newModelRef.id,
+            })
+          );
+        }
         yield* put(
           UiActions.showNotification({
             type: "success",
@@ -743,8 +754,12 @@ export function* submitModelFieldFormFlow() {
 
     const { target } = payload;
 
+    const isNewModel =
+      payload.fieldType === "object" && payload.format === "새로운 모델";
+
+    let hasToBlurForm = true;
+
     try {
-      yield* put(UiActions.showDelayedLoading(500));
       if (!!target) {
         delete payload.target;
         delete payload.modelFormId;
@@ -782,18 +797,33 @@ export function* submitModelFieldFormFlow() {
           },
           ...updatedRecordProps,
         };
-        const isNewModel =
-          payload.fieldType === "object" && payload.format === "새로운 모델";
+
         if (isNewModel) {
           yield* put(UiActions.showQuickModelNameFormModal());
-          // const [{ payload: quickModelNameFormValues }, isCanceled] = yield* race([
-          //   take(), // 모델 생성 액션
-          //   take(ProjectActions.cancelQuickModelNameForm()) // 모델 생성 취소 액션
-          // ])
-          // if (isCanceled) {
-          //   continue;
-          // }
+          const { submit, cancel } = yield* race({
+            submit: take(ProjectActions.submitQuickModelNameForm), // 모델 생성 액션
+            cancel: take(ProjectActions.cancelQuickModelNameForm), // 모델 생성 취소 액션
+          });
+          if (cancel) {
+            yield* put(UiActions.hideQuickModelNameFormModal());
+            hasToBlurForm = false;
+            continue;
+          } else {
+            yield* putResolve(
+              ProjectActions.submitModelNameForm(submit!.payload)
+            );
+            yield* put(UiActions.showDelayedLoading(500));
+            yield* put(UiActions.hideQuickModelNameFormModal());
+            yield* call(Firework.updateModelField, target.id, {
+              ...newModelField,
+              format: {
+                value: submit!.payload.name,
+                ...updatedRecordProps,
+              },
+            });
+          }
         } else {
+          yield* put(UiActions.showDelayedLoading(500));
           yield* call(Firework.updateModelField, target.id, newModelField);
         }
       } else {
@@ -831,8 +861,35 @@ export function* submitModelFieldFormFlow() {
           },
           ...recordableDocProps,
         };
-        // modelField 생성
-        yield* call(Firework.addModelField, newModelField);
+
+        if (isNewModel) {
+          yield* put(UiActions.showQuickModelNameFormModal());
+          const { submit, cancel } = yield* race({
+            submit: take(ProjectActions.submitQuickModelNameForm), // 모델 생성 액션
+            cancel: take(ProjectActions.cancelQuickModelNameForm), // 모델 생성 취소 액션
+          });
+          if (cancel) {
+            yield* put(UiActions.hideQuickModelNameFormModal());
+            hasToBlurForm = false;
+            continue;
+          } else {
+            yield* putResolve(
+              ProjectActions.submitModelNameForm(submit!.payload)
+            );
+            yield* put(UiActions.showDelayedLoading(500));
+            yield* put(UiActions.hideQuickModelNameFormModal());
+            yield* call(Firework.addModelField, {
+              ...newModelField,
+              format: {
+                value: submit!.payload.name,
+                ...recordableDocProps,
+              },
+            });
+          }
+        } else {
+          yield* put(UiActions.showDelayedLoading(500));
+          yield* call(Firework.addModelField, newModelField);
+        }
       }
     } catch (error) {
       yield* put(
@@ -845,18 +902,11 @@ export function* submitModelFieldFormFlow() {
       yield* put(
         ProgressActions.finishProgress(submitModelFieldFormActionType)
       );
-      yield* put(ProjectActions.receiveEditingModelField(undefined));
+      if (hasToBlurForm) {
+        yield* put(ProjectActions.receiveEditingModelField(undefined));
+      }
       yield* put(UiActions.hideLoading());
     }
-  }
-}
-
-export function* submitQuickModelNameFormFlow() {
-  while (true) {
-    const { type, payload } = yield* take(
-      ProjectActions.submitQuickModelNameForm
-    );
-    yield* put(ProgressActions.startProgress(type));
   }
 }
 
@@ -874,6 +924,5 @@ export function* watchProjectActions() {
     fork(submitModelFieldFormFlow),
     fork(listenToModelFieldsFlow),
     fork(deleteModelFieldFlow),
-    fork(submitQuickModelNameFormFlow),
   ]);
 }

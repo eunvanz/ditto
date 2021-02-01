@@ -3,17 +3,13 @@ import { Box, Button, TextField } from "@material-ui/core";
 import { useForm } from "react-hook-form";
 import isEqual from "lodash/isEqual";
 import { patterns } from "../../helpers/projectHelpers";
+import { ModelNameFormValues } from "../ModelForm/ModelNameForm";
 
 export interface QuickModelNameFormProps {
-  onSubmit: (values: QuickModelNameFormValues) => void;
+  onSubmit: (values: ModelNameFormValues) => void;
   isSubmitting: boolean;
-  defaultValues?: QuickModelNameFormValues;
+  defaultValues?: ModelNameFormValues;
   existingModelNames: string[];
-}
-
-export interface QuickModelNameFormValues {
-  name: string;
-  description: string;
 }
 
 const QuickModelNameForm: React.FC<QuickModelNameFormProps> = ({
@@ -23,7 +19,7 @@ const QuickModelNameForm: React.FC<QuickModelNameFormProps> = ({
   existingModelNames,
 }) => {
   const { register, handleSubmit, errors, watch, formState } = useForm<
-    QuickModelNameFormValues
+    ModelNameFormValues
   >({
     mode: "onChange",
     defaultValues,

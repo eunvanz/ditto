@@ -3,9 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
-import QuickModelNameForm, {
-  QuickModelNameFormValues,
-} from "./QuickModelNameForm";
+import { ModelNameFormValues } from "../ModelForm/ModelNameForm";
+import QuickModelNameForm from "./QuickModelNameForm";
 
 const QuickModelNameFormContainer = () => {
   const dispatch = useDispatch();
@@ -13,12 +12,12 @@ const QuickModelNameFormContainer = () => {
   const projectModels = useSelector(ProjectSelectors.selectProjectModels);
   const isSubmitting = useSelector(
     ProgressSelectors.createInProgressSelector(
-      ProjectActions.submitQuickModelNameForm.type
+      ProjectActions.submitModelNameForm.type
     )
   );
 
   const submitModel = useCallback(
-    (data: QuickModelNameFormValues) => {
+    (data: ModelNameFormValues) => {
       dispatch(ProjectActions.submitQuickModelNameForm(data));
     },
     [dispatch]

@@ -122,14 +122,14 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [projectModels, watchedFieldType]);
 
   useEffect(() => {
-    if (watchedFieldType === FIELD_TYPE.OBJECT) {
-      const format =
-        modelField && modelField.fieldType.value === FIELD_TYPE.OBJECT
-          ? modelField?.format.value
-          : formatOptions[0];
-      setValue("format", format, { shouldValidate: true });
-    }
-  }, [formatOptions, modelField, setValue, watchedFieldType]);
+    const format =
+      modelField && modelField.fieldType.value === watchedFieldType
+        ? modelField?.format.value
+        : formatOptions[0];
+    setValue("format", format, { shouldValidate: true });
+    // formatOptions가 디펜던시에 포함되면 QuickModelNameFormModal 노출 시 포맷이 바뀌는 이슈로 인해 추가
+    // eslint-disable-next-line
+  }, [modelField, watchedFieldType, setValue]);
 
   const handleOnSubmit = useCallback(async () => {
     trigger();
@@ -151,7 +151,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
 
   const handleOnCancel = useCallback(() => {
     onCancel();
-  }, [onCancel]);
+    reset(); // 폼의 변경사항들을 되돌림
+  }, [onCancel, reset]);
 
   const showForm = useCallback(
     (focusField) => {

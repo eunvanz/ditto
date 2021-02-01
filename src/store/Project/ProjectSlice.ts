@@ -10,7 +10,6 @@ import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBa
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
 import { ModelNameFormValues } from "../../components/ModelForm/ModelNameForm";
 import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
-import { QuickModelNameFormValues } from "../../components/QuickModelNameForm/QuickModelNameForm";
 
 export type ProjectState = {
   editingModelField?: {
@@ -75,7 +74,7 @@ const ProjectSlice = createSlice({
     deleteModelField: (_, _action: PayloadAction<ModelFieldDoc>) => {},
     submitQuickModelNameForm: (
       _,
-      _action: PayloadAction<QuickModelNameFormValues>
+      _action: PayloadAction<ModelNameFormValues>
     ) => {},
     cancelQuickModelNameForm: (_, _action: PayloadAction<void>) => {},
   },
