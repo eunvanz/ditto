@@ -245,7 +245,7 @@ export interface ModelItem extends Recordable {
   name: string;
   extends?: string;
   description?: string;
-  referencedByModelField?: Record<string, boolean>;
+  referredByModelField?: Record<string, boolean>;
   extendedByByModel?: Record<string, boolean>;
   settingsByMember: Record<string, BaseSettings>;
 }

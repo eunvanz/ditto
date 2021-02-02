@@ -495,6 +495,7 @@ export function* submitModelNameFormFlow() {
     }
 
     const { target } = payload;
+    const referredBy = payload.referredBy;
 
     try {
       if (!!target) {
@@ -502,11 +503,16 @@ export function* submitModelNameFormFlow() {
         yield* put(UiActions.showDelayedLoading());
         delete payload.target;
         delete payload.modelFormId;
+        delete payload.referredBy;
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
         const newModel: Partial<ModelItem> = {
           projectId: currentProject.id,
           ...payload,
           ...updatedRecordProps,
+          referredByModelField: {
+            ...target.referredByModelField,
+            ...(referredBy ? { [referredBy]: true } : undefined),
+          },
         };
         yield* call(Firework.updateModel, target.id, newModel);
       } else {
@@ -518,6 +524,9 @@ export function* submitModelNameFormFlow() {
           projectId: currentProject.id,
           name: payload.name,
           ...recordableDocProps,
+          referredByModelField: {
+            ...(referredBy ? { [referredBy]: true } : undefined),
+          },
         };
         // model document 생성
         const newModelRef = yield* call(Firework.addModel, newModel);
@@ -801,6 +810,8 @@ export function* submitModelFieldFormFlow() {
           ...updatedRecordProps,
         };
 
+        // TODO: 기존의 target이 모델타입이고, 포맷이 바뀌었을 경우 기존 포맷의 referredByModelField를 false로 바꾸는 작업
+
         if (isNewModel) {
           yield* put(UiActions.showQuickModelNameFormModal());
           const { submit, cancel } = yield* race({
@@ -811,7 +822,12 @@ export function* submitModelFieldFormFlow() {
             hasToBlurForm = false;
             continue;
           } else {
-            yield* put(ProjectActions.submitModelNameForm(submit!.payload));
+            yield* put(
+              ProjectActions.submitModelNameForm({
+                ...submit!.payload,
+                referredBy: target.id,
+              })
+            );
             yield* take(
               ProjectActions.notifySubmissionQuickModelNameFormComplete
             );
@@ -894,6 +910,8 @@ export function* submitModelFieldFormFlow() {
                 ...recordableDocProps,
               },
             });
+
+            // TODO: 추가된 ModelField의 id를 Model의 referredByModelField에 추가하는 작업
           }
         } else {
           yield* put(UiActions.showDelayedLoading(500));
