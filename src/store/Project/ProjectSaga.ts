@@ -25,6 +25,7 @@ import {
   ModelFieldItem,
   ModelFieldDoc,
   ModifiableModelFieldItem,
+  FORMAT,
 } from "../../types";
 import { eventChannel, EventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
@@ -520,6 +521,7 @@ export function* submitModelNameFormFlow() {
         };
         // model document 생성
         const newModelRef = yield* call(Firework.addModel, newModel);
+        yield* putResolve(ProjectActions.receiveCreatedModelId(newModelRef.id));
         if (payload.modelFormId) {
           // QuickModelNameForm일 경우에는 modelFormId가 없음
           yield* put(
@@ -545,6 +547,7 @@ export function* submitModelNameFormFlow() {
         })
       );
     } finally {
+      yield* put(ProjectActions.notifySubmissionQuickModelNameFormComplete());
       yield* put(UiActions.hideLoading());
     }
   }
@@ -755,7 +758,7 @@ export function* submitModelFieldFormFlow() {
     const { target } = payload;
 
     const isNewModel =
-      payload.fieldType === "object" && payload.format === "새로운 모델";
+      payload.fieldType === "object" && payload.format === FORMAT.NEW_MODEL;
 
     let hasToBlurForm = true;
 
@@ -808,15 +811,19 @@ export function* submitModelFieldFormFlow() {
             hasToBlurForm = false;
             continue;
           } else {
-            yield* putResolve(
-              ProjectActions.submitModelNameForm(submit!.payload)
+            yield* put(ProjectActions.submitModelNameForm(submit!.payload));
+            yield* take(
+              ProjectActions.notifySubmissionQuickModelNameFormComplete
+            );
+            const createdModelId = yield* select(
+              (state: RootState) => state.project.createdModelId
             );
             yield* put(UiActions.showDelayedLoading(500));
             yield* put(UiActions.hideQuickModelNameFormModal());
             yield* call(Firework.updateModelField, target.id, {
               ...newModelField,
               format: {
-                value: submit!.payload.name,
+                value: createdModelId,
                 ...updatedRecordProps,
               },
             });
@@ -871,15 +878,19 @@ export function* submitModelFieldFormFlow() {
             hasToBlurForm = false;
             continue;
           } else {
-            yield* putResolve(
-              ProjectActions.submitModelNameForm(submit!.payload)
+            yield* put(ProjectActions.submitModelNameForm(submit!.payload));
+            yield* take(
+              ProjectActions.notifySubmissionQuickModelNameFormComplete
+            );
+            const createdModelId = yield* select(
+              (state: RootState) => state.project.createdModelId
             );
             yield* put(UiActions.showDelayedLoading(500));
             yield* put(UiActions.hideQuickModelNameFormModal());
             yield* call(Firework.addModelField, {
               ...newModelField,
               format: {
-                value: submit!.payload.name,
+                value: createdModelId!,
                 ...recordableDocProps,
               },
             });

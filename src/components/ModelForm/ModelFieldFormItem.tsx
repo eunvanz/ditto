@@ -73,17 +73,33 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
 }) => {
   const classes = useStyles();
 
+  const getFormatValue = useCallback(
+    (fieldType: string, format: string) => {
+      if (fieldType === FIELD_TYPE.OBJECT) {
+        return (
+          projectModels.find((model) => model.id === format)?.name ||
+          FORMAT.NEW_MODEL
+        );
+      } else {
+        return format;
+      }
+    },
+    [projectModels]
+  );
+
   const defaultValues: ModelFieldFormValues = useMemo(() => {
     return {
       fieldName: modelField?.fieldName.value || "",
       isRequired: modelField ? modelField.isRequired.value : true,
       fieldType: modelField?.fieldType.value || "string",
-      format: modelField?.format.value || "없음",
+      format: modelField
+        ? getFormatValue(modelField.fieldType.value, modelField.format.value)
+        : "없음",
       enum: modelField?.enum.value || "없음",
       description: modelField?.description.value || "",
       isArray: modelField ? modelField.isArray.value : false,
     };
-  }, [modelField]);
+  }, [getFormatValue, modelField]);
 
   const [autoFocusField, setAutoFocusField] = useState<
     keyof ModelFieldFormValues
@@ -124,7 +140,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   useEffect(() => {
     const format =
       modelField && modelField.fieldType.value === watchedFieldType
-        ? modelField?.format.value
+        ? getFormatValue(watchedFieldType, modelField?.format.value)
         : formatOptions[0];
     setValue("format", format, { shouldValidate: true });
     // formatOptions가 디펜던시에 포함되면 QuickModelNameFormModal 노출 시 포맷이 바뀌는 이슈로 인해 추가
@@ -134,9 +150,14 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   const handleOnSubmit = useCallback(async () => {
     trigger();
     await handleSubmit((data) => {
-      onSubmit({ ...data, target: modelField });
+      const format =
+        data.fieldType === FIELD_TYPE.OBJECT
+          ? projectModels.find((model) => model.name === data.format)?.id ||
+            FORMAT.NEW_MODEL
+          : data.format;
+      onSubmit({ ...data, format, target: modelField });
     })();
-  }, [handleSubmit, modelField, onSubmit, trigger]);
+  }, [handleSubmit, modelField, onSubmit, projectModels, trigger]);
 
   useEffect(() => {
     if (isSubmitting) {
@@ -146,8 +167,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       };
     }
   }, [getValues, isSubmitting, reset]);
-
-  const watchedValues = watch();
 
   const handleOnCancel = useCallback(() => {
     onCancel();
@@ -198,11 +217,21 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [depth]);
 
   const subModelId = useMemo(() => {
-    const subModel = projectModels.find(
-      (model) => watchedValues.format === model.name
-    );
-    return subModel?.id;
-  }, [projectModels, watchedValues.format]);
+    return modelField?.format.value;
+  }, [modelField]);
+
+  const objectFormatDefaultValue = useMemo(() => {
+    if (watchedFieldType !== FIELD_TYPE.OBJECT) {
+      return FORMAT.NEW_MODEL;
+    } else if (modelField?.format) {
+      return (
+        projectModels.find((item) => item.id === modelField.format.value)
+          ?.name || FORMAT.NEW_MODEL
+      );
+    } else {
+      return FORMAT.NEW_MODEL;
+    }
+  }, [modelField, projectModels, watchedFieldType]);
 
   return (
     <>
@@ -339,7 +368,11 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             <Controller
               control={control}
               name="format"
-              defaultValue={defaultValues.format || formatOptions[0]}
+              defaultValue={
+                watchedFieldType === FIELD_TYPE.OBJECT
+                  ? objectFormatDefaultValue
+                  : defaultValues.format || formatOptions[0]
+              }
               render={({ value }) => {
                 return (
                   <Autocomplete
@@ -362,6 +395,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 );
               }}
             />
+          ) : watchedFieldType === FIELD_TYPE.OBJECT ? (
+            objectFormatDefaultValue
           ) : (
             modelField?.format.value
           )}

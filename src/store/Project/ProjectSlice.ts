@@ -16,6 +16,7 @@ export type ProjectState = {
     modelFormId: string;
     modelFieldId: string;
   };
+  createdModelId?: string;
 };
 
 export const initialProjectState: ProjectState = {};
@@ -36,6 +37,9 @@ const ProjectSlice = createSlice({
       >
     ) => {
       state.editingModelField = action.payload;
+    },
+    receiveCreatedModelId: (state, action: PayloadAction<string>) => {
+      state.createdModelId = action.payload;
     },
     submitProjectForm: (
       _,
@@ -78,6 +82,10 @@ const ProjectSlice = createSlice({
     ) => {},
     cancelQuickModelNameForm: (_, _action: PayloadAction<void>) => {},
     proceedQuickModelNameForm: (_, _action: PayloadAction<ModelDoc>) => {},
+    notifySubmissionQuickModelNameFormComplete: (
+      _,
+      _action: PayloadAction<void>
+    ) => {},
   },
 });
 

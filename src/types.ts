@@ -266,7 +266,7 @@ export type ModelFieldDoc = Omit<
   isRequired: ModelCellDoc<boolean>;
   isArray: ModelCellDoc<boolean>;
   fieldType: ModelCellDoc<string>;
-  format: ModelCellDoc<string>;
+  format: ModelCellDoc<string>; // object 타입의 경우에는 참조하고 있는 Model의 id 값이 들어감
   enum: ModelCellDoc<string>;
   description: ModelCellDoc<string>;
 };
