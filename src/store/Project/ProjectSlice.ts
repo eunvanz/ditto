@@ -56,9 +56,7 @@ const ProjectSlice = createSlice({
     deleteProjectUrl: (_, _action: PayloadAction<ProjectUrlDoc>) => {},
     submitModelNameForm: (
       _,
-      _action: PayloadAction<
-        ModelNameFormValues & { modelFormId?: string; referredBy?: string }
-      >
+      _action: PayloadAction<ModelNameFormValues & { modelFormId?: string }>
     ) => {},
     submitModelFieldForm: (
       _,
