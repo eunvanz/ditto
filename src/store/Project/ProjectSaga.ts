@@ -951,7 +951,7 @@ export function* submitModelFieldFormFlow() {
         })
       );
     } finally {
-      yield* put(
+      yield* putResolve(
         ProgressActions.finishProgress(submitModelFieldFormActionType)
       );
       if (hasToBlurForm) {
