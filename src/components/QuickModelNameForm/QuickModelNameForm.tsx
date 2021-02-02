@@ -31,6 +31,10 @@ const QuickModelNameForm: React.FC<QuickModelNameFormProps> = ({
     return isEqual(defaultValues, watchedValues);
   }, [defaultValues, watchedValues]);
 
+  const isSubmittable = useMemo(() => {
+    return !isSubmitting && !isNotModified && formState.isValid;
+  }, [formState.isValid, isNotModified, isSubmitting]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <Box mt={2}>
@@ -76,7 +80,7 @@ const QuickModelNameForm: React.FC<QuickModelNameFormProps> = ({
       <Box mt={2}>
         <Button
           color="secondary"
-          disabled={isSubmitting || isNotModified || !formState.isValid}
+          disabled={!isSubmittable}
           fullWidth
           size="large"
           type="submit"

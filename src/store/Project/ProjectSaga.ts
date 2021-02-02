@@ -805,7 +805,6 @@ export function* submitModelFieldFormFlow() {
             cancel: take(ProjectActions.cancelQuickModelNameForm), // 모델 생성 취소 액션
           });
           if (cancel) {
-            yield* put(UiActions.hideQuickModelNameFormModal());
             hasToBlurForm = false;
             continue;
           } else {
@@ -869,7 +868,6 @@ export function* submitModelFieldFormFlow() {
             cancel: take(ProjectActions.cancelQuickModelNameForm), // 모델 생성 취소 액션
           });
           if (cancel) {
-            yield* put(UiActions.hideQuickModelNameFormModal());
             hasToBlurForm = false;
             continue;
           } else {
@@ -910,6 +908,26 @@ export function* submitModelFieldFormFlow() {
   }
 }
 
+export function* proceedQuickModelNameFormFlow() {
+  while (true) {
+    const { payload: originModel } = yield* take(
+      ProjectActions.proceedQuickModelNameForm
+    );
+    yield* put(UiActions.showQuickModelNameFormModal(originModel));
+    const { submit, cancel } = yield* race({
+      submit: take(ProjectActions.submitQuickModelNameForm),
+      cancel: take(ProjectActions.cancelQuickModelNameForm),
+    });
+    if (cancel) {
+      continue;
+    } else {
+      yield* putResolve(ProjectActions.submitModelNameForm(submit!.payload));
+      yield* put(UiActions.showDelayedLoading(500));
+      yield* put(UiActions.hideQuickModelNameFormModal());
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -924,5 +942,6 @@ export function* watchProjectActions() {
     fork(submitModelFieldFormFlow),
     fork(listenToModelFieldsFlow),
     fork(deleteModelFieldFlow),
+    fork(proceedQuickModelNameFormFlow),
   ]);
 }

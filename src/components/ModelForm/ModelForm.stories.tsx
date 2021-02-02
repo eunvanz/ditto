@@ -13,6 +13,7 @@ export default {
 
 const defaultProps: Partial<ModelFormProps> = {
   projectModels: mockProject.models,
+  checkIsSubmittingModelField: () => false,
 };
 
 const Template: Story<ModelFormProps> = (args) => (

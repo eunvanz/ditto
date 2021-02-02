@@ -6,7 +6,7 @@ import { ProjectActions } from "../../store/Project/ProjectSlice";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import shortId from "shortid";
 import { DataActions, DATA_KEY } from "../../store/Data/DataSlice";
-import { ModelFieldDoc } from "../../types";
+import { ModelDoc, ModelFieldDoc } from "../../types";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 
 export interface ModelFormContainerProps {
@@ -126,6 +126,13 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       : undefined;
   }, [editingModelField, modelFormId]);
 
+  const handleOnClickQuickEditModelName = useCallback(
+    (model: ModelDoc) => {
+      dispatch(ProjectActions.proceedQuickModelNameForm(model));
+    },
+    [dispatch]
+  );
+
   return onClose ? (
     <ModelFormModal
       model={model}
@@ -139,6 +146,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       checkIsSubmittingModelField={checkIsSubmittingModelField}
       onSetEditingModelField={handleOnSetEditingModelField}
       editingModelFieldId={editingModelFieldId}
+      onClickQuickEditModelName={handleOnClickQuickEditModelName}
     />
   ) : (
     <ModelForm
@@ -152,6 +160,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       checkIsSubmittingModelField={checkIsSubmittingModelField}
       onSetEditingModelField={handleOnSetEditingModelField}
       editingModelFieldId={editingModelFieldId}
+      onClickQuickEditModelName={handleOnClickQuickEditModelName}
     />
   );
 };

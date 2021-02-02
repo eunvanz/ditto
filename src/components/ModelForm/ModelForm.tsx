@@ -27,9 +27,9 @@ import { ModelFieldDoc, ModelDoc } from "../../types";
 import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
 import CloseIcon from "@material-ui/icons/Close";
 import { getIntentionPaddingByDepth } from "../../helpers/projectHelpers";
-import { ExpandLess, ExpandMore } from "@material-ui/icons";
+import { ExpandLess, ExpandMore, EditOutlined } from "@material-ui/icons";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   fieldNameCell: {
     width: 150,
   },
@@ -51,6 +51,10 @@ const useStyles = makeStyles(() => ({
   },
   submit: {
     display: "none",
+  },
+  addSubButton: {
+    marginLeft: 10,
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -84,6 +88,7 @@ export interface ModelFormProps {
   checkIsSubmittingModelField: (modelId?: string) => boolean;
   onSetEditingModelField: (modelFieldId?: string) => void;
   editingModelFieldId?: string;
+  onClickQuickEditModelName: (model: ModelDoc) => void;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -98,6 +103,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   checkIsSubmittingModelField,
   onSetEditingModelField,
   editingModelFieldId,
+  onClickQuickEditModelName,
 }) => {
   const classes = useStyles();
 
@@ -173,6 +179,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
       onClose={onClose}
       isCancelingRef={isCancelingRef}
       modelNameInputRef={modelNameInputRef}
+      onClickQuickEditModelName={onClickQuickEditModelName}
     >
       {modelFields.map((modelField) => (
         <ModelFieldFormItem
@@ -219,7 +226,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
 
 type WrapperProps = Pick<
   ModelFormProps,
-  "depth" | "model" | "onClose" | "onSubmitModel"
+  "depth" | "model" | "onClose" | "onSubmitModel" | "onClickQuickEditModelName"
 > & {
   existingModelNames: string[];
   children: React.ReactNode;
@@ -236,6 +243,7 @@ const Wrapper: React.FC<WrapperProps> = ({
   children,
   isCancelingRef,
   modelNameInputRef,
+  onClickQuickEditModelName,
 }) => {
   const classes = useStyles();
 
@@ -314,6 +322,16 @@ const Wrapper: React.FC<WrapperProps> = ({
               {isDetailVisible && (
                 <>
                   <ExpandLess fontSize="small" /> {model?.name} 접기
+                  <Button
+                    className={classes.addSubButton}
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onClickQuickEditModelName(model!);
+                    }}
+                  >
+                    <EditOutlined fontSize="small" />
+                  </Button>
                 </>
               )}
             </Button>

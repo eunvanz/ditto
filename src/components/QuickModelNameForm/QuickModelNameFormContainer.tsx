@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
+import UiSelectors from "../../store/Ui/UiSelectors";
 import { ModelNameFormValues } from "../ModelForm/ModelNameForm";
 import QuickModelNameForm from "./QuickModelNameForm";
 
@@ -15,24 +16,41 @@ const QuickModelNameFormContainer = () => {
       ProjectActions.submitModelNameForm.type
     )
   );
+  const { model } = useSelector(UiSelectors.selectQuickModelNameFormModal);
 
   const submitModel = useCallback(
     (data: ModelNameFormValues) => {
-      dispatch(ProjectActions.submitQuickModelNameForm(data));
+      dispatch(
+        ProjectActions.submitQuickModelNameForm({ ...data, target: model })
+      );
     },
-    [dispatch]
+    [dispatch, model]
   );
 
   const existingModelNames = useMemo(() => {
-    // TODO: defaultValue가 존재할 경우 자기자신은 빼는 로직 필요
-    return projectModels?.map((item) => item.name) || [];
-  }, [projectModels]);
+    const allModelNames = projectModels?.map((item) => item.name) || [];
+    if (model) {
+      return allModelNames.filter((item) => item !== model.name);
+    }
+    return allModelNames;
+  }, [model, projectModels]);
+
+  const defaultValues = useMemo(() => {
+    if (model) {
+      return {
+        name: model.name,
+        description: model.description || "",
+      };
+    }
+    return undefined;
+  }, [model]);
 
   return (
     <QuickModelNameForm
       onSubmit={submitModel}
       isSubmitting={isSubmitting}
       existingModelNames={existingModelNames}
+      defaultValues={defaultValues}
     />
   );
 };

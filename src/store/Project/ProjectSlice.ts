@@ -77,6 +77,7 @@ const ProjectSlice = createSlice({
       _action: PayloadAction<ModelNameFormValues>
     ) => {},
     cancelQuickModelNameForm: (_, _action: PayloadAction<void>) => {},
+    proceedQuickModelNameForm: (_, _action: PayloadAction<ModelDoc>) => {},
   },
 });
 
