@@ -124,6 +124,17 @@ function* deleteModelField(modelField: ModelFieldDoc) {
   );
 }
 
+function getModelFieldsReferringModelRef(
+  referringModel: ModelDoc,
+  referredModel: ModelDoc
+) {
+  return db
+    .collection(
+      `projects/${referringModel.projectId}/models/${referringModel.id}/modelFields`
+    )
+    .where("format.value", "==", referredModel.id);
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -144,6 +155,7 @@ export const realFirework = {
   deleteModelField,
   updateModel,
   updateModelField,
+  getModelFieldsReferringModelRef,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

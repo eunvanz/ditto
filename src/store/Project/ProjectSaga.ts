@@ -665,10 +665,39 @@ export function* listenToModelFieldsFlow() {
   }
 }
 
+export async function getReferringModels(referredModel: ModelDoc) {
+  const projectModelsRef = Firework.getProjectModelsRef(
+    referredModel.projectId
+  );
+  const projectModelsSnapshot = await projectModelsRef.get();
+
+  // 프로젝트의 모델을 가져옴
+  let projectModels: ModelDoc[] = [];
+  projectModelsSnapshot.forEach((doc) =>
+    projectModels.push({ id: doc.id, ...doc.data() } as ModelDoc)
+  );
+
+  // 프로젝트의 모델 중 삭제하려는 모델을 참조하고 있는 모델이 있는지 확인
+  let referringModels: ModelDoc[] = [];
+  await Promise.all(
+    projectModels
+      .filter((model) => model.id !== referredModel.id)
+      .map(async (model) => {
+        const modelFieldsSnapshot = await Firework.getModelFieldsReferringModelRef(
+          model,
+          referredModel
+        ).get();
+        if (modelFieldsSnapshot.size > 0) {
+          referringModels.push(model);
+        }
+      })
+  );
+  return referringModels;
+}
+
 export function* deleteModelFlow() {
   while (true) {
     const { payload } = yield* take(ProjectActions.deleteModel);
-    // TODO: 다른곳에서 참조하고 있을 경우 삭제를 막는 로직 필요
     const isConfirmed = yield* call(Alert.confirm, {
       title: "모델 삭제",
       message: `정말 ${payload.name} 모델을 삭제하시겠습니까?`,
@@ -676,13 +705,27 @@ export function* deleteModelFlow() {
     if (isConfirmed) {
       try {
         yield* put(UiActions.showDelayedLoading());
-        yield* call(Firework.deleteModel, payload);
-        yield* put(
-          UiActions.showNotification({
-            type: "success",
-            message: "모델이 삭제되었습니다.",
-          })
-        );
+        const referringModels = yield* call(getReferringModels, payload);
+        if (referringModels.length > 0) {
+          yield* put(UiActions.hideLoading());
+          yield* call(Alert.message, {
+            title: "삭제 불가",
+            message: `${referringModels
+              .map((model) => model.name)
+              .join(
+                ", "
+              )}에서 참조 중인 모델입니다. 다른 모델에서 참조중인 모델은 삭제가 불가능합니다.`,
+          });
+          continue;
+        } else {
+          yield* call(Firework.deleteModel, payload);
+          yield* put(
+            UiActions.showNotification({
+              type: "success",
+              message: "모델이 삭제되었습니다.",
+            })
+          );
+        }
       } catch (error) {
         yield* put(
           ErrorActions.catchError({
