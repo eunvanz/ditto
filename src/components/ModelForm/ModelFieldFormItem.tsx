@@ -1,4 +1,10 @@
-import React, { useMemo, useEffect, useCallback, useState } from "react";
+import React, {
+  useMemo,
+  useEffect,
+  useCallback,
+  useState,
+  useRef,
+} from "react";
 import {
   TableCell,
   TextField,
@@ -159,11 +165,16 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     })();
   }, [handleSubmit, modelField, onSubmit, projectModels, trigger]);
 
+  const fieldNameInputRef = useRef<HTMLInputElement | null>(null);
+
   useEffect(() => {
     if (isSubmitting) {
+      const nameInput = fieldNameInputRef.current;
       return () => {
         // form의 값이 초기로 돌아가는 현상이 있어서 직접 리셋해줌
-        reset(getValues());
+        // reset(getValues());
+        reset();
+        nameInput?.focus();
       };
     }
   }, [getValues, isSubmitting, reset]);
@@ -267,6 +278,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 return (
                   <TextField
                     {...props}
+                    inputRef={fieldNameInputRef}
                     size="small"
                     autoFocus={autoFocusField === "fieldName"}
                     fullWidth

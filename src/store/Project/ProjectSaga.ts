@@ -714,7 +714,7 @@ export function* deleteModelFlow() {
               .map((model) => model.name)
               .join(
                 ", "
-              )}에서 참조 중인 모델입니다. 다른 모델에서 참조중인 모델은 삭제가 불가능합니다.`,
+              )} 모델에서 참조 중인 모델입니다. 다른 모델에서 참조중인 모델은 삭제가 불가능합니다.`,
           });
           continue;
         } else {
@@ -876,6 +876,7 @@ export function* submitModelFieldFormFlow() {
           yield* call(Firework.updateModelField, target.id, newModelField);
         }
       } else {
+        hasToBlurForm = false;
         const recordableDocProps = yield* call(getRecordableDocProps);
         const newModelField: ModelFieldItem = {
           projectId: currentProject.id,
@@ -918,7 +919,6 @@ export function* submitModelFieldFormFlow() {
             cancel: take(ProjectActions.cancelQuickModelNameForm), // 모델 생성 취소 액션
           });
           if (cancel) {
-            hasToBlurForm = false;
             continue;
           } else {
             yield* put(ProjectActions.submitModelNameForm(submit!.payload));

@@ -95,8 +95,12 @@ Alert.message = ({ title, message }: { title: string; message: string }) => {
       const handleOnOk = () => {
         setIsAlertVisible(false);
         setTimeout(() => {
-          document.body.removeChild(container);
-          resolve();
+          try {
+            document.body.removeChild(container);
+          } catch (error) {
+            // FIXME: 두번 연속 실행되는 시점부터 오류가 남 (원인 불명)
+          }
+          resolve(undefined);
         }, 500);
       };
 
