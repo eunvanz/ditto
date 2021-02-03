@@ -11,7 +11,7 @@ const ProjectManagementContainer = () => {
     (state: RootState) => state.data[DATA_KEY.PROJECTS] || []
   );
 
-  const { projectId } = useParams();
+  const { projectId } = useParams<{ projectId: string }>();
 
   const project = useMemo(() => {
     return projects.find((project) => project.id === projectId);
