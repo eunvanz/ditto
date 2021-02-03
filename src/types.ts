@@ -209,12 +209,11 @@ export interface ModelCell<T> extends Recordable {
 export interface ModelFieldItem extends Recordable {
   projectId: string;
   modelId: string;
-  referenceModelId?: string; // object인 경우 참조하는 모델
   fieldName: ModelCell<string>;
   isRequired: ModelCell<boolean>;
   isArray: ModelCell<boolean>;
   fieldType: ModelCell<string>;
-  format: ModelCell<string>;
+  format: ModelCell<string>; // object인 경우 참조하는 모델 id
   enum: ModelCell<string>;
   description: ModelCell<string>;
   settingsByMember: Record<string, BaseSettings>;
@@ -234,7 +233,7 @@ export interface ModifiableModelFieldItem
   fieldName: Partial<ModelCell<string>>;
   isRequired: Partial<ModelCell<boolean>>;
   isArray: Partial<ModelCell<boolean>>;
-  fieldType: Partial<ModelCell<string>>;
+  fieldType: Partial<ModelCell<FIELD_TYPE>>;
   format: Partial<ModelCell<string>>;
   enum: Partial<ModelCell<string>>;
   description: Partial<ModelCell<string>>;
@@ -263,10 +262,20 @@ export type ModelFieldDoc = Omit<
   fieldName: ModelCellDoc<string>;
   isRequired: ModelCellDoc<boolean>;
   isArray: ModelCellDoc<boolean>;
-  fieldType: ModelCellDoc<string>;
+  fieldType: ModelCellDoc<FIELD_TYPE>;
   format: ModelCellDoc<string>; // object 타입의 경우에는 참조하고 있는 Model의 id 값이 들어감
   enum: ModelCellDoc<string>;
   description: ModelCellDoc<string>;
 };
 
 export type ModelDoc = Doc<ModelItem, BaseSettings>;
+
+export interface EnumerationItem extends Recordable {
+  projectId: string;
+  name: string;
+  description?: string;
+  fieldType: FIELD_TYPE; // 현재는 string과 number만 지원
+  items: string[] | number[];
+}
+
+export type EnumerationDoc = Doc<EnumerationItem, BaseSettings>;

@@ -1,4 +1,4 @@
-import { ModelFieldDoc, ModelDoc } from "../types";
+import { ModelFieldDoc, ModelDoc, FIELD_TYPE, EnumerationDoc } from "../types";
 
 const project = {
   id: "imIYYtrWFJjpU9aeTRlQ",
@@ -202,7 +202,7 @@ const modelFields: ModelFieldDoc[] = [
     },
     fieldType: {
       id: "mockId",
-      value: "string",
+      value: FIELD_TYPE.STRING,
       updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
       createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
       updatedAt: {
@@ -364,12 +364,68 @@ const models: ModelDoc[] = [
   },
 ];
 
+const enumerations: EnumerationDoc[] = [
+  {
+    id: "mockId",
+    projectId: "mockProjectId",
+    name: "Status",
+    fieldType: FIELD_TYPE.STRING,
+    items: ["WAITING", "SUBMITIING", "LOADING"],
+    description: "상태",
+    updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    updatedAt: {
+      seconds: 1601466174,
+      nanoseconds: 963000000,
+    },
+    createdAt: {
+      seconds: 1601466174,
+      nanoseconds: 963000000,
+    },
+    settingsByMember: {
+      aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+        updatedAt: {
+          seconds: 1601466174,
+          nanoseconds: 963000000,
+        },
+      },
+    },
+  },
+  {
+    id: "mockId2",
+    projectId: "mockProjectId",
+    name: "Gender",
+    fieldType: FIELD_TYPE.STRING,
+    items: ["FEMALE", "MALE", "QUEER"],
+    description: "성별",
+    updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    updatedAt: {
+      seconds: 1601466174,
+      nanoseconds: 963000000,
+    },
+    createdAt: {
+      seconds: 1601466174,
+      nanoseconds: 963000000,
+    },
+    settingsByMember: {
+      aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+        updatedAt: {
+          seconds: 1601466174,
+          nanoseconds: 963000000,
+        },
+      },
+    },
+  },
+];
+
 const mockProject = {
   project,
   projectUrls,
   modelFields,
   model,
   models,
+  enumerations,
 };
 
 export default mockProject;
