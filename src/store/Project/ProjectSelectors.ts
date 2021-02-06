@@ -86,6 +86,29 @@ const selectListeningModelsProjectIds = createSelector(
   }
 );
 
+const selectListeningEnumerationsProjectIds = createSelector(
+  (state: RootState) => state.data[DATA_KEY.ENUMERATIONS],
+  (models) => {
+    if (models) {
+      return Object.keys(models);
+    }
+    return [];
+  }
+);
+
+const selectProjectEnumerations = createSelector(
+  (state: RootState) => state.data[DATA_KEY.PROJECT],
+  (state: RootState) => state.data[DATA_KEY.ENUMERATIONS],
+  (project, enumerations) => {
+    return project && enumerations?.[project?.id]
+      ? orderBy(convertRecordToArray(enumerations[project.id]), [
+          "createdAt.seconds",
+          "asc",
+        ])
+      : undefined;
+  }
+);
+
 const ProjectSelectors = {
   selectIsProjectFormSubmitting,
   selectProjectUrls,
@@ -94,6 +117,8 @@ const ProjectSelectors = {
   createModelFormSelector,
   selectListeningFieldsModelIds,
   selectListeningModelsProjectIds,
+  selectListeningEnumerationsProjectIds,
+  selectProjectEnumerations,
 };
 
 export default ProjectSelectors;

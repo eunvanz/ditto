@@ -4,6 +4,7 @@ import {
   ProjectUrlDoc,
   ModelDoc,
   ModelFieldDoc,
+  EnumerationDoc,
 } from "../../types";
 
 export enum DATA_KEY {
@@ -14,6 +15,7 @@ export enum DATA_KEY {
   FIELDS = "fields",
   MODEL_FORMS = "modelForms",
   MODEL_FIELDS = "modelFields",
+  ENUMERATIONS = "enumerations",
 }
 
 export interface DataPayload {
@@ -54,6 +56,10 @@ export interface DataState {
    * { modelId: data } 형식
    */
   [DATA_KEY.MODEL_FIELDS]?: Record<string, ModelFieldDoc[]>;
+  /**
+   * { projectId: { enumerationId: data }} 형식
+   */
+  [DATA_KEY.ENUMERATIONS]?: Record<string, Record<string, EnumerationDoc>>;
 }
 
 export const initialDataState: DataState = {};

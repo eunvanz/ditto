@@ -9,6 +9,8 @@ import {
   ModelDoc,
   ModelFieldDoc,
   ModifiableModelFieldItem,
+  EnumerationItem,
+  EnumerationDoc,
 } from "../../types";
 import { call } from "typed-redux-saga";
 
@@ -135,6 +137,46 @@ function getModelFieldsReferringModelRef(
     .where("format.value", "==", referredModel.id);
 }
 
+function getModelFieldsReferringEnumerationRef(
+  referringModel: ModelDoc,
+  referredEnumeration: EnumerationDoc
+) {
+  return db
+    .collection(
+      `projects/${referringModel.projectId}/models/${referringModel.id}/modelFields`
+    )
+    .where("enum.value", "==", referredEnumeration.id);
+}
+
+function* addEnumeration(data: EnumerationItem) {
+  return yield* call(
+    addDocument,
+    `projects/${data.projectId}/enumerations`,
+    data
+  );
+}
+
+function* updateEnumeration(id: string, data: Partial<EnumerationItem>) {
+  yield* call(
+    updateDocument,
+    `projects/${data.projectId}/enumerations`,
+    id,
+    data
+  );
+}
+
+function getProjectEnumerationsRef(projectId: string) {
+  return db.collection(`projects/${projectId}/enumerations`);
+}
+
+function* deleteEnumeration(enumeration: EnumerationDoc) {
+  yield* call(
+    deleteDocument,
+    `projects/${enumeration.projectId}/enumerations`,
+    enumeration.id
+  );
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -156,6 +198,11 @@ export const realFirework = {
   updateModel,
   updateModelField,
   getModelFieldsReferringModelRef,
+  addEnumeration,
+  updateEnumeration,
+  getProjectEnumerationsRef,
+  getModelFieldsReferringEnumerationRef,
+  deleteEnumeration,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

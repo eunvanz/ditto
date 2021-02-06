@@ -44,7 +44,7 @@ const ProjectUrlFormContainer = () => {
     <ProjectUrlForm
       onSubmit={submitProjectUrlForm}
       onDelete={deleteProjectUrl}
-      projectUrls={projectUrls as ProjectUrlDoc[]}
+      projectUrls={projectUrls}
     />
   ) : null;
 };

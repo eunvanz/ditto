@@ -97,7 +97,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     return {
       fieldName: modelField?.fieldName.value || "",
       isRequired: modelField ? modelField.isRequired.value : true,
-      fieldType: modelField?.fieldType.value || "string",
+      fieldType: modelField?.fieldType.value || FIELD_TYPE.STRING,
       format: modelField
         ? getFormatValue(modelField.fieldType.value, modelField.format.value)
         : "없음",

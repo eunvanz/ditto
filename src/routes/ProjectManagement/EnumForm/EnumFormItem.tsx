@@ -147,8 +147,8 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
               pattern: (value) => {
                 if (watchedFieldType === FIELD_TYPE.STRING) {
                   return (
-                    /^[a-z0-9]+(,[a-z0-9]+)*$/i.test(value) ||
-                    "영문과 숫자만 사용해서 1글자 이상씩 콤마로 구분해서 입력해주세요."
+                    /^[a-z0-9_\-가-힣]+(,[a-z0-9_\-가-힣]+)*$/i.test(value) ||
+                    "문자와 숫자만 사용해서 1글자 이상씩 콤마로 구분해서 입력해주세요."
                   );
                 } else if (watchedFieldType === FIELD_TYPE.INTEGER) {
                   return (

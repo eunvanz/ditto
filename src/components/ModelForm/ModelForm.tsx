@@ -23,7 +23,7 @@ import {
 import PerfectScrollbar from "react-perfect-scrollbar";
 import AddIcon from "@material-ui/icons/Add";
 import ModelFieldFormItem from "./ModelFieldFormItem";
-import { ModelFieldDoc, ModelDoc } from "../../types";
+import { ModelFieldDoc, ModelDoc, FIELD_TYPE } from "../../types";
 import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
 import CloseIcon from "@material-ui/icons/Close";
 import { getIntentionPaddingByDepth } from "../../helpers/projectHelpers";
@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 
 export interface ModelFieldFormValues {
   fieldName: string;
-  fieldType: string;
+  fieldType: FIELD_TYPE;
   format: string;
   isRequired: boolean;
   isArray: boolean;

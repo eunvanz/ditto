@@ -26,6 +26,8 @@ import {
   ModelFieldDoc,
   ModifiableModelFieldItem,
   FORMAT,
+  EnumerationItem,
+  EnumerationDoc,
 } from "../../types";
 import { eventChannel, EventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
@@ -516,7 +518,7 @@ export function* submitModelNameFormFlow() {
         const recordableDocProps = yield* call(getRecordableDocProps);
         const newModel: ModelItem = {
           projectId: currentProject.id,
-          name: payload.name,
+          name: payload.name, // name 필드 blur시 수행되므로 이 값만 필요
           ...recordableDocProps,
         };
         // model document 생성
@@ -665,10 +667,11 @@ export function* listenToModelFieldsFlow() {
   }
 }
 
-export async function getReferringModels(referredModel: ModelDoc) {
-  const projectModelsRef = Firework.getProjectModelsRef(
-    referredModel.projectId
-  );
+export async function getReferringModels(
+  type: "model" | "enum",
+  referred: ModelDoc | EnumerationDoc
+) {
+  const projectModelsRef = Firework.getProjectModelsRef(referred.projectId);
   const projectModelsSnapshot = await projectModelsRef.get();
 
   // 프로젝트의 모델을 가져옴
@@ -679,13 +682,17 @@ export async function getReferringModels(referredModel: ModelDoc) {
 
   // 프로젝트의 모델 중 삭제하려는 모델을 참조하고 있는 모델이 있는지 확인
   let referringModels: ModelDoc[] = [];
+  const isTypeModel = type === "model";
+  const getReferringModelFieldsRef = isTypeModel
+    ? Firework.getModelFieldsReferringModelRef
+    : Firework.getModelFieldsReferringEnumerationRef;
   await Promise.all(
     projectModels
-      .filter((model) => model.id !== referredModel.id)
+      .filter((model) => (isTypeModel ? model.id !== referred.id : true))
       .map(async (model) => {
-        const modelFieldsSnapshot = await Firework.getModelFieldsReferringModelRef(
+        const modelFieldsSnapshot = await getReferringModelFieldsRef(
           model,
-          referredModel
+          referred as any
         ).get();
         if (modelFieldsSnapshot.size > 0) {
           referringModels.push(model);
@@ -705,7 +712,11 @@ export function* deleteModelFlow() {
     if (isConfirmed) {
       try {
         yield* put(UiActions.showDelayedLoading());
-        const referringModels = yield* call(getReferringModels, payload);
+        const referringModels = yield* call(
+          getReferringModels,
+          "model",
+          payload
+        );
         if (referringModels.length > 0) {
           yield* put(UiActions.hideLoading());
           yield* call(Alert.message, {
@@ -982,6 +993,162 @@ export function* proceedQuickModelNameFormFlow() {
   }
 }
 
+export function* submitEnumFormFlow() {
+  while (true) {
+    const { payload } = yield* take(ProjectActions.submitEnumForm);
+
+    const currentProject = yield* call(selectAndCheckProject);
+    if (!currentProject) {
+      continue;
+    }
+
+    const { target } = payload;
+    delete payload.target;
+
+    try {
+      const items = payload.items.split(",");
+      if (!!target) {
+        yield* put(UiActions.showDelayedLoading());
+        const updatedRecordProps = yield* call(getUpdatedRecordProps);
+        const newEnumeration: Partial<EnumerationItem> = {
+          projectId: currentProject.id,
+          ...payload,
+          items,
+          ...updatedRecordProps,
+        };
+        yield* call(Firework.updateEnumeration, target.id, newEnumeration);
+      } else {
+        yield* put(UiActions.showDelayedLoading());
+        const recordableDocProps = yield* call(getRecordableDocProps);
+        const newEnumeration: EnumerationItem = {
+          projectId: currentProject.id,
+          ...payload,
+          items,
+          ...recordableDocProps,
+        };
+        console.log("===== newEnumeration", newEnumeration);
+        yield* call(Firework.addEnumeration, newEnumeration);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "열거형이 생성되었습니다.",
+          })
+        );
+      }
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    } finally {
+      yield* put(UiActions.hideLoading());
+    }
+  }
+}
+
+export function createProjectEnumerationsEventChannel(projectId: string) {
+  const listener = eventChannel((emit) => {
+    const projectEnumerationsRef = Firework.getProjectEnumerationsRef(
+      projectId
+    );
+    const unsubscribe = projectEnumerationsRef.onSnapshot(
+      (querySnapshot) => {
+        const record: Record<string, EnumerationDoc> = {};
+        querySnapshot.forEach((enumeration) => {
+          record[enumeration.id] = {
+            id: enumeration.id,
+            ...enumeration.data(),
+          } as EnumerationDoc;
+        });
+        emit(record);
+      },
+      (error) => {
+        emit(error);
+      }
+    );
+    return unsubscribe;
+  });
+  return listener;
+}
+
+export function* listenToProjectEnumerationsFlow() {
+  while (true) {
+    yield* take(ProjectActions.listenToProjectEnumerations);
+    const project = yield* call(selectAndCheckProject);
+    if (!project) {
+      continue;
+    }
+
+    const listeningEnumerationsProjectIds = yield* select(
+      ProjectSelectors.selectListeningEnumerationsProjectIds
+    );
+
+    if (listeningEnumerationsProjectIds.includes(project.id)) {
+      continue;
+    }
+
+    yield* fork(listenToEventChannel, {
+      eventChannel: createProjectEnumerationsEventChannel(project.id),
+      dataReceiverCreator: (data) =>
+        DataActions.receiveRecordData({
+          key: DATA_KEY.ENUMERATIONS,
+          recordKey: project.id,
+          data,
+        }),
+      unlistenWaiter: createUnlistenWaiter({
+        cleanUpAction: DataActions.clearData(DATA_KEY.ENUMERATIONS),
+        unlistenAction: ProjectActions.unlistenToProjectEnumerations,
+      }),
+    });
+  }
+}
+
+export function* deleteEnumerationFlow() {
+  while (true) {
+    const { payload } = yield* take(ProjectActions.deleteEnumeration);
+    const isConfirmed = yield* call(Alert.confirm, {
+      title: "열거형 삭제",
+      message: `정말 ${payload.name} 열거형을 삭제하시겠습니까?`,
+    });
+    if (isConfirmed) {
+      try {
+        yield* put(UiActions.showDelayedLoading());
+        const referringModels = yield* call(
+          getReferringModels,
+          "enum",
+          payload
+        );
+        if (referringModels.length > 0) {
+          yield* put(UiActions.hideLoading());
+          yield* call(Alert.message, {
+            title: "삭제 불가",
+            message: `${referringModels
+              .map((model) => model.name)
+              .join(
+                ", "
+              )} 모델에서 참조 중인 열거형입니다. 모델에서 참조중인 열거형은 삭제가 불가능합니다.`,
+          });
+          continue;
+        } else {
+          yield* call(Firework.deleteEnumeration, payload);
+          yield* put(
+            UiActions.showNotification({
+              type: "success",
+              message: "열거형이 삭제되었습니다.",
+            })
+          );
+        }
+      } catch (error) {
+        yield* put(
+          ErrorActions.catchError({
+            error,
+            isAlertOnly: true,
+          })
+        );
+      } finally {
+        yield* put(UiActions.hideLoading());
+      }
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -997,5 +1164,8 @@ export function* watchProjectActions() {
     fork(listenToModelFieldsFlow),
     fork(deleteModelFieldFlow),
     fork(proceedQuickModelNameFormFlow),
+    fork(submitEnumFormFlow),
+    fork(listenToProjectEnumerationsFlow),
+    fork(deleteEnumerationFlow),
   ]);
 }

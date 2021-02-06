@@ -116,10 +116,10 @@ const EnumForm: React.FC<EnumFormProps> = ({
 
   const submitAndHideForm = useCallback(
     (data: EnumFormValues) => {
-      onSubmit(data);
+      onSubmit({ ...data, target: currentEnumeration });
       hideForm();
     },
-    [hideForm, onSubmit]
+    [currentEnumeration, hideForm, onSubmit]
   );
 
   return (

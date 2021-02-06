@@ -13,6 +13,7 @@ import ProjectBasicForm from "./ProjectBasicForm";
 import { Theme } from "../../theme";
 import ProjectUrlForm from "./ProjectUrlForm";
 import ModelList from "./ModelList";
+import EnumForm from "./EnumForm";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -40,6 +41,7 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
       { value: "urls", label: "URL" },
       { value: "members", label: "맴버" },
       { value: "models", label: "모델" },
+      { value: "enums", label: "열거형" },
     ];
   }, []);
 
@@ -69,6 +71,7 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
         {activeTab === "urls" && <ProjectUrlForm />}
         {/* {activeTab === 'members' && <Notifications />} */}
         {activeTab === "models" && <ModelList />}
+        {activeTab === "enums" && <EnumForm />}
       </Box>
     </Container>
   );
