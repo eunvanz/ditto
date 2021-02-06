@@ -83,7 +83,7 @@ const EnumForm: React.FC<EnumFormProps> = ({
     [clearErrors]
   );
 
-  const handleOnCancel = useCallback(() => {
+  const hideForm = useCallback(() => {
     setIsEditFormVisible(false);
     setIsNewFormVisible(false);
     setCurrentEnumeration(undefined);
@@ -113,6 +113,14 @@ const EnumForm: React.FC<EnumFormProps> = ({
       });
     }
   }, [currentEnumeration, setValue]);
+
+  const submitAndHideForm = useCallback(
+    (data: EnumFormValues) => {
+      onSubmit(data);
+      hideForm();
+    },
+    [hideForm, onSubmit]
+  );
 
   return (
     <Card>
@@ -148,8 +156,8 @@ const EnumForm: React.FC<EnumFormProps> = ({
                       formProps={formProps}
                       autoFocusField={fieldNameToFocus}
                       defaultFieldType={enumeration.fieldType}
-                      onSubmit={onSubmit}
-                      onCancel={handleOnCancel}
+                      onSubmit={submitAndHideForm}
+                      onCancel={hideForm}
                     />
                   ) : (
                     <>
@@ -189,8 +197,8 @@ const EnumForm: React.FC<EnumFormProps> = ({
                   <EnumFormItem
                     formProps={formProps}
                     autoFocusField={fieldNameToFocus}
-                    onSubmit={onSubmit}
-                    onCancel={handleOnCancel}
+                    onSubmit={submitAndHideForm}
+                    onCancel={hideForm}
                   />
                 ) : (
                   <TableCell colSpan={5}>

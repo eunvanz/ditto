@@ -12,6 +12,7 @@ import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
 import { FIELD_TYPE } from "../../../types";
 import { EnumFormValues } from "./EnumForm";
+import uniq from "lodash/uniq";
 
 export interface EnumFormItemProps {
   formProps: UseFormMethods<EnumFormValues>;
@@ -157,6 +158,14 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
                 } else {
                   return true;
                 }
+              },
+              exclusive: (value: string) => {
+                const splitValues = value.split(",");
+                let isExclusive =
+                  uniq(splitValues).length === splitValues.length;
+                return !isExclusive
+                  ? "콤마로 구분된 값이 중복되지 않도록 입력해주세요."
+                  : true;
               },
             },
           })}
