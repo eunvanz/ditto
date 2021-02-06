@@ -37,7 +37,6 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
     reset,
     control,
     setValue,
-    formState,
   } = formProps;
 
   const watchedFieldType = watch("fieldType");
@@ -71,12 +70,6 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
       window.removeEventListener("keyup", handleOnPressKey);
     };
   }, [handleOnPressKey]);
-
-  useEffect(() => {
-    if (formState.isDirty) {
-      trigger("items");
-    }
-  }, [formState.isDirty, trigger, watchedFieldType]);
 
   return (
     <>
@@ -138,6 +131,11 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
           size="small"
           autoFocus={autoFocusField === "items"}
           name="items"
+          onChange={(e) => {
+            const { value } = e.target;
+            setValue("items", value.replace(" ", ""));
+            trigger();
+          }}
           inputRef={register({
             required: "값을 입력해주세요.",
             maxLength: {
@@ -161,7 +159,6 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
                 }
               },
             },
-            setValueAs: (value) => value.replace(/" "/g, ""),
           })}
           fullWidth
           required

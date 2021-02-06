@@ -66,21 +66,22 @@ const EnumForm: React.FC<EnumFormProps> = ({
     keyof EnumFormValues | undefined
   >(undefined);
 
+  const formProps = useForm<EnumFormValues>({
+    mode: "onChange",
+  });
+
+  const { setValue, reset, clearErrors } = formProps;
+
   const showEditForm = useCallback(
     (enumeration: EnumerationDoc, fieldName: keyof EnumFormValues) => {
       setCurrentEnumeration(enumeration);
       setIsNewFormVisible(false);
       setIsEditFormVisible(true);
       setFieldNameToFocus(fieldName);
+      setTimeout(clearErrors);
     },
-    []
+    [clearErrors]
   );
-
-  const formProps = useForm<EnumFormValues>({
-    mode: "onChange",
-  });
-
-  const { setValue, reset } = formProps;
 
   const handleOnCancel = useCallback(() => {
     setIsEditFormVisible(false);
@@ -100,7 +101,6 @@ const EnumForm: React.FC<EnumFormProps> = ({
 
   useEffect(() => {
     if (currentEnumeration) {
-      console.log("===== currentEnumeration", currentEnumeration);
       setValue("name", currentEnumeration.name, { shouldValidate: true });
       setValue("fieldType", currentEnumeration.fieldType, {
         shouldValidate: true,
@@ -166,7 +166,7 @@ const EnumForm: React.FC<EnumFormProps> = ({
                       <TableCell
                         onClick={() => showEditForm(enumeration, "items")}
                       >
-                        {enumeration.items.join(", ")}
+                        {enumeration.items.join(",")}
                       </TableCell>
                       <TableCell
                         onClick={() => showEditForm(enumeration, "description")}
