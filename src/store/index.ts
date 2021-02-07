@@ -4,13 +4,17 @@ import UiSlice, { initialUiState } from "./Ui/UiSlice";
 import ProgressSlice, { initialProgressState } from "./Progress/ProgressSlice";
 import ProjectSlice, { initialProjectState } from "./Project/ProjectSlice";
 import watchAllActions from "./RootSaga";
-import FirebaseSlice, { initialFirebaseState } from "./Firebase";
+import FirebaseSlice, {
+  initialFirebaseState,
+  initialFirestoreState,
+} from "./Firebase";
 import ErrorSlice, { initialErrorState } from "./Error/ErrorSlice";
 import AuthSlice, { initialAuthState } from "./Auth/AuthSlice";
 import DataSlice, { initialDataState } from "./Data/DataSlice";
 
 export const rootReducer = combineReducers({
-  firebase: FirebaseSlice.reducer,
+  firebase: FirebaseSlice.firebaseReducer,
+  firestore: FirebaseSlice.firestoreReducer,
   ui: UiSlice.reducer,
   progress: ProgressSlice.reducer,
   project: ProjectSlice.reducer,
@@ -23,6 +27,7 @@ export type RootState = ReturnType<typeof rootReducer>;
 
 export const initialRootState: RootState = {
   firebase: initialFirebaseState as any,
+  firestore: initialFirestoreState,
   ui: initialUiState,
   progress: initialProgressState,
   project: initialProjectState,

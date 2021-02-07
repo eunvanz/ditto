@@ -1,13 +1,15 @@
 import React from "react";
 import { Provider } from "react-redux";
-import { ReactReduxFirebaseProvider } from "react-redux-firebase";
 import firebase from "firebase/app";
+import { ReactReduxFirebaseProvider } from "react-redux-firebase";
+import { createFirestoreInstance } from "redux-firestore";
 import store from "../../store";
 
 const rrfProps = {
   firebase,
   config: {},
   dispatch: store.dispatch,
+  createFirestoreInstance,
 };
 
 const StoreProvider = ({ children }: { children: React.ReactNode }) => {

@@ -1,4 +1,4 @@
-import { firebaseReducer } from "react-redux-firebase";
+import { firebaseReducer, firestoreReducer } from "react-redux-firebase";
 
 export const initialFirebaseState = {
   requesting: {},
@@ -23,8 +23,28 @@ export const initialFirebaseState = {
   errors: [],
 };
 
+export const initialFirestoreState = {
+  data: {},
+  errors: {
+    allIds: [],
+    byQuery: [],
+  },
+  listeners: {
+    allIds: [],
+    byId: {},
+  },
+  ordered: {},
+  queries: {},
+  status: {
+    requested: {},
+    requesting: {},
+    timestamps: {},
+  },
+};
+
 const FirebaseSlice = {
-  reducer: firebaseReducer,
+  firebaseReducer: firebaseReducer,
+  firestoreReducer: firestoreReducer,
 };
 
 export default FirebaseSlice;
