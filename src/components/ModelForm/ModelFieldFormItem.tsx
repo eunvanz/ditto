@@ -162,6 +162,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         ? getFormatValue(watchedFieldType, modelField?.format.value)
         : formatOptions[0];
     setValue("format", format, { shouldValidate: true });
+    setValue("enum", "없음", { shouldValidate: true });
     // formatOptions가 디펜던시에 포함되면 QuickModelNameFormModal 노출 시 포맷이 바뀌는 이슈로 인해 추가
     // eslint-disable-next-line
   }, [modelField, watchedFieldType, setValue]);
@@ -196,12 +197,11 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       const nameInput = fieldNameInputRef.current;
       return () => {
         // form의 값이 초기로 돌아가는 현상이 있어서 직접 리셋해줌
-        // reset(getValues());
-        reset();
+        reset(!modelField ? undefined : getValues());
         nameInput?.focus();
       };
     }
-  }, [getValues, isSubmitting, reset]);
+  }, [getValues, isSubmitting, modelField, reset]);
 
   const handleOnCancel = useCallback(() => {
     onCancel();
