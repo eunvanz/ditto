@@ -174,7 +174,7 @@ const EnumForm: React.FC<EnumFormProps> = ({
                       <TableCell
                         onClick={() => showEditForm(enumeration, "items")}
                       >
-                        {enumeration.items.join(",")}
+                        {enumeration.items.join(", ")}
                       </TableCell>
                       <TableCell
                         onClick={() => showEditForm(enumeration, "description")}

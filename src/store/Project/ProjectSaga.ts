@@ -28,6 +28,7 @@ import {
   FORMAT,
   EnumerationItem,
   EnumerationDoc,
+  FIELD_TYPE,
 } from "../../types";
 import { eventChannel, EventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
@@ -416,24 +417,30 @@ export function* deleteModelFieldFlow() {
     const { payload: modelField } = yield* take(
       ProjectActions.deleteModelField
     );
-    try {
-      yield* put(UiActions.showDelayedLoading());
-      yield* call(Firework.deleteModelField, modelField);
-      yield* put(
-        UiActions.showNotification({
-          type: "success",
-          message: "필드가 삭제되었습니다.",
-        })
-      );
-    } catch (error) {
-      yield* put(
-        ErrorActions.catchError({
-          error,
-          isAlertOnly: true,
-        })
-      );
-    } finally {
-      yield* put(UiActions.hideLoading());
+    const isConfirmed = yield* call(Alert.confirm, {
+      title: "필드 삭제",
+      message: `정말 ${modelField.fieldName.value} 필드를 삭제하시겠습니까?`,
+    });
+    if (isConfirmed) {
+      try {
+        yield* put(UiActions.showDelayedLoading());
+        yield* call(Firework.deleteModelField, modelField);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "필드가 삭제되었습니다.",
+          })
+        );
+      } catch (error) {
+        yield* put(
+          ErrorActions.catchError({
+            error,
+            isAlertOnly: true,
+          })
+        );
+      } finally {
+        yield* put(UiActions.hideLoading());
+      }
     }
   }
 }
@@ -1006,7 +1013,10 @@ export function* submitEnumFormFlow() {
     delete payload.target;
 
     try {
-      const items = payload.items.split(",");
+      const items =
+        payload.fieldType === FIELD_TYPE.INTEGER
+          ? payload.items.split(",").map((item) => Number(item))
+          : payload.items.split(",");
       if (!!target) {
         yield* put(UiActions.showDelayedLoading());
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
@@ -1026,7 +1036,6 @@ export function* submitEnumFormFlow() {
           items,
           ...recordableDocProps,
         };
-        console.log("===== newEnumeration", newEnumeration);
         yield* call(Firework.addEnumeration, newEnumeration);
         yield* put(
           UiActions.showNotification({

@@ -51,9 +51,13 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
     }
   }, [defaultModelId, dispatch, modelFormId]);
 
-  const { model, modelFields, projectModels, editingModelField } = useSelector(
-    ProjectSelectors.createModelFormSelector(modelFormId)
-  );
+  const {
+    model,
+    modelFields,
+    projectModels,
+    editingModelField,
+    projectEnumerations,
+  } = useSelector(ProjectSelectors.createModelFormSelector(modelFormId));
 
   const listeningModelIds = useSelector(
     ProjectSelectors.selectListeningFieldsModelIds
@@ -94,6 +98,13 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
     }
     // eslint-disable-next-line
   }, [dispatch, model?.id]);
+
+  useEffect(() => {
+    dispatch(ProjectActions.listenToProjectEnumerations());
+    return () => {
+      dispatch(ProjectActions.unlistenToProjectEnumerations());
+    };
+  }, [dispatch]);
 
   const checkIsSubmittingModelField = useCallback(
     (modelId?: string) => {
@@ -143,6 +154,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       isVisible={isVisible || false}
       onClose={onClose}
       projectModels={projectModels}
+      projectEnumerations={projectEnumerations}
       checkIsSubmittingModelField={checkIsSubmittingModelField}
       onSetEditingModelField={handleOnSetEditingModelField}
       editingModelFieldId={editingModelFieldId}
@@ -156,6 +168,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
       onDeleteModelField={deleteModelField}
       onSubmitModelField={submitModelField}
       projectModels={projectModels}
+      projectEnumerations={projectEnumerations}
       depth={depth}
       checkIsSubmittingModelField={checkIsSubmittingModelField}
       onSetEditingModelField={handleOnSetEditingModelField}

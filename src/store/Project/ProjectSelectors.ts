@@ -4,7 +4,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { DATA_KEY } from "../Data/DataSlice";
 import { convertRecordToArray } from "../../helpers/commonHelpers";
 import orderBy from "lodash/orderBy";
-import { ModelDoc, ModelFieldDoc } from "../../types";
+import { EnumerationDoc, ModelDoc, ModelFieldDoc } from "../../types";
 
 const selectIsProjectFormSubmitting = (state: RootState) =>
   state.progress.includes(ProjectActions.submitProjectForm.type);
@@ -47,21 +47,35 @@ const createModelFormSelector = (modelFormId?: string) =>
       modelFormId ? state.data[DATA_KEY.MODEL_FORMS]?.[modelFormId] : undefined,
     (state: RootState) => state.data[DATA_KEY.MODEL_FIELDS],
     (state: RootState) => state.project.editingModelField,
-    (models, project, modelId, allModelFields, editingModelField) => {
+    (state: RootState) => state.data[DATA_KEY.ENUMERATIONS],
+    (
+      models,
+      project,
+      modelId,
+      allModelFields,
+      editingModelField,
+      enumerations
+    ) => {
       const model =
         models && project && modelId ? models[project.id][modelId] : undefined;
       let projectModels: ModelDoc[] = [];
+      let projectEnumerations: EnumerationDoc[] = [];
       const modelFields: ModelFieldDoc[] = model
         ? allModelFields?.[model.id] || []
         : [];
       if (models && project) {
         projectModels = convertRecordToArray(models[project.id]);
       }
+      if (enumerations && project) {
+        projectEnumerations = convertRecordToArray(enumerations[project.id]);
+      }
+
       return {
         model,
         modelFields,
         projectModels,
         editingModelField,
+        projectEnumerations,
       };
     }
   );

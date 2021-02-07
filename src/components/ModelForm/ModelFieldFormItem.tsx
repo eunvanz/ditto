@@ -29,6 +29,7 @@ import {
   ModelFieldDoc,
   ModelDoc,
   FORMAT,
+  EnumerationDoc,
 } from "../../types";
 import {
   getIntentionPaddingByDepth,
@@ -59,6 +60,7 @@ export interface ModelFieldFormItemProps {
    * 같은 프로젝트 내의 모델들
    */
   projectModels: ModelDoc[];
+  projectEnumerations: EnumerationDoc[];
   onCancel: () => void;
   isSubmitting: boolean;
   isFormVisible: boolean;
@@ -72,6 +74,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   onDelete,
   depth,
   projectModels,
+  projectEnumerations,
   onCancel,
   isSubmitting,
   isFormVisible,
@@ -93,6 +96,16 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     [projectModels]
   );
 
+  const getEnumValue = useCallback(
+    (enumId: string) => {
+      return (
+        projectEnumerations.find((enumeration) => enumeration.id === enumId)
+          ?.name || "없음"
+      );
+    },
+    [projectEnumerations]
+  );
+
   const defaultValues: ModelFieldFormValues = useMemo(() => {
     return {
       fieldName: modelField?.fieldName.value || "",
@@ -101,11 +114,11 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       format: modelField
         ? getFormatValue(modelField.fieldType.value, modelField.format.value)
         : "없음",
-      enum: modelField?.enum.value || "없음",
+      enum: modelField ? getEnumValue(modelField.enum.value) : "없음",
       description: modelField?.description.value || "",
       isArray: modelField ? modelField.isArray.value : false,
     };
-  }, [getFormatValue, modelField]);
+  }, [getEnumValue, getFormatValue, modelField]);
 
   const [autoFocusField, setAutoFocusField] = useState<
     keyof ModelFieldFormValues
@@ -161,9 +174,20 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
           ? projectModels.find((model) => model.name === data.format)?.id ||
             FORMAT.NEW_MODEL
           : data.format;
-      onSubmit({ ...data, format, target: modelField });
+      const enumValue =
+        projectEnumerations.find(
+          (enumeration) => enumeration.name === data.enum
+        )?.id || "없음";
+      onSubmit({ ...data, format, enum: enumValue, target: modelField });
     })();
-  }, [handleSubmit, modelField, onSubmit, projectModels, trigger]);
+  }, [
+    handleSubmit,
+    modelField,
+    onSubmit,
+    projectEnumerations,
+    projectModels,
+    trigger,
+  ]);
 
   const fieldNameInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -243,6 +267,22 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       return FORMAT.NEW_MODEL;
     }
   }, [modelField, projectModels, watchedFieldType]);
+
+  const enumOptions = useMemo(() => {
+    return [
+      "없음",
+      ...projectEnumerations
+        .filter((item) => item.fieldType === watchedFieldType)
+        .map((item) => item.name),
+    ];
+  }, [projectEnumerations, watchedFieldType]);
+
+  const enumDefaultValue = useMemo(() => {
+    return (
+      projectEnumerations.find((item) => item.id === modelField?.enum.value)
+        ?.name || "없음"
+    );
+  }, [modelField, projectEnumerations]);
 
   return (
     <>
@@ -418,14 +458,17 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             <Controller
               control={control}
               name="enum"
-              defaultValue={defaultValues.enum}
+              defaultValue={enumDefaultValue}
               render={({ value }) => {
                 return (
                   <Autocomplete
                     value={value}
                     openOnFocus
                     className={classes.autocomplete}
-                    options={["없음"]}
+                    options={enumOptions}
+                    onChange={(_e, value) => {
+                      setValue("enum", value, { shouldValidate: true });
+                    }}
                     disableClearable
                     renderInput={(params) => (
                       <TextField
@@ -439,7 +482,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
               }}
             />
           ) : (
-            modelField?.enum.value
+            enumDefaultValue
           )}
         </TableCell>
         <TableCell onClick={createCellClickHandler("description")}>

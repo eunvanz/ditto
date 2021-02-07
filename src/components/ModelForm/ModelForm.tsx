@@ -23,7 +23,12 @@ import {
 import PerfectScrollbar from "react-perfect-scrollbar";
 import AddIcon from "@material-ui/icons/Add";
 import ModelFieldFormItem from "./ModelFieldFormItem";
-import { ModelFieldDoc, ModelDoc, FIELD_TYPE } from "../../types";
+import {
+  ModelFieldDoc,
+  ModelDoc,
+  FIELD_TYPE,
+  EnumerationDoc,
+} from "../../types";
 import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
 import CloseIcon from "@material-ui/icons/Close";
 import { getIntentionPaddingByDepth } from "../../helpers/projectHelpers";
@@ -84,6 +89,10 @@ export interface ModelFormProps {
    * 같은 프로젝트 내의 모델들
    */
   projectModels: ModelDoc[];
+  /**
+   * 같은 프로젝트 내의 열거형들
+   */
+  projectEnumerations: EnumerationDoc[];
   depth?: number;
   checkIsSubmittingModelField: (modelId?: string) => boolean;
   onSetEditingModelField: (modelFieldId?: string) => void;
@@ -99,6 +108,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   onClose,
   modelFields = [],
   projectModels,
+  projectEnumerations,
   depth,
   checkIsSubmittingModelField,
   onSetEditingModelField,
@@ -189,6 +199,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
           onSubmit={onSubmitModelField}
           onDelete={() => onDeleteModelField(modelField)}
           projectModels={projectModels}
+          projectEnumerations={projectEnumerations}
           depth={depth}
           isSubmitting={checkIsSubmittingModelField(modelField.id)}
           onClickCell={() => onSetEditingModelField(modelField.id)}
@@ -202,6 +213,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
           onSubmit={onSubmitModelField}
           isFormVisible
           projectModels={projectModels}
+          projectEnumerations={projectEnumerations}
           depth={depth}
           onCancel={resetEditingModelField}
           isSubmitting={checkIsSubmittingModelField()}
