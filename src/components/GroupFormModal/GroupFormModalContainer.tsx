@@ -13,13 +13,14 @@ const GroupFormModalContainer = () => {
     return group ? { name: group.name } : undefined;
   }, [group]);
 
-  return (
-    <GroupFormModal
-      defaultValues={defaultValues}
-      isVisible={isVisible}
-      onClose={() => dispatch(UiActions.hideGroupFormModal())}
-    />
-  );
+  // return (
+  //   <GroupFormModal
+  //     defaultValues={defaultValues}
+  //     isVisible={isVisible}
+  //     onClose={() => dispatch(UiActions.hideGroupFormModal())}
+  //   />
+  // );
+  return null;
 };
 
 export default GroupFormModalContainer;

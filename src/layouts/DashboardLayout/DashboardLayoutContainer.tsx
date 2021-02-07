@@ -1,11 +1,10 @@
 import React, { useMemo, useCallback } from "react";
 import DashboardLayout from "./DashboardLayout";
 import { useSelector } from "react-redux";
-import { RootState } from "../../store";
-import { DATA_KEY } from "../../store/Data/DataSlice";
 import { ProjectDoc } from "../../types";
 import { useHistory } from "react-router-dom";
 import ROUTE from "../../paths";
+import FirebaseSelector from "../../store/Firebase/FirebaseSelector";
 
 export interface DashboardLayoutContainerProps {
   children: React.ReactNode;
@@ -14,9 +13,7 @@ export interface DashboardLayoutContainerProps {
 const DashboardLayoutContainer = ({
   children,
 }: DashboardLayoutContainerProps) => {
-  const projects = useSelector(
-    (state: RootState) => state.data[DATA_KEY.PROJECTS]
-  );
+  const projects = useSelector(FirebaseSelector.selectOrderedMyProjects);
 
   const history = useHistory();
 

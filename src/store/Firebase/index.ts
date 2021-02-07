@@ -1,4 +1,5 @@
-import { firebaseReducer, firestoreReducer } from "react-redux-firebase";
+import { firebaseReducer } from "react-redux-firebase";
+import { firestoreReducer } from "redux-firestore";
 
 export const initialFirebaseState = {
   requesting: {},
@@ -43,8 +44,8 @@ export const initialFirestoreState = {
 };
 
 const FirebaseSlice = {
-  firebaseReducer: firebaseReducer,
-  firestoreReducer: firestoreReducer,
+  firebaseReducer,
+  firestoreReducer,
 };
 
 export default FirebaseSlice;
