@@ -158,6 +158,9 @@ const EnumForm: React.FC<EnumFormProps> = ({
                       defaultFieldType={enumeration.fieldType}
                       onSubmit={submitAndHideForm}
                       onCancel={hideForm}
+                      existingEnumerations={enumerations.filter(
+                        (item) => item.id !== enumeration.id
+                      )}
                     />
                   ) : (
                     <>
@@ -199,6 +202,7 @@ const EnumForm: React.FC<EnumFormProps> = ({
                     autoFocusField={fieldNameToFocus}
                     onSubmit={submitAndHideForm}
                     onCancel={hideForm}
+                    existingEnumerations={enumerations}
                   />
                 ) : (
                   <TableCell colSpan={5}>

@@ -10,7 +10,7 @@ import React, { useCallback, useEffect } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
-import { FIELD_TYPE } from "../../../types";
+import { EnumerationDoc, FIELD_TYPE } from "../../../types";
 import { EnumFormValues } from "./EnumForm";
 import uniq from "lodash/uniq";
 
@@ -20,6 +20,7 @@ export interface EnumFormItemProps {
   onSubmit: (data: EnumFormValues) => void;
   onCancel: () => void;
   defaultFieldType?: FIELD_TYPE;
+  existingEnumerations: EnumerationDoc[];
 }
 
 const EnumFormItem: React.FC<EnumFormItemProps> = ({
@@ -28,6 +29,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
   onSubmit,
   onCancel,
   defaultFieldType = FIELD_TYPE.STRING,
+  existingEnumerations,
 }) => {
   const {
     register,
@@ -84,6 +86,12 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
             maxLength: {
               value: 40,
               message: "이름이 너무 길어요.",
+            },
+            validate: (data: string) => {
+              const isDup = existingEnumerations.some(
+                (enumeration) => enumeration.name === data
+              );
+              return isDup ? "중복되는 이름이 있어요." : true;
             },
           })}
           fullWidth
