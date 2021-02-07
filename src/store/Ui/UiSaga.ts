@@ -71,6 +71,7 @@ export function* handleShowDelayedLoading(
 export function* handleShowQuickModelNameFormModal(
   action: ReturnType<typeof UiActions.showQuickModelNameFormModal>
 ) {
+  // FIXME: 추후 공통 미들웨어로 작성
   const auth = yield* select(AuthSelectors.selectAuth);
   if (auth.isEmpty) {
     yield* put(UiActions.showSignInModal());

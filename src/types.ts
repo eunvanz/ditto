@@ -284,3 +284,10 @@ export interface EnumerationItem extends Recordable {
 }
 
 export type EnumerationDoc = Doc<EnumerationItem, BaseSettings>;
+
+export interface GroupItem extends Recordable {
+  projectId: string;
+  name: string;
+}
+
+export type GroupDoc = Doc<GroupItem, BaseSettings>;

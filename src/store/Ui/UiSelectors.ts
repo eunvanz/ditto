@@ -10,11 +10,14 @@ const selectQuickModelNameFormModal = (state: RootState) =>
 const selectQuickEnumFormModal = (state: RootState) =>
   state.ui.quickEnumFormModal;
 
+const selectGroupFormModal = (state: RootState) => state.ui.groupFormModal;
+
 const UiSelectors = {
   selectTheme,
   selectProjectFormModal,
   selectQuickModelNameFormModal,
   selectQuickEnumFormModal,
+  selectGroupFormModal,
 };
 
 export default UiSelectors;

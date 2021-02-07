@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { OptionsObject } from "notistack";
-import { THEMES, ProjectDoc, ModelDoc } from "../../types";
+import { THEMES, ProjectDoc, ModelDoc, GroupDoc } from "../../types";
 
 export interface Notification {
   key: React.ReactText;
@@ -19,7 +19,13 @@ export type UiState = {
   };
   quickModelNameFormModal: QuickModelNameFormModalState;
   quickEnumFormModal: QuickEnumFormModalState;
+  groupFormModal: GroupFormModalState;
 };
+
+export interface GroupFormModalState {
+  isVisible: boolean;
+  group?: GroupDoc;
+}
 
 export interface QuickEnumFormModalState {
   isVisible: boolean;
@@ -54,6 +60,10 @@ export const initialUiState: UiState = {
   },
   quickEnumFormModal: {
     isVisible: false,
+  },
+  groupFormModal: {
+    isVisible: false,
+    group: undefined,
   },
 };
 
@@ -129,6 +139,22 @@ const UiSlice = createSlice({
     },
     hideQuickEnumFormModal: (state, _action: PayloadAction<void>) => {
       state.quickEnumFormModal.isVisible = false;
+    },
+    receiveGroupFormModal: (
+      state,
+      action: PayloadAction<GroupFormModalState>
+    ) => {
+      state.groupFormModal = action.payload;
+    },
+    showGroupFormModal: (
+      state,
+      action: PayloadAction<GroupDoc | undefined>
+    ) => {
+      state.groupFormModal.isVisible = true;
+      state.groupFormModal.group = action.payload;
+    },
+    hideGroupFormModal: (state, action: PayloadAction<void>) => {
+      state.groupFormModal.isVisible = false;
     },
   },
 });
