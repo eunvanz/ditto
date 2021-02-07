@@ -30,6 +30,7 @@ import {
   ModelDoc,
   FORMAT,
   EnumerationDoc,
+  ENUMERATION,
 } from "../../types";
 import {
   getIntentionPaddingByDepth,
@@ -100,7 +101,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     (enumId: string) => {
       return (
         projectEnumerations.find((enumeration) => enumeration.id === enumId)
-          ?.name || "없음"
+          ?.name || ENUMERATION.NONE
       );
     },
     [projectEnumerations]
@@ -113,8 +114,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       fieldType: modelField?.fieldType.value || FIELD_TYPE.STRING,
       format: modelField
         ? getFormatValue(modelField.fieldType.value, modelField.format.value)
-        : "없음",
-      enum: modelField ? getEnumValue(modelField.enum.value) : "없음",
+        : FORMAT.NONE,
+      enum: modelField ? getEnumValue(modelField.enum.value) : ENUMERATION.NONE,
       description: modelField?.description.value || "",
       isArray: modelField ? modelField.isArray.value : false,
     };
@@ -152,7 +153,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       case FIELD_TYPE.OBJECT:
         return [FORMAT.NEW_MODEL, ...projectModels.map((model) => model.name)];
       default:
-        return ["없음"];
+        return [ENUMERATION.NONE];
     }
   }, [projectModels, watchedFieldType]);
 
@@ -162,7 +163,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         ? getFormatValue(watchedFieldType, modelField?.format.value)
         : formatOptions[0];
     setValue("format", format, { shouldValidate: true });
-    setValue("enum", "없음", { shouldValidate: true });
+    setValue("enum", ENUMERATION.NONE, { shouldValidate: true });
     // formatOptions가 디펜던시에 포함되면 QuickModelNameFormModal 노출 시 포맷이 바뀌는 이슈로 인해 추가
     // eslint-disable-next-line
   }, [modelField, watchedFieldType, setValue]);
@@ -178,7 +179,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       const enumValue =
         projectEnumerations.find(
           (enumeration) => enumeration.name === data.enum
-        )?.id || "없음";
+        )?.id || ENUMERATION.NONE;
       onSubmit({ ...data, format, enum: enumValue, target: modelField });
     })();
   }, [
@@ -269,18 +270,22 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [modelField, projectModels, watchedFieldType]);
 
   const enumOptions = useMemo(() => {
-    return [
-      "없음",
+    const result = [
+      ENUMERATION.NONE,
+      [FIELD_TYPE.INTEGER, FIELD_TYPE.STRING].includes(watchedFieldType)
+        ? ENUMERATION.NEW
+        : undefined,
       ...projectEnumerations
         .filter((item) => item.fieldType === watchedFieldType)
         .map((item) => item.name),
     ];
+    return result.filter((item) => !!item);
   }, [projectEnumerations, watchedFieldType]);
 
   const enumDefaultValue = useMemo(() => {
     return (
       projectEnumerations.find((item) => item.id === modelField?.enum.value)
-        ?.name || "없음"
+        ?.name || ENUMERATION.NONE
     );
   }, [modelField, projectEnumerations]);
 

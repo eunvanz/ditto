@@ -186,6 +186,11 @@ export enum FORMAT {
   PASSWORD = "password",
 }
 
+export enum ENUMERATION {
+  NONE = "없음",
+  NEW = "새로운 열거형",
+}
+
 export const formats: { [k in FIELD_TYPE]: (string | undefined)[] } = {
   [FIELD_TYPE.INTEGER]: [FORMAT.INT32, FORMAT.INT64],
   [FIELD_TYPE.NUMBER]: [FORMAT.NONE, FORMAT.FLOAT, FORMAT.DOUBLE],
