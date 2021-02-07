@@ -18,7 +18,12 @@ export type UiState = {
     isVisible: boolean;
   };
   quickModelNameFormModal: QuickModelNameFormModalState;
+  quickEnumFormModal: QuickEnumFormModalState;
 };
+
+export interface QuickEnumFormModalState {
+  isVisible: boolean;
+}
 
 export interface QuickModelNameFormModalState {
   isVisible: boolean;
@@ -46,6 +51,9 @@ export const initialUiState: UiState = {
   quickModelNameFormModal: {
     isVisible: false,
     model: undefined,
+  },
+  quickEnumFormModal: {
+    isVisible: false,
   },
 };
 
@@ -115,6 +123,12 @@ const UiSlice = createSlice({
     },
     clearQuickModelNameFormModal: (state, _action: PayloadAction<void>) => {
       state.quickModelNameFormModal.model = undefined;
+    },
+    showQuickEnumFormModal: (state, _action: PayloadAction<void>) => {
+      state.quickEnumFormModal.isVisible = true;
+    },
+    hideQuickEnumFormModal: (state, _action: PayloadAction<void>) => {
+      state.quickEnumFormModal.isVisible = false;
     },
   },
 });

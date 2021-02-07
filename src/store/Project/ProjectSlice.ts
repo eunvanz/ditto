@@ -6,6 +6,7 @@ import {
   ModelDoc,
   ModelFieldDoc,
   EnumerationDoc,
+  FIELD_TYPE,
 } from "../../types";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
@@ -19,6 +20,8 @@ export type ProjectState = {
     modelFieldId: string;
   };
   createdModelId?: string;
+  createdEnumId?: string;
+  fieldTypeToCreate?: FIELD_TYPE;
 };
 
 export const initialProjectState: ProjectState = {};
@@ -42,6 +45,12 @@ const ProjectSlice = createSlice({
     },
     receiveCreatedModelId: (state, action: PayloadAction<string>) => {
       state.createdModelId = action.payload;
+    },
+    receiveCreatedEnumId: (state, action: PayloadAction<string>) => {
+      state.createdEnumId = action.payload;
+    },
+    receiveFieldTypeToCreate: (state, action: PayloadAction<FIELD_TYPE>) => {
+      state.fieldTypeToCreate = action.payload;
     },
     submitProjectForm: (
       _,
@@ -92,6 +101,11 @@ const ProjectSlice = createSlice({
     listenToProjectEnumerations: (_, _action: PayloadAction<void>) => {},
     unlistenToProjectEnumerations: (_, _action: PayloadAction<void>) => {},
     deleteEnumeration: (_, _action: PayloadAction<EnumerationDoc>) => {},
+    submitQuickEnumForm: (_, _action: PayloadAction<EnumFormValues>) => {},
+    notifySubmissionQuickEnumFormComplete: (
+      _,
+      _action: PayloadAction<void>
+    ) => {},
   },
 });
 

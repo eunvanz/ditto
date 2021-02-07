@@ -4,6 +4,7 @@ import GlobalLoading from "../GlobalLoading";
 import SignInModal from "../SignInModal";
 import ProjectFormModal from "../ProjectFormModal";
 import QuickModelNameFormModal from "../QuickModelNameFormModal";
+import QuickEnumFormModal from "../QuickEnumFormModal";
 
 const GlobalComponents: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const GlobalComponents: React.FC = () => {
       <ProjectFormModal />
       <SignInModal />
       <QuickModelNameFormModal />
+      <QuickEnumFormModal />
     </>
   );
 };

@@ -123,6 +123,11 @@ const selectProjectEnumerations = createSelector(
   }
 );
 
+const selectFieldTypeToCreate = createSelector(
+  (state: RootState) => state.project.fieldTypeToCreate,
+  (fieldType) => fieldType
+);
+
 const ProjectSelectors = {
   selectIsProjectFormSubmitting,
   selectProjectUrls,
@@ -133,6 +138,7 @@ const ProjectSelectors = {
   selectListeningModelsProjectIds,
   selectListeningEnumerationsProjectIds,
   selectProjectEnumerations,
+  selectFieldTypeToCreate,
 };
 
 export default ProjectSelectors;

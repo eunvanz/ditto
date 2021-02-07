@@ -13,6 +13,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 import { EnumerationDoc, FIELD_TYPE } from "../../../types";
 import { EnumFormValues } from "./EnumForm";
 import uniq from "lodash/uniq";
+import { patterns } from "../../../helpers/projectHelpers";
 
 export interface EnumFormItemProps {
   formProps: UseFormMethods<EnumFormValues>;
@@ -93,6 +94,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
               );
               return isDup ? "중복되는 이름이 있어요." : true;
             },
+            pattern: patterns.wordsWithNoSpace,
           })}
           fullWidth
           required
@@ -155,7 +157,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
               pattern: (value) => {
                 if (watchedFieldType === FIELD_TYPE.STRING) {
                   return (
-                    /^[a-z0-9_\-가-힣]+(,[a-z0-9_\-가-힣]+)*$/i.test(value) ||
+                    /^[a-z0-9_가-힣]+(,[a-z0-9_가-힣]+)*$/i.test(value) ||
                     "일반문자와 숫자만 사용해서 1글자 이상씩 콤마로 구분해서 입력해주세요."
                   );
                 } else if (watchedFieldType === FIELD_TYPE.INTEGER) {

@@ -29,6 +29,7 @@ import {
   EnumerationItem,
   EnumerationDoc,
   FIELD_TYPE,
+  ENUMERATION,
 } from "../../types";
 import { eventChannel, EventChannel } from "redux-saga";
 import { DataActions, DATA_KEY } from "../Data/DataSlice";
@@ -819,7 +820,10 @@ export function* submitModelFieldFormFlow() {
     const { target } = payload;
 
     const isNewModel =
-      payload.fieldType === "object" && payload.format === FORMAT.NEW_MODEL;
+      payload.fieldType === FIELD_TYPE.OBJECT &&
+      payload.format === FORMAT.NEW_MODEL;
+
+    const isNewEnum = payload.enum === ENUMERATION.NEW;
 
     let hasToBlurForm = true;
 
@@ -885,6 +889,34 @@ export function* submitModelFieldFormFlow() {
               ...newModelField,
               format: {
                 value: createdModelId,
+                ...updatedRecordProps,
+              },
+            });
+          }
+        } else if (isNewEnum) {
+          yield* putResolve(
+            ProjectActions.receiveFieldTypeToCreate(payload.fieldType)
+          );
+          yield* put(UiActions.showQuickEnumFormModal());
+          const { submit, cancel } = yield* race({
+            submit: take(ProjectActions.submitEnumForm),
+            cancel: take(UiActions.hideQuickEnumFormModal),
+          });
+          if (cancel) {
+            hasToBlurForm = false;
+            continue;
+          } else {
+            yield* put(ProjectActions.submitEnumForm(submit!.payload));
+            yield* take(ProjectActions.notifySubmissionQuickEnumFormComplete);
+            const createdEnumId = yield* select(
+              (state: RootState) => state.project.createdEnumId
+            );
+            yield* put(UiActions.showDelayedLoading(500));
+            yield* put(UiActions.hideQuickEnumFormModal());
+            yield* call(Firework.updateModelField, target.id, {
+              ...newModelField,
+              enum: {
+                value: createdEnumId,
                 ...updatedRecordProps,
               },
             });
@@ -956,6 +988,33 @@ export function* submitModelFieldFormFlow() {
               },
             });
           }
+        } else if (isNewEnum) {
+          yield* putResolve(
+            ProjectActions.receiveFieldTypeToCreate(payload.fieldType)
+          );
+          yield* put(UiActions.showQuickEnumFormModal());
+          const { submit, cancel } = yield* race({
+            submit: take(ProjectActions.submitQuickEnumForm),
+            cancel: take(UiActions.hideQuickEnumFormModal),
+          });
+          if (cancel) {
+            continue;
+          } else {
+            yield* put(ProjectActions.submitEnumForm(submit!.payload));
+            yield* take(ProjectActions.notifySubmissionQuickEnumFormComplete);
+            const createdEnumId = yield* select(
+              (state: RootState) => state.project.createdEnumId
+            );
+            yield* put(UiActions.showDelayedLoading(500));
+            yield* put(UiActions.hideQuickEnumFormModal());
+            yield* call(Firework.addModelField, {
+              ...newModelField,
+              enum: {
+                value: createdEnumId!,
+                ...recordableDocProps,
+              },
+            });
+          }
         } else {
           yield* put(UiActions.showDelayedLoading(500));
           yield* call(Firework.addModelField, newModelField);
@@ -1002,7 +1061,7 @@ export function* proceedQuickModelNameFormFlow() {
 
 export function* submitEnumFormFlow() {
   while (true) {
-    const { payload } = yield* take(ProjectActions.submitEnumForm);
+    const { type, payload } = yield* take(ProjectActions.submitEnumForm);
 
     const currentProject = yield* call(selectAndCheckProject);
     if (!currentProject) {
@@ -1013,6 +1072,7 @@ export function* submitEnumFormFlow() {
     delete payload.target;
 
     try {
+      yield* put(ProgressActions.startProgress(type));
       const items =
         payload.fieldType === FIELD_TYPE.INTEGER
           ? payload.items.split(",").map((item) => Number(item))
@@ -1036,7 +1096,13 @@ export function* submitEnumFormFlow() {
           items,
           ...recordableDocProps,
         };
-        yield* call(Firework.addEnumeration, newEnumeration);
+        const createdEnumerationRef = yield* call(
+          Firework.addEnumeration,
+          newEnumeration
+        );
+        yield* putResolve(
+          ProjectActions.receiveCreatedEnumId(createdEnumerationRef.id)
+        );
         yield* put(
           UiActions.showNotification({
             type: "success",
@@ -1048,6 +1114,8 @@ export function* submitEnumFormFlow() {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
       yield* put(UiActions.hideLoading());
+      yield* put(ProgressActions.finishProgress(type));
+      yield* put(ProjectActions.notifySubmissionQuickEnumFormComplete());
     }
   }
 }

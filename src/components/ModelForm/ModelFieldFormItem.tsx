@@ -179,7 +179,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       const enumValue =
         projectEnumerations.find(
           (enumeration) => enumeration.name === data.enum
-        )?.id || ENUMERATION.NONE;
+        )?.id || data.enum;
       onSubmit({ ...data, format, enum: enumValue, target: modelField });
     })();
   }, [
