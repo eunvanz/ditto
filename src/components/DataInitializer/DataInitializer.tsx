@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AuthSelectors from "../../store/Auth/AuthSelector";
 import { UiActions } from "../../store/Ui/UiSlice";
 import { isLoaded, useFirestoreConnect } from "react-redux-firebase";
-import FirebaseSelector from "../../store/Firebase/FirebaseSelector";
+import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 
 /**
  * 필수적인 데이터들을 로딩후에 하위 컴포넌트들을 렌더링
@@ -32,7 +32,7 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
 
   useFirestoreConnect(firestoreQuery as any);
 
-  const projects = useSelector(FirebaseSelector.selectMyProjects);
+  const projects = useSelector(FirebaseSelectors.selectMyProjects);
 
   const dispatch = useDispatch();
 

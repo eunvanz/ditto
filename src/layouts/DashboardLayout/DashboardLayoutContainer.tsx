@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { ProjectDoc } from "../../types";
 import { useHistory } from "react-router-dom";
 import ROUTE from "../../paths";
-import FirebaseSelector from "../../store/Firebase/FirebaseSelector";
+import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 
 export interface DashboardLayoutContainerProps {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ export interface DashboardLayoutContainerProps {
 const DashboardLayoutContainer = ({
   children,
 }: DashboardLayoutContainerProps) => {
-  const projects = useSelector(FirebaseSelector.selectOrderedMyProjects);
+  const projects = useSelector(FirebaseSelectors.selectOrderedMyProjects);
 
   const history = useHistory();
 

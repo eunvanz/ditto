@@ -22,6 +22,7 @@ export type ProjectState = {
   createdModelId?: string;
   createdEnumId?: string;
   fieldTypeToCreate?: FIELD_TYPE;
+  currentProject?: ProjectDoc;
 };
 
 export const initialProjectState: ProjectState = {};
@@ -35,6 +36,9 @@ const ProjectSlice = createSlice({
   name: "Project",
   initialState: initialProjectState,
   reducers: {
+    receiveCurrentProject: (state, action: PayloadAction<ProjectDoc>) => {
+      state.currentProject = action.payload;
+    },
     receiveEditingModelField: (
       state,
       action: PayloadAction<
@@ -56,7 +60,6 @@ const ProjectSlice = createSlice({
       _,
       _action: PayloadAction<SubmitProjectFormPayload>
     ) => {},
-    listenToMyProjects: (_, _action: PayloadAction<void>) => {},
     deleteProject: (_, _action: PayloadAction<ProjectDoc>) => {},
     submitProjectUrlForm: (
       _,

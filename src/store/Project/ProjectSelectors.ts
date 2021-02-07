@@ -1,20 +1,13 @@
 import { RootState } from "..";
-import { ProjectActions } from "./ProjectSlice";
 import { createSelector } from "@reduxjs/toolkit";
 import { DATA_KEY } from "../Data/DataSlice";
 import { convertRecordToArray } from "../../helpers/commonHelpers";
 import orderBy from "lodash/orderBy";
 import { EnumerationDoc, ModelDoc, ModelFieldDoc } from "../../types";
 
-const selectIsProjectFormSubmitting = (state: RootState) =>
-  state.progress.includes(ProjectActions.submitProjectForm.type);
-
-const selectProjectUrls = createSelector(
-  (state: RootState) => state.data[DATA_KEY.PROJECT],
-  (state: RootState) => state.data[DATA_KEY.PROJECT_URLS],
-  (project, projectUrls) => {
-    return projectUrls && project ? projectUrls[project.id] : undefined;
-  }
+const selectCurrentProject = createSelector(
+  (state: RootState) => state.project.currentProject,
+  (project) => project
 );
 
 const selectProjectModels = createSelector(
@@ -28,15 +21,6 @@ const selectProjectModels = createSelector(
         ])
       : undefined;
   }
-);
-
-const selectForProjectBasicForm = createSelector(
-  (state: RootState) => state.data[DATA_KEY.PROJECT],
-  selectIsProjectFormSubmitting,
-  (project, isSubmitting) => ({
-    project,
-    isSubmitting,
-  })
 );
 
 const createModelFormSelector = (modelFormId?: string) =>
@@ -129,9 +113,7 @@ const selectFieldTypeToCreate = createSelector(
 );
 
 const ProjectSelectors = {
-  selectIsProjectFormSubmitting,
-  selectProjectUrls,
-  selectForProjectBasicForm,
+  selectCurrentProject,
   selectProjectModels,
   createModelFormSelector,
   selectListeningFieldsModelIds,

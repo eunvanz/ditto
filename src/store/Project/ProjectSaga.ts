@@ -37,10 +37,7 @@ import { RootState } from "..";
 import DataSelectors from "../Data/DataSelectors";
 import { AuthActions } from "../Auth/AuthSlice";
 import { requireSignIn } from "../Auth/AuthSaga";
-import {
-  assertNotEmpty,
-  getPathFromLocation,
-} from "../../helpers/commonHelpers";
+import { assertNotEmpty } from "../../helpers/commonHelpers";
 import { PayloadAction, ActionCreator, Action } from "@reduxjs/toolkit";
 import history from "../../helpers/history";
 import ROUTE from "../../paths";
@@ -68,7 +65,7 @@ export function* submitProjectFormFlow() {
     ]);
     const timestamp = yield* call(getTimestamp);
     const projectCount = yield* select(
-      (state: RootState) => state.data[DATA_KEY.PROJECTS]?.length
+      (state: RootState) => state.firestore.ordered.projects?.length
     );
     try {
       if (isModification) {
@@ -139,42 +136,6 @@ export function createMyProjectsEventChannel(uid: string) {
   return listener;
 }
 
-export function* listenToMyProjectsFlow() {
-  while (true) {
-    yield* take(ProjectActions.listenToMyProjects);
-    const auth = yield* select(AuthSelectors.selectAuth);
-    if (auth.uid) {
-      try {
-        const myProjectEventChannel = createMyProjectsEventChannel(auth.uid);
-
-        yield* fork(listenToEventChannel, {
-          eventChannel: myProjectEventChannel,
-          dataReceiverCreator: (data: ProjectDoc[]) =>
-            DataActions.receiveData({
-              key: DATA_KEY.PROJECTS,
-              data,
-            }),
-          unlistenWaiter: waitForUnlistenToMyProject,
-        });
-      } catch (error) {
-        yield* put(
-          ErrorActions.catchError({
-            error,
-            retryPath: getPathFromLocation(window.location),
-          })
-        );
-      }
-    } else {
-      yield* put(
-        DataActions.receiveData({
-          key: DATA_KEY.PROJECTS,
-          data: [],
-        })
-      );
-    }
-  }
-}
-
 export function* waitForUnlistenToMyProject(
   myProjectEventChannel: EventChannel<any>
 ) {
@@ -198,16 +159,16 @@ export function* deleteProjectFlow() {
       try {
         yield* put(UiActions.showLoading());
         yield* call(Firework.deleteProject, project.id);
-      } catch (error) {
-        yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
-      } finally {
-        yield* put(UiActions.hideLoading());
         yield* put(
           UiActions.showNotification({
             message: "프로젝트가 삭제됐습니다.",
             type: "success",
           })
         );
+      } catch (error) {
+        yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+      } finally {
+        yield* put(UiActions.hideLoading());
       }
     }
   }
@@ -225,9 +186,7 @@ export function* submitProjectUrlFormFlow() {
 
     const isModification = !!data.target;
 
-    const project = yield* select(
-      DataSelectors.createDataKeySelector(DATA_KEY.PROJECT)
-    );
+    const project = yield* select(ProjectSelectors.selectCurrentProject);
     assertNotEmpty(project);
     const { id: projectId } = project as ProjectDoc;
     const timestamp = yield* call(getTimestamp);
@@ -1229,7 +1188,6 @@ export function* deleteEnumerationFlow() {
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
-    fork(listenToMyProjectsFlow),
     fork(deleteProjectFlow),
     fork(submitProjectUrlFormFlow),
     fork(listenToProjectUrlsFlow),
