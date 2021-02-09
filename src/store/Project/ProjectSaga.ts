@@ -19,7 +19,6 @@ import { getTimestamp } from "../../firebase";
 import { ErrorActions } from "../Error/ErrorSlice";
 import {
   ProjectDoc,
-  ProjectUrlDoc,
   ModelItem,
   ModelDoc,
   ModelFieldItem,
@@ -250,38 +249,6 @@ export function* submitProjectUrlFormFlow() {
   }
 }
 
-export function createProjectUrlEventChannel(projectId: string) {
-  const listener = eventChannel((emit) => {
-    const projectUrlRef = Firework.getProjectUrlRef(projectId);
-    const unsubscribe = projectUrlRef.onSnapshot((querySnapshot) => {
-      const projectUrls: ProjectUrlDoc[] = [];
-      querySnapshot.forEach((doc) => {
-        projectUrls.push({ id: doc.id, ...doc.data() } as ProjectUrlDoc);
-      });
-      emit(projectUrls);
-    });
-    return unsubscribe;
-  });
-  return listener;
-}
-
-export function* waitForUnlistenProjectUrl(
-  projectUrlEventChannel: EventChannel<any>
-) {
-  while (true) {
-    const [isSignedOut] = yield* race([
-      take(AuthActions.signOut),
-      take(ProjectActions.unlistenToProjectUrls),
-    ]);
-    yield* call(projectUrlEventChannel.close);
-    // 데이터를 클리어 하지 않는게 나을까?
-    if (isSignedOut) {
-      yield* put(DataActions.clearData(DATA_KEY.PROJECT_URLS));
-    }
-    break;
-  }
-}
-
 export function* listenToEventChannel({
   eventChannel,
   unlistenWaiter,
@@ -304,37 +271,6 @@ export function* listenToEventChannel({
         })
       );
     }
-  }
-}
-
-export function* listenToProjectUrlsFlow() {
-  while (true) {
-    yield* take(ProjectActions.listenToProjectUrls);
-    const project = yield* select(
-      DataSelectors.createDataKeySelector(DATA_KEY.PROJECT)
-    );
-    if (!project) {
-      yield* put(
-        ErrorActions.catchError({
-          error: new Error("선택되어있는 프로젝트가 없습니다."),
-          isAlertOnly: true,
-        })
-      );
-      continue;
-    }
-    const projectId = (project as ProjectDoc).id;
-    const projectUrlEventChannel = createProjectUrlEventChannel(projectId);
-
-    yield* fork(listenToEventChannel, {
-      eventChannel: projectUrlEventChannel,
-      unlistenWaiter: waitForUnlistenProjectUrl,
-      dataReceiverCreator: (data) =>
-        DataActions.receiveRecordData({
-          key: DATA_KEY.PROJECT_URLS,
-          recordKey: projectId,
-          data,
-        }),
-    });
   }
 }
 
@@ -470,7 +406,6 @@ export function* submitModelNameFormFlow() {
         // 수정인 경우
         yield* put(UiActions.showDelayedLoading());
         delete payload.target;
-        delete payload.modelFormId;
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
         const newModel: Partial<ModelItem> = {
           projectId: currentProject.id,
@@ -491,16 +426,6 @@ export function* submitModelNameFormFlow() {
         // model document 생성
         const newModelRef = yield* call(Firework.addModel, newModel);
         yield* putResolve(ProjectActions.receiveCreatedModelId(newModelRef.id));
-        if (payload.modelFormId) {
-          // QuickModelNameForm일 경우에는 modelFormId가 없음
-          yield* put(
-            DataActions.receiveRecordData({
-              key: DATA_KEY.MODEL_FORMS,
-              recordKey: payload.modelFormId,
-              data: newModelRef.id,
-            })
-          );
-        }
         yield* put(
           UiActions.showNotification({
             type: "success",
@@ -719,9 +644,9 @@ export function* deleteModelFlow() {
 }
 
 export function* selectAndCheckProject() {
-  const { currentProject } = yield* select((state: RootState) => ({
-    currentProject: state.data[DATA_KEY.PROJECT],
-  }));
+  const currentProject = yield* select(
+    (state: RootState) => state.project.currentProject
+  );
 
   // currentProject가 없을경우 오류
   if (!currentProject) {
@@ -757,9 +682,7 @@ export function* submitModelFieldFormFlow() {
     const submitModelFieldFormActionType = `${type}-${payload.target?.id}`;
     yield* put(ProgressActions.startProgress(submitModelFieldFormActionType));
 
-    const modelId = yield* select(
-      (state: RootState) => state.data.modelForms?.[payload.modelFormId!]
-    );
+    const { modelId } = payload;
 
     if (!modelId) {
       yield* put(
@@ -789,7 +712,7 @@ export function* submitModelFieldFormFlow() {
     try {
       if (!!target) {
         delete payload.target;
-        delete payload.modelFormId;
+        delete payload.modelId;
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
         const newModelField: ModifiableModelFieldItem = {
           projectId: currentProject.id,
@@ -1190,7 +1113,6 @@ export function* watchProjectActions() {
     fork(submitProjectFormFlow),
     fork(deleteProjectFlow),
     fork(submitProjectUrlFormFlow),
-    fork(listenToProjectUrlsFlow),
     fork(deleteProjectUrlFlow),
     fork(submitModelNameFormFlow),
     fork(listenToProjectModelsFlow),

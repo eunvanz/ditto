@@ -23,47 +23,6 @@ const selectProjectModels = createSelector(
   }
 );
 
-const createModelFormSelector = (modelFormId?: string) =>
-  createSelector(
-    (state: RootState) => state.data[DATA_KEY.MODELS],
-    (state: RootState) => state.data[DATA_KEY.PROJECT],
-    (state: RootState) =>
-      modelFormId ? state.data[DATA_KEY.MODEL_FORMS]?.[modelFormId] : undefined,
-    (state: RootState) => state.data[DATA_KEY.MODEL_FIELDS],
-    (state: RootState) => state.project.editingModelField,
-    (state: RootState) => state.data[DATA_KEY.ENUMERATIONS],
-    (
-      models,
-      project,
-      modelId,
-      allModelFields,
-      editingModelField,
-      enumerations
-    ) => {
-      const model =
-        models && project && modelId ? models[project.id][modelId] : undefined;
-      let projectModels: ModelDoc[] = [];
-      let projectEnumerations: EnumerationDoc[] = [];
-      const modelFields: ModelFieldDoc[] = model
-        ? allModelFields?.[model.id] || []
-        : [];
-      if (models && project) {
-        projectModels = convertRecordToArray(models[project.id]);
-      }
-      if (enumerations && project) {
-        projectEnumerations = convertRecordToArray(enumerations[project.id]);
-      }
-
-      return {
-        model,
-        modelFields,
-        projectModels,
-        editingModelField,
-        projectEnumerations,
-      };
-    }
-  );
-
 const selectListeningFieldsModelIds = createSelector(
   (state: RootState) => state.data[DATA_KEY.MODEL_FIELDS],
   (modelFields) => {
@@ -115,7 +74,6 @@ const selectFieldTypeToCreate = createSelector(
 const ProjectSelectors = {
   selectCurrentProject,
   selectProjectModels,
-  createModelFormSelector,
   selectListeningFieldsModelIds,
   selectListeningModelsProjectIds,
   selectListeningEnumerationsProjectIds,

@@ -16,8 +16,8 @@ import { EnumFormValues } from "../../routes/ProjectManagement/EnumForm/EnumForm
 
 export type ProjectState = {
   editingModelField?: {
-    modelFormId: string;
-    modelFieldId: string;
+    formId?: string;
+    modelFieldId?: string;
   };
   createdModelId?: string;
   createdEnumId?: string;
@@ -42,7 +42,11 @@ const ProjectSlice = createSlice({
     receiveEditingModelField: (
       state,
       action: PayloadAction<
-        { modelFormId: string; modelFieldId: string } | undefined
+        | {
+            formId?: string;
+            modelFieldId?: string;
+          }
+        | undefined
       >
     ) => {
       state.editingModelField = action.payload;
@@ -65,16 +69,11 @@ const ProjectSlice = createSlice({
       _,
       _action: PayloadAction<ProjectUrlFormValues>
     ) => {},
-    listenToProjectUrls: (_, _action: PayloadAction<void>) => {},
-    unlistenToProjectUrls: (_, _action: PayloadAction<void>) => {},
     deleteProjectUrl: (_, _action: PayloadAction<ProjectUrlDoc>) => {},
-    submitModelNameForm: (
-      _,
-      _action: PayloadAction<ModelNameFormValues & { modelFormId?: string }>
-    ) => {},
+    submitModelNameForm: (_, _action: PayloadAction<ModelNameFormValues>) => {},
     submitModelFieldForm: (
       _,
-      _action: PayloadAction<ModelFieldFormValues & { modelFormId?: string }>
+      _action: PayloadAction<ModelFieldFormValues & { modelId?: string }>
     ) => {},
     listenToModel: (
       _,

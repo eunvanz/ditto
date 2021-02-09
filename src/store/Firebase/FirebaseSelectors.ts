@@ -1,7 +1,12 @@
 import { createSelector } from "@reduxjs/toolkit";
 import orderBy from "lodash/orderBy";
 import { RootState } from "..";
-import { ProjectDoc } from "../../types";
+import {
+  EnumerationDoc,
+  ModelDoc,
+  ModelFieldDoc,
+  ProjectDoc,
+} from "../../types";
 import AuthSelectors from "../Auth/AuthSelector";
 
 const selectMyProjects = (state: RootState) =>
@@ -32,11 +37,40 @@ const selectProjectUrls = createSelector(
   (urls) => urls
 );
 
+const selectProjectModels = createSelector(
+  (state: RootState) => state.firestore.ordered.projectModels as ModelDoc[],
+  (models) => models
+);
+
+const createProjectEnumerationsSelector = (projectId: string) =>
+  createSelector(
+    (state: RootState) => state.firestore,
+    (firestore) =>
+      firestore.ordered[
+        `projects/${projectId}/enumerations`
+      ] as EnumerationDoc[]
+  );
+
+const createModelFieldsSelector = (projectId: string, modelId?: string) =>
+  createSelector(
+    (state: RootState) => state.firestore,
+    (firestore) => {
+      return modelId
+        ? (firestore.ordered[
+            `projects/${projectId}/models/${modelId}/modelFields`
+          ] as ModelFieldDoc[])
+        : undefined;
+    }
+  );
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
   createProjectSelectorByProjectId,
   selectProjectUrls,
+  selectProjectModels,
+  createProjectEnumerationsSelector,
+  createModelFieldsSelector,
 };
 
 export default FirebaseSelectors;
