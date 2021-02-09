@@ -3,7 +3,6 @@ import { createSelector } from "@reduxjs/toolkit";
 import { DATA_KEY } from "../Data/DataSlice";
 import { convertRecordToArray } from "../../helpers/commonHelpers";
 import orderBy from "lodash/orderBy";
-import { EnumerationDoc, ModelDoc, ModelFieldDoc } from "../../types";
 
 const selectCurrentProject = createSelector(
   (state: RootState) => state.project.currentProject,
