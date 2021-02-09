@@ -467,38 +467,6 @@ export function createProjectModelsEventChannel(projectId: string) {
   return listener;
 }
 
-export function* listenToProjectModelsFlow() {
-  while (true) {
-    yield* take(ProjectActions.listenToProjectModels);
-    const project = yield* call(selectAndCheckProject);
-    if (!project) {
-      continue;
-    }
-
-    const listeningModelsProjectIds = yield* select(
-      ProjectSelectors.selectListeningModelsProjectIds
-    );
-
-    if (listeningModelsProjectIds.includes(project.id)) {
-      continue;
-    }
-
-    yield* fork(listenToEventChannel, {
-      eventChannel: createProjectModelsEventChannel(project.id),
-      dataReceiverCreator: (data) =>
-        DataActions.receiveRecordData({
-          key: DATA_KEY.MODELS,
-          recordKey: project.id,
-          data,
-        }),
-      unlistenWaiter: createUnlistenWaiter({
-        cleanUpAction: DataActions.clearData(DATA_KEY.MODELS),
-        unlistenAction: ProjectActions.unlistenToProjectModels,
-      }),
-    });
-  }
-}
-
 export function createModelFieldsEventChannel(model: ModelDoc) {
   const listener = eventChannel((emit) => {
     const modelFieldsRef = Firework.getModelFieldsRef(model);
@@ -520,43 +488,6 @@ export function createModelFieldsEventChannel(model: ModelDoc) {
     return unsubscribe;
   });
   return listener;
-}
-
-export function* listenToModelFieldsFlow() {
-  while (true) {
-    const { payload: model } = yield* take(ProjectActions.listenToModelFields);
-    const project = yield* call(selectAndCheckProject);
-    if (!project) {
-      continue;
-    }
-
-    const listeningFieldsModelIds = yield* select(
-      ProjectSelectors.selectListeningFieldsModelIds
-    );
-
-    if (listeningFieldsModelIds.includes(model.id)) {
-      continue;
-    }
-
-    yield* fork(listenToEventChannel, {
-      eventChannel: createModelFieldsEventChannel(model),
-      dataReceiverCreator: (data) =>
-        DataActions.receiveRecordData({
-          key: DATA_KEY.MODEL_FIELDS,
-          recordKey: model.id,
-          data,
-        }),
-      unlistenWaiter: createUnlistenWaiter({
-        cleanUpAction: DataActions.clearRecordData({
-          key: DATA_KEY.MODEL_FIELDS,
-          recordKey: model.id,
-        }),
-        checkCondition: (payload: ModelDoc) => payload.id === model.id,
-        unlistenAction: ProjectActions.unlistenToModelFields,
-        hasToCleanUpOnUnlisten: true,
-      }),
-    });
-  }
 }
 
 export async function getReferringModels(
@@ -1002,63 +933,6 @@ export function* submitEnumFormFlow() {
   }
 }
 
-export function createProjectEnumerationsEventChannel(projectId: string) {
-  const listener = eventChannel((emit) => {
-    const projectEnumerationsRef = Firework.getProjectEnumerationsRef(
-      projectId
-    );
-    const unsubscribe = projectEnumerationsRef.onSnapshot(
-      (querySnapshot) => {
-        const record: Record<string, EnumerationDoc> = {};
-        querySnapshot.forEach((enumeration) => {
-          record[enumeration.id] = {
-            id: enumeration.id,
-            ...enumeration.data(),
-          } as EnumerationDoc;
-        });
-        emit(record);
-      },
-      (error) => {
-        emit(error);
-      }
-    );
-    return unsubscribe;
-  });
-  return listener;
-}
-
-export function* listenToProjectEnumerationsFlow() {
-  while (true) {
-    yield* take(ProjectActions.listenToProjectEnumerations);
-    const project = yield* call(selectAndCheckProject);
-    if (!project) {
-      continue;
-    }
-
-    const listeningEnumerationsProjectIds = yield* select(
-      ProjectSelectors.selectListeningEnumerationsProjectIds
-    );
-
-    if (listeningEnumerationsProjectIds.includes(project.id)) {
-      continue;
-    }
-
-    yield* fork(listenToEventChannel, {
-      eventChannel: createProjectEnumerationsEventChannel(project.id),
-      dataReceiverCreator: (data) =>
-        DataActions.receiveRecordData({
-          key: DATA_KEY.ENUMERATIONS,
-          recordKey: project.id,
-          data,
-        }),
-      unlistenWaiter: createUnlistenWaiter({
-        cleanUpAction: DataActions.clearData(DATA_KEY.ENUMERATIONS),
-        unlistenAction: ProjectActions.unlistenToProjectEnumerations,
-      }),
-    });
-  }
-}
-
 export function* deleteEnumerationFlow() {
   while (true) {
     const { payload } = yield* take(ProjectActions.deleteEnumeration);
@@ -1115,14 +989,11 @@ export function* watchProjectActions() {
     fork(submitProjectUrlFormFlow),
     fork(deleteProjectUrlFlow),
     fork(submitModelNameFormFlow),
-    fork(listenToProjectModelsFlow),
     fork(deleteModelFlow),
     fork(submitModelFieldFormFlow),
-    fork(listenToModelFieldsFlow),
     fork(deleteModelFieldFlow),
     fork(proceedQuickModelNameFormFlow),
     fork(submitEnumFormFlow),
-    fork(listenToProjectEnumerationsFlow),
     fork(deleteEnumerationFlow),
   ]);
 }

@@ -75,18 +75,6 @@ const ProjectSlice = createSlice({
       _,
       _action: PayloadAction<ModelFieldFormValues & { modelId?: string }>
     ) => {},
-    listenToModel: (
-      _,
-      _action: PayloadAction<{
-        projectId: string;
-        modelId: string;
-      }>
-    ) => {},
-    unlistenToModel: (_, _action: PayloadAction<void>) => {},
-    listenToProjectModels: (_, _action: PayloadAction<void>) => {},
-    unlistenToProjectModels: (_, _action: PayloadAction<void>) => {},
-    listenToModelFields: (_, _action: PayloadAction<ModelDoc>) => {},
-    unlistenToModelFields: (_, _action: PayloadAction<ModelDoc>) => {},
     deleteModel: (_, _action: PayloadAction<ModelDoc>) => {},
     deleteModelField: (_, _action: PayloadAction<ModelFieldDoc>) => {},
     submitQuickModelNameForm: (
@@ -100,8 +88,6 @@ const ProjectSlice = createSlice({
       _action: PayloadAction<void>
     ) => {},
     submitEnumForm: (_, _action: PayloadAction<EnumFormValues>) => {},
-    listenToProjectEnumerations: (_, _action: PayloadAction<void>) => {},
-    unlistenToProjectEnumerations: (_, _action: PayloadAction<void>) => {},
     deleteEnumeration: (_, _action: PayloadAction<EnumerationDoc>) => {},
     submitQuickEnumForm: (_, _action: PayloadAction<EnumFormValues>) => {},
     notifySubmissionQuickEnumFormComplete: (
