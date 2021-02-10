@@ -25,6 +25,7 @@ export type ProjectState = {
   createdEnumId?: string;
   fieldTypeToCreate?: FIELD_TYPE;
   currentProject?: ProjectDoc;
+  currentModel?: ModelDoc;
 };
 
 export const initialProjectState: ProjectState = {};
@@ -62,6 +63,12 @@ const ProjectSlice = createSlice({
     receiveFieldTypeToCreate: (state, action: PayloadAction<FIELD_TYPE>) => {
       state.fieldTypeToCreate = action.payload;
     },
+    receiveCurrentModel: (state, action: PayloadAction<ModelDoc>) => {
+      state.currentModel = action.payload;
+    },
+    clearCurrentModel: (state, _action: PayloadAction<void>) => {
+      state.currentModel = undefined;
+    },
     submitProjectForm: (
       _,
       _action: PayloadAction<SubmitProjectFormPayload>
@@ -72,7 +79,10 @@ const ProjectSlice = createSlice({
       _action: PayloadAction<ProjectUrlFormValues>
     ) => {},
     deleteProjectUrl: (_, _action: PayloadAction<ProjectUrlDoc>) => {},
-    submitModelNameForm: (_, _action: PayloadAction<ModelNameFormValues>) => {},
+    submitModelNameForm: (
+      _,
+      _action: PayloadAction<ModelNameFormValues & { hasToSetResult?: boolean }>
+    ) => {},
     submitModelFieldForm: (
       _,
       _action: PayloadAction<ModelFieldFormValues & { modelId?: string }>

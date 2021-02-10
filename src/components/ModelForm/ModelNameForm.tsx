@@ -1,8 +1,9 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { CardContent, Grid, TextField, makeStyles } from "@material-ui/core";
 import { useForm } from "react-hook-form";
 import { ModelDoc } from "../../types";
 import { patterns } from "../../helpers/projectHelpers";
+import { isEqual } from "lodash";
 
 const useStyles = makeStyles(() => ({
   submit: {
@@ -33,12 +34,16 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
 }) => {
   const classes = useStyles();
 
+  const defaultValues = useMemo(() => {
+    return {
+      name: model?.name || "",
+      description: model?.description || "",
+    };
+  }, [model]);
+
   const { register, errors, handleSubmit, getValues } = useForm({
     mode: "onChange",
-    defaultValues: {
-      name: model?.name,
-      description: model?.description,
-    },
+    defaultValues,
   });
 
   const submit = useCallback(
@@ -59,8 +64,10 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
     if (isCancelingRef.current) {
       return;
     }
-    submit();
-  }, [isCancelingRef, submit]);
+    if (!isEqual(getValues(), defaultValues)) {
+      submit();
+    }
+  }, [defaultValues, getValues, isCancelingRef, submit]);
 
   return (
     <form onSubmit={submit} noValidate>

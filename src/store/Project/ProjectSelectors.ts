@@ -6,6 +6,11 @@ const selectCurrentProject = createSelector(
   (project) => project
 );
 
+const selectCurrentModel = createSelector(
+  (state: RootState) => state.project.currentModel,
+  (model) => model
+);
+
 const selectFieldTypeToCreate = createSelector(
   (state: RootState) => state.project.fieldTypeToCreate,
   (fieldType) => fieldType
@@ -14,6 +19,7 @@ const selectFieldTypeToCreate = createSelector(
 const ProjectSelectors = {
   selectCurrentProject,
   selectFieldTypeToCreate,
+  selectCurrentModel,
 };
 
 export default ProjectSelectors;

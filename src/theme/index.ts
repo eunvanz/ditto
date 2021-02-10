@@ -64,6 +64,29 @@ const baseOptions: ThemeOptions = {
         backgroundColor: "rgba(0,0,0,0.075)",
       },
     },
+    MuiSubheader: {
+      root: {
+        lineHeight: 40,
+      },
+    },
+    MuiTableCell: {
+      root: {
+        "& .MuiIconButton-root": {
+          padding: 4,
+        },
+        "& .MuiButton-text": {
+          padding: "2px 8px",
+        },
+        "& .MuiInputBase-root": {
+          fontSize: "0.875rem",
+        },
+      },
+    },
+    MuiButton: {
+      root: {
+        minWidth: 32,
+      },
+    },
   },
 };
 

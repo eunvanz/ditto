@@ -38,6 +38,7 @@ import { assertNotEmpty } from "../../helpers/commonHelpers";
 import history from "../../helpers/history";
 import ROUTE from "../../paths";
 import ProjectSelectors from "./ProjectSelectors";
+import FirebaseSelectors from "../Firebase/FirebaseSelectors";
 
 function* getProperDoc<T extends Recordable>(
   values: any & { target?: Doc<T, BaseSettings> }
@@ -337,13 +338,14 @@ export function* submitModelNameFormFlow() {
       continue;
     }
 
-    const { target } = payload;
+    const { target, hasToSetResult } = payload;
 
+    delete payload.target;
+    delete payload.hasToSetResult;
     try {
       if (!!target) {
         // 수정인 경우
         yield* put(UiActions.showDelayedLoading());
-        delete payload.target;
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
         const newModel: Partial<ModelItem> = {
           projectId: currentProject.id,
@@ -351,6 +353,12 @@ export function* submitModelNameFormFlow() {
           ...updatedRecordProps,
         };
         yield* call(Firework.updateModel, target.id, newModel);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "모델이 수정됐습니다.",
+          })
+        );
       } else {
         // 생성인 경우
         // 모델을 생성하지 않고 필드를 수정할 수 없으므로 loading을 보여줌
@@ -363,7 +371,19 @@ export function* submitModelNameFormFlow() {
         };
         // model document 생성
         const newModelRef = yield* call(Firework.addModel, newModel);
-        yield* putResolve(ProjectActions.receiveCreatedModelId(newModelRef.id));
+        const newModelId = newModelRef.id;
+        yield* putResolve(ProjectActions.receiveCreatedModelId(newModelId));
+
+        if (hasToSetResult) {
+          const projectModels = yield* select(
+            FirebaseSelectors.createProjectModelsSelector(currentProject.id)
+          );
+          const currentModel = projectModels?.find(
+            (model) => model.id === newModelId
+          );
+          yield* putResolve(ProjectActions.receiveCurrentModel(currentModel!));
+        }
+
         yield* put(
           UiActions.showNotification({
             type: "success",

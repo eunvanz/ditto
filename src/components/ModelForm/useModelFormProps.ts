@@ -64,7 +64,9 @@ const useModelFormProps: (defaultModelId?: string) => any = (
 
   const onSubmitModel = useCallback(
     (data: ModelNameFormValues) => {
-      dispatch(ProjectActions.submitModelNameForm(data));
+      dispatch(
+        ProjectActions.submitModelNameForm({ ...data, hasToSetResult: true })
+      );
     },
     [dispatch]
   );
