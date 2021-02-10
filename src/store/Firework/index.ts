@@ -11,6 +11,7 @@ import {
   ModifiableModelFieldItem,
   EnumerationItem,
   EnumerationDoc,
+  GroupItem,
 } from "../../types";
 import { call } from "typed-redux-saga";
 
@@ -177,6 +178,14 @@ function* deleteEnumeration(enumeration: EnumerationDoc) {
   );
 }
 
+function* updateGroup(id: string, data: Partial<GroupItem>) {
+  yield* call(updateDocument, `projects/${data.projectId}/groups`, id, data);
+}
+
+function* addGroup(data: GroupItem) {
+  return yield* call(addDocument, `projects/${data.projectId}/groups`, data);
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -203,6 +212,8 @@ export const realFirework = {
   getProjectEnumerationsRef,
   getModelFieldsReferringEnumerationRef,
   deleteEnumeration,
+  updateGroup,
+  addGroup,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

@@ -1,10 +1,12 @@
 import React, { useMemo, useCallback } from "react";
 import DashboardLayout from "./DashboardLayout";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ProjectDoc } from "../../types";
 import { useHistory } from "react-router-dom";
 import ROUTE from "../../paths";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
+import { UiActions } from "../../store/Ui/UiSlice";
+import { ProjectActions } from "../../store/Project/ProjectSlice";
 
 export interface DashboardLayoutContainerProps {
   children: React.ReactNode;
@@ -13,6 +15,8 @@ export interface DashboardLayoutContainerProps {
 const DashboardLayoutContainer = ({
   children,
 }: DashboardLayoutContainerProps) => {
+  const dispatch = useDispatch();
+
   const projects = useSelector(FirebaseSelectors.selectOrderedMyProjects);
 
   const history = useHistory();
@@ -22,7 +26,13 @@ const DashboardLayoutContainer = ({
     []
   );
 
-  const showGroupFormModal = useCallback((project: ProjectDoc) => {}, []);
+  const showGroupFormModal = useCallback(
+    (project: ProjectDoc) => {
+      dispatch(ProjectActions.receiveCurrentProject(project));
+      dispatch(UiActions.showGroupFormModal());
+    },
+    [dispatch]
+  );
 
   const sections = useMemo(() => {
     return [

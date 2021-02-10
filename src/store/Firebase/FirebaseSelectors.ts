@@ -3,6 +3,7 @@ import orderBy from "lodash/orderBy";
 import { RootState } from "..";
 import {
   EnumerationDoc,
+  GroupDoc,
   ModelDoc,
   ModelFieldDoc,
   ProjectDoc,
@@ -54,6 +55,9 @@ const createModelFieldsSelector = (projectId: string, modelId?: string) =>
     `projects/${projectId}/models/${modelId}/modelFields`
   );
 
+const createProjectGroupsSelector = (projectId: string) =>
+  createOrderedSelector<GroupDoc[]>(`projects/${projectId}/groups`);
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -62,6 +66,7 @@ const FirebaseSelectors = {
   createProjectEnumerationsSelector,
   createModelFieldsSelector,
   createProjectModelsSelector,
+  createProjectGroupsSelector,
 };
 
 export default FirebaseSelectors;

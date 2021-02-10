@@ -1,26 +1,11 @@
-import React, { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import UiSelectors from "../../store/Ui/UiSelectors";
-import { UiActions } from "../../store/Ui/UiSlice";
+import React from "react";
 import GroupFormModal from "./GroupFormModal";
+import useGroupFormModal from "./useGroupFormModal";
 
 const GroupFormModalContainer = () => {
-  const dispatch = useDispatch();
+  const props = useGroupFormModal();
 
-  const { isVisible, group } = useSelector(UiSelectors.selectGroupFormModal);
-
-  const defaultValues = useMemo(() => {
-    return group ? { name: group.name } : undefined;
-  }, [group]);
-
-  // return (
-  //   <GroupFormModal
-  //     defaultValues={defaultValues}
-  //     isVisible={isVisible}
-  //     onClose={() => dispatch(UiActions.hideGroupFormModal())}
-  //   />
-  // );
-  return null;
+  return <GroupFormModal {...props} />;
 };
 
 export default GroupFormModalContainer;

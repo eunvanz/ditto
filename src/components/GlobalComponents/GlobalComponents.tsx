@@ -5,6 +5,7 @@ import SignInModal from "../SignInModal";
 import ProjectFormModal from "../ProjectFormModal";
 import QuickModelNameFormModal from "../QuickModelNameFormModal";
 import QuickEnumFormModal from "../QuickEnumFormModal";
+import GroupFormModal from "../GroupFormModal";
 
 const GlobalComponents: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const GlobalComponents: React.FC = () => {
       <SignInModal />
       <QuickModelNameFormModal />
       <QuickEnumFormModal />
+      <GroupFormModal />
     </>
   );
 };

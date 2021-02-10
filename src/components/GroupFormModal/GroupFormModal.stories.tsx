@@ -1,7 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
 
-import GroupForm, { GroupFormModalProps } from "./GroupFormModal";
+import GroupFormModal, { GroupFormModalProps } from "./GroupFormModal";
 
 const defaultProps: Partial<GroupFormModalProps> = {
   isSubmitting: false,
@@ -10,15 +10,17 @@ const defaultProps: Partial<GroupFormModalProps> = {
 };
 
 export default {
-  title: "components/GroupForm",
-  component: GroupForm,
+  title: "components/GroupFormModal",
+  component: GroupFormModal,
   argTypes: {},
   args: {
     ...defaultProps,
   },
 } as Meta;
 
-const Template: Story<GroupFormModalProps> = (args) => <GroupForm {...args} />;
+const Template: Story<GroupFormModalProps> = (args) => (
+  <GroupFormModal {...args} />
+);
 
 export const 생성 = Template.bind({});
 생성.args = {};

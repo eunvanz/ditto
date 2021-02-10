@@ -3,9 +3,11 @@ import { useForm } from "react-hook-form";
 import isEqual from "lodash/isEqual";
 import { Box, Button, TextField } from "@material-ui/core";
 import Modal from "../Modal";
+import { GroupDoc } from "../../types";
 
 export interface GroupFormValues {
   name: string;
+  target?: GroupDoc;
 }
 
 export interface GroupFormModalProps {
@@ -14,7 +16,7 @@ export interface GroupFormModalProps {
   isSubmitting: boolean;
   isVisible: boolean;
   onClose: () => void;
-  existingGroupNames: string[];
+  existingGroupNames?: string[];
 }
 
 const GroupFormModal: React.FC<GroupFormModalProps> = ({
@@ -42,7 +44,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
     return isEqual(defaultValues, watchedValues);
   }, [defaultValues, watchedValues]);
 
-  return (
+  return existingGroupNames ? (
     <Modal
       title={defaultValues ? "그룹 수정" : "그룹 생성"}
       isVisible={isVisible}
@@ -88,7 +90,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
         </Box>
       </form>
     </Modal>
-  );
+  ) : null;
 };
 
 export default GroupFormModal;

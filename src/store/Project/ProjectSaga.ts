@@ -27,6 +27,7 @@ import {
   EnumerationDoc,
   FIELD_TYPE,
   ENUMERATION,
+  GroupItem,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -842,6 +843,59 @@ export function* deleteEnumerationFlow() {
   }
 }
 
+export function* submitGroupFormFlow() {
+  while (true) {
+    const { type, payload } = yield* take(ProjectActions.submitGroupForm);
+    yield* put(ProgressActions.startProgress(type));
+
+    const project = yield* select(ProjectSelectors.selectCurrentProject);
+
+    if (!project) {
+      yield* call(Alert.message, {
+        title: "그룹 생성 불가",
+        message: "선택되어있는 프로젝트가 없습니다.",
+      });
+      continue;
+    }
+
+    const { target } = payload;
+
+    try {
+      yield* put(UiActions.showLoading());
+      if (!!target) {
+        delete payload.target;
+        const updatedRecordProps = yield* call(getUpdatedRecordProps);
+        const newGroup: Partial<GroupItem> = {
+          projectId: project.id,
+          ...payload,
+          ...updatedRecordProps,
+        };
+        yield* call(Firework.updateGroup, target.id, newGroup);
+      } else {
+        const recordableDocProps = yield* call(getRecordableDocProps);
+        const newModel: ModelItem = {
+          projectId: project.id,
+          ...payload,
+          ...recordableDocProps,
+        };
+        yield* call(Firework.addGroup, newModel);
+      }
+      yield* put(
+        UiActions.showNotification({
+          type: "success",
+          message: "그룹이 생성됐습니다.",
+        })
+      );
+      yield* put(UiActions.hideGroupFormModal());
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    } finally {
+      yield* put(ProgressActions.finishProgress(type));
+      yield* put(UiActions.hideLoading());
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -855,5 +909,6 @@ export function* watchProjectActions() {
     fork(proceedQuickModelNameFormFlow),
     fork(submitEnumFormFlow),
     fork(deleteEnumerationFlow),
+    fork(submitGroupFormFlow),
   ]);
 }
