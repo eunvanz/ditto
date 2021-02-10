@@ -45,7 +45,7 @@ export interface EnumFormValues {
 }
 
 export interface EnumFormProps {
-  enumerations: EnumerationDoc[];
+  enumerations?: EnumerationDoc[];
   onDelete: (enumeration: EnumerationDoc) => void;
   onSubmit: (data: EnumFormValues) => void;
 }
@@ -122,7 +122,7 @@ const EnumForm: React.FC<EnumFormProps> = ({
     [currentEnumeration, hideForm, onSubmit]
   );
 
-  return (
+  return enumerations ? (
     <Card>
       <CardHeader title="열거형 목록" />
       <Divider />
@@ -222,7 +222,7 @@ const EnumForm: React.FC<EnumFormProps> = ({
         </Box>
       </PerfectScrollbar>
     </Card>
-  );
+  ) : null;
 };
 
 export default EnumForm;

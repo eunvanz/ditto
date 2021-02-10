@@ -1,9 +1,9 @@
 import { fork, take, all, call, put, select } from "typed-redux-saga";
 import { AuthActions } from "./AuthSlice";
 import { getFirebase } from "react-redux-firebase";
+import { actionTypes } from "redux-firestore";
 import history from "../../helpers/history";
 import ROUTE from "../../paths";
-import { DataActions, DATA_KEY } from "../Data/DataSlice";
 import { UiActions } from "../Ui/UiSlice";
 import { ProgressActions } from "../Progress/ProgressSlice";
 import AuthSelectors from "./AuthSelector";
@@ -55,7 +55,7 @@ export function* signOutFlow() {
     try {
       const firebase = yield* call(getFirebase);
       yield* call(firebase.logout);
-      yield* all([put(DataActions.clearData(DATA_KEY.PROJECTS))]);
+      yield* all([put({ type: actionTypes.CLEAR_DATA })]);
       yield* call(history.push, ROUTE.ROOT);
     } catch (error) {
       yield* put(
@@ -64,8 +64,9 @@ export function* signOutFlow() {
           isAlertOnly: true,
         })
       );
+    } finally {
+      yield* put(UiActions.hideLoading());
     }
-    yield* put(UiActions.hideLoading());
   }
 }
 

@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import { assertNotEmpty } from "../../../helpers/commonHelpers";
+import useLoading from "../../../hooks/useLoading";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 import ProjectSelectors from "../../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
@@ -36,6 +37,8 @@ const useEnumFormProps = () => {
     },
     [dispatch]
   );
+
+  useLoading(enumerations);
 
   return {
     enumerations,

@@ -42,7 +42,9 @@ const useModelFormProps: (defaultModelId?: string) => any = (
 
   useFirestoreConnect(firestoreQuery as any);
 
-  const projectModels = useSelector(FirebaseSelectors.selectProjectModels);
+  const projectModels = useSelector(
+    FirebaseSelectors.createProjectModelsSelector(project.id)
+  );
 
   const projectEnumerations = useSelector(
     FirebaseSelectors.createProjectEnumerationsSelector(project.id)
@@ -57,7 +59,7 @@ const useModelFormProps: (defaultModelId?: string) => any = (
   );
 
   const model = useMemo(() => {
-    return projectModels.find((model) => model.id === defaultModelId);
+    return projectModels?.find((model) => model.id === defaultModelId);
   }, [defaultModelId, projectModels]);
 
   const onSubmitModel = useCallback(

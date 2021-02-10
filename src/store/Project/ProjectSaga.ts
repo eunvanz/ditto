@@ -8,7 +8,6 @@ import {
   race,
   putResolve,
 } from "typed-redux-saga";
-import orderBy from "lodash/orderBy";
 import { ProjectActions } from "./ProjectSlice";
 import { ProgressActions } from "../Progress/ProgressSlice";
 import Firework from "../Firework";
@@ -22,7 +21,6 @@ import {
   ModelItem,
   ModelDoc,
   ModelFieldItem,
-  ModelFieldDoc,
   ModifiableModelFieldItem,
   FORMAT,
   EnumerationItem,
@@ -30,14 +28,9 @@ import {
   FIELD_TYPE,
   ENUMERATION,
 } from "../../types";
-import { eventChannel, EventChannel } from "redux-saga";
-import { DataActions, DATA_KEY } from "../Data/DataSlice";
 import { RootState } from "..";
-import DataSelectors from "../Data/DataSelectors";
-import { AuthActions } from "../Auth/AuthSlice";
 import { requireSignIn } from "../Auth/AuthSaga";
 import { assertNotEmpty } from "../../helpers/commonHelpers";
-import { PayloadAction, ActionCreator, Action } from "@reduxjs/toolkit";
 import history from "../../helpers/history";
 import ROUTE from "../../paths";
 import ProjectSelectors from "./ProjectSelectors";
@@ -52,9 +45,7 @@ export function* submitProjectFormFlow() {
       continue;
     }
 
-    const project = yield* select(
-      DataSelectors.createDataKeySelector(DATA_KEY.PROJECT)
-    );
+    const project = yield* select(ProjectSelectors.selectCurrentProject);
 
     const isModification = payload.type === "modify";
 
@@ -112,37 +103,6 @@ export function* submitProjectFormFlow() {
         put(UiActions.hideLoading()),
       ]);
     }
-  }
-}
-
-export function createMyProjectsEventChannel(uid: string) {
-  const listener = eventChannel((emit) => {
-    const myProjectRef = Firework.getMyProjectsRef(uid);
-    const unsubscribe = myProjectRef.onSnapshot(
-      (querySnapshot) => {
-        const projects: ProjectDoc[] = [];
-        querySnapshot.forEach((doc) => {
-          projects.push({ id: doc.id, ...doc.data() } as ProjectDoc);
-        });
-        emit(orderBy(projects, [`settingsByMember.${uid}.seq`], ["asc"]));
-      },
-      (error) => {
-        emit(error);
-      }
-    );
-    return unsubscribe;
-  });
-  return listener;
-}
-
-export function* waitForUnlistenToMyProject(
-  myProjectEventChannel: EventChannel<any>
-) {
-  while (true) {
-    yield* take(AuthActions.signOut);
-    yield* call(myProjectEventChannel.close);
-    yield* put(DataActions.clearData(DATA_KEY.PROJECTS));
-    break;
   }
 }
 
@@ -249,31 +209,6 @@ export function* submitProjectUrlFormFlow() {
   }
 }
 
-export function* listenToEventChannel({
-  eventChannel,
-  unlistenWaiter,
-  dataReceiverCreator,
-}: {
-  eventChannel: EventChannel<any>;
-  unlistenWaiter: (eventChannel: EventChannel<any>) => Generator<any>;
-  dataReceiverCreator: (data: any) => PayloadAction<any>;
-}) {
-  while (true) {
-    try {
-      const data = yield* take(eventChannel);
-      yield* put(dataReceiverCreator(data));
-      yield* fork(unlistenWaiter, eventChannel);
-    } catch (error) {
-      put(
-        ErrorActions.catchError({
-          error,
-          isAlertOnly: true,
-        })
-      );
-    }
-  }
-}
-
 export function* deleteProjectUrlFlow() {
   while (true) {
     const { payload: projectUrl } = yield* take(
@@ -358,38 +293,6 @@ export function* getRecordableDocProps<T>(additionalSettings?: T) {
   };
 }
 
-export function createUnlistenWaiter({
-  unlistenAction,
-  cleanUpAction,
-  hasToCleanUpOnUnlisten,
-  checkCondition,
-}: {
-  unlistenAction: ActionCreator<any>;
-  checkCondition?: (payload: any) => boolean;
-  cleanUpAction: Action<any>;
-  hasToCleanUpOnUnlisten?: boolean;
-}) {
-  return function* (eventChannel: EventChannel<any>) {
-    while (true) {
-      const [isSignedOut, { payload }] = yield* race([
-        take(AuthActions.signOut),
-        take(unlistenAction),
-      ]);
-      if (isSignedOut) {
-        yield* call(eventChannel.close);
-        yield* put(cleanUpAction);
-      } else if (
-        hasToCleanUpOnUnlisten &&
-        (checkCondition ? checkCondition(payload) : true)
-      ) {
-        yield* call(eventChannel.close);
-        yield* put(cleanUpAction);
-      }
-      break;
-    }
-  };
-}
-
 export function* submitModelNameFormFlow() {
   while (true) {
     const { payload } = yield* take(ProjectActions.submitModelNameForm);
@@ -445,49 +348,6 @@ export function* submitModelNameFormFlow() {
       yield* put(UiActions.hideLoading());
     }
   }
-}
-
-export function createProjectModelsEventChannel(projectId: string) {
-  const listener = eventChannel((emit) => {
-    const projectModelsRef = Firework.getProjectModelsRef(projectId);
-    const unsubscribe = projectModelsRef.onSnapshot(
-      (querySnapshot) => {
-        const record: Record<string, ModelDoc> = {};
-        querySnapshot.forEach((model) => {
-          record[model.id] = { id: model.id, ...model.data() } as ModelDoc;
-        });
-        emit(record);
-      },
-      (error) => {
-        emit(error);
-      }
-    );
-    return unsubscribe;
-  });
-  return listener;
-}
-
-export function createModelFieldsEventChannel(model: ModelDoc) {
-  const listener = eventChannel((emit) => {
-    const modelFieldsRef = Firework.getModelFieldsRef(model);
-    const unsubscribe = modelFieldsRef.onSnapshot(
-      (querySnapshot) => {
-        const result: ModelFieldDoc[] = [];
-        querySnapshot.forEach((modelField) => {
-          result.push({
-            id: modelField.id,
-            ...modelField.data(),
-          } as ModelFieldDoc);
-        });
-        emit(orderBy(result, ["createdAt.seconds", "asc"]));
-      },
-      (error) => {
-        emit(error);
-      }
-    );
-    return unsubscribe;
-  });
-  return listener;
 }
 
 export async function getReferringModels(

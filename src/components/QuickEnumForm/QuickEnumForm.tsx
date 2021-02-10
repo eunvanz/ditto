@@ -10,7 +10,7 @@ export interface QuickEnumFormProps {
   onSubmit: (values: EnumFormValues) => void;
   isSubmitting: boolean;
   fieldType: FIELD_TYPE.INTEGER | FIELD_TYPE.STRING;
-  existingEnumerations: EnumerationDoc[];
+  existingEnumerations?: EnumerationDoc[];
 }
 
 const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
@@ -46,7 +46,7 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
     [fieldType, getValues, handleSubmit, onSubmit, trigger]
   );
 
-  return (
+  return existingEnumerations ? (
     <form onSubmit={handleOnSubmit} noValidate>
       <Box mt={2}>
         <TextField
@@ -153,7 +153,7 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
         </Button>
       </Box>
     </form>
-  );
+  ) : null;
 };
 
 export default QuickEnumForm;

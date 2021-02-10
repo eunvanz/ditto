@@ -5,7 +5,7 @@ import useProjectUrlFormProps from "./useProjectUrlFormProps";
 const ProjectUrlFormContainer = () => {
   const props = useProjectUrlFormProps();
 
-  return props.projectUrls ? <ProjectUrlForm {...props} /> : null;
+  return <ProjectUrlForm {...props} />;
 };
 
 export default ProjectUrlFormContainer;

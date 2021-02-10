@@ -1,5 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { assertNotEmpty } from "../../helpers/commonHelpers";
+import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
@@ -10,7 +12,12 @@ import QuickModelNameForm from "./QuickModelNameForm";
 const QuickModelNameFormContainer = () => {
   const dispatch = useDispatch();
 
-  const projectModels = useSelector(ProjectSelectors.selectProjectModels);
+  const project = useSelector(ProjectSelectors.selectCurrentProject);
+  assertNotEmpty(project);
+
+  const projectModels = useSelector(
+    FirebaseSelectors.createProjectModelsSelector(project.id)
+  );
   const isSubmitting = useSelector(
     ProgressSelectors.createInProgressSelector(
       ProjectActions.submitModelNameForm.type

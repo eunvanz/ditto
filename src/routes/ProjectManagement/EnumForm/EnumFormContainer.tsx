@@ -5,7 +5,7 @@ import useEnumFormProps from "./useEnumFormProps";
 const EnumFormContainer = () => {
   const props = useEnumFormProps();
 
-  return props.enumerations ? <EnumForm {...props} /> : null;
+  return <EnumForm {...props} />;
 };
 
 export default EnumFormContainer;

@@ -14,7 +14,7 @@ const ModelListContainer = () => {
     defaultModelId,
   } = useModelListProps();
 
-  return models ? (
+  return (
     <>
       <ModelList
         models={models}
@@ -29,7 +29,7 @@ const ModelListContainer = () => {
         defaultModelId={defaultModelId}
       />
     </>
-  ) : null;
+  );
 };
 
 export default ModelListContainer;

@@ -54,7 +54,7 @@ export interface ProjectUrlFormValues {
 export interface ProjectUrlFormProps {
   onSubmit: (values: ProjectUrlFormValues) => void;
   onDelete: (projectUrl: ProjectUrlDoc) => void;
-  projectUrls: ProjectUrlDoc[];
+  projectUrls?: ProjectUrlDoc[];
 }
 
 const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
@@ -209,7 +209,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
     };
   }, [cancelTask]);
 
-  return (
+  return projectUrls ? (
     <form onSubmit={handleOnSubmit} noValidate>
       <Card>
         <CardHeader title="베이스 URL" />
@@ -299,7 +299,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
       </Card>
       <button className={classes.submit} type="submit" />
     </form>
-  );
+  ) : null;
 };
 
 export default ProjectUrlForm;

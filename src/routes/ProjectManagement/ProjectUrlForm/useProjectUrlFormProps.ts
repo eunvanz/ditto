@@ -1,18 +1,17 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
+import useLoading from "../../../hooks/useLoading";
 import useProjectByParam from "../../../hooks/useProjectByParam";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
-import { UiActions } from "../../../store/Ui/UiSlice";
 import { ProjectUrlDoc } from "../../../types";
-import { ProjectUrlFormProps, ProjectUrlFormValues } from "./ProjectUrlForm";
+import { ProjectUrlFormValues } from "./ProjectUrlForm";
 
-const useProjectUrlFormProps: () => ProjectUrlFormProps = () => {
+const useProjectUrlFormProps = () => {
   const { projectId } = useProjectByParam();
 
   useFirestoreConnect({
-    storeAs: "projectUrls",
     collection: `projects/${projectId}/urls`,
     orderBy: ["createdAt", "asc"],
   });
@@ -33,15 +32,11 @@ const useProjectUrlFormProps: () => ProjectUrlFormProps = () => {
     [dispatch]
   );
 
-  const projectUrls = useSelector(FirebaseSelectors.selectProjectUrls);
+  const projectUrls = useSelector(
+    FirebaseSelectors.createProjectUrlsSelector(projectId)
+  );
 
-  useEffect(() => {
-    if (!projectUrls) {
-      dispatch(UiActions.showLoading());
-    } else {
-      dispatch(UiActions.hideLoading());
-    }
-  }, [dispatch, projectUrls]);
+  useLoading(projectUrls);
 
   return {
     onSubmit,

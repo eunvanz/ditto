@@ -33,7 +33,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export interface ModelListProps {
-  models: ModelDoc[];
+  models?: ModelDoc[];
   onDelete: (model: ModelDoc) => void;
   onClickName: (model: ModelDoc) => void;
   onClickAdd: () => void;
@@ -47,7 +47,7 @@ const ModelList: React.FC<ModelListProps> = ({
 }) => {
   const classes = useStyles();
 
-  return (
+  return models ? (
     <Card>
       <CardHeader title="모델 목록" />
       <Divider />
@@ -105,7 +105,7 @@ const ModelList: React.FC<ModelListProps> = ({
         </Box>
       </PerfectScrollbar>
     </Card>
-  );
+  ) : null;
 };
 
 export default ModelList;

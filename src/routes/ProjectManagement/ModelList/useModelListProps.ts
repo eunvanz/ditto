@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useFirestore, useFirestoreConnect } from "react-redux-firebase";
 import { ModelFormContainerProps } from "../../../components/ModelForm/ModelFormContainer";
 import { assertNotEmpty } from "../../../helpers/commonHelpers";
+import useLoading from "../../../hooks/useLoading";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 import ProjectSelectors from "../../../store/Project/ProjectSelectors";
 import { ModelDoc } from "../../../types";
@@ -14,12 +15,13 @@ const useModelListProps: () => ModelListProps &
   assertNotEmpty(project);
 
   useFirestoreConnect({
-    storeAs: "projectModels",
     collection: `projects/${project.id}/models`,
     orderBy: ["createdAt", "asc"],
   });
 
-  const models = useSelector(FirebaseSelectors.selectProjectModels);
+  const models = useSelector(
+    FirebaseSelectors.createProjectModelsSelector(project.id)
+  );
 
   const firestore = useFirestore();
 
@@ -47,6 +49,8 @@ const useModelListProps: () => ModelListProps &
     setModel(undefined);
     setIsModelFormVisible(false);
   }, []);
+
+  useLoading(models);
 
   return {
     models,

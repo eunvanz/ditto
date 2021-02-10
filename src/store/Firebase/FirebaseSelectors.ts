@@ -6,6 +6,7 @@ import {
   ModelDoc,
   ModelFieldDoc,
   ProjectDoc,
+  ProjectUrlDoc,
 } from "../../types";
 import AuthSelectors from "../Auth/AuthSelector";
 
@@ -32,45 +33,35 @@ const createProjectSelectorByProjectId = (projectId: string) =>
     }
   );
 
-const selectProjectUrls = createSelector(
-  (state: RootState) => state.firestore.ordered.projectUrls,
-  (urls) => urls
-);
+function createOrderedSelector<T>(key: string) {
+  return createSelector(
+    (state: RootState) => state.firestore.ordered[key],
+    (data) => data as T | undefined
+  );
+}
 
-const selectProjectModels = createSelector(
-  (state: RootState) => state.firestore.ordered.projectModels as ModelDoc[],
-  (models) => models
-);
+const createProjectUrlsSelector = (projectId: string) =>
+  createOrderedSelector<ProjectUrlDoc[]>(`projects/${projectId}/urls`);
+
+const createProjectModelsSelector = (projectId: string) =>
+  createOrderedSelector<ModelDoc[]>(`projects/${projectId}/models`);
 
 const createProjectEnumerationsSelector = (projectId: string) =>
-  createSelector(
-    (state: RootState) => state.firestore,
-    (firestore) =>
-      firestore.ordered[
-        `projects/${projectId}/enumerations`
-      ] as EnumerationDoc[]
-  );
+  createOrderedSelector<EnumerationDoc[]>(`projects/${projectId}/enumerations`);
 
 const createModelFieldsSelector = (projectId: string, modelId?: string) =>
-  createSelector(
-    (state: RootState) => state.firestore,
-    (firestore) => {
-      return modelId
-        ? (firestore.ordered[
-            `projects/${projectId}/models/${modelId}/modelFields`
-          ] as ModelFieldDoc[])
-        : undefined;
-    }
+  createOrderedSelector<ModelFieldDoc[]>(
+    `projects/${projectId}/models/${modelId}/modelFields`
   );
 
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
   createProjectSelectorByProjectId,
-  selectProjectUrls,
-  selectProjectModels,
+  createProjectUrlsSelector,
   createProjectEnumerationsSelector,
   createModelFieldsSelector,
+  createProjectModelsSelector,
 };
 
 export default FirebaseSelectors;
