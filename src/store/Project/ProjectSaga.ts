@@ -28,6 +28,9 @@ import {
   FIELD_TYPE,
   ENUMERATION,
   GroupItem,
+  BaseSettings,
+  Doc,
+  Recordable,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -35,6 +38,36 @@ import { assertNotEmpty } from "../../helpers/commonHelpers";
 import history from "../../helpers/history";
 import ROUTE from "../../paths";
 import ProjectSelectors from "./ProjectSelectors";
+
+function* getProperDoc<T extends Recordable>(
+  values: any & { target?: Doc<T, BaseSettings> }
+) {
+  const project = yield* select(ProjectSelectors.selectCurrentProject);
+
+  if (!project) {
+    throw new Error("선택되어있는 프로젝트가 없습니다.");
+  }
+
+  const { target } = values;
+  delete values.target;
+  if (!!target) {
+    const updatedRecordProps = yield* call(getUpdatedRecordProps);
+    const newDoc: Partial<T> = {
+      projectId: project.id,
+      ...values,
+      ...updatedRecordProps,
+    };
+    return newDoc;
+  } else {
+    const recordableDocProps = yield* call(getRecordableDocProps);
+    const newDoc: T = {
+      projectId: project.id,
+      ...values,
+      ...recordableDocProps,
+    };
+    return newDoc;
+  }
+}
 
 export function* submitProjectFormFlow() {
   while (true) {
@@ -849,37 +882,15 @@ export function* submitGroupFormFlow() {
     const { type, payload } = yield* take(ProjectActions.submitGroupForm);
     yield* put(ProgressActions.startProgress(type));
 
-    const project = yield* select(ProjectSelectors.selectCurrentProject);
-
-    if (!project) {
-      yield* call(Alert.message, {
-        title: "그룹 생성 불가",
-        message: "선택되어있는 프로젝트가 없습니다.",
-      });
-      continue;
-    }
-
     const { target } = payload;
+    const newGroup = yield* call(getProperDoc, payload);
 
     try {
       yield* put(UiActions.showLoading());
-      delete payload.target;
       if (!!target) {
-        const updatedRecordProps = yield* call(getUpdatedRecordProps);
-        const newGroup: Partial<GroupItem> = {
-          projectId: target.projectId,
-          ...payload,
-          ...updatedRecordProps,
-        };
         yield* call(Firework.updateGroup, target.id, newGroup);
       } else {
-        const recordableDocProps = yield* call(getRecordableDocProps);
-        const newModel: ModelItem = {
-          projectId: project.id,
-          ...payload,
-          ...recordableDocProps,
-        };
-        yield* call(Firework.addGroup, newModel);
+        yield* call(Firework.addGroup, newGroup as GroupItem);
       }
       yield* put(
         UiActions.showNotification({

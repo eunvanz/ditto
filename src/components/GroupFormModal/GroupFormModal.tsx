@@ -4,15 +4,10 @@ import isEqual from "lodash/isEqual";
 import { Box, Button, makeStyles, TextField, Theme } from "@material-ui/core";
 import Modal from "../Modal";
 import { GroupDoc } from "../../types";
+import { getDangerButtonStyle } from "../../styles";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  deleteButton: {
-    color: theme.palette.common.white,
-    backgroundColor: theme.palette.error.main,
-    "&:hover": {
-      backgroundColor: theme.palette.error.dark,
-    },
-  },
+  deleteButton: getDangerButtonStyle(theme),
 }));
 
 export interface GroupFormValues {

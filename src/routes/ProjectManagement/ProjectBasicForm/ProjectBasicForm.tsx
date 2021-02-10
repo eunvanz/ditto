@@ -13,18 +13,13 @@ import { useForm } from "react-hook-form";
 import isEqual from "lodash/isEqual";
 import { ProjectDoc } from "../../../types";
 import { Theme } from "../../../theme";
+import { getDangerButtonStyle } from "../../../styles";
 
 const useStyles = makeStyles((theme: Theme) => ({
   submitButton: {
     marginLeft: 8,
   },
-  deleteButton: {
-    color: theme.palette.common.white,
-    backgroundColor: theme.palette.error.main,
-    "&:hover": {
-      backgroundColor: theme.palette.error.dark,
-    },
-  },
+  deleteButton: getDangerButtonStyle(theme),
 }));
 
 export interface ProjectBasicFormValues {
