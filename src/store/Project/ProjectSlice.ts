@@ -7,6 +7,7 @@ import {
   ModelFieldDoc,
   EnumerationDoc,
   FIELD_TYPE,
+  GroupDoc,
 } from "../../types";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
@@ -96,6 +97,7 @@ const ProjectSlice = createSlice({
       _action: PayloadAction<void>
     ) => {},
     submitGroupForm: (_, _action: PayloadAction<GroupFormValues>) => {},
+    deleteGroup: (_, _action: PayloadAction<GroupDoc>) => {},
   },
 });
 

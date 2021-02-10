@@ -117,6 +117,7 @@ export function* deleteProjectFlow() {
     });
     if (isConfirmed) {
       try {
+        // TODO: 하위 항목들 모두 삭제
         yield* put(UiActions.showLoading());
         yield* call(Firework.deleteProject, project.id);
         yield* put(
@@ -862,11 +863,11 @@ export function* submitGroupFormFlow() {
 
     try {
       yield* put(UiActions.showLoading());
+      delete payload.target;
       if (!!target) {
-        delete payload.target;
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
         const newGroup: Partial<GroupItem> = {
-          projectId: project.id,
+          projectId: target.projectId,
           ...payload,
           ...updatedRecordProps,
         };
@@ -883,7 +884,7 @@ export function* submitGroupFormFlow() {
       yield* put(
         UiActions.showNotification({
           type: "success",
-          message: "그룹이 생성됐습니다.",
+          message: target ? "그룹이 수정됐습니다." : "그룹이 생성됐습니다.",
         })
       );
       yield* put(UiActions.hideGroupFormModal());
@@ -892,6 +893,37 @@ export function* submitGroupFormFlow() {
     } finally {
       yield* put(ProgressActions.finishProgress(type));
       yield* put(UiActions.hideLoading());
+    }
+  }
+}
+
+export function* deleteGroupFlow() {
+  while (true) {
+    const { type, payload } = yield* take(ProjectActions.deleteGroup);
+    const isConfirmed = yield* call(Alert.confirm, {
+      title: "그룹 삭제",
+      message:
+        "그룹 하위의 작업들이 모두 삭제됩니다. 정말 그룹을 삭제하시겠습니까?",
+    });
+    if (isConfirmed) {
+      yield* put(UiActions.showLoading());
+      try {
+        // TODO: 하위 항목들 모두 삭제
+        yield* put(ProgressActions.startProgress(type));
+        yield* call(Firework.deleteGroup, payload);
+        yield* put(
+          UiActions.showNotification({
+            message: "그룹이 삭제됐습니다.",
+            type: "success",
+          })
+        );
+        yield* put(UiActions.hideGroupFormModal());
+      } catch (error) {
+        yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+      } finally {
+        yield* put(UiActions.hideLoading());
+        yield* put(ProgressActions.finishProgress(type));
+      }
     }
   }
 }
@@ -910,5 +942,6 @@ export function* watchProjectActions() {
     fork(submitEnumFormFlow),
     fork(deleteEnumerationFlow),
     fork(submitGroupFormFlow),
+    fork(deleteGroupFlow),
   ]);
 }

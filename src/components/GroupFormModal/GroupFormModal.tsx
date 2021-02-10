@@ -1,9 +1,19 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import isEqual from "lodash/isEqual";
-import { Box, Button, TextField } from "@material-ui/core";
+import { Box, Button, makeStyles, TextField, Theme } from "@material-ui/core";
 import Modal from "../Modal";
 import { GroupDoc } from "../../types";
+
+const useStyles = makeStyles((theme: Theme) => ({
+  deleteButton: {
+    color: theme.palette.common.white,
+    backgroundColor: theme.palette.error.main,
+    "&:hover": {
+      backgroundColor: theme.palette.error.dark,
+    },
+  },
+}));
 
 export interface GroupFormValues {
   name: string;
@@ -17,6 +27,7 @@ export interface GroupFormModalProps {
   isVisible: boolean;
   onClose: () => void;
   existingGroupNames?: string[];
+  onDelete: () => void;
 }
 
 const GroupFormModal: React.FC<GroupFormModalProps> = ({
@@ -26,8 +37,11 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
   isVisible,
   onClose,
   existingGroupNames,
+  onDelete,
 }) => {
-  const { register, handleSubmit, errors, watch, formState } = useForm<
+  const classes = useStyles();
+
+  const { register, handleSubmit, errors, watch, formState, reset } = useForm<
     GroupFormValues
   >({
     mode: "onChange",
@@ -44,13 +58,22 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
     return isEqual(defaultValues, watchedValues);
   }, [defaultValues, watchedValues]);
 
+  useEffect(() => {
+    reset(defaultValues || { name: "" });
+  }, [defaultValues, reset]);
+
   return existingGroupNames ? (
     <Modal
       title={defaultValues ? "그룹 수정" : "그룹 생성"}
       isVisible={isVisible}
       onClose={onClose}
     >
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <form
+        onSubmit={handleSubmit((values) =>
+          onSubmit({ ...values, target: defaultValues?.target })
+        )}
+        noValidate
+      >
         <Box mt={2}>
           <TextField
             autoFocus
@@ -88,6 +111,21 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
             {defaultValues ? "그룹 정보 변경" : "그룹 만들기"}
           </Button>
         </Box>
+        {defaultValues && (
+          <Box mt={2}>
+            <Button
+              className={classes.deleteButton}
+              disabled={isSubmitting}
+              fullWidth
+              size="large"
+              type="button"
+              variant="contained"
+              onClick={onDelete}
+            >
+              그룹 삭제
+            </Button>
+          </Box>
+        )}
       </form>
     </Modal>
   ) : null;

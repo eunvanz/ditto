@@ -153,7 +153,7 @@ const UiSlice = createSlice({
       state.groupFormModal.isVisible = true;
       state.groupFormModal.group = action.payload;
     },
-    hideGroupFormModal: (state, action: PayloadAction<void>) => {
+    hideGroupFormModal: (state, _action: PayloadAction<void>) => {
       state.groupFormModal.isVisible = false;
     },
   },

@@ -58,6 +58,24 @@ const createModelFieldsSelector = (projectId: string, modelId?: string) =>
 const createProjectGroupsSelector = (projectId: string) =>
   createOrderedSelector<GroupDoc[]>(`projects/${projectId}/groups`);
 
+const createGroupedProjectGroupsSelector = (projectIds: string[]) =>
+  createSelector(
+    (state: RootState) =>
+      projectIds.map(
+        (projectId) => state.firestore.ordered[`projects/${projectId}/groups`]
+      ),
+    (projectGroupsArray: GroupDoc[][]) => {
+      const groupedProjectGroups: Record<string, GroupDoc[]> = {};
+      projectGroupsArray.forEach((projectGroups) => {
+        if (projectGroups?.length) {
+          const projectId = projectGroups[0].projectId;
+          groupedProjectGroups[projectId] = projectGroups;
+        }
+      });
+      return groupedProjectGroups;
+    }
+  );
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -67,6 +85,7 @@ const FirebaseSelectors = {
   createModelFieldsSelector,
   createProjectModelsSelector,
   createProjectGroupsSelector,
+  createGroupedProjectGroupsSelector,
 };
 
 export default FirebaseSelectors;

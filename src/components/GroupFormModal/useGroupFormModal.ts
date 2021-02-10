@@ -18,7 +18,7 @@ const useGroupFormModal = () => {
   const { isVisible, group } = useSelector(UiSelectors.selectGroupFormModal);
 
   const defaultValues = useMemo(() => {
-    return group ? { name: group.name } : undefined;
+    return group ? { name: group.name, target: group } : undefined;
   }, [group]);
 
   const onClose = useCallback(() => {
@@ -30,6 +30,7 @@ const useGroupFormModal = () => {
       return [
         {
           collection: `projects/${project.id}/groups`,
+          orderBy: ["createdAt", "asc"],
         },
       ];
     } else {
@@ -37,7 +38,7 @@ const useGroupFormModal = () => {
     }
   }, [project]);
 
-  useFirestoreConnect(firestoreQuery);
+  useFirestoreConnect(firestoreQuery as any);
 
   const existingGroups = useSelector(
     FirebaseSelectors.createProjectGroupsSelector(project?.id || "")
@@ -50,10 +51,18 @@ const useGroupFormModal = () => {
     [dispatch]
   );
 
+  const onDelete = useCallback(() => {
+    if (!group) {
+      return;
+    }
+    dispatch(ProjectActions.deleteGroup(group));
+  }, [dispatch, group]);
+
   const isSubmitting = useSelector(
-    ProgressSelectors.createInProgressSelector(
-      ProjectActions.submitGroupForm.type
-    )
+    ProgressSelectors.createInProgressSelector([
+      ProjectActions.submitGroupForm.type,
+      ProjectActions.deleteGroup.type,
+    ])
   );
 
   useLoading(existingGroups);
@@ -65,6 +74,7 @@ const useGroupFormModal = () => {
     existingGroupNames: existingGroups?.map((group) => group.name),
     onSubmit,
     isSubmitting,
+    onDelete,
   };
 };
 
