@@ -61,12 +61,14 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
   );
 
   const handleOnBlur = useCallback(() => {
-    if (isCancelingRef.current) {
-      return;
-    }
-    if (!isEqual(getValues(), defaultValues)) {
-      submit();
-    }
+    setTimeout(() => {
+      if (isCancelingRef.current) {
+        return;
+      }
+      if (!isEqual(getValues(), defaultValues)) {
+        submit();
+      }
+    }, 100); // isCancelingRef.current를 인식하는 타이밍을 맞추기 위해
   }, [defaultValues, getValues, isCancelingRef, submit]);
 
   return (

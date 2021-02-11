@@ -155,14 +155,10 @@ const ModelForm: React.FC<ModelFormProps> = ({
       if (e.key === "Escape") {
         // ModelNameForm에서의 에서의 참조를 위해
         isCancelingRef.current = true;
-        if (!isNewFormVisible) {
-          onClose?.();
-        } else {
-          onSetEditingModelField(undefined);
-        }
+        onSetEditingModelField(undefined);
       }
     },
-    [isNewFormVisible, onClose, onSetEditingModelField]
+    [onSetEditingModelField]
   );
 
   useEffect(() => {
@@ -180,13 +176,18 @@ const ModelForm: React.FC<ModelFormProps> = ({
     return depth ? `${model?.name}에 새로운 필드 추가` : "새로운 필드 추가";
   }, [depth, model]);
 
+  const handleOnClose = useCallback(() => {
+    isCancelingRef.current = true;
+    onClose?.();
+  }, [onClose]);
+
   return (
     <Wrapper
       existingModelNames={existingModelNames}
       onSubmitModel={onSubmitModel}
       depth={depth}
       model={model}
-      onClose={onClose}
+      onClose={handleOnClose}
       isCancelingRef={isCancelingRef}
       modelNameInputRef={modelNameInputRef}
       onClickQuickEditModelName={onClickQuickEditModelName}
@@ -366,7 +367,13 @@ export const ModelFormModal: React.FC<ModelFormModalProps> = ({
   ...restProps
 }) => {
   return (
-    <Dialog open={isVisible} fullWidth maxWidth="xl" scroll="body">
+    <Dialog
+      open={isVisible}
+      fullWidth
+      maxWidth="xl"
+      scroll="body"
+      onEscapeKeyDown={onClose}
+    >
       <ModelForm {...restProps} onClose={onClose} />
     </Dialog>
   );
