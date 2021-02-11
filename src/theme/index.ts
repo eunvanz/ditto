@@ -87,6 +87,13 @@ const baseOptions: ThemeOptions = {
         minWidth: 32,
       },
     },
+    MuiAutocomplete: {
+      endAdornment: {
+        "& .MuiIconButton-root": {
+          padding: 2,
+        },
+      },
+    },
   },
 };
 

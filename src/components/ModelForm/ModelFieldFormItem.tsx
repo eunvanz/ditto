@@ -224,10 +224,14 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     [isFormVisible, showForm]
   );
 
+  const [isDisabledEnterSubmit, setIsDisabledEnterSubmit] = useState<boolean>(
+    false
+  );
+
   const handleOnPressKey = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Enter") {
-        handleOnSubmit();
+        !isDisabledEnterSubmit && handleOnSubmit();
       } else if (e.key === "Escape") {
         if (isFormVisible) {
           // 새로운 필드를 추가중이 아닐 때에는 ModelForm에 이벤트 전파 하지 않음
@@ -236,7 +240,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         handleOnCancel();
       }
     },
-    [handleOnCancel, handleOnSubmit, isFormVisible]
+    [handleOnCancel, handleOnSubmit, isDisabledEnterSubmit, isFormVisible]
   );
 
   useEffect(() => {
@@ -412,6 +416,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                         />
                       );
                     }}
+                    onFocus={() => setIsDisabledEnterSubmit(true)}
+                    onBlur={() => setIsDisabledEnterSubmit(false)}
                   />
                 );
               }}
@@ -448,6 +454,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                         placeholder="포맷"
                       />
                     )}
+                    onFocus={() => setIsDisabledEnterSubmit(true)}
+                    onBlur={() => setIsDisabledEnterSubmit(false)}
                   />
                 );
               }}
@@ -482,6 +490,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                         placeholder="열거형"
                       />
                     )}
+                    onFocus={() => setIsDisabledEnterSubmit(true)}
+                    onBlur={() => setIsDisabledEnterSubmit(false)}
                   />
                 );
               }}
