@@ -32,7 +32,7 @@ const Alert = ({
   onOk,
   onCancel,
 }: AlertProps) => {
-  const handleOnKeyup = useCallback(
+  const handleOnKeydown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Enter") {
         onOk?.();
@@ -44,11 +44,11 @@ const Alert = ({
   );
 
   useEffect(() => {
-    window.addEventListener("keyup", handleOnKeyup);
+    window.addEventListener("keydown", handleOnKeydown);
     return () => {
-      window.removeEventListener("keyup", handleOnKeyup);
+      window.removeEventListener("keydown", handleOnKeydown);
     };
-  }, [handleOnKeyup]);
+  }, [handleOnKeydown]);
 
   return (
     <Dialog fullWidth maxWidth="xs" open={isVisible} onClose={onClose}>
@@ -58,9 +58,15 @@ const Alert = ({
       </DialogContent>
       <DialogActions>
         {cancelText && (
-          <Button onClick={onCancel || onClose}>{cancelText}</Button>
+          <Button color="secondary" onClick={onCancel || onClose}>
+            {cancelText}
+          </Button>
         )}
-        {okText && <Button onClick={onOk || onClose}>{okText}</Button>}
+        {okText && (
+          <Button color="secondary" onClick={onOk || onClose}>
+            {okText}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

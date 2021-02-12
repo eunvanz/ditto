@@ -233,21 +233,17 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       if (e.key === "Enter") {
         !isDisabledEnterSubmit && handleOnSubmit();
       } else if (e.key === "Escape") {
-        if (isFormVisible) {
-          // 새로운 필드를 추가중이 아닐 때에는 ModelForm에 이벤트 전파 하지 않음
-          e.stopPropagation();
-        }
-        handleOnCancel();
+        !isSubmitting && handleOnCancel();
       }
     },
-    [handleOnCancel, handleOnSubmit, isDisabledEnterSubmit, isFormVisible]
+    [handleOnCancel, handleOnSubmit, isDisabledEnterSubmit, isSubmitting]
   );
 
   useEffect(() => {
     if (isFormVisible) {
-      document.addEventListener("keyup", handleOnPressKey);
+      document.addEventListener("keydown", handleOnPressKey);
       return () => {
-        document.removeEventListener("keyup", handleOnPressKey);
+        document.removeEventListener("keydown", handleOnPressKey);
       };
     }
   }, [handleOnPressKey, isFormVisible]);

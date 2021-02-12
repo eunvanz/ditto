@@ -18,9 +18,6 @@ const QuickModelNameFormModal: React.FC<QuickModelNameFormModalProps> = ({
       title={isModification ? "모델명 수정" : "새로운 모델"}
       isVisible={isVisible}
       onClose={onClose}
-      onEscapeKeyDown={(e) => {
-        e.stopPropagation();
-      }}
     >
       <QuickModelNameForm />
     </Modal>

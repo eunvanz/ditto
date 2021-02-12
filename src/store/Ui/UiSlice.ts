@@ -20,6 +20,7 @@ export type UiState = {
   quickModelNameFormModal: QuickModelNameFormModalState;
   quickEnumFormModal: QuickEnumFormModalState;
   groupFormModal: GroupFormModalState;
+  modalLayers: string[];
 };
 
 export interface GroupFormModalState {
@@ -65,6 +66,7 @@ export const initialUiState: UiState = {
     isVisible: false,
     group: undefined,
   },
+  modalLayers: [],
 };
 
 const UiSlice = createSlice({
@@ -155,6 +157,12 @@ const UiSlice = createSlice({
     },
     hideGroupFormModal: (state, _action: PayloadAction<void>) => {
       state.groupFormModal.isVisible = false;
+    },
+    pushModalLayer: (state, action: PayloadAction<string>) => {
+      state.modalLayers.push(action.payload);
+    },
+    popModalLayer: (state, _action: PayloadAction<void>) => {
+      state.modalLayers.pop();
     },
   },
 });

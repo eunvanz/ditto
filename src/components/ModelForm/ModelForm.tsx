@@ -33,6 +33,7 @@ import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
 import CloseIcon from "@material-ui/icons/Close";
 import { getIntentionPaddingByDepth } from "../../helpers/projectHelpers";
 import { ExpandLess, ExpandMore, EditOutlined } from "@material-ui/icons";
+import useModalKeyControl from "../../hooks/useModalKeyControl";
 
 const useStyles = makeStyles((theme) => ({
   fieldNameCell: {
@@ -98,6 +99,7 @@ export interface ModelFormProps {
   onSetEditingModelField: (modelFieldId?: string) => void;
   editingModelFieldId?: string;
   onClickQuickEditModelName: (model: ModelDoc) => void;
+  isVisible?: boolean;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -114,6 +116,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   onSetEditingModelField,
   editingModelFieldId,
   onClickQuickEditModelName,
+  isVisible,
 }) => {
   const classes = useStyles();
 
@@ -153,15 +156,17 @@ const ModelForm: React.FC<ModelFormProps> = ({
   const cancelTask = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        // ModelNameForm에서의 에서의 참조를 위해
-        isCancelingRef.current = true;
-        onSetEditingModelField(undefined);
+        if (!editingModelFieldId) {
+          // ModelNameForm에서의 에서의 참조를 위해
+          isCancelingRef.current = true;
+        }
       }
     },
-    [onSetEditingModelField]
+    [editingModelFieldId]
   );
 
   useEffect(() => {
+    // keydown일 경우 ModelNameForm 정상동작 하지 않음
     window.addEventListener("keyup", cancelTask);
     return () => {
       window.removeEventListener("keyup", cancelTask);
@@ -180,6 +185,13 @@ const ModelForm: React.FC<ModelFormProps> = ({
     isCancelingRef.current = true;
     onClose?.();
   }, [onClose]);
+
+  useModalKeyControl({
+    isVisible,
+    onClose,
+    name: "ModelForm",
+    isDisabled: editingModelFieldId !== undefined,
+  });
 
   return (
     <Wrapper
@@ -367,14 +379,8 @@ export const ModelFormModal: React.FC<ModelFormModalProps> = ({
   ...restProps
 }) => {
   return (
-    <Dialog
-      open={isVisible}
-      fullWidth
-      maxWidth="lg"
-      scroll="body"
-      onEscapeKeyDown={onClose}
-    >
-      <ModelForm {...restProps} onClose={onClose} />
+    <Dialog open={isVisible} fullWidth maxWidth="lg" scroll="body">
+      <ModelForm {...restProps} onClose={onClose} isVisible={isVisible} />
     </Dialog>
   );
 };

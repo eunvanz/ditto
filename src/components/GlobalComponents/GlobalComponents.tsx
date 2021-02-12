@@ -3,9 +3,9 @@ import Notifier from "../Notifier";
 import GlobalLoading from "../GlobalLoading";
 import SignInModal from "../SignInModal";
 import ProjectFormModal from "../ProjectFormModal";
+import GroupFormModal from "../GroupFormModal";
 import QuickModelNameFormModal from "../QuickModelNameFormModal";
 import QuickEnumFormModal from "../QuickEnumFormModal";
-import GroupFormModal from "../GroupFormModal";
 
 const GlobalComponents: React.FC = () => {
   return (

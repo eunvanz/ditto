@@ -203,9 +203,9 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
   }, []);
 
   useEffect(() => {
-    window.addEventListener("keyup", cancelTask);
+    window.addEventListener("keydown", cancelTask);
     return () => {
-      window.removeEventListener("keyup", cancelTask);
+      window.removeEventListener("keydown", cancelTask);
     };
   }, [cancelTask]);
 
