@@ -93,6 +93,11 @@ const baseOptions: ThemeOptions = {
           padding: 2,
         },
       },
+      popper: {
+        "& .MuiAutocomplete-paper": {
+          fontSize: "0.875rem",
+        },
+      },
     },
   },
 };

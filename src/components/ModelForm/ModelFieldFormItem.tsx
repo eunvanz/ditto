@@ -456,6 +456,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                     )}
                     onFocus={() => setIsDisabledEnterSubmit(true)}
                     onBlur={() => setIsDisabledEnterSubmit(false)}
+                    size="small"
                   />
                 );
               }}

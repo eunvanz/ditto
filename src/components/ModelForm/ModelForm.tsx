@@ -370,7 +370,7 @@ export const ModelFormModal: React.FC<ModelFormModalProps> = ({
     <Dialog
       open={isVisible}
       fullWidth
-      maxWidth="xl"
+      maxWidth="lg"
       scroll="body"
       onEscapeKeyDown={onClose}
     >

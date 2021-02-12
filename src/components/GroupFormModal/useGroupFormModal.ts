@@ -65,7 +65,7 @@ const useGroupFormModal = () => {
     ])
   );
 
-  useLoading(existingGroups);
+  useLoading(project ? existingGroups : true);
 
   return {
     defaultValues,

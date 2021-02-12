@@ -60,15 +60,7 @@ const Alert = ({
         {cancelText && (
           <Button onClick={onCancel || onClose}>{cancelText}</Button>
         )}
-        {okText && (
-          <Button
-            onClick={onOk || onClose}
-            variant="contained"
-            color="secondary"
-          >
-            {okText}
-          </Button>
-        )}
+        {okText && <Button onClick={onOk || onClose}>{okText}</Button>}
       </DialogActions>
     </Dialog>
   );
