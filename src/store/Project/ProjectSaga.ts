@@ -937,10 +937,16 @@ export function* submitGroupFormFlow() {
 export function* deleteGroupFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.deleteGroup);
-    const isConfirmed = yield* call(Alert.confirm, {
-      title: "그룹 삭제",
-      message:
-        "그룹 하위의 작업들이 모두 삭제됩니다. 정말 그룹을 삭제하시겠습니까?",
+    yield* put(
+      UiActions.showCriticalConfirmModal({
+        title: "그룹 삭제",
+        message: `그룹 하위의 작업들이 모두 삭제됩니다. 정말 그룹을 삭제하시겠습니까? 삭제를 하시려면 {${payload.name}}을 입력해주세요.`,
+        keyword: payload.name,
+      })
+    );
+    const { isConfirmed } = yield* race({
+      isConfirmed: take(UiActions.confirmCriticalConfirmModal),
+      isCanceled: take(UiActions.hideCriticalConfirmModal),
     });
     if (isConfirmed) {
       yield* put(UiActions.showLoading());
@@ -955,6 +961,7 @@ export function* deleteGroupFlow() {
           })
         );
         yield* put(UiActions.hideGroupFormModal());
+        yield* put(UiActions.hideCriticalConfirmModal());
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
       } finally {
