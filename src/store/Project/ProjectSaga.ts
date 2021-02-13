@@ -144,14 +144,19 @@ export function* submitProjectFormFlow() {
 export function* deleteProjectFlow() {
   while (true) {
     const { payload: project } = yield* take(ProjectActions.deleteProject);
-    const isConfirmed = yield* call(Alert.confirm, {
-      title: "프로젝트 삭제",
-      message:
-        "프로젝트 하위의 작업들이 모두 삭제됩니다. 정말 프로젝트를 삭제하시겠습니까?",
+    yield* put(
+      UiActions.showCriticalConfirmModal({
+        title: "프로젝트 삭제",
+        message: `프로젝트 하위의 작업들이 모두 삭제됩니다. 정말 프로젝트를 삭제하시겠습니까? 삭제를 하시려면 {${project.title}}을 입력해주세요.`,
+        keyword: project.title,
+      })
+    );
+    const { isConfirmed } = yield* race({
+      isConfirmed: take(UiActions.confirmCriticalConfirmModal),
+      isCanceled: take(UiActions.hideCriticalConfirmModal),
     });
     if (isConfirmed) {
       try {
-        // TODO: 하위 항목들 모두 삭제
         yield* put(UiActions.showLoading());
         yield* call(Firework.deleteProject, project.id);
         yield* put(
@@ -160,6 +165,7 @@ export function* deleteProjectFlow() {
             type: "success",
           })
         );
+        yield* put(UiActions.hideCriticalConfirmModal());
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
       } finally {

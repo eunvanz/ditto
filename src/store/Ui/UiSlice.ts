@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { OptionsObject } from "notistack";
-import { CriticalConfirmModalFormValues } from "../../components/CriticalConfirmModal/CriticalConfirmModal";
 import { THEMES, ProjectDoc, ModelDoc, GroupDoc } from "../../types";
 
 export interface Notification {
@@ -30,7 +29,6 @@ export interface CriticalConfirmModalState {
   title: string;
   message: string;
   keyword: string;
-  onSubmit: (values: CriticalConfirmModalFormValues) => void;
 }
 
 export interface GroupFormModalState {
@@ -82,7 +80,6 @@ export const initialUiState: UiState = {
     title: "",
     message: "",
     keyword: "",
-    onSubmit: () => {},
   },
 };
 
@@ -194,8 +191,9 @@ const UiSlice = createSlice({
       state.criticalConfirmModal = { isVisible: true, ...action.payload };
     },
     hideCriticalConfirmModal: (state, _action: PayloadAction<void>) => {
-      state.criticalConfirmModal = initialUiState.criticalConfirmModal;
+      state.criticalConfirmModal.isVisible = false;
     },
+    confirmCriticalConfirmModal: (_, _action: PayloadAction<void>) => {},
   },
 });
 

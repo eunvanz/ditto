@@ -16,7 +16,7 @@ export interface CriticalConfirmModalProps {
   title: string;
   message: string;
   keyword: string;
-  onSubmit: (values: CriticalConfirmModalFormValues) => void;
+  onSubmit: () => void;
 }
 
 export interface CriticalConfirmModalFormValues {

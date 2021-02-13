@@ -14,9 +14,14 @@ const useCriticalConfirmModalProps = () => {
     dispatch(UiActions.hideCriticalConfirmModal());
   }, [dispatch]);
 
+  const onSubmit = useCallback(() => {
+    dispatch(UiActions.confirmCriticalConfirmModal());
+  }, [dispatch]);
+
   return {
     ...criticalConfirmModal,
     onClose,
+    onSubmit,
   };
 };
 
