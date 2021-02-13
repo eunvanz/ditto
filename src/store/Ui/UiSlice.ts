@@ -21,7 +21,15 @@ export type UiState = {
   quickEnumFormModal: QuickEnumFormModalState;
   groupFormModal: GroupFormModalState;
   modalLayers: string[];
+  criticalConfirmModal: CriticalConfirmModalState;
 };
+
+export interface CriticalConfirmModalState {
+  isVisible: boolean;
+  title: string;
+  message: string;
+  keyword: string;
+}
 
 export interface GroupFormModalState {
   isVisible: boolean;
@@ -67,6 +75,12 @@ export const initialUiState: UiState = {
     group: undefined,
   },
   modalLayers: [],
+  criticalConfirmModal: {
+    isVisible: false,
+    title: "",
+    message: "",
+    keyword: "",
+  },
 };
 
 const UiSlice = createSlice({
@@ -163,6 +177,21 @@ const UiSlice = createSlice({
     },
     popModalLayer: (state, _action: PayloadAction<void>) => {
       state.modalLayers.pop();
+    },
+    receiveCriticalConfirmModal: (
+      state,
+      action: PayloadAction<CriticalConfirmModalState>
+    ) => {
+      state.criticalConfirmModal = action.payload;
+    },
+    showCriticalConfirmModal: (
+      state,
+      action: PayloadAction<Omit<CriticalConfirmModalState, "isVisible">>
+    ) => {
+      state.criticalConfirmModal = { isVisible: true, ...action.payload };
+    },
+    hideCriticalConfirmModal: (state, _action: PayloadAction<void>) => {
+      state.criticalConfirmModal = initialUiState.criticalConfirmModal;
     },
   },
 });

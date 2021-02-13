@@ -16,7 +16,11 @@ export interface CriticalConfirmModalProps {
   title: string;
   message: string;
   keyword: string;
-  onSubmit: () => void;
+  onSubmit: (values: CriticalConfirmModalFormValues) => void;
+}
+
+export interface CriticalConfirmModalFormValues {
+  text: string;
 }
 
 const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
@@ -27,7 +31,9 @@ const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
   keyword,
   onSubmit,
 }) => {
-  const { register, handleSubmit, errors } = useForm({
+  const { register, handleSubmit, errors, formState } = useForm<
+    CriticalConfirmModalFormValues
+  >({
     mode: "onChange",
   });
 
@@ -43,7 +49,9 @@ const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
           <DialogContentText>
             <div
               dangerouslySetInnerHTML={{
-                __html: message.replace("{", '<b>"').replace("}", '"</b>'),
+                __html: message
+                  .replace("{", '<b class="MuiTypography-colorPrimary">')
+                  .replace("}", "</b>"),
               }}
             />
           </DialogContentText>
@@ -62,13 +70,14 @@ const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             placeholder={`${keyword}`}
             error={!!errors.text}
             helperText={errors.text?.message}
+            autoComplete="off"
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} type="button" color="primary">
             취소
           </Button>
-          <Button type="submit" color="primary">
+          <Button disabled={!formState.isValid} type="submit" color="primary">
             삭제
           </Button>
         </DialogActions>

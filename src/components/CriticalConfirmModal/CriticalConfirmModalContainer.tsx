@@ -1,8 +1,19 @@
 import React from "react";
-import CriticalConfirmModal from "./CriticalConfirmModal";
+import CriticalConfirmModal, {
+  CriticalConfirmModalFormValues,
+} from "./CriticalConfirmModal";
+import useCriticalConfirmModalProps from "./useCriticalConfirmModalProps";
 
-const CriticalConfirmModalContainer = () => {
-  return <CriticalConfirmModal />;
+export interface CriticalConfirmModalContainerProps {
+  onSubmit: (values: CriticalConfirmModalFormValues) => void;
+}
+
+const CriticalConfirmModalContainer = ({
+  onSubmit,
+}: CriticalConfirmModalContainerProps) => {
+  const props = useCriticalConfirmModalProps({ onSubmit });
+
+  return <CriticalConfirmModal {...props} />;
 };
 
 export default CriticalConfirmModalContainer;

@@ -14,6 +14,9 @@ const selectGroupFormModal = (state: RootState) => state.ui.groupFormModal;
 
 const selectModalLayers = (state: RootState) => state.ui.modalLayers;
 
+const selectCriticalConfirmModal = (state: RootState) =>
+  state.ui.criticalConfirmModal;
+
 const UiSelectors = {
   selectTheme,
   selectProjectFormModal,
@@ -21,6 +24,7 @@ const UiSelectors = {
   selectQuickEnumFormModal,
   selectGroupFormModal,
   selectModalLayers,
+  selectCriticalConfirmModal,
 };
 
 export default UiSelectors;
