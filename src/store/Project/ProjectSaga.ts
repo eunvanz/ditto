@@ -147,7 +147,7 @@ export function* deleteProjectFlow() {
     yield* put(
       UiActions.showCriticalConfirmModal({
         title: "프로젝트 삭제",
-        message: `프로젝트 하위의 작업들이 모두 삭제됩니다. 정말 프로젝트를 삭제하시겠습니까? 삭제를 하시려면 {${project.title}}을 입력해주세요.`,
+        message: `프로젝트 하위의 작업들이 모두 삭제됩니다. 정말 프로젝트를 삭제하시겠습니까? 진행하시려면 {${project.title}}을 입력해주세요.`,
         keyword: project.title,
       })
     );
@@ -940,7 +940,7 @@ export function* deleteGroupFlow() {
     yield* put(
       UiActions.showCriticalConfirmModal({
         title: "그룹 삭제",
-        message: `그룹 하위의 작업들이 모두 삭제됩니다. 정말 그룹을 삭제하시겠습니까? 삭제를 하시려면 {${payload.name}}을 입력해주세요.`,
+        message: `그룹 하위의 작업들이 모두 삭제됩니다. 정말 그룹을 삭제하시겠습니까? 진행하시려면 {${payload.name}}을 입력해주세요.`,
         keyword: payload.name,
       })
     );

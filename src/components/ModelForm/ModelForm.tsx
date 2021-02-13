@@ -146,9 +146,12 @@ const ModelForm: React.FC<ModelFormProps> = ({
 
   const showNewForm = useCallback(() => {
     if (
-      modelNameInputRef.current === undefined || // modelNameInput이 없는 경우 (depth 존재)
-      !!modelNameInputRef.current.value
+      modelNameInputRef.current === undefined // modelNameInput이 없는 경우 (depth 존재)
     ) {
+      onSetEditingModelField("NEW");
+    } else if (!modelNameInputRef.current.value) {
+      modelNameInputRef.current.focus();
+    } else {
       onSetEditingModelField("NEW");
     }
   }, [onSetEditingModelField]);

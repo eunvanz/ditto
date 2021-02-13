@@ -1,10 +1,9 @@
 import React from "react";
 import ProjectForm from "../ProjectForm";
 import Modal from "../Modal";
+import { ModalBase } from "../../types";
 
-export interface ProjectFormModalProps {
-  isVisible: boolean;
-  onClose: () => void;
+export interface ProjectFormModalProps extends ModalBase {
   isModification: boolean;
 }
 

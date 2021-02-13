@@ -291,3 +291,16 @@ export interface GroupItem extends Recordable {
 }
 
 export type GroupDoc = Doc<GroupItem, BaseSettings>;
+
+export interface RequestItem extends Recordable {
+  projectId: string;
+  groupId: string;
+  name: string;
+  summary?: string;
+  description?: string;
+}
+
+export interface ModalBase {
+  isVisible: boolean;
+  onClose: () => void;
+}
