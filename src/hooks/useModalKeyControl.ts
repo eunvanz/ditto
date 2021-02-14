@@ -7,29 +7,30 @@ export interface UseModalKeyControlParams {
   isVisible?: boolean;
   onClose?: () => void;
   name: string;
-  isDisabled?: boolean;
 }
 
 const useModalKeyControl = ({
   isVisible,
   onClose,
   name,
-  isDisabled,
 }: UseModalKeyControlParams) => {
   const dispatch = useDispatch();
 
   const modalLayers = useSelector(UiSelectors.selectModalLayers);
+  const isModalEscapeDisabled = useSelector(
+    UiSelectors.selectIsModalEscapeDisabled
+  );
 
   const handleOnPressKey = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && !isModalEscapeDisabled) {
         e.stopPropagation();
-        if (!isDisabled && modalLayers[modalLayers.length - 1] === name) {
+        if (modalLayers[modalLayers.length - 1] === name) {
           onClose?.();
         }
       }
     },
-    [isDisabled, modalLayers, name, onClose]
+    [isModalEscapeDisabled, modalLayers, name, onClose]
   );
 
   useEffect(() => {

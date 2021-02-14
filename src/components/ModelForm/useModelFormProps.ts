@@ -8,6 +8,7 @@ import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
+import { UiActions } from "../../store/Ui/UiSlice";
 import { ModelDoc, ModelFieldDoc } from "../../types";
 import { ModelFieldFormValues } from "./ModelForm";
 import { ModelNameFormValues } from "./ModelNameForm";
@@ -109,8 +110,10 @@ const useModelFormProps: (defaultModelId?: string) => any = (
             formId,
           })
         );
+        dispatch(UiActions.disableModalEscape());
       } else {
         dispatch(ProjectActions.receiveEditingModelField(undefined));
+        dispatch(UiActions.enableModalEscape());
       }
     },
     [dispatch, formId]

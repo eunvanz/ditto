@@ -20,7 +20,6 @@ import {
   Divider,
   Dialog,
 } from "@material-ui/core";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import AddIcon from "@material-ui/icons/Add";
 import ModelFieldFormItem from "./ModelFieldFormItem";
 import {
@@ -61,6 +60,10 @@ const useStyles = makeStyles((theme) => ({
   addSubButton: {
     marginLeft: 10,
     color: theme.palette.text.secondary,
+  },
+  tableContainer: {
+    maxHeight: "calc(100vh - 200px)",
+    overflow: "auto",
   },
 }));
 
@@ -193,7 +196,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
     isVisible,
     onClose,
     name: "ModelForm",
-    isDisabled: editingModelFieldId !== undefined,
   });
 
   return (
@@ -303,32 +305,30 @@ const Wrapper: React.FC<WrapperProps> = ({
           existingModelNames={existingModelNames}
         />
         <Divider />
-        <PerfectScrollbar>
-          <Box minWidth={700}>
-            <Table stickyHeader>
-              <caption></caption>
-              <TableHead>
-                <TableRow>
-                  <TableCell component="th" className={classes.fieldNameCell}>
-                    필드명*
-                  </TableCell>
-                  <TableCell align="center" className={classes.requiredCell}>
-                    필수
-                  </TableCell>
-                  <TableCell align="center" className={classes.arrayCell}>
-                    배열
-                  </TableCell>
-                  <TableCell className={classes.typeCell}>타입*</TableCell>
-                  <TableCell className={classes.formatCell}>포맷</TableCell>
-                  <TableCell className={classes.formatCell}>열거형</TableCell>
-                  <TableCell>설명</TableCell>
-                  <TableCell align="right"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{children}</TableBody>
-            </Table>
-          </Box>
-        </PerfectScrollbar>
+        <Box minWidth={700} className={classes.tableContainer}>
+          <Table stickyHeader size="small">
+            <caption></caption>
+            <TableHead>
+              <TableRow>
+                <TableCell component="th" className={classes.fieldNameCell}>
+                  필드명*
+                </TableCell>
+                <TableCell align="center" className={classes.requiredCell}>
+                  필수
+                </TableCell>
+                <TableCell align="center" className={classes.arrayCell}>
+                  배열
+                </TableCell>
+                <TableCell className={classes.typeCell}>타입*</TableCell>
+                <TableCell className={classes.formatCell}>포맷</TableCell>
+                <TableCell className={classes.formatCell}>열거형</TableCell>
+                <TableCell>설명</TableCell>
+                <TableCell align="right"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>{children}</TableBody>
+          </Table>
+        </Box>
       </Card>
     );
   } else {

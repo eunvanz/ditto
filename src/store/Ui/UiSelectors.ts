@@ -17,6 +17,9 @@ const selectModalLayers = (state: RootState) => state.ui.modalLayers;
 const selectCriticalConfirmModal = (state: RootState) =>
   state.ui.criticalConfirmModal;
 
+const selectIsModalEscapeDisabled = (state: RootState) =>
+  state.ui.isModalEscapeDisabled;
+
 const UiSelectors = {
   selectTheme,
   selectProjectFormModal,
@@ -25,6 +28,7 @@ const UiSelectors = {
   selectGroupFormModal,
   selectModalLayers,
   selectCriticalConfirmModal,
+  selectIsModalEscapeDisabled,
 };
 
 export default UiSelectors;

@@ -22,6 +22,7 @@ export type UiState = {
   groupFormModal: GroupFormModalState;
   modalLayers: string[];
   criticalConfirmModal: CriticalConfirmModalState;
+  isModalEscapeDisabled: boolean;
 };
 
 export interface CriticalConfirmModalState {
@@ -81,6 +82,7 @@ export const initialUiState: UiState = {
     message: "",
     keyword: "",
   },
+  isModalEscapeDisabled: false,
 };
 
 const UiSlice = createSlice({
@@ -194,6 +196,12 @@ const UiSlice = createSlice({
       state.criticalConfirmModal.isVisible = false;
     },
     confirmCriticalConfirmModal: (_, _action: PayloadAction<void>) => {},
+    enableModalEscape: (state, _action: PayloadAction<void>) => {
+      state.isModalEscapeDisabled = false;
+    },
+    disableModalEscape: (state, _action: PayloadAction<void>) => {
+      state.isModalEscapeDisabled = true;
+    },
   },
 });
 
