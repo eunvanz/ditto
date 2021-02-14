@@ -13,6 +13,7 @@ import {
   EnumerationDoc,
   GroupItem,
   GroupDoc,
+  RequestItem,
 } from "../../types";
 import { call } from "typed-redux-saga";
 
@@ -191,6 +192,10 @@ function* deleteGroup(group: GroupDoc) {
   yield* call(deleteDocument, `projects/${group.projectId}/groups`, group.id);
 }
 
+function* addRequest(data: RequestItem) {
+  return yield* call(addDocument, `projects/${data.projectId}/requests`, data);
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -220,6 +225,7 @@ export const realFirework = {
   updateGroup,
   addGroup,
   deleteGroup,
+  addRequest,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

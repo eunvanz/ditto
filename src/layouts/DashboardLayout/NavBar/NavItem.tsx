@@ -190,9 +190,9 @@ const NavItem: FC<NavItemProps> = ({
     if (type === "project") {
       setIsNewItemMenuOpen(true);
     } else {
-      // TODO: api 생성화면 이동
+      onClickAddRequest?.();
     }
-  }, [type]);
+  }, [onClickAddRequest, type]);
 
   const handleOnClickAddRequest = useCallback(
     (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {

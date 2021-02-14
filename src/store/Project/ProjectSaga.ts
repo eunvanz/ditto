@@ -31,6 +31,7 @@ import {
   BaseSettings,
   Doc,
   Recordable,
+  RequestItem,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -39,6 +40,7 @@ import history from "../../helpers/history";
 import ROUTE from "../../paths";
 import ProjectSelectors from "./ProjectSelectors";
 import FirebaseSelectors from "../Firebase/FirebaseSelectors";
+import UiSelectors from "../Ui/UiSelectors";
 
 function* getProperDoc<T extends Recordable>(
   values: any & { target?: Doc<T, BaseSettings> }
@@ -972,6 +974,46 @@ export function* deleteGroupFlow() {
   }
 }
 
+export function* submitRequestFormFlow() {
+  while (true) {
+    const { type, payload } = yield* take(ProjectActions.submitRequestForm);
+    yield* put(ProgressActions.startProgress(type));
+    yield* put(UiActions.showLoading());
+
+    const { groupId, projectId } = yield* select(
+      UiSelectors.selectRequestFormModal
+    );
+    if (!projectId) {
+      continue;
+    }
+
+    const recordableDocProps = yield* call(getRecordableDocProps);
+    const newRequest: RequestItem = {
+      projectId,
+      groupId,
+      ...payload,
+      ...recordableDocProps,
+    };
+
+    try {
+      const newRequestRef = yield* call(Firework.addRequest, newRequest);
+      yield* put(
+        UiActions.showNotification({
+          message: "리퀘스트가 생성됐습니다.",
+          type: "success",
+        })
+      );
+      yield* put(UiActions.hideRequestFormModal());
+      yield* call(history.push, `${ROUTE.REQUESTS}/${newRequestRef.id}`);
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    } finally {
+      yield* put(ProgressActions.finishProgress(type));
+      yield* put(UiActions.hideLoading());
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -987,5 +1029,6 @@ export function* watchProjectActions() {
     fork(deleteEnumerationFlow),
     fork(submitGroupFormFlow),
     fork(deleteGroupFlow),
+    fork(submitRequestFormFlow),
   ]);
 }

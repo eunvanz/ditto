@@ -23,7 +23,14 @@ export type UiState = {
   modalLayers: string[];
   criticalConfirmModal: CriticalConfirmModalState;
   isModalEscapeDisabled: boolean;
+  requestFormModal: RequestFormModalState;
 };
+
+export interface RequestFormModalState {
+  isVisible: boolean;
+  projectId?: string;
+  groupId?: string;
+}
 
 export interface CriticalConfirmModalState {
   isVisible: boolean;
@@ -83,6 +90,11 @@ export const initialUiState: UiState = {
     keyword: "",
   },
   isModalEscapeDisabled: false,
+  requestFormModal: {
+    isVisible: false,
+    projectId: undefined,
+    groupId: undefined,
+  },
 };
 
 const UiSlice = createSlice({
@@ -201,6 +213,17 @@ const UiSlice = createSlice({
     },
     disableModalEscape: (state, _action: PayloadAction<void>) => {
       state.isModalEscapeDisabled = true;
+    },
+    showRequestFormModal: (
+      state,
+      action: PayloadAction<Omit<RequestFormModalState, "isVisible">>
+    ) => {
+      state.requestFormModal.isVisible = true;
+      state.requestFormModal.projectId = action.payload.projectId;
+      state.requestFormModal.groupId = action.payload.groupId;
+    },
+    hideRequestFormModal: (state, _action: PayloadAction<void>) => {
+      state.requestFormModal.isVisible = false;
     },
   },
 });

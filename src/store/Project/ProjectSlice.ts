@@ -15,6 +15,7 @@ import { ModelNameFormValues } from "../../components/ModelForm/ModelNameForm";
 import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
 import { EnumFormValues } from "../../routes/ProjectManagement/EnumForm/EnumForm";
 import { GroupFormValues } from "../../components/GroupFormModal/GroupFormModal";
+import { RequestFormValues } from "../../components/RequestFormModal/RequestFormModal";
 
 export type ProjectState = {
   editingModelField?: {
@@ -108,6 +109,7 @@ const ProjectSlice = createSlice({
     ) => {},
     submitGroupForm: (_, _action: PayloadAction<GroupFormValues>) => {},
     deleteGroup: (_, _action: PayloadAction<GroupDoc>) => {},
+    submitRequestForm: (_, _action: PayloadAction<RequestFormValues>) => {},
   },
 });
 

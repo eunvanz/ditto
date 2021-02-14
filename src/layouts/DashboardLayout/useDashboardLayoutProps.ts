@@ -24,9 +24,16 @@ const useDashboardLayoutProps = () => {
 
   const history = useHistory();
 
-  const navigateToNewRequest = useCallback(
-    (project: ProjectDoc, group?: any) => {},
-    []
+  const showRequestFormModal = useCallback(
+    (project: ProjectDoc, group?: any) => {
+      dispatch(
+        UiActions.showRequestFormModal({
+          projectId: project.id,
+          groupId: group?.id,
+        })
+      );
+    },
+    [dispatch]
   );
 
   const showGroupFormModal = useCallback(
@@ -51,10 +58,11 @@ const useDashboardLayoutProps = () => {
         hasNew: false,
         childrenCount: 0,
         onClickConfig: () => showGroupFormModal(project, group),
+        onClickAddRequest: () => showRequestFormModal(project, group),
         items: [],
       }));
     },
-    [groupedProjectGroups, showGroupFormModal]
+    [groupedProjectGroups, showGroupFormModal, showRequestFormModal]
   );
 
   const sections = useMemo(() => {
@@ -68,7 +76,7 @@ const useDashboardLayoutProps = () => {
             childrenCount: 0,
             onClickConfig: () =>
               history.push(`${ROUTE.PROJECTS}/${project.id}`),
-            onClickAddRequest: () => navigateToNewRequest(project),
+            onClickAddRequest: () => showRequestFormModal(project),
             onClickAddGroup: () => showGroupFormModal(project),
             type: "project" as const,
             items: getProjectSubItems(project),
@@ -78,7 +86,7 @@ const useDashboardLayoutProps = () => {
   }, [
     getProjectSubItems,
     history,
-    navigateToNewRequest,
+    showRequestFormModal,
     projects,
     showGroupFormModal,
   ]);
