@@ -16,7 +16,6 @@ import {
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import SettingsIcon from "@material-ui/icons/Settings";
-import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import FolderOutlined from "@material-ui/icons/FolderOutlined";
 import AddIcon from "@material-ui/icons/Add";
 import EmojiObjectsOutlinedIcon from "@material-ui/icons/EmojiObjectsOutlined";
@@ -90,7 +89,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-    maxWidth: 160,
+    maxWidth: 190,
     "&.has-new": {
       color: theme.palette.error.main,
     },
@@ -151,8 +150,6 @@ const NavItem: FC<NavItemProps> = ({
 }) => {
   if (type === "group") {
     assertNotEmpty(childrenCount);
-  } else if (type === "request") {
-    assertNotEmpty(requestMethod);
   }
 
   const classes = useStyles();
@@ -295,13 +292,12 @@ const NavItem: FC<NavItemProps> = ({
           style={style}
           to={href!}
         >
-          <RequestMethodBadge requestMethod={requestMethod!} />
+          {!!requestMethod && (
+            <RequestMethodBadge requestMethod={requestMethod!} />
+          )}
           <NewBadge isVisible={hasNew} className={classes.newBadge}>
             <span className={classes.title}>{title}</span>
           </NewBadge>
-          <Button className={classes.insideButton} size="small">
-            <MoreHorizIcon fontSize="small" />
-          </Button>
         </Button>
       </ListItem>
     );

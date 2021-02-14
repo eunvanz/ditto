@@ -8,6 +8,7 @@ import {
   ModelFieldDoc,
   ProjectDoc,
   ProjectUrlDoc,
+  RequestDoc,
 } from "../../types";
 import AuthSelectors from "../Auth/AuthSelector";
 
@@ -76,6 +77,24 @@ const createGroupedProjectGroupsSelector = (projectIds: string[]) =>
     }
   );
 
+const createGroupedProjectRequestsSelector = (projectIds: string[]) =>
+  createSelector(
+    (state: RootState) =>
+      projectIds.map(
+        (projectId) => state.firestore.ordered[`projects/${projectId}/requests`]
+      ),
+    (projectRequestsArray: RequestDoc[][]) => {
+      const groupedProjectRequests: Record<string, RequestDoc[]> = {};
+      projectRequestsArray.forEach((projectRequests) => {
+        if (projectRequests?.length) {
+          const projectId = projectRequests[0].projectId;
+          groupedProjectRequests[projectId] = projectRequests;
+        }
+      });
+      return groupedProjectRequests;
+    }
+  );
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -86,6 +105,7 @@ const FirebaseSelectors = {
   createProjectModelsSelector,
   createProjectGroupsSelector,
   createGroupedProjectGroupsSelector,
+  createGroupedProjectRequestsSelector,
 };
 
 export default FirebaseSelectors;

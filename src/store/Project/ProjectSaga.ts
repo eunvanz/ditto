@@ -990,10 +990,12 @@ export function* submitRequestFormFlow() {
     const recordableDocProps = yield* call(getRecordableDocProps);
     const newRequest: RequestItem = {
       projectId,
-      groupId,
       ...payload,
       ...recordableDocProps,
     };
+    if (groupId) {
+      newRequest.groupId = groupId;
+    }
 
     try {
       const newRequestRef = yield* call(Firework.addRequest, newRequest);

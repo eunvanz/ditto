@@ -7,6 +7,7 @@ import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { UiActions } from "../../store/Ui/UiSlice";
 import { GroupDoc, ProjectDoc } from "../../types";
+import { SectionItem } from "./NavBar/NavBar";
 
 const useDashboardLayoutProps = () => {
   const dispatch = useDispatch();
@@ -14,13 +15,21 @@ const useDashboardLayoutProps = () => {
   const projects = useSelector(FirebaseSelectors.selectOrderedMyProjects);
 
   const firestoreQuery = useMemo(() => {
-    return projects.map((project) => ({
-      collection: `projects/${project.id}/groups`,
-      orderBy: ["createdAt", "asc"],
-    }));
+    const query: any[] = [];
+    projects.forEach((project) => {
+      query.push({
+        collection: `projects/${project.id}/groups`,
+        orderBy: ["createdAt", "asc"],
+      });
+      query.push({
+        collection: `projects/${project.id}/requests`,
+        orderBy: ["createdAt", "asc"],
+      });
+    });
+    return query;
   }, [projects]);
 
-  useFirestoreConnect(firestoreQuery as any);
+  useFirestoreConnect(firestoreQuery);
 
   const history = useHistory();
 
@@ -50,19 +59,60 @@ const useDashboardLayoutProps = () => {
     )
   );
 
+  const groupedProjectRequests = useSelector(
+    FirebaseSelectors.createGroupedProjectRequestsSelector(
+      projects.map((project) => project.id)
+    )
+  );
+
+  const getGroupSubItems = useCallback(
+    (project: ProjectDoc, group: GroupDoc) => {
+      return groupedProjectRequests[project.id]
+        ?.filter((request) => request.groupId === group.id)
+        .map((request) => ({
+          title: request.name,
+          type: "request" as const,
+          hasNew: false,
+          href: `${ROUTE.REQUESTS}/${request.id}`,
+        }));
+    },
+    [groupedProjectRequests]
+  );
+
   const getProjectSubItems = useCallback(
     (project: ProjectDoc) => {
-      return groupedProjectGroups[project.id]?.map((group) => ({
-        title: group.name,
-        type: "group" as const,
-        hasNew: false,
-        childrenCount: 0,
-        onClickConfig: () => showGroupFormModal(project, group),
-        onClickAddRequest: () => showRequestFormModal(project, group),
-        items: [],
-      }));
+      const subItems: SectionItem[] = [];
+      groupedProjectGroups[project.id]?.forEach((group) => {
+        const items = getGroupSubItems(project, group);
+        subItems.push({
+          title: group.name,
+          type: "group" as const,
+          hasNew: false,
+          childrenCount: items?.length || 0,
+          onClickConfig: () => showGroupFormModal(project, group),
+          onClickAddRequest: () => showRequestFormModal(project, group),
+          items,
+        });
+      });
+      groupedProjectRequests[project.id]
+        ?.filter((request) => !request.groupId)
+        .forEach((request) => {
+          subItems.push({
+            title: request.name,
+            type: "request" as const,
+            hasNew: false,
+            href: `${ROUTE.REQUESTS}/${request.id}`,
+          });
+        });
+      return subItems;
     },
-    [groupedProjectGroups, showGroupFormModal, showRequestFormModal]
+    [
+      getGroupSubItems,
+      groupedProjectGroups,
+      groupedProjectRequests,
+      showGroupFormModal,
+      showRequestFormModal,
+    ]
   );
 
   const sections = useMemo(() => {
