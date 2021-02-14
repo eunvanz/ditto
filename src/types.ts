@@ -298,6 +298,54 @@ export interface RequestItem extends Recordable {
   name: string;
   summary?: string;
   description?: string;
+  path: string;
+  baseUrl: string;
+  operationId?: string;
+  isDeprecated?: boolean;
+}
+
+export enum REQUEST_PARAM_LOCATION {
+  QUERY = "QUERY",
+  PATH = "PATH",
+  HEADER = "HEADER",
+  COOKIE = "COOKIE",
+}
+
+export enum REQUEST_PARAM_DATA_TYPE {
+  STRING = "STRING",
+  INTEGER = "INTEGER",
+  NUMBER = "NUMBER",
+  BOOLEAN = "BOOLEAN",
+  ARRAY = "ARRAY",
+  OBJECT = "OBJECT",
+}
+
+export interface RequestParamItem extends Recordable {
+  requestId: string;
+  name: string;
+  description?: string;
+  location: REQUEST_PARAM_LOCATION;
+  dataType: REQUEST_PARAM_DATA_TYPE;
+  isRequired: boolean;
+  isDeprecated: boolean;
+  format?: string; // model id
+  enum?: string; // enum id
+}
+
+export interface RequestBodyItem extends Recordable {
+  requestId: string;
+  description?: string;
+  mediaType: string;
+  isRequired: boolean;
+  format?: string; // model id
+}
+
+export interface ResponseItem extends Recordable {
+  requestId: string;
+  statusCode: number;
+  description?: string;
+  mediaType?: string;
+  format?: string; // model id
 }
 
 export interface ModalBase {
