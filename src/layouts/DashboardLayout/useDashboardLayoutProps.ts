@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
-import { useHistory } from "react-router-dom";
+import { matchPath, useHistory, useLocation } from "react-router-dom";
 import ROUTE from "../../paths";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
@@ -32,6 +32,8 @@ const useDashboardLayoutProps = () => {
   useFirestoreConnect(firestoreQuery);
 
   const history = useHistory();
+
+  const location = useLocation();
 
   const showRequestFormModal = useCallback(
     (project: ProjectDoc, group?: any) => {
@@ -91,6 +93,9 @@ const useDashboardLayoutProps = () => {
           childrenCount: items?.length || 0,
           onClickConfig: () => showGroupFormModal(project, group),
           onClickAddRequest: () => showRequestFormModal(project, group),
+          isOpen: items.some((item) =>
+            matchPath(location.pathname, { path: item.href, exact: false })
+          ),
           items,
         });
       });
@@ -110,6 +115,7 @@ const useDashboardLayoutProps = () => {
       getGroupSubItems,
       groupedProjectGroups,
       groupedProjectRequests,
+      location.pathname,
       showGroupFormModal,
       showRequestFormModal,
     ]
@@ -119,18 +125,30 @@ const useDashboardLayoutProps = () => {
     return [
       {
         subheader: "내 프로젝트",
-        items:
-          projects?.map((project) => ({
-            title: project.title,
-            hasNew: false,
-            childrenCount: 0,
-            onClickConfig: () =>
-              history.push(`${ROUTE.PROJECTS}/${project.id}`),
-            onClickAddRequest: () => showRequestFormModal(project),
-            onClickAddGroup: () => showGroupFormModal(project),
-            type: "project" as const,
-            items: getProjectSubItems(project),
-          })) || [],
+        items: projects?.map((project) => {
+          const items = getProjectSubItems(project);
+          return (
+            {
+              title: project.title,
+              hasNew: false,
+              childrenCount: 0,
+              onClickConfig: () =>
+                history.push(`${ROUTE.PROJECTS}/${project.id}`),
+              onClickAddRequest: () => showRequestFormModal(project),
+              onClickAddGroup: () => showGroupFormModal(project),
+              type: "project" as const,
+              items,
+              isOpen: items.some(
+                (item) =>
+                  item.isOpen ||
+                  matchPath(location.pathname, {
+                    path: item.href,
+                    exact: false,
+                  })
+              ),
+            } || []
+          );
+        }),
       },
     ];
   }, [

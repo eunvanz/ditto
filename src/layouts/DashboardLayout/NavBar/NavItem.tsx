@@ -1,4 +1,10 @@
-import React, { useState, useMemo, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+} from "react";
 import { FC, ReactNode } from "react";
 import { NavLink as RouterLink } from "react-router-dom";
 import clsx from "clsx";
@@ -155,6 +161,13 @@ const NavItem: FC<NavItemProps> = ({
   const classes = useStyles();
 
   const [isOpen, setIsOpen] = useState<boolean>(isInitiallyOpen);
+
+  useEffect(() => {
+    // 데이터 로딩에 따라 뒤늦게 열리는 경우가 있어서 추가된 로직
+    if (isInitiallyOpen) {
+      setIsOpen(isInitiallyOpen);
+    }
+  }, [isInitiallyOpen]);
 
   const handleToggle = (): void => {
     setIsOpen((prevOpen) => !prevOpen);

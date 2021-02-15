@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { FC, ReactNode } from "react";
-import { useLocation, matchPath } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   Box,
@@ -20,7 +20,7 @@ export interface NavBarProps {
 }
 
 export interface SectionItem
-  extends Omit<NavItemProps, "depth" | "isOpen" | "children" | "onClick"> {
+  extends Omit<NavItemProps, "depth" | "children" | "onClick"> {
   icon?: ReactNode;
   info?: ReactNode;
   items?: SectionItem[];
@@ -67,13 +67,8 @@ function reduceChildRoutes({
   const key = item.title + depth;
 
   if (item.items) {
-    const isPathMatched = !!matchPath(pathname, {
-      path: item.href,
-      exact: false,
-    });
-
     acc.push(
-      <NavItem depth={depth} key={key} isOpen={isPathMatched} {...item}>
+      <NavItem depth={depth} key={key} {...item}>
         {renderNavItems({
           depth: depth + 1,
           pathname,
