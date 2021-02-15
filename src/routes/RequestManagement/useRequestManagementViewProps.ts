@@ -19,7 +19,6 @@ const useRequestManagementViewProps = () => {
 
   useFirestoreConnect({
     collection: `projects/${projectId}/requests`,
-    doc: requestId,
   });
 
   const request = useSelector(

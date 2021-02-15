@@ -22,7 +22,7 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
 }) => {
   const classes = useStyles();
 
-  const [activeTab, setActiveTab] = useState("basic");
+  const [activeTab, setActiveTab] = useState("request");
 
   const tabs = useMemo(() => {
     return [
