@@ -15,6 +15,10 @@ function RoutedApp() {
       <DashboardLayout>
         <Switch>
           <Route
+            path={`${ROUTE.PROJECTS}/:projectId${ROUTE.REQUESTS}/:requestId`}
+            component={Routes.RequestManagement}
+          />
+          <Route
             path={`${ROUTE.PROJECTS}/:projectId`}
             component={Routes.ProjectManagement}
           />

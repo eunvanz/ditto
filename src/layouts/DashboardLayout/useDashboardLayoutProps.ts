@@ -73,7 +73,7 @@ const useDashboardLayoutProps = () => {
           title: request.name,
           type: "request" as const,
           hasNew: false,
-          href: `${ROUTE.REQUESTS}/${request.id}`,
+          href: `${ROUTE.PROJECTS}/${project.id}${ROUTE.REQUESTS}/${request.id}`,
         }));
     },
     [groupedProjectRequests]
@@ -101,7 +101,7 @@ const useDashboardLayoutProps = () => {
             title: request.name,
             type: "request" as const,
             hasNew: false,
-            href: `${ROUTE.REQUESTS}/${request.id}`,
+            href: `${ROUTE.PROJECTS}/${project.id}${ROUTE.REQUESTS}/${request.id}`,
           });
         });
       return subItems;

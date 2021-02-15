@@ -5,7 +5,7 @@ import { Typography, makeStyles, Box } from "@material-ui/core";
 interface HeaderProps {
   className?: string;
   title: string;
-  description: string;
+  description?: string;
 }
 
 const useStyles = makeStyles(() => ({

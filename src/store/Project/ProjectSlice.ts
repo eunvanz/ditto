@@ -8,6 +8,7 @@ import {
   EnumerationDoc,
   FIELD_TYPE,
   GroupDoc,
+  RequestDoc,
 } from "../../types";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
@@ -27,6 +28,7 @@ export type ProjectState = {
   fieldTypeToCreate?: FIELD_TYPE;
   currentProject?: ProjectDoc;
   currentModel?: ModelDoc;
+  currentRequest?: RequestDoc;
 };
 
 export const initialProjectState: ProjectState = {};
@@ -69,6 +71,12 @@ const ProjectSlice = createSlice({
     },
     clearCurrentModel: (state, _action: PayloadAction<void>) => {
       state.currentModel = undefined;
+    },
+    receiveCurrentRequest: (state, action: PayloadAction<RequestDoc>) => {
+      state.currentRequest = action.payload;
+    },
+    clearCurrentRequest: (state, _action: PayloadAction<void>) => {
+      state.currentRequest = undefined;
     },
     submitProjectForm: (
       _,
