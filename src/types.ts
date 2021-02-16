@@ -6,6 +6,7 @@ export enum THEMES {
 }
 
 export enum REQUEST_METHOD {
+  NONE = "미선택",
   GET = "GET",
   POST = "POST",
   PUT = "PUT",
@@ -191,6 +192,11 @@ export enum ENUMERATION {
   NEW = "새로운 열거형",
 }
 
+export enum BASE_URL {
+  NONE = "미선택",
+  NEW = "새로운 베이스URL",
+}
+
 export const formats: { [k in FIELD_TYPE]: (string | undefined)[] } = {
   [FIELD_TYPE.INTEGER]: [FORMAT.INT32, FORMAT.INT64],
   [FIELD_TYPE.NUMBER]: [FORMAT.NONE, FORMAT.FLOAT, FORMAT.DOUBLE],
@@ -301,6 +307,7 @@ export interface RequestItem extends Recordable {
   path?: string;
   baseUrl?: string;
   basePath?: string;
+  method?: REQUEST_METHOD;
   operationId?: string;
   isDeprecated?: boolean;
 }

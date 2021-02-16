@@ -152,11 +152,12 @@ const useDashboardLayoutProps = () => {
       },
     ];
   }, [
+    projects,
     getProjectSubItems,
     history,
     showRequestFormModal,
-    projects,
     showGroupFormModal,
+    location.pathname,
   ]);
 
   return { sections };

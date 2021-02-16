@@ -1,4 +1,11 @@
-import { ModelFieldDoc, ModelDoc, FIELD_TYPE, EnumerationDoc } from "../types";
+import {
+  ModelFieldDoc,
+  ModelDoc,
+  FIELD_TYPE,
+  EnumerationDoc,
+  RequestDoc,
+  REQUEST_METHOD,
+} from "../types";
 
 const project = {
   id: "imIYYtrWFJjpU9aeTRlQ",
@@ -419,6 +426,35 @@ const enumerations: EnumerationDoc[] = [
   },
 ];
 
+const request: RequestDoc = {
+  id: "mockId",
+  projectId: "mockId",
+  name: "펫 정보 가져오기",
+  summary: "아이디로 펫 정보 조회",
+  path: "pet/{petId}",
+  baseUrl: projectUrls[0].id,
+  method: REQUEST_METHOD.GET,
+  isDeprecated: false,
+  updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+  createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+  updatedAt: {
+    seconds: 1601466174,
+    nanoseconds: 963000000,
+  },
+  createdAt: {
+    seconds: 1601466174,
+    nanoseconds: 963000000,
+  },
+  settingsByMember: {
+    aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+      updatedAt: {
+        seconds: 1601466174,
+        nanoseconds: 963000000,
+      },
+    },
+  },
+};
+
 const mockProject = {
   project,
   projectUrls,
@@ -426,6 +462,7 @@ const mockProject = {
   model,
   models,
   enumerations,
+  request,
 };
 
 export default mockProject;

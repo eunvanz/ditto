@@ -364,6 +364,8 @@ const RequestMethodBadge: FC<RequestMethodBadgeProps> = ({ requestMethod }) => {
         return { color: "error" as const, text: "DEL" };
       case REQUEST_METHOD.PATCH:
         return { color: "secondary" as const, text: "PATCH" };
+      default:
+        return { color: "error" as const, text: "" };
     }
   }, [requestMethod]);
 
