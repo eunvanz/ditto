@@ -1,5 +1,5 @@
 import { Box, InputAdornment, makeStyles, TextField } from "@material-ui/core";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { regExps } from "../../../../helpers/commonHelpers";
 import { Theme } from "../../../../theme";
@@ -60,7 +60,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
     };
   }, [request.baseUrl, request.method, request.path]);
 
-  const { register, handleSubmit, watch, errors } = useForm<
+  const { register, handleSubmit, watch, errors, trigger } = useForm<
     RequestUrlFormValues
   >({
     mode: "onChange",
@@ -93,9 +93,16 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
       : `${baseUrls.find((item) => item.id === watchedBaseUrl)?.url}/`;
   }, [baseUrls, watchedBaseUrl]);
 
+  const validateAndSubmit = useCallback(async () => {
+    trigger();
+    await handleSubmit((data) => {
+      onSubmit(data);
+    })();
+  }, [handleSubmit, onSubmit, trigger]);
+
   return (
     <Box p={2}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={validateAndSubmit}>
         <Box display="flex" alignItems="center">
           <TextField
             label="메소드"
@@ -105,6 +112,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             inputRef={register()}
             className={classes.methodField}
             SelectProps={{ native: true }}
+            onBlur={validateAndSubmit}
           >
             {methodOptions.map((method) => (
               <option key={method} value={method}>
@@ -120,6 +128,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             inputRef={register()}
             className={classes.baseUrlField}
             SelectProps={{ native: true }}
+            onBlur={validateAndSubmit}
           >
             {baseUrlOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -147,13 +156,14 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
                 return !isValidUrl
                   ? "URL형식에 맞지 않아요."
                   : isParamWrappedProperly ||
-                      "패스 파라미터 형식이 부적절해요.";
+                      "패스 파라미터를 '{}'로 감싸주세요.";
               },
             })}
             className={classes.pathField}
             placeholder="user/{userId}"
             error={!!errors.path}
             helperText={errors.path?.message}
+            onBlur={validateAndSubmit}
           />
         </Box>
       </form>
