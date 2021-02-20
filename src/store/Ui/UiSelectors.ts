@@ -1,26 +1,55 @@
+import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "..";
 
-const selectTheme = (state: RootState) => state.ui.theme;
+const selectTheme = createSelector(
+  (state: RootState) => state.ui.theme,
+  (theme) => theme
+);
 
-const selectProjectFormModal = (state: RootState) => state.ui.projectFormModal;
+const selectProjectFormModal = createSelector(
+  (state: RootState) => state.ui.projectFormModal,
+  (projectFormModal) => projectFormModal
+);
 
-const selectQuickModelNameFormModal = (state: RootState) =>
-  state.ui.quickModelNameFormModal;
+const selectQuickModelNameFormModal = createSelector(
+  (state: RootState) => state.ui.quickModelNameFormModal,
+  (quickModelNameFormModal) => quickModelNameFormModal
+);
 
-const selectQuickEnumFormModal = (state: RootState) =>
-  state.ui.quickEnumFormModal;
+const selectQuickEnumFormModal = createSelector(
+  (state: RootState) => state.ui.quickEnumFormModal,
+  (quickEnumFormModal) => quickEnumFormModal
+);
 
-const selectGroupFormModal = (state: RootState) => state.ui.groupFormModal;
+const selectGroupFormModal = createSelector(
+  (state: RootState) => state.ui.groupFormModal,
+  (groupFormModal) => groupFormModal
+);
 
-const selectModalLayers = (state: RootState) => state.ui.modalLayers;
+const selectModalLayers = createSelector(
+  (state: RootState) => state.ui.modalLayers,
+  (modalLayers) => modalLayers
+);
 
-const selectCriticalConfirmModal = (state: RootState) =>
-  state.ui.criticalConfirmModal;
+const selectCriticalConfirmModal = createSelector(
+  (state: RootState) => state.ui.criticalConfirmModal,
+  (criticalConfirmModal) => criticalConfirmModal
+);
 
-const selectIsModalEscapeDisabled = (state: RootState) =>
-  state.ui.isModalEscapeDisabled;
+const selectIsModalEscapeDisabled = createSelector(
+  (state: RootState) => state.ui.isModalEscapeDisabled,
+  (isModalEscapeDisabled) => isModalEscapeDisabled
+);
 
-const selectRequestFormModal = (state: RootState) => state.ui.requestFormModal;
+const selectRequestFormModal = createSelector(
+  (state: RootState) => state.ui.requestFormModal,
+  (requestFormModal) => requestFormModal
+);
+
+const selectQuickUrlFormModal = createSelector(
+  (state: RootState) => state.ui.quickUrlFormModal,
+  (quickUrlFormModal) => quickUrlFormModal
+);
 
 const UiSelectors = {
   selectTheme,
@@ -32,6 +61,7 @@ const UiSelectors = {
   selectCriticalConfirmModal,
   selectIsModalEscapeDisabled,
   selectRequestFormModal,
+  selectQuickUrlFormModal,
 };
 
 export default UiSelectors;

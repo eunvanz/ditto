@@ -1064,5 +1064,6 @@ export function* watchProjectActions() {
     fork(submitGroupFormFlow),
     fork(deleteGroupFlow),
     fork(submitRequestFormFlow),
+    fork(submitRequestUrlFormFlow),
   ]);
 }

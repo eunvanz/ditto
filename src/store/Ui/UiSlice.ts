@@ -24,7 +24,12 @@ export type UiState = {
   criticalConfirmModal: CriticalConfirmModalState;
   isModalEscapeDisabled: boolean;
   requestFormModal: RequestFormModalState;
+  quickUrlFormModal: QuickUrlFormModalState;
 };
+
+export interface QuickUrlFormModalState {
+  isVisible: boolean;
+}
 
 export interface RequestFormModalState {
   isVisible: boolean;
@@ -94,6 +99,9 @@ export const initialUiState: UiState = {
     isVisible: false,
     projectId: undefined,
     groupId: undefined,
+  },
+  quickUrlFormModal: {
+    isVisible: false,
   },
 };
 
@@ -224,6 +232,12 @@ const UiSlice = createSlice({
     },
     hideRequestFormModal: (state, _action: PayloadAction<void>) => {
       state.requestFormModal.isVisible = false;
+    },
+    showQuickUrlFormModal: (state, _action: PayloadAction<void>) => {
+      state.quickUrlFormModal.isVisible = true;
+    },
+    hideQuickUrlFormModal: (state, _action: PayloadAction<void>) => {
+      state.quickUrlFormModal.isVisible = false;
     },
   },
 });

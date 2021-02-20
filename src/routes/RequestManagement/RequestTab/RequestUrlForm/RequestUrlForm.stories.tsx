@@ -3,6 +3,8 @@ import { Story, Meta } from "@storybook/react/types-6-0";
 
 import RequestUrlForm, { RequestUrlFormProps } from "./RequestUrlForm";
 import mockProject from "../../../../mocks/mockProject";
+import { withRedux } from "../../../../helpers/storybookHelpers";
+import { initialRootState } from "../../../../store";
 
 const defaultProps: Partial<RequestUrlFormProps> = {
   baseUrls: mockProject.projectUrls,
@@ -16,6 +18,12 @@ export default {
   args: {
     ...defaultProps,
   },
+  decorators: [
+    withRedux({
+      ...initialRootState,
+      project: { currentProject: mockProject.project },
+    }),
+  ],
 } as Meta;
 
 const Template: Story<RequestUrlFormProps> = (args) => (

@@ -1,3 +1,5 @@
+import { FieldError } from "react-hook-form";
+
 export const patterns = {
   wordsWithNoSpace: {
     value: /^\w+\S$/,
@@ -8,3 +10,8 @@ export const patterns = {
 export const getIntentionPaddingByDepth = (depth?: number) => {
   return depth ? depth * 16 : undefined;
 };
+
+export const getTextFieldErrorProps = (error?: FieldError) => ({
+  error: !!error,
+  helperText: error?.message,
+});

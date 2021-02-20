@@ -240,6 +240,9 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
                         autoFocusField={fieldNameToFocus}
                         onBlur={handleOnBlur}
                         onFocus={handleOnFocus}
+                        existingUrls={projectUrls.filter(
+                          (item) => item.id !== projectUrl.id
+                        )}
                       />
                     ) : (
                       <>
@@ -278,6 +281,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
                       autoFocusField={fieldNameToFocus}
                       onBlur={handleOnBlur}
                       onFocus={handleOnFocus}
+                      existingUrls={projectUrls}
                     />
                   ) : (
                     <TableCell colSpan={4}>

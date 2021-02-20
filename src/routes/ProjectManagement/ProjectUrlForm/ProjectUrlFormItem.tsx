@@ -3,12 +3,14 @@ import { TableCell, TextField, Box } from "@material-ui/core";
 import { UseFormMethods } from "react-hook-form";
 import { ProjectUrlFormValues } from "./ProjectUrlForm";
 import { regExps } from "../../../helpers/commonHelpers";
+import { ProjectUrlDoc } from "../../../types";
 
 export interface ProjectUrlFormItemProps {
   formProps: UseFormMethods<ProjectUrlFormValues>;
   autoFocusField?: keyof ProjectUrlFormValues;
   onBlur: () => void;
   onFocus: () => void;
+  existingUrls: ProjectUrlDoc[];
 }
 
 const ProjectUrlFormItem: React.FC<ProjectUrlFormItemProps> = ({
@@ -16,6 +18,7 @@ const ProjectUrlFormItem: React.FC<ProjectUrlFormItemProps> = ({
   autoFocusField = "label",
   onBlur,
   onFocus,
+  existingUrls,
 }) => {
   const { register, errors } = formProps;
 
@@ -31,6 +34,10 @@ const ProjectUrlFormItem: React.FC<ProjectUrlFormItemProps> = ({
             maxLength: {
               value: 20,
               message: "이름이 너무 길어요.",
+            },
+            validate: (data: string) => {
+              const isDup = existingUrls.some((item) => item.label === data);
+              return isDup ? "중복되는 이름이 있어요." : true;
             },
           })}
           fullWidth
@@ -50,12 +57,16 @@ const ProjectUrlFormItem: React.FC<ProjectUrlFormItemProps> = ({
           inputRef={register({
             required: "URL을 입력해주세요.",
             maxLength: {
-              value: 200,
+              value: 100,
               message: "URL이 너무 길어요.",
             },
             pattern: {
               value: regExps.url,
               message: "URL형식으로 입력해주세요.",
+            },
+            validate: (data: string) => {
+              const dupUrl = existingUrls.find((item) => item.url === data);
+              return dupUrl ? `이미 등록된 URL이에요. - ${dupUrl.label}` : true;
             },
           })}
           fullWidth
@@ -74,7 +85,7 @@ const ProjectUrlFormItem: React.FC<ProjectUrlFormItemProps> = ({
           name="description"
           inputRef={register({
             maxLength: {
-              value: 80,
+              value: 100,
               message: "설명이 너무 길어요.",
             },
           })}

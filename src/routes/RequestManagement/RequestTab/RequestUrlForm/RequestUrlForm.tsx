@@ -1,6 +1,7 @@
 import { Box, InputAdornment, makeStyles, TextField } from "@material-ui/core";
 import React, { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import QuickUrlFormModal from "../../../../components/QuickUrlFormModal";
 import { regExps } from "../../../../helpers/commonHelpers";
 import { Theme } from "../../../../theme";
 import {
@@ -167,6 +168,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
           />
         </Box>
       </form>
+      <QuickUrlFormModal />
     </Box>
   );
 };
