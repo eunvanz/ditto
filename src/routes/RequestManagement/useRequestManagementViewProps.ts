@@ -27,17 +27,24 @@ const useRequestManagementViewProps = () => {
       requestId
     )
   );
+  const project = useSelector(
+    FirebaseSelectors.createProjectSelectorByProjectId(projectId)
+  );
 
   useEffect(() => {
     if (isLoaded(request)) {
       dispatch(UiActions.hideLoading());
-      dispatch(ProjectActions.receiveCurrentRequest(request));
     }
   }, [dispatch, request]);
 
   useEffect(() => {
     dispatch(UiActions.showDelayedLoading());
-  }, [dispatch]);
+    if (project) {
+      dispatch(ProjectActions.receiveCurrentProject(project));
+    } else {
+      // TODO: NOT FOUND 페이지로 이동
+    }
+  }, [dispatch, project]);
 
   return { request, key: request?.id };
 };

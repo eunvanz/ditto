@@ -1,5 +1,5 @@
 import { Box, InputAdornment, makeStyles, TextField } from "@material-ui/core";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import QuickUrlFormModal from "../../../../components/QuickUrlFormModal";
 import { regExps } from "../../../../helpers/commonHelpers";
@@ -44,6 +44,7 @@ export interface RequestUrlFormValues {
   method: REQUEST_METHOD;
   baseUrl: string;
   path: string;
+  target?: RequestDoc;
 }
 
 const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
@@ -61,7 +62,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
     };
   }, [request.baseUrl, request.method, request.path]);
 
-  const { register, handleSubmit, watch, errors, trigger } = useForm<
+  const { register, handleSubmit, watch, errors, trigger, reset } = useForm<
     RequestUrlFormValues
   >({
     mode: "onChange",
@@ -94,12 +95,22 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
       : `${baseUrls.find((item) => item.id === watchedBaseUrl)?.url}/`;
   }, [baseUrls, watchedBaseUrl]);
 
-  const validateAndSubmit = useCallback(async () => {
-    trigger();
-    await handleSubmit((data) => {
-      onSubmit(data);
-    })();
-  }, [handleSubmit, onSubmit, trigger]);
+  const validateAndSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      trigger();
+      await handleSubmit((data) => {
+        onSubmit({ ...data, target: request });
+      })();
+    },
+    [handleSubmit, onSubmit, request, trigger]
+  );
+
+  useEffect(() => {
+    if (request) {
+      reset(defaultValues);
+    }
+  }, [defaultValues, request, reset]);
 
   return (
     <Box p={2}>
@@ -154,10 +165,18 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
                 const isParamWrappedProperly = regExps.url.test(
                   braceRemovedUrl
                 );
-                return !isValidUrl
-                  ? "URL형식에 맞지 않아요."
-                  : isParamWrappedProperly ||
-                      "패스 파라미터를 '{}'로 감싸주세요.";
+                if (
+                  data &&
+                  watchedBaseUrl !== BASE_URL.NEW &&
+                  watchedBaseUrl !== BASE_URL.NONE
+                ) {
+                  return !isValidUrl
+                    ? "URL형식에 맞지 않아요."
+                    : isParamWrappedProperly ||
+                        "패스 파라미터를 '{}'로 감싸주세요.";
+                } else {
+                  return true;
+                }
               },
             })}
             className={classes.pathField}

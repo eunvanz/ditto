@@ -101,9 +101,12 @@ const createRequestSelectorByProjectIdAndRequestId = (
 ) =>
   createSelector(
     (state: RootState) =>
-      state.firestore.data[`projects/${projectId}/requests`]?.[requestId],
-    (request) =>
-      request ? ({ ...request, id: requestId } as RequestDoc) : undefined
+      // react redux firebase의 버그로 인해 ordered 사용
+      state.firestore.ordered[`projects/${projectId}/requests`],
+    (requests) =>
+      requests
+        ? requests.find((item: RequestDoc) => item.id === requestId)
+        : undefined
   );
 
 const FirebaseSelectors = {

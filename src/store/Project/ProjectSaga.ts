@@ -32,6 +32,7 @@ import {
   Doc,
   Recordable,
   RequestItem,
+  BASE_URL,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -232,7 +233,15 @@ export function* submitProjectUrlFormFlow() {
           },
         };
         delete newProjectUrl.target;
-        yield* call(Firework.addProjectUrl, newProjectUrl);
+        const projectUrlRef = yield* call(
+          Firework.addProjectUrl,
+          newProjectUrl
+        );
+        yield* put(
+          ProjectActions.notifySubmissionQuickUrlFormComplete({
+            createdUrlId: projectUrlRef.id,
+          })
+        );
         yield* put(
           UiActions.showNotification({
             type: "success",
@@ -1020,10 +1029,8 @@ export function* submitRequestUrlFormFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.submitRequestUrlForm);
     yield* put(ProgressActions.startProgress(type));
-    yield* put(UiActions.showDelayedLoading());
 
     const project = yield* call(selectAndCheckProject);
-    const request = yield* select(ProjectSelectors.selectCurrentRequest);
 
     if (!project) {
       continue;
@@ -1031,6 +1038,8 @@ export function* submitRequestUrlFormFlow() {
 
     const updatedRecordProps = yield* call(getUpdatedRecordProps);
 
+    const target = payload.target;
+    delete payload.target;
     const newRequest: Partial<RequestItem> = {
       projectId: project.id,
       ...payload,
@@ -1038,7 +1047,23 @@ export function* submitRequestUrlFormFlow() {
     };
 
     try {
-      yield* call(Firework.updateRequest, request!.id, newRequest);
+      if (payload.baseUrl === BASE_URL.NEW) {
+        yield* put(UiActions.showQuickUrlFormModal());
+        const { createdUrl } = yield* race({
+          createdUrl: take(ProjectActions.notifySubmissionQuickUrlFormComplete),
+          isUrlCanceled: take(UiActions.hideQuickUrlFormModal),
+        });
+        if (createdUrl) {
+          const { createdUrlId } = createdUrl.payload;
+          newRequest.baseUrl = createdUrlId;
+          yield* put(UiActions.hideQuickUrlFormModal());
+        } else {
+          continue;
+        }
+      }
+
+      yield* put(UiActions.showDelayedLoading());
+      yield* call(Firework.updateRequest, target!.id, newRequest);
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {

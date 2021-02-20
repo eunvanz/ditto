@@ -1,29 +1,33 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
-import { assertNotEmpty } from "../../../../helpers/commonHelpers";
+import useRequestByParam from "../../../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../../../store/Firebase/FirebaseSelectors";
 import ProjectSelectors from "../../../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../../../store/Project/ProjectSlice";
+import UiSelectors from "../../../../store/Ui/UiSelectors";
 import { RequestUrlFormValues } from "./RequestUrlForm";
 
 const useRequestUrlFormProps = () => {
   const dispatch = useDispatch();
 
-  const request = useSelector(ProjectSelectors.selectCurrentRequest);
   const project = useSelector(ProjectSelectors.selectCurrentProject);
-  assertNotEmpty(project);
+  const { request } = useRequestByParam();
 
   const firestoreQuery = useMemo(() => {
-    return {
-      collection: `projects/${project.id}/urls`,
-    };
+    if (project) {
+      return {
+        collection: `projects/${project.id}/urls`,
+      };
+    } else {
+      return [];
+    }
   }, [project]);
 
   useFirestoreConnect(firestoreQuery);
 
   const baseUrls = useSelector(
-    FirebaseSelectors.createProjectUrlsSelector(project.id)
+    FirebaseSelectors.createProjectUrlsSelector(project?.id || "")
   );
 
   const onSubmit = useCallback(
@@ -33,10 +37,21 @@ const useRequestUrlFormProps = () => {
     [dispatch]
   );
 
+  const { isVisible } = useSelector(UiSelectors.selectQuickUrlFormModal);
+
+  const [key, setKey] = useState(0);
+
+  useEffect(() => {
+    if (isVisible) {
+      return () => setKey((key) => key + 1);
+    }
+  }, [isVisible]);
+
   return {
     onSubmit,
     request,
     baseUrls,
+    key,
   };
 };
 

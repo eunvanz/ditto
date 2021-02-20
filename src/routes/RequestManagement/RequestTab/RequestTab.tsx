@@ -1,9 +1,14 @@
 import React from "react";
+import RequestUrlForm from "./RequestUrlForm";
 
 export interface RequestTabProps {}
 
-const RequestForm: React.FC<RequestTabProps> = ({}) => {
-  return <></>;
+const RequestTab: React.FC<RequestTabProps> = ({}) => {
+  return (
+    <>
+      <RequestUrlForm />
+    </>
+  );
 };
 
-export default RequestForm;
+export default RequestTab;

@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import Header from "../../components/Header";
 import { Theme } from "../../theme";
 import { RequestDoc } from "../../types";
+import RequestTab from "./RequestTab";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -52,7 +53,7 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
           ))}
         </Tabs>
       </Box>
-      <Box mt={3}></Box>
+      <Box mt={3}>{activeTab === "request" && <RequestTab />}</Box>
     </Container>
   );
 };

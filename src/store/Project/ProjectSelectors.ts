@@ -16,16 +16,10 @@ const selectFieldTypeToCreate = createSelector(
   (fieldType) => fieldType
 );
 
-const selectCurrentRequest = createSelector(
-  (state: RootState) => state.project.currentRequest,
-  (request) => request
-);
-
 const ProjectSelectors = {
   selectCurrentProject,
   selectFieldTypeToCreate,
   selectCurrentModel,
-  selectCurrentRequest,
 };
 
 export default ProjectSelectors;
