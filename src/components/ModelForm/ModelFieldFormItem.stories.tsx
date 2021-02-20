@@ -10,6 +10,7 @@ import { Table, TableBody } from "@material-ui/core";
 const defaultProps: Partial<ModelFieldFormItemProps> = {
   modelFields: mockProject.modelFields,
   projectModels: mockProject.models,
+  projectEnumerations: mockProject.enumerations,
 };
 
 export default {

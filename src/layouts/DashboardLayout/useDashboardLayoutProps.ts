@@ -93,7 +93,7 @@ const useDashboardLayoutProps = () => {
           childrenCount: items?.length || 0,
           onClickConfig: () => showGroupFormModal(project, group),
           onClickAddRequest: () => showRequestFormModal(project, group),
-          isOpen: items.some((item) =>
+          isOpen: items?.some((item) =>
             matchPath(location.pathname, { path: item.href, exact: false })
           ),
           items,

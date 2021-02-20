@@ -207,8 +207,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
 
   const handleOnCancel = useCallback(() => {
     onCancel();
-    reset(); // 폼의 변경사항들을 되돌림
-  }, [onCancel, reset]);
+    reset(defaultValues); // 폼의 변경사항들을 되돌림
+  }, [defaultValues, onCancel, reset]);
 
   const showForm = useCallback(
     (focusField) => {
