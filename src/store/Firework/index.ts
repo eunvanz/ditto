@@ -196,6 +196,15 @@ function* addRequest(data: RequestItem) {
   return yield* call(addDocument, `projects/${data.projectId}/requests`, data);
 }
 
+function* updateRequest(id: string, data: Partial<RequestItem>) {
+  return yield* call(
+    updateDocument,
+    `projects/${data.projectId}/requests`,
+    id,
+    data
+  );
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -226,6 +235,7 @@ export const realFirework = {
   addGroup,
   deleteGroup,
   addRequest,
+  updateRequest,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

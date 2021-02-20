@@ -1016,6 +1016,38 @@ export function* submitRequestFormFlow() {
   }
 }
 
+export function* submitRequestUrlFormFlow() {
+  while (true) {
+    const { type, payload } = yield* take(ProjectActions.submitRequestUrlForm);
+    yield* put(ProgressActions.startProgress(type));
+    yield* put(UiActions.showDelayedLoading());
+
+    const project = yield* call(selectAndCheckProject);
+    const request = yield* select(ProjectSelectors.selectCurrentRequest);
+
+    if (!project) {
+      continue;
+    }
+
+    const updatedRecordProps = yield* call(getUpdatedRecordProps);
+
+    const newRequest: Partial<RequestItem> = {
+      projectId: project.id,
+      ...payload,
+      ...updatedRecordProps,
+    };
+
+    try {
+      yield* call(Firework.updateRequest, request!.id, newRequest);
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    } finally {
+      yield* put(ProgressActions.finishProgress(type));
+      yield* put(UiActions.hideLoading());
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),

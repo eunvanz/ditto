@@ -112,7 +112,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             inputRef={register()}
             className={classes.methodField}
             SelectProps={{ native: true }}
-            onBlur={validateAndSubmit}
+            onChange={validateAndSubmit}
           >
             {methodOptions.map((method) => (
               <option key={method} value={method}>
@@ -128,7 +128,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             inputRef={register()}
             className={classes.baseUrlField}
             SelectProps={{ native: true }}
-            onBlur={validateAndSubmit}
+            onChange={validateAndSubmit}
           >
             {baseUrlOptions.map((option) => (
               <option key={option.value} value={option.value}>
