@@ -109,6 +109,13 @@ const createRequestSelectorByProjectIdAndRequestId = (
         : undefined
   );
 
+const createProjectRequestsSelector = (projectId: string) =>
+  createSelector(
+    (state: RootState) =>
+      state.firestore.ordered[`projects/${projectId}/requests`],
+    (requests: RequestDoc[]) => requests
+  );
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -121,6 +128,7 @@ const FirebaseSelectors = {
   createGroupedProjectGroupsSelector,
   createGroupedProjectRequestsSelector,
   createRequestSelectorByProjectIdAndRequestId,
+  createProjectRequestsSelector,
 };
 
 export default FirebaseSelectors;

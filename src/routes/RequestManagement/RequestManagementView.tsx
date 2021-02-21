@@ -1,9 +1,18 @@
-import { Box, Container, makeStyles, Tab, Tabs } from "@material-ui/core";
+import {
+  Box,
+  Card,
+  Container,
+  Divider,
+  makeStyles,
+  Tab,
+  Tabs,
+} from "@material-ui/core";
 import React, { useCallback, useMemo, useState } from "react";
 import Header from "../../components/Header";
 import { Theme } from "../../theme";
 import { RequestDoc } from "../../types";
 import RequestTab from "./RequestTab";
+import RequestUrlForm from "./RequestTab/RequestUrlForm";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -41,6 +50,11 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
     <Container className={classes.root} maxWidth="lg">
       <Header title={request.name} description={request.summary} />
       <Box mt={3}>
+        <Card>
+          <RequestUrlForm />
+        </Card>
+      </Box>
+      <Box mt={3}>
         <Tabs
           onChange={handleOnTabChange}
           scrollButtons="auto"
@@ -53,6 +67,7 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
           ))}
         </Tabs>
       </Box>
+      <Divider />
       <Box mt={3}>{activeTab === "request" && <RequestTab />}</Box>
     </Container>
   );

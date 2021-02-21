@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
+import useProjectByParam from "../../../../hooks/useProjectByParam";
 import useRequestByParam from "../../../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../../../store/Firebase/FirebaseSelectors";
-import ProjectSelectors from "../../../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../../../store/Project/ProjectSlice";
 import UiSelectors from "../../../../store/Ui/UiSelectors";
 import { RequestUrlFormValues } from "./RequestUrlForm";
@@ -11,20 +11,21 @@ import { RequestUrlFormValues } from "./RequestUrlForm";
 const useRequestUrlFormProps = () => {
   const dispatch = useDispatch();
 
-  const project = useSelector(ProjectSelectors.selectCurrentProject);
+  const { project, projectId } = useProjectByParam();
   const { request } = useRequestByParam();
 
   const firestoreQuery = useMemo(() => {
-    if (project) {
+    if (projectId) {
       return {
-        collection: `projects/${project.id}/urls`,
+        collection: `projects/${projectId}/urls`,
+        orderBy: ["createdAt", "asc"],
       };
     } else {
       return [];
     }
-  }, [project]);
+  }, [projectId]);
 
-  useFirestoreConnect(firestoreQuery);
+  useFirestoreConnect(firestoreQuery as any);
 
   const baseUrls = useSelector(
     FirebaseSelectors.createProjectUrlsSelector(project?.id || "")

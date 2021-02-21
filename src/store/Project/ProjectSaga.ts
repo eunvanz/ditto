@@ -267,15 +267,17 @@ export function* deleteProjectUrlFlow() {
     const { payload: projectUrl } = yield* take(
       ProjectActions.deleteProjectUrl
     );
-    const usingRequests = Object.keys(projectUrl.usedByRequest || {});
-    const isUsedBySome =
-      projectUrl.usedByRequest &&
-      usingRequests.some((item) => projectUrl.usedByRequest?.[item]);
+    const requests = yield* select(
+      FirebaseSelectors.createProjectRequestsSelector(projectUrl.projectId)
+    );
+    const isUsedBySome = requests.some(
+      (item) => item.baseUrl === projectUrl.id
+    );
 
     if (isUsedBySome) {
       yield* call(Alert.message, {
         title: "삭제 불가",
-        message: "사용하고 있는 리퀘스트가 있어서 삭제가 불가합니다.",
+        message: "사용하고 있는 리퀘스트가 있어 삭제가 불가합니다.",
       });
       continue;
     }
