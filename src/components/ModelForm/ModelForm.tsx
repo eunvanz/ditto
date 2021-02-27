@@ -20,8 +20,6 @@ import {
   Divider,
   Dialog,
 } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import ModelFieldFormItem from "./ModelFieldFormItem";
 import {
   ModelFieldDoc,
   ModelDoc,
@@ -33,6 +31,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { getIntentionPaddingByDepth } from "../../helpers/projectHelpers";
 import { ExpandLess, ExpandMore, EditOutlined } from "@material-ui/icons";
 import useModalKeyControl from "../../hooks/useModalKeyControl";
+import ModelTable from "../ModelTable";
 
 const useStyles = makeStyles((theme) => ({
   fieldNameCell: {
@@ -123,14 +122,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
 }) => {
   const classes = useStyles();
 
-  const isNewFormVisible = useMemo(() => {
-    return editingModelFieldId === "NEW";
-  }, [editingModelFieldId]);
-
-  const resetEditingModelField = useCallback(() => {
-    onSetEditingModelField(undefined);
-  }, [onSetEditingModelField]);
-
   const modelNameInputRef = useRef<any | undefined>(undefined);
   const isCancelingRef = useRef<boolean>(false);
 
@@ -147,17 +138,11 @@ const ModelForm: React.FC<ModelFormProps> = ({
     return result;
   }, [model, projectModels]);
 
-  const showNewForm = useCallback(() => {
-    if (
-      modelNameInputRef.current === undefined // modelNameInput이 없는 경우 (depth 존재)
-    ) {
-      onSetEditingModelField("NEW");
-    } else if (!modelNameInputRef.current.value) {
+  const checkModelNameInput = useCallback(() => {
+    if (!modelNameInputRef.current.value) {
       modelNameInputRef.current.focus();
-    } else {
-      onSetEditingModelField("NEW");
     }
-  }, [onSetEditingModelField]);
+  }, []);
 
   const cancelTask = useCallback(
     (e: KeyboardEvent) => {
@@ -179,109 +164,15 @@ const ModelForm: React.FC<ModelFormProps> = ({
     };
   }, [cancelTask]);
 
-  const indentionPadding = useMemo(() => {
-    return getIntentionPaddingByDepth(depth);
-  }, [depth]);
-
-  const addText = useMemo(() => {
-    return depth ? `${model?.name}에 새로운 필드 추가` : "새로운 필드 추가";
-  }, [depth, model]);
-
-  const handleOnClose = useCallback(() => {
-    isCancelingRef.current = true;
-    onClose?.();
-  }, [onClose]);
-
   useModalKeyControl({
     isVisible,
     onClose,
     name: "ModelForm",
   });
 
-  return (
-    <Wrapper
-      existingModelNames={existingModelNames}
-      onSubmitModel={onSubmitModel}
-      depth={depth}
-      model={model}
-      onClose={handleOnClose}
-      isCancelingRef={isCancelingRef}
-      modelNameInputRef={modelNameInputRef}
-      onClickQuickEditModelName={onClickQuickEditModelName}
-    >
-      {modelFields.map((modelField) => (
-        <ModelFieldFormItem
-          key={modelField.id}
-          modelFields={modelFields}
-          modelField={modelField}
-          onSubmit={onSubmitModelField}
-          onDelete={() => onDeleteModelField(modelField)}
-          projectModels={projectModels}
-          projectEnumerations={projectEnumerations}
-          depth={depth}
-          isSubmitting={checkIsSubmittingModelField(modelField.id)}
-          onClickCell={() => onSetEditingModelField(modelField.id)}
-          isFormVisible={editingModelFieldId === modelField.id}
-          onCancel={resetEditingModelField}
-        />
-      ))}
-      {isNewFormVisible ? (
-        <ModelFieldFormItem
-          modelFields={modelFields}
-          onSubmit={onSubmitModelField}
-          isFormVisible
-          projectModels={projectModels}
-          projectEnumerations={projectEnumerations}
-          depth={depth}
-          onCancel={resetEditingModelField}
-          isSubmitting={checkIsSubmittingModelField()}
-        />
-      ) : (
-        <TableRow>
-          <TableCell colSpan={8} style={{ paddingLeft: indentionPadding }}>
-            <Button
-              className={classes.addButton}
-              fullWidth
-              color="secondary"
-              onClick={showNewForm}
-            >
-              <AddIcon fontSize="small" /> {addText}
-            </Button>
-          </TableCell>
-        </TableRow>
-      )}
-    </Wrapper>
-  );
-};
-
-type WrapperProps = Pick<
-  ModelFormProps,
-  "depth" | "model" | "onClose" | "onSubmitModel" | "onClickQuickEditModelName"
-> & {
-  existingModelNames: string[];
-  children: React.ReactNode;
-  isCancelingRef: React.MutableRefObject<boolean>;
-  modelNameInputRef: React.MutableRefObject<any>;
-};
-
-const Wrapper: React.FC<WrapperProps> = ({
-  depth,
-  model,
-  onClose,
-  onSubmitModel,
-  existingModelNames,
-  children,
-  isCancelingRef,
-  modelNameInputRef,
-  onClickQuickEditModelName,
-}) => {
-  const classes = useStyles();
-
-  const [isDetailVisible, setIsDetailVisible] = useState(false);
-
-  const indentionPadding = useMemo(() => {
-    return getIntentionPaddingByDepth(depth);
-  }, [depth]);
+  const checkIsNewFormDisabled = useCallback(() => {
+    return modelNameInputRef.current && !modelNameInputRef.current.value;
+  }, []);
 
   if (!depth) {
     return (
@@ -306,67 +197,38 @@ const Wrapper: React.FC<WrapperProps> = ({
         />
         <Divider />
         <Box minWidth={700} className={classes.tableContainer}>
-          <Table stickyHeader size="small">
-            <caption></caption>
-            <TableHead>
-              <TableRow>
-                <TableCell component="th" className={classes.fieldNameCell}>
-                  필드명*
-                </TableCell>
-                <TableCell align="center" className={classes.requiredCell}>
-                  필수
-                </TableCell>
-                <TableCell align="center" className={classes.arrayCell}>
-                  배열
-                </TableCell>
-                <TableCell className={classes.typeCell}>타입*</TableCell>
-                <TableCell className={classes.formatCell}>포맷</TableCell>
-                <TableCell className={classes.formatCell}>열거형</TableCell>
-                <TableCell>설명</TableCell>
-                <TableCell align="right"></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{children}</TableBody>
-          </Table>
+          <ModelTable
+            model={model}
+            modelFields={modelFields}
+            onDeleteModelField={onDeleteModelField}
+            projectModels={projectModels}
+            projectEnumerations={projectEnumerations}
+            checkIsSubmittingModelField={checkIsSubmittingModelField}
+            onSetEditingModelField={onSetEditingModelField}
+            editingModelFieldId={editingModelFieldId}
+            onClickQuickEditModelName={onClickQuickEditModelName}
+            onSubmitModelField={onSubmitModelField}
+            checkIsNewFormDisabled={checkIsNewFormDisabled}
+            onShowNewForm={checkModelNameInput}
+          />
         </Box>
       </Card>
     );
   } else {
     return (
-      <>
-        <TableRow>
-          <TableCell colSpan={8} style={{ paddingLeft: indentionPadding }}>
-            <Button
-              className={classes.addButton}
-              fullWidth
-              color="secondary"
-              onClick={() => setIsDetailVisible(!isDetailVisible)}
-            >
-              {!isDetailVisible && (
-                <>
-                  <ExpandMore fontSize="small" /> {model?.name} 펼치기
-                </>
-              )}
-              {isDetailVisible && (
-                <>
-                  <ExpandLess fontSize="small" /> {model?.name} 접기
-                  <Button
-                    className={classes.addSubButton}
-                    size="small"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onClickQuickEditModelName(model!);
-                    }}
-                  >
-                    <EditOutlined fontSize="small" />
-                  </Button>
-                </>
-              )}
-            </Button>
-          </TableCell>
-        </TableRow>
-        {isDetailVisible ? children : null}
-      </>
+      <ModelTable
+        model={model}
+        modelFields={modelFields}
+        onDeleteModelField={onDeleteModelField}
+        projectModels={projectModels}
+        projectEnumerations={projectEnumerations}
+        checkIsSubmittingModelField={checkIsSubmittingModelField}
+        onSetEditingModelField={onSetEditingModelField}
+        editingModelFieldId={editingModelFieldId}
+        onClickQuickEditModelName={onClickQuickEditModelName}
+        onSubmitModelField={onSubmitModelField}
+        depth={depth}
+      />
     );
   }
 };

@@ -117,16 +117,16 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
   );
 };
 
-type WrapperProps = Pick<
-  RequestParamFormProps,
-  "depth" | "model" | "onClose" | "onSubmitModel" | "onClickQuickEditModelName"
-> & {
-  existingModelNames: string[];
-  children: React.ReactNode;
-  isCancelingRef: React.MutableRefObject<boolean>;
-  modelNameInputRef: React.MutableRefObject<any>;
-};
+// type WrapperProps = Pick<
+//   RequestParamFormProps,
+//   "depth" | "model" | "onClose" | "onSubmitModel" | "onClickQuickEditModelName"
+// > & {
+//   existingModelNames: string[];
+//   children: React.ReactNode;
+//   isCancelingRef: React.MutableRefObject<boolean>;
+//   modelNameInputRef: React.MutableRefObject<any>;
+// };
 
-const Wrapper: React.FC<WrapperProps> = ({}) => {};
+// const Wrapper: React.FC<WrapperProps> = ({}) => {};
 
 export default RequestParamForm;

@@ -62,6 +62,8 @@ export interface ModelTableProps {
   editingModelFieldId?: string;
   onClickQuickEditModelName: (model: ModelDoc) => void;
   onSubmitModelField: (data: ModelFieldFormValues) => void;
+  onShowNewForm?: () => void;
+  checkIsNewFormDisabled?: () => boolean;
 }
 
 const ModelTable: React.FC<ModelTableProps> = ({
@@ -76,6 +78,8 @@ const ModelTable: React.FC<ModelTableProps> = ({
   checkIsSubmittingModelField,
   onSetEditingModelField,
   editingModelFieldId,
+  onShowNewForm,
+  checkIsNewFormDisabled,
 }) => {
   const classes = useStyles();
 
@@ -109,8 +113,11 @@ const ModelTable: React.FC<ModelTableProps> = ({
   }, [editingModelFieldId]);
 
   const showNewForm = useCallback(() => {
-    onSetEditingModelField("NEW");
-  }, [onSetEditingModelField]);
+    onShowNewForm?.();
+    if (!checkIsNewFormDisabled?.()) {
+      onSetEditingModelField("NEW");
+    }
+  }, [checkIsNewFormDisabled, onSetEditingModelField, onShowNewForm]);
 
   return (
     <Wrapper
