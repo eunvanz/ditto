@@ -1,20 +1,11 @@
 import React, { useCallback, useState } from "react";
-import {
-  Box,
-  Card,
-  CardHeader,
-  Divider,
-  makeStyles,
-  Table,
-  TableCell,
-  TableHead,
-  TableRow,
-} from "@material-ui/core";
+import { Box, Card, CardHeader, Divider, makeStyles } from "@material-ui/core";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { Theme } from "../../theme";
 import { EnumerationDoc, ModelDoc, RequestParamDoc } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
+import ModelTable from "../ModelTable";
 
 export interface RequestParamFormProps {
   title: string;
@@ -88,27 +79,7 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
           <Divider />
           <PerfectScrollbar>
             <Box minWidth={700}>
-              <Table stickyHeader size="small">
-                <caption />
-                <TableHead>
-                  <TableRow>
-                    <TableCell component="th" className={classes.fieldNameCell}>
-                      필드명*
-                    </TableCell>
-                    <TableCell align="center" className={classes.requiredCell}>
-                      필수
-                    </TableCell>
-                    <TableCell align="center" className={classes.arrayCell}>
-                      배열
-                    </TableCell>
-                    <TableCell className={classes.typeCell}>타입*</TableCell>
-                    <TableCell className={classes.formatCell}>포맷</TableCell>
-                    <TableCell className={classes.formatCell}>열거형</TableCell>
-                    <TableCell>설명</TableCell>
-                    <TableCell align="right"></TableCell>
-                  </TableRow>
-                </TableHead>
-              </Table>
+              <ModelTable modelFields={requestParams} />
             </Box>
           </PerfectScrollbar>
         </>
@@ -116,17 +87,5 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
     </Card>
   );
 };
-
-// type WrapperProps = Pick<
-//   RequestParamFormProps,
-//   "depth" | "model" | "onClose" | "onSubmitModel" | "onClickQuickEditModelName"
-// > & {
-//   existingModelNames: string[];
-//   children: React.ReactNode;
-//   isCancelingRef: React.MutableRefObject<boolean>;
-//   modelNameInputRef: React.MutableRefObject<any>;
-// };
-
-// const Wrapper: React.FC<WrapperProps> = ({}) => {};
 
 export default RequestParamForm;

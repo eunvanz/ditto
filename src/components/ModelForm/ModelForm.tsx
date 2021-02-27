@@ -1,20 +1,8 @@
-import React, {
-  useCallback,
-  useState,
-  useRef,
-  useEffect,
-  useMemo,
-} from "react";
+import React, { useCallback, useRef, useEffect, useMemo } from "react";
 import {
   Card,
   Box,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
   makeStyles,
-  TableBody,
-  Button,
   IconButton,
   CardHeader,
   Divider,
@@ -28,8 +16,6 @@ import {
 } from "../../types";
 import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
 import CloseIcon from "@material-ui/icons/Close";
-import { getIntentionPaddingByDepth } from "../../helpers/projectHelpers";
-import { ExpandLess, ExpandMore, EditOutlined } from "@material-ui/icons";
 import useModalKeyControl from "../../hooks/useModalKeyControl";
 import ModelTable from "../ModelTable";
 

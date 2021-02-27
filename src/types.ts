@@ -342,7 +342,8 @@ export interface ResponseItem extends Recordable {
 
 export type RequestDoc = Doc<RequestItem, BaseSettings>;
 
-export type RequestParamDoc = Doc<RequestParamItem, BaseSettings>;
+export type RequestParamDoc = Doc<RequestParamItem, BaseSettings> &
+  ModelFieldDoc;
 
 export type RequestBodyDoc = Doc<RequestBodyItem, BaseSettings>;
 
