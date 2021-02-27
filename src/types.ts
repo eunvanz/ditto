@@ -319,25 +319,9 @@ export enum REQUEST_PARAM_LOCATION {
   COOKIE = "COOKIE",
 }
 
-export enum REQUEST_PARAM_DATA_TYPE {
-  STRING = "STRING",
-  INTEGER = "INTEGER",
-  NUMBER = "NUMBER",
-  BOOLEAN = "BOOLEAN",
-  ARRAY = "ARRAY",
-  OBJECT = "OBJECT",
-}
-
-export interface RequestParamItem extends Recordable {
+export interface RequestParamItem extends ModelFieldItem {
   requestId: string;
-  name: string;
-  description?: string;
   location: REQUEST_PARAM_LOCATION;
-  dataType: REQUEST_PARAM_DATA_TYPE;
-  isRequired: boolean;
-  isDeprecated: boolean;
-  format?: string; // model id
-  enum?: string; // enum id
 }
 
 export interface RequestBodyItem extends Recordable {
