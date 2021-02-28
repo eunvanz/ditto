@@ -122,7 +122,7 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
             onClick={onDelete}
             variant="contained"
           >
-            Delete this project
+            Delete project
           </Button>
           <Button
             color="secondary"

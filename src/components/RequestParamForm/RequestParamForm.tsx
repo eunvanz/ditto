@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Box,
   Card,
@@ -66,9 +66,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: 10,
     "&> span": {
       color: theme.palette.text.secondary,
-      fontSize: "1rem",
-      paddingLeft: 6,
-      paddingRight: 6,
+      fontSize: "0.875rem",
+      paddingLeft: 8,
+      paddingRight: 8,
     },
   },
 }));
@@ -115,6 +115,13 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
         return [];
     }
   }, [location]);
+
+  useEffect(() => {
+    // 최초 로딩 시 requestParam이 undefined이므로 lazy loading 처리를 위해 적용
+    if (requestParams?.length) {
+      setIsOpen(true);
+    }
+  }, [requestParams]);
 
   return (
     <Card>

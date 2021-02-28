@@ -36,6 +36,7 @@ import {
   ModifiableRequestParamItem,
   RequestParamItem,
   RequestParamDoc,
+  REQUEST_METHOD,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -1004,6 +1005,7 @@ export function* submitRequestFormFlow() {
     const recordableDocProps = yield* call(getRecordableDocProps);
     const newRequest: RequestItem = {
       projectId,
+      method: REQUEST_METHOD.GET,
       ...payload,
       ...recordableDocProps,
     };
@@ -1020,7 +1022,10 @@ export function* submitRequestFormFlow() {
         })
       );
       yield* put(UiActions.hideRequestFormModal());
-      yield* call(history.push, `${ROUTE.REQUESTS}/${newRequestRef.id}`);
+      yield* call(
+        history.push,
+        `${ROUTE.PROJECTS}/${projectId}${ROUTE.REQUESTS}/${newRequestRef.id}`
+      );
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {

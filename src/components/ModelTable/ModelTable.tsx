@@ -182,6 +182,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
           isFormVisible={editingModelFieldId === modelField.id}
           onCancel={resetEditingModelField}
           hiddenColumns={hiddenColumns}
+          customFieldName={customFieldName}
         />
       ))}
       {isNewFormVisible ? (
@@ -206,6 +207,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
                 )()
           }
           hiddenColumns={hiddenColumns}
+          customFieldName={customFieldName}
         />
       ) : (
         <TableRow>

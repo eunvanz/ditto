@@ -6,7 +6,6 @@ export enum THEMES {
 }
 
 export enum REQUEST_METHOD {
-  NONE = "Not selected",
   GET = "GET",
   POST = "POST",
   PUT = "PUT",
@@ -348,16 +347,19 @@ export interface RequestBodyItem extends Recordable {
   requestId: string;
   description?: string;
   mediaType: string;
-  isRequired: boolean;
-  format?: string; // model id
+  type: FIELD_TYPE;
+  format: string;
+  enum: string;
 }
 
 export interface ResponseItem extends Recordable {
   requestId: string;
   statusCode: number;
   description?: string;
-  mediaType?: string;
-  format?: string; // model id
+  mediaType: string;
+  type: FIELD_TYPE;
+  format: string;
+  enum: string;
 }
 
 export type RequestDoc = Doc<RequestItem, BaseSettings>;

@@ -25,6 +25,7 @@ const useRequestManagementViewProps = () => {
       },
       {
         collection: `projects/${projectId}/requests`,
+        orderBy: ["createdAt", "asc"],
       },
     ];
   }, [projectId, requestId]);

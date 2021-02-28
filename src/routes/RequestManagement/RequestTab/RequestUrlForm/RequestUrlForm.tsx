@@ -26,7 +26,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const methodOptions = [
-  REQUEST_METHOD.NONE,
   REQUEST_METHOD.GET,
   REQUEST_METHOD.POST,
   REQUEST_METHOD.PUT,
@@ -56,7 +55,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
 
   const defaultValues = useMemo(() => {
     return {
-      method: request.method || REQUEST_METHOD.NONE,
+      method: request.method || REQUEST_METHOD.GET,
       baseUrl: request.baseUrl || BASE_URL.NONE,
       path: request.path || "",
     };

@@ -59,7 +59,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
 
   return existingGroupNames ? (
     <Modal
-      title={defaultValues ? "Modify group" : "Create group"}
+      title={defaultValues ? "Modify group" : "Create new group"}
       isVisible={isVisible}
       onClose={onClose}
     >
@@ -103,7 +103,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
             type="submit"
             variant="contained"
           >
-            {defaultValues ? "Apply modifications" : "Create"}
+            {defaultValues ? "Apply modifications" : "Create new group"}
           </Button>
         </Box>
         {defaultValues && (
@@ -117,7 +117,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
               variant="contained"
               onClick={onDelete}
             >
-              Delete this group
+              Delete group
             </Button>
           </Box>
         )}

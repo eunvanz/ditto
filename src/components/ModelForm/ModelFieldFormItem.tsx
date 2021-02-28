@@ -68,6 +68,7 @@ export interface ModelFieldFormItemProps {
   isFormVisible: boolean;
   onClickCell?: () => void;
   hiddenColumns?: ModelTableColumns[];
+  customFieldName?: string;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -83,6 +84,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   isFormVisible,
   onClickCell,
   hiddenColumns,
+  customFieldName,
 }) => {
   const classes = useStyles();
 
@@ -320,10 +322,10 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
               name="fieldName"
               defaultValue={defaultValues.fieldName}
               rules={{
-                required: "Field name is required.",
+                required: `${customFieldName || "Field name"} is required.`,
                 maxLength: {
                   value: 40,
-                  message: "Field name is too long.",
+                  message: `${customFieldName || "Field name"} is too long.`,
                 },
                 validate: (data: string) => {
                   const isDup = modelFields
@@ -333,7 +335,9 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                         item.fieldName.value !== defaultValues?.fieldName
                     )
                     .some((modelField) => modelField.fieldName.value === data);
-                  return isDup ? "Field name is duplicated." : true;
+                  return isDup
+                    ? `${customFieldName || "Field name"} is duplicated.`
+                    : true;
                 },
                 pattern: patterns.wordsWithNoSpace,
               }}
@@ -348,7 +352,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                     required
                     error={!!errors.fieldName}
                     helperText={errors.fieldName?.message}
-                    placeholder="Field name"
+                    placeholder={customFieldName || "Field name"}
                   />
                 );
               }}
@@ -440,6 +444,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                     }}
                     onFocus={() => setIsDisabledEnterSubmit(true)}
                     onBlur={() => setIsDisabledEnterSubmit(false)}
+                    size="small"
                   />
                 );
               }}
@@ -488,6 +493,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             />
           ) : watchedFieldType === FIELD_TYPE.OBJECT ? (
             objectFormatDefaultValue
+          ) : modelField?.format.value === FORMAT.NONE ? (
+            "-"
           ) : (
             modelField?.format.value
           )}
@@ -521,10 +528,13 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                     )}
                     onFocus={() => setIsDisabledEnterSubmit(true)}
                     onBlur={() => setIsDisabledEnterSubmit(false)}
+                    size="small"
                   />
                 );
               }}
             />
+          ) : enumDefaultValue === ENUMERATION.NONE ? (
+            "-"
           ) : (
             enumDefaultValue
           )}

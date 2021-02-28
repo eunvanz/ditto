@@ -303,8 +303,8 @@ const NavItem: FC<NavItemProps> = ({
           style={style}
           to={href!}
         >
-          {!!requestMethod && requestMethod !== REQUEST_METHOD.NONE && (
-            <RequestMethodBadge requestMethod={requestMethod!} />
+          {!!requestMethod && (
+            <RequestMethodBadge requestMethod={requestMethod} />
           )}
           <NewBadge isVisible={hasNew} className={classes.newBadge}>
             <span className={classes.title}>{title}</span>

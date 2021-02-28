@@ -64,7 +64,7 @@ const useRequestParamFormProps: (
 
   return {
     location,
-    requestParams: requestParams || [],
+    requestParams: requestParams,
     onSubmitRequestParamForm,
     onDeleteRequestParam,
     checkIsSubmittingRequestParam,
