@@ -149,7 +149,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             ))}
           </TextField>
           <TextField
-            label="URL"
+            label="Path"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">{urlPrefix}</InputAdornment>
