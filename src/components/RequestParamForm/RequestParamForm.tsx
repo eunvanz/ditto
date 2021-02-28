@@ -3,19 +3,16 @@ import { Box, Card, CardHeader, Divider, makeStyles } from "@material-ui/core";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { Theme } from "../../theme";
-import { EnumerationDoc, ModelDoc, RequestParamDoc } from "../../types";
+import { ModelFieldDoc, RequestParamDoc } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import ModelTable from "../ModelTable";
 
 export interface RequestParamFormProps {
   title: string;
   requestParams: RequestParamDoc[];
-  onSubmitRequestParam: (values: ModelFieldFormValues) => void;
-  onDeleteRequestParam: (requestParam: RequestParamDoc) => void;
-  projectModels: ModelDoc[];
-  projectEnumerations: EnumerationDoc[];
-  depth?: number;
-  checkIsSubmittingRequestParam: (requestParamId?: string) => boolean;
+  onSubmitRequestParamForm: (values: ModelFieldFormValues) => void;
+  onDeleteRequestParam: (requestParam: ModelFieldDoc) => void;
+  checkIsSubmittingRequestParam: (id?: string) => boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -57,6 +54,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 const RequestParamForm: React.FC<RequestParamFormProps> = ({
   title,
   requestParams,
+  onSubmitRequestParamForm,
+  onDeleteRequestParam,
+  checkIsSubmittingRequestParam,
 }) => {
   const classes = useStyles();
 
@@ -79,7 +79,14 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
           <Divider />
           <PerfectScrollbar>
             <Box minWidth={700}>
-              <ModelTable modelFields={requestParams} />
+              <ModelTable
+                modelFields={requestParams}
+                onSubmitModelFieldCustom={onSubmitRequestParamForm}
+                onDeleteModelFieldCustom={onDeleteRequestParam}
+                checkIsSubmittingModelFieldCustom={
+                  checkIsSubmittingRequestParam
+                }
+              />
             </Box>
           </PerfectScrollbar>
         </>

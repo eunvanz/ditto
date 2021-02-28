@@ -250,6 +250,26 @@ export interface ModifiableModelFieldItem
   description: Partial<ModelCell<string>>;
 }
 
+export interface ModifiableRequestParamItem
+  extends Omit<
+    Partial<RequestParamItem>,
+    | "fieldName"
+    | "isRequired"
+    | "isArray"
+    | "fieldType"
+    | "format"
+    | "enum"
+    | "description"
+  > {
+  fieldName: Partial<ModelCell<string>>;
+  isRequired: Partial<ModelCell<boolean>>;
+  isArray: Partial<ModelCell<boolean>>;
+  fieldType: Partial<ModelCell<FIELD_TYPE>>;
+  format: Partial<ModelCell<string>>;
+  enum: Partial<ModelCell<string>>;
+  description: Partial<ModelCell<string>>;
+}
+
 export interface ModelItem extends Recordable {
   projectId: string;
   name: string;
@@ -319,7 +339,7 @@ export enum REQUEST_PARAM_LOCATION {
   COOKIE = "COOKIE",
 }
 
-export interface RequestParamItem extends ModelFieldItem {
+export interface RequestParamItem extends Omit<ModelFieldItem, "modelId"> {
   requestId: string;
   location: REQUEST_PARAM_LOCATION;
 }

@@ -8,6 +8,7 @@ import {
   EnumerationDoc,
   FIELD_TYPE,
   GroupDoc,
+  REQUEST_PARAM_LOCATION,
 } from "../../types";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
@@ -119,6 +120,16 @@ const ProjectSlice = createSlice({
       _,
       _action: PayloadAction<{ createdUrlId: string }>
     ) => {},
+    submitRequestParamForm: (
+      _,
+      _action: PayloadAction<
+        ModelFieldFormValues & {
+          requestId: string;
+          location: REQUEST_PARAM_LOCATION;
+        }
+      >
+    ) => {},
+    deleteRequestParam: (_, _action: PayloadAction<ModelFieldDoc>) => {},
   },
 });
 

@@ -8,12 +8,7 @@ import {
   Divider,
   Dialog,
 } from "@material-ui/core";
-import {
-  ModelFieldDoc,
-  ModelDoc,
-  FIELD_TYPE,
-  EnumerationDoc,
-} from "../../types";
+import { ModelFieldDoc, ModelDoc, FIELD_TYPE } from "../../types";
 import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
 import CloseIcon from "@material-ui/icons/Close";
 import useModalKeyControl from "../../hooks/useModalKeyControl";
@@ -78,32 +73,20 @@ export interface ModelFormProps {
    * 같은 프로젝트 내의 모델들
    */
   projectModels: ModelDoc[];
-  /**
-   * 같은 프로젝트 내의 열거형들
-   */
-  projectEnumerations: EnumerationDoc[];
   depth?: number;
   checkIsSubmittingModelField: (modelId?: string) => boolean;
-  onSetEditingModelField: (modelFieldId?: string) => void;
   editingModelFieldId?: string;
-  onClickQuickEditModelName: (model: ModelDoc) => void;
   isVisible?: boolean;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
-  onSubmitModelField,
   model,
-  onDeleteModelField,
   onSubmitModel,
   onClose,
   modelFields = [],
   projectModels,
-  projectEnumerations,
   depth,
-  checkIsSubmittingModelField,
-  onSetEditingModelField,
   editingModelFieldId,
-  onClickQuickEditModelName,
   isVisible,
 }) => {
   const classes = useStyles();
@@ -186,14 +169,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
           <ModelTable
             model={model}
             modelFields={modelFields}
-            onDeleteModelField={onDeleteModelField}
-            projectModels={projectModels}
-            projectEnumerations={projectEnumerations}
-            checkIsSubmittingModelField={checkIsSubmittingModelField}
-            onSetEditingModelField={onSetEditingModelField}
-            editingModelFieldId={editingModelFieldId}
-            onClickQuickEditModelName={onClickQuickEditModelName}
-            onSubmitModelField={onSubmitModelField}
             checkIsNewFormDisabled={checkIsNewFormDisabled}
             onShowNewForm={checkModelNameInput}
           />
@@ -201,21 +176,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
       </Card>
     );
   } else {
-    return (
-      <ModelTable
-        model={model}
-        modelFields={modelFields}
-        onDeleteModelField={onDeleteModelField}
-        projectModels={projectModels}
-        projectEnumerations={projectEnumerations}
-        checkIsSubmittingModelField={checkIsSubmittingModelField}
-        onSetEditingModelField={onSetEditingModelField}
-        editingModelFieldId={editingModelFieldId}
-        onClickQuickEditModelName={onClickQuickEditModelName}
-        onSubmitModelField={onSubmitModelField}
-        depth={depth}
-      />
-    );
+    return <ModelTable model={model} modelFields={modelFields} depth={depth} />;
   }
 };
 

@@ -9,6 +9,8 @@ import {
   ProjectDoc,
   ProjectUrlDoc,
   RequestDoc,
+  RequestParamDoc,
+  REQUEST_PARAM_LOCATION,
 } from "../../types";
 import AuthSelectors from "../Auth/AuthSelector";
 
@@ -116,6 +118,25 @@ const createProjectRequestsSelector = (projectId: string) =>
     (requests: RequestDoc[]) => requests
   );
 
+const createRequestParamsSelector = (
+  projectId: string,
+  requestId: string,
+  location?: REQUEST_PARAM_LOCATION
+) =>
+  createSelector(
+    (state: RootState) =>
+      state.firestore.ordered[
+        `projects/${projectId}/requests/${requestId}/params`
+      ],
+    (params: RequestParamDoc[] | undefined) => {
+      if (location) {
+        return params?.filter((param) => param.location === location);
+      } else {
+        return params;
+      }
+    }
+  );
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -129,6 +150,7 @@ const FirebaseSelectors = {
   createGroupedProjectRequestsSelector,
   createRequestSelectorByProjectIdAndRequestId,
   createProjectRequestsSelector,
+  createRequestParamsSelector,
 };
 
 export default FirebaseSelectors;

@@ -5,12 +5,8 @@ import shortId from "shortid";
 import { assertNotEmpty } from "../../helpers/commonHelpers";
 import { RootState } from "../../store";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
-import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
-import { UiActions } from "../../store/Ui/UiSlice";
-import { ModelDoc, ModelFieldDoc } from "../../types";
-import { ModelFieldFormValues } from "./ModelForm";
 import { ModelNameFormValues } from "./ModelNameForm";
 
 const useModelFormProps: (defaultModelId?: string) => any = (
@@ -26,12 +22,7 @@ const useModelFormProps: (defaultModelId?: string) => any = (
   assertNotEmpty(project);
 
   const firestoreQuery = useMemo(() => {
-    const query = [
-      {
-        collection: `projects/${project.id}/enumerations`,
-        orderBy: ["createdAt", "asc"],
-      },
-    ];
+    const query = [];
     if (defaultModelId) {
       query.push({
         collection: `projects/${project.id}/models/${defaultModelId}/modelFields`,
@@ -45,10 +36,6 @@ const useModelFormProps: (defaultModelId?: string) => any = (
 
   const projectModels = useSelector(
     FirebaseSelectors.createProjectModelsSelector(project.id)
-  );
-
-  const projectEnumerations = useSelector(
-    FirebaseSelectors.createProjectEnumerationsSelector(project.id)
   );
 
   const modelFields = useSelector(
@@ -72,60 +59,6 @@ const useModelFormProps: (defaultModelId?: string) => any = (
     [dispatch]
   );
 
-  const onDeleteModelField = useCallback(
-    (modelField: ModelFieldDoc) => {
-      dispatch(ProjectActions.deleteModelField(modelField));
-    },
-    [dispatch]
-  );
-
-  const onSubmitModelField = useCallback(
-    (data: ModelFieldFormValues) => {
-      dispatch(
-        ProjectActions.submitModelFieldForm({ ...data, modelId: model?.id })
-      );
-    },
-    [dispatch, model]
-  );
-
-  const submittingModelFieldActionsInProgress = useSelector(
-    ProgressSelectors.selectSubmitModelFieldFormItemActions
-  );
-
-  const checkIsSubmittingModelField = useCallback(
-    (modelId?: string) => {
-      return submittingModelFieldActionsInProgress.includes(
-        `${ProjectActions.submitModelFieldForm}-${modelId}`
-      );
-    },
-    [submittingModelFieldActionsInProgress]
-  );
-
-  const onSetEditingModelField = useCallback(
-    (modelFieldId?: string) => {
-      if (modelFieldId) {
-        dispatch(
-          ProjectActions.receiveEditingModelField({
-            modelFieldId,
-            formId,
-          })
-        );
-        dispatch(UiActions.disableModalEscape());
-      } else {
-        dispatch(ProjectActions.receiveEditingModelField(undefined));
-        dispatch(UiActions.enableModalEscape());
-      }
-    },
-    [dispatch, formId]
-  );
-
-  const onClickQuickEditModelName = useCallback(
-    (model: ModelDoc) => {
-      dispatch(ProjectActions.proceedQuickModelNameForm(model));
-    },
-    [dispatch]
-  );
-
   const editingModelFieldId = useMemo(() => {
     return editingModelField?.formId === formId
       ? editingModelField.modelFieldId
@@ -134,16 +67,10 @@ const useModelFormProps: (defaultModelId?: string) => any = (
 
   return {
     model,
-    modelFields,
+    modelFields: modelFields || [],
     onSubmitModel,
-    onDeleteModelField,
-    onSubmitModelField,
-    projectModels,
-    projectEnumerations,
-    checkIsSubmittingModelField,
-    onSetEditingModelField,
+    projectModels: projectModels || [],
     editingModelFieldId,
-    onClickQuickEditModelName,
   };
 };
 

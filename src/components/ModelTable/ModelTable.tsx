@@ -31,6 +31,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   requiredCell: {
     width: 50,
   },
+  buttonCell: {
+    width: 60,
+  },
   addButton: {
     justifyContent: "start",
     textTransform: "unset",
@@ -47,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export interface ModelTableProps {
   model?: ModelDoc;
   modelFields?: ModelFieldDoc[];
+  onDeleteModelFieldCustom?: (modelField: ModelFieldDoc) => void;
   onDeleteModelField: (modelField: ModelFieldDoc) => void;
   /**
    * 같은 프로젝트 내의 모델들
@@ -57,10 +61,12 @@ export interface ModelTableProps {
    */
   projectEnumerations: EnumerationDoc[];
   depth?: number;
+  checkIsSubmittingModelFieldCustom?: (id?: string) => boolean;
   checkIsSubmittingModelField: (id?: string) => boolean;
   onSetEditingModelField: (id?: string) => void;
   editingModelFieldId?: string;
   onClickQuickEditModelName: (model: ModelDoc) => void;
+  onSubmitModelFieldCustom?: (data: ModelFieldFormValues) => void;
   onSubmitModelField: (data: ModelFieldFormValues) => void;
   onShowNewForm?: () => void;
   checkIsNewFormDisabled?: () => boolean;
@@ -73,9 +79,12 @@ const ModelTable: React.FC<ModelTableProps> = ({
   onClickQuickEditModelName,
   modelFields = [],
   onSubmitModelField,
+  onSubmitModelFieldCustom,
   onDeleteModelField,
+  onDeleteModelFieldCustom,
   projectEnumerations,
   checkIsSubmittingModelField,
+  checkIsSubmittingModelFieldCustom,
   onSetEditingModelField,
   editingModelFieldId,
   onShowNewForm,
@@ -131,12 +140,27 @@ const ModelTable: React.FC<ModelTableProps> = ({
           key={modelField.id}
           modelFields={modelFields}
           modelField={modelField}
-          onSubmit={onSubmitModelField}
-          onDelete={() => onDeleteModelField(modelField)}
+          onSubmit={
+            depth
+              ? onSubmitModelField
+              : onSubmitModelFieldCustom || onSubmitModelField
+          }
+          onDelete={() =>
+            depth
+              ? onDeleteModelField(modelField)
+              : (onDeleteModelFieldCustom || onDeleteModelField)(modelField)
+          }
           projectModels={projectModels}
           projectEnumerations={projectEnumerations}
           depth={depth}
-          isSubmitting={checkIsSubmittingModelField(modelField.id)}
+          isSubmitting={
+            depth
+              ? checkIsSubmittingModelField(modelField.id)
+              : (
+                  checkIsSubmittingModelFieldCustom ||
+                  checkIsSubmittingModelField
+                )(modelField.id)
+          }
           onClickCell={() => onSetEditingModelField(modelField.id)}
           isFormVisible={editingModelFieldId === modelField.id}
           onCancel={resetEditingModelField}
@@ -145,13 +169,24 @@ const ModelTable: React.FC<ModelTableProps> = ({
       {isNewFormVisible ? (
         <ModelFieldFormItem
           modelFields={modelFields}
-          onSubmit={onSubmitModelField}
+          onSubmit={
+            depth
+              ? onSubmitModelField
+              : onSubmitModelFieldCustom || onSubmitModelField
+          }
           isFormVisible
           projectModels={projectModels}
           projectEnumerations={projectEnumerations}
           depth={depth}
           onCancel={resetEditingModelField}
-          isSubmitting={checkIsSubmittingModelField()}
+          isSubmitting={
+            depth
+              ? checkIsSubmittingModelField()
+              : (
+                  checkIsSubmittingModelFieldCustom ||
+                  checkIsSubmittingModelField
+                )()
+          }
         />
       ) : (
         <TableRow>
@@ -212,7 +247,7 @@ const Wrapper: React.FC<WrapperProps> = ({
             <TableCell className={classes.formatCell}>포맷</TableCell>
             <TableCell className={classes.formatCell}>열거형</TableCell>
             <TableCell>설명</TableCell>
-            <TableCell align="right"></TableCell>
+            <TableCell align="right" className={classes.buttonCell}></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>{children}</TableBody>

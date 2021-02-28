@@ -1,3 +1,3 @@
-import ModelTable from "./ModelTable";
+import ModelTableContainer from "./ModelTableContainer";
 
-export default ModelTable;
+export default ModelTableContainer;
