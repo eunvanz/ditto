@@ -1,15 +1,27 @@
-import React, { useCallback, useState } from "react";
-import { Box, Card, CardHeader, Divider, makeStyles } from "@material-ui/core";
+import React, { useCallback, useMemo, useState } from "react";
+import {
+  Box,
+  Card,
+  CardHeader,
+  Chip,
+  Divider,
+  makeStyles,
+} from "@material-ui/core";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { Theme } from "../../theme";
-import { ModelFieldDoc, RequestParamDoc } from "../../types";
+import {
+  ModelFieldDoc,
+  RequestParamDoc,
+  REQUEST_PARAM_LOCATION,
+} from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import ModelTable from "../ModelTable";
+import { ModelTableColumns } from "../ModelTable/ModelTable";
 
 export interface RequestParamFormProps {
-  title: string;
-  requestParams: RequestParamDoc[];
+  location: REQUEST_PARAM_LOCATION;
+  requestParams?: RequestParamDoc[];
   onSubmitRequestParamForm: (values: ModelFieldFormValues) => void;
   onDeleteRequestParam: (requestParam: ModelFieldDoc) => void;
   checkIsSubmittingRequestParam: (id?: string) => boolean;
@@ -49,10 +61,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: 10,
     color: theme.palette.text.secondary,
   },
+  countChip: {
+    height: 18,
+    marginLeft: 10,
+    "&> span": {
+      color: theme.palette.text.secondary,
+      fontSize: "1rem",
+      paddingLeft: 6,
+      paddingRight: 6,
+    },
+  },
 }));
 
 const RequestParamForm: React.FC<RequestParamFormProps> = ({
-  title,
+  location,
   requestParams,
   onSubmitRequestParamForm,
   onDeleteRequestParam,
@@ -60,17 +82,57 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
 }) => {
   const classes = useStyles();
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(
+    requestParams?.length ? true : false
+  );
 
   const toggleOpen = useCallback(() => {
     setIsOpen((isOpen) => !isOpen);
   }, []);
 
+  const title = useMemo(() => {
+    switch (location) {
+      case REQUEST_PARAM_LOCATION.COOKIE:
+        return "Cookies";
+      case REQUEST_PARAM_LOCATION.HEADER:
+        return "Headers";
+      case REQUEST_PARAM_LOCATION.PATH:
+        return "Path Params";
+      case REQUEST_PARAM_LOCATION.QUERY:
+        return "Query Params";
+    }
+  }, [location]);
+
+  const hiddenColumns: ModelTableColumns[] = useMemo(() => {
+    switch (location) {
+      case REQUEST_PARAM_LOCATION.COOKIE:
+        return [];
+      case REQUEST_PARAM_LOCATION.HEADER:
+        return [];
+      case REQUEST_PARAM_LOCATION.PATH:
+        return ["isRequired", "isArray"];
+      case REQUEST_PARAM_LOCATION.QUERY:
+        return [];
+    }
+  }, [location]);
+
   return (
     <Card>
       <CardHeader
         className={classes.header}
-        title={title}
+        title={
+          <>
+            {title}
+            {requestParams?.length ? (
+              <Chip
+                className={classes.countChip}
+                label={requestParams.length}
+              />
+            ) : (
+              ""
+            )}
+          </>
+        }
         action={isOpen ? <ExpandLess /> : <ExpandMore />}
         onClick={toggleOpen}
       />
@@ -86,6 +148,8 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
                 checkIsSubmittingModelFieldCustom={
                   checkIsSubmittingRequestParam
                 }
+                customFieldName="Key"
+                hiddenColumns={hiddenColumns}
               />
             </Box>
           </PerfectScrollbar>

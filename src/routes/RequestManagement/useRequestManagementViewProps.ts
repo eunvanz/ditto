@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { isLoaded, useFirestoreConnect } from "react-redux-firebase";
 import { useParams } from "react-router-dom";
@@ -17,9 +17,19 @@ const useRequestManagementViewProps = () => {
     projectId: string;
   }>();
 
-  useFirestoreConnect({
-    collection: `projects/${projectId}/requests`,
-  });
+  const firestoreQuery = useMemo(() => {
+    return [
+      {
+        collection: `projects/${projectId}/requests/${requestId}/params`,
+        orderBy: ["createdAt", "asc"],
+      },
+      {
+        collection: `projects/${projectId}/requests`,
+      },
+    ];
+  }, [projectId, requestId]);
+
+  useFirestoreConnect(firestoreQuery as any);
 
   const request = useSelector(
     FirebaseSelectors.createRequestSelectorByProjectIdAndRequestId(

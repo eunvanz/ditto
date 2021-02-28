@@ -124,26 +124,26 @@ const EnumForm: React.FC<EnumFormProps> = ({
 
   return enumerations ? (
     <Card>
-      <CardHeader title="열거형 목록" />
+      <CardHeader title="Enumeration list" />
       <Divider />
       <PerfectScrollbar>
         <Box minWidth={700}>
           <Table>
             <caption>
-              등록된 열거형은 프로젝트 내 어디에서든지 재사용 될 수 있습니다.
+              Enumerations are shared and reusable in this project.
             </caption>
             <TableHead>
               <TableRow>
                 <TableCell component="th" className={classes.nameCell}>
-                  열거형 명*
+                  Enumeration name*
                 </TableCell>
                 <TableCell component="th" className={classes.fieldTypeCell}>
-                  타입*
+                  Type*
                 </TableCell>
                 <TableCell component="th" className={classes.itemsCell}>
-                  값*
+                  Values*
                 </TableCell>
-                <TableCell component="th">설명</TableCell>
+                <TableCell component="th">Description</TableCell>
                 <TableCell align="right"></TableCell>
               </TableRow>
             </TableHead>
@@ -212,7 +212,7 @@ const EnumForm: React.FC<EnumFormProps> = ({
                       color="secondary"
                       onClick={showNewForm}
                     >
-                      <AddIcon fontSize="small" /> 새로운 열거형 등록
+                      <AddIcon fontSize="small" /> Add new enumeration
                     </Button>
                   </TableCell>
                 )}

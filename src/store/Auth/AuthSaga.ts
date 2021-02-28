@@ -16,8 +16,8 @@ export function* requireSignIn() {
   // 로그인이 돼있지 않은 경우 로그인 유도
   if (auth.isEmpty) {
     yield* call(Alert.message, {
-      title: "로그인 필요",
-      message: "로그인이 필요한 기능입니다.",
+      title: "Sign-in Required",
+      message: "Please sign in to continue.",
     });
     yield* put(UiActions.hideProjectFormModal());
     yield* put(UiActions.showSignInModal());

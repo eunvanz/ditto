@@ -29,22 +29,22 @@ const QuickUrlFormModal: React.FC<QuickUrlFormModalProps> = ({
   });
 
   return (
-    <Modal title="새로운 베이스 URL" isVisible={isVisible} onClose={onClose}>
+    <Modal title="Create new base URL" isVisible={isVisible} onClose={onClose}>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Box mt={2}>
           <TextField
             autoFocus
-            label="라벨"
+            label="Label"
             name="label"
             inputRef={register({
-              required: "이름표를 붙여주세요.",
+              required: "Label is required.",
               maxLength: {
                 value: 20,
-                message: "이름이 너무 길어요.",
+                message: "Label is too long.",
               },
               validate: (data: string) => {
                 const isDup = existingUrls.some((item) => item.label === data);
-                return isDup ? "중복되는 이름이 있어요." : true;
+                return isDup ? "Label is duplicated." : true;
               },
             })}
             variant="outlined"
@@ -58,20 +58,18 @@ const QuickUrlFormModal: React.FC<QuickUrlFormModalProps> = ({
             label="URL"
             name="url"
             inputRef={register({
-              required: "URL을 입력해주세요.",
+              required: "URL is required.",
               maxLength: {
                 value: 100,
-                message: "URL이 너무 길어요.",
+                message: "URL is too long.",
               },
               pattern: {
                 value: regExps.url,
-                message: "URL형식으로 입력해주세요.",
+                message: "URL is not valid.",
               },
               validate: (data: string) => {
                 const dupUrl = existingUrls.find((item) => item.url === data);
-                return dupUrl
-                  ? `이미 등록된 URL이에요. - ${dupUrl.label}`
-                  : true;
+                return dupUrl ? `URL is duplicated with ${dupUrl.label}` : true;
               },
             })}
             variant="outlined"
@@ -82,12 +80,12 @@ const QuickUrlFormModal: React.FC<QuickUrlFormModalProps> = ({
         </Box>
         <Box mt={2}>
           <TextField
-            label="설명"
+            label="Description"
             name="description"
             inputRef={register({
               maxLength: {
                 value: 100,
-                message: "설명이 너무 길어요.",
+                message: "Description is too long.",
               },
             })}
             variant="outlined"
@@ -104,7 +102,7 @@ const QuickUrlFormModal: React.FC<QuickUrlFormModalProps> = ({
             type="submit"
             variant="contained"
           >
-            베이스 URL 생성
+            Create new base URL
           </Button>
         </Box>
       </form>

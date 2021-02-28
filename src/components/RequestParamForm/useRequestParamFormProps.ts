@@ -1,6 +1,5 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useFirestoreConnect } from "react-redux-firebase";
 import useProjectByParam from "../../hooks/useProjectByParam";
 import useRequestByParam from "../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
@@ -17,34 +16,8 @@ export interface UseRequestParamFormPropsParams {
 const useRequestParamFormProps: (
   params: UseRequestParamFormPropsParams
 ) => RequestParamFormProps = ({ location }: UseRequestParamFormPropsParams) => {
-  const title = useMemo(() => {
-    switch (location) {
-      case REQUEST_PARAM_LOCATION.COOKIE:
-        return "Cookies";
-      case REQUEST_PARAM_LOCATION.HEADER:
-        return "Headers";
-      case REQUEST_PARAM_LOCATION.PATH:
-        return "Path Params";
-      case REQUEST_PARAM_LOCATION.QUERY:
-        return "Query Params";
-    }
-  }, [location]);
-
   const { projectId } = useProjectByParam();
   const { requestId } = useRequestByParam();
-
-  const firestoreQuery = useMemo(() => {
-    if (projectId) {
-      return {
-        collection: `projects/${projectId}/requests/${requestId}/params`,
-        orderBy: ["createdAt", "asc"],
-      };
-    } else {
-      return [];
-    }
-  }, [projectId, requestId]);
-
-  useFirestoreConnect(firestoreQuery as any);
 
   const requestParams = useSelector(
     FirebaseSelectors.createRequestParamsSelector(
@@ -90,7 +63,7 @@ const useRequestParamFormProps: (
   );
 
   return {
-    title,
+    location,
     requestParams: requestParams || [],
     onSubmitRequestParamForm,
     onDeleteRequestParam,

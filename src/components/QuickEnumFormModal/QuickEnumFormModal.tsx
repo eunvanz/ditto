@@ -12,7 +12,11 @@ const QuickEnumFormModal: React.FC<QuickEnumFormModalProps> = ({
   onClose,
 }) => {
   return (
-    <Modal title="새로운 열거형" isVisible={isVisible} onClose={onClose}>
+    <Modal
+      title="Create new enumeration"
+      isVisible={isVisible}
+      onClose={onClose}
+    >
       <QuickEnumForm />
     </Modal>
   );

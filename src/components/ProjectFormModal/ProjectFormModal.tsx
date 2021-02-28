@@ -14,7 +14,7 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
 }) => {
   return (
     <Modal
-      title={isModification ? "프로젝트 설정" : "새로운 프로젝트"}
+      title={isModification ? "Modify project" : "Create new project"}
       isVisible={isVisible}
       onClose={onClose}
     >

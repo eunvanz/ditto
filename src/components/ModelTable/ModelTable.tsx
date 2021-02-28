@@ -47,6 +47,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+export type ModelTableColumns =
+  | "fieldName"
+  | "isRequired"
+  | "isArray"
+  | "fieldType"
+  | "format"
+  | "enum"
+  | "description";
+
 export interface ModelTableProps {
   model?: ModelDoc;
   modelFields?: ModelFieldDoc[];
@@ -70,6 +79,8 @@ export interface ModelTableProps {
   onSubmitModelField: (data: ModelFieldFormValues) => void;
   onShowNewForm?: () => void;
   checkIsNewFormDisabled?: () => boolean;
+  customFieldName?: string;
+  hiddenColumns?: ModelTableColumns[];
 }
 
 const ModelTable: React.FC<ModelTableProps> = ({
@@ -89,6 +100,8 @@ const ModelTable: React.FC<ModelTableProps> = ({
   editingModelFieldId,
   onShowNewForm,
   checkIsNewFormDisabled,
+  customFieldName,
+  hiddenColumns,
 }) => {
   const classes = useStyles();
 
@@ -114,8 +127,10 @@ const ModelTable: React.FC<ModelTableProps> = ({
   }, [depth]);
 
   const addText = useMemo(() => {
-    return depth ? `${model?.name}에 새로운 필드 추가` : "새로운 필드 추가";
-  }, [depth, model]);
+    return depth
+      ? `Add New Field To ${model?.name}`
+      : `Add New ${customFieldName}`;
+  }, [customFieldName, depth, model]);
 
   const isNewFormVisible = useMemo(() => {
     return editingModelFieldId === "NEW";
@@ -134,6 +149,8 @@ const ModelTable: React.FC<ModelTableProps> = ({
       depth={depth}
       model={model}
       onClickQuickEditModelName={onClickQuickEditModelName}
+      customFieldName={customFieldName}
+      hiddenColumns={hiddenColumns}
     >
       {modelFields.map((modelField) => (
         <ModelFieldFormItem
@@ -164,6 +181,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
           onClickCell={() => onSetEditingModelField(modelField.id)}
           isFormVisible={editingModelFieldId === modelField.id}
           onCancel={resetEditingModelField}
+          hiddenColumns={hiddenColumns}
         />
       ))}
       {isNewFormVisible ? (
@@ -187,6 +205,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
                   checkIsSubmittingModelField
                 )()
           }
+          hiddenColumns={hiddenColumns}
         />
       ) : (
         <TableRow>
@@ -208,7 +227,11 @@ const ModelTable: React.FC<ModelTableProps> = ({
 
 type WrapperProps = Pick<
   ModelTableProps,
-  "depth" | "model" | "onClickQuickEditModelName"
+  | "depth"
+  | "model"
+  | "onClickQuickEditModelName"
+  | "customFieldName"
+  | "hiddenColumns"
 > & {
   existingModelNames: string[];
   children: React.ReactNode;
@@ -219,6 +242,8 @@ const Wrapper: React.FC<WrapperProps> = ({
   model,
   children,
   onClickQuickEditModelName,
+  customFieldName,
+  hiddenColumns,
 }) => {
   const classes = useStyles();
 
@@ -228,25 +253,65 @@ const Wrapper: React.FC<WrapperProps> = ({
     return getIntentionPaddingByDepth(depth);
   }, [depth]);
 
+  const getHiddenColumnStyle = useCallback(
+    (column: ModelTableColumns) => {
+      if (hiddenColumns?.includes(column)) {
+        return { display: "none" };
+      } else {
+        return undefined;
+      }
+    },
+    [hiddenColumns]
+  );
+
   if (!depth) {
     return (
       <Table stickyHeader size="small">
         <caption />
         <TableHead>
           <TableRow>
-            <TableCell component="th" className={classes.fieldNameCell}>
-              필드명*
+            <TableCell
+              component="th"
+              className={classes.fieldNameCell}
+              style={getHiddenColumnStyle("fieldName")}
+            >
+              {customFieldName ? `${customFieldName}*` : "Field name*"}
             </TableCell>
-            <TableCell align="center" className={classes.requiredCell}>
-              필수
+            <TableCell
+              align="center"
+              className={classes.requiredCell}
+              style={getHiddenColumnStyle("isRequired")}
+            >
+              Required
             </TableCell>
-            <TableCell align="center" className={classes.arrayCell}>
-              배열
+            <TableCell
+              align="center"
+              className={classes.arrayCell}
+              style={getHiddenColumnStyle("isArray")}
+            >
+              Array
             </TableCell>
-            <TableCell className={classes.typeCell}>타입*</TableCell>
-            <TableCell className={classes.formatCell}>포맷</TableCell>
-            <TableCell className={classes.formatCell}>열거형</TableCell>
-            <TableCell>설명</TableCell>
+            <TableCell
+              className={classes.typeCell}
+              style={getHiddenColumnStyle("fieldType")}
+            >
+              Type*
+            </TableCell>
+            <TableCell
+              className={classes.formatCell}
+              style={getHiddenColumnStyle("format")}
+            >
+              Format
+            </TableCell>
+            <TableCell
+              className={classes.formatCell}
+              style={getHiddenColumnStyle("enum")}
+            >
+              Enumeration
+            </TableCell>
+            <TableCell style={getHiddenColumnStyle("description")}>
+              Description
+            </TableCell>
             <TableCell align="right" className={classes.buttonCell}></TableCell>
           </TableRow>
         </TableHead>

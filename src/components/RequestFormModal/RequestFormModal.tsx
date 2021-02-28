@@ -28,18 +28,18 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
   });
 
   return (
-    <Modal title="리퀘스트 생성" isVisible={isVisible} onClose={onClose}>
+    <Modal title="Create new operation" isVisible={isVisible} onClose={onClose}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box mt={2}>
           <TextField
             autoFocus
-            label="리퀘스트 이름"
+            label="Operation name"
             name="name"
             inputRef={register({
-              required: "리퀘스트 이름을 지어주세요.",
+              required: "Operation name is required.",
               maxLength: {
                 value: 30,
-                message: "이름이 너무 길어요.",
+                message: "Operation name is too long.",
               },
             })}
             variant="outlined"
@@ -51,38 +51,38 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
         </Box>
         <Box mt={2}>
           <TextField
-            label="리퀘스트 요약"
+            label="Summary"
             name="summary"
             inputRef={register({
               maxLength: {
                 value: 30,
-                message: "요약이 너무 길어요.",
+                message: "Summary is too long.",
               },
             })}
             variant="outlined"
             fullWidth
             error={!!errors.summary}
             helperText={errors.summary?.message}
-            placeholder="리퀘스트의 기능을 간략하게 요약해주세요."
+            placeholder="Summary of this operation."
           />
         </Box>
         <Box mt={2}>
           <TextField
             rows={3}
             multiline
-            label="리퀘스트 설명"
+            label="Description"
             name="description"
             inputRef={register({
               maxLength: {
                 value: 200,
-                message: "설명이 너무 길어요.",
+                message: "Description is too long",
               },
             })}
             variant="outlined"
             fullWidth
             error={!!errors.description}
             helperText={errors.description?.message}
-            placeholder="리퀘스트의 세부적인 설명을 적어주세요."
+            placeholder="Detailed description of this operation."
           />
         </Box>
         <Box mt={2}>
@@ -94,7 +94,7 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
             type="submit"
             variant="contained"
           >
-            리퀘스트 만들기
+            Create new operation
           </Button>
         </Box>
       </form>

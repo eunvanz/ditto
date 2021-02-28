@@ -91,7 +91,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
 
   const urlPrefix = useMemo(() => {
     return [BASE_URL.NONE, BASE_URL.NEW].includes(watchedBaseUrl as any)
-      ? "베이스URL을 선택해주세요"
+      ? "Please select a base URL"
       : `${baseUrls.find((item) => item.id === watchedBaseUrl)?.url}/`;
   }, [baseUrls, watchedBaseUrl]);
 
@@ -117,7 +117,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
       <form onSubmit={validateAndSubmit}>
         <Box display="flex" alignItems="center">
           <TextField
-            label="메소드"
+            label="Method"
             name="method"
             select
             variant="outlined"
@@ -133,7 +133,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             ))}
           </TextField>
           <TextField
-            label="베이스URL"
+            label="Base URL"
             name="baseUrl"
             select
             variant="outlined"
@@ -171,9 +171,9 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
                   watchedBaseUrl !== BASE_URL.NONE
                 ) {
                   return !isValidUrl
-                    ? "URL형식에 맞지 않아요."
+                    ? "URL is not valid."
                     : isParamWrappedProperly ||
-                        "패스 파라미터를 '{}'로 감싸주세요.";
+                        "Please wrap path parameter with '{}'";
                 } else {
                   return true;
                 }

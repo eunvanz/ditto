@@ -126,7 +126,7 @@ const useDashboardLayoutProps = () => {
   const sections = useMemo(() => {
     return [
       {
-        subheader: "내 프로젝트",
+        subheader: "My Projects",
         items: projects?.map((project) => {
           const items = getProjectSubItems(project);
           return (

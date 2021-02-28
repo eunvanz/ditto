@@ -6,7 +6,7 @@ export enum THEMES {
 }
 
 export enum REQUEST_METHOD {
-  NONE = "미선택",
+  NONE = "Not selected",
   GET = "GET",
   POST = "POST",
   PUT = "PUT",
@@ -174,8 +174,8 @@ export const fieldTypes = Object.keys(FIELD_TYPE).map(
 );
 
 export enum FORMAT {
-  NONE = "없음",
-  NEW_MODEL = "새로운 모델",
+  NONE = "None",
+  NEW_MODEL = "New model",
   INT32 = "int32",
   INT64 = "int64",
   FLOAT = "float",
@@ -188,13 +188,13 @@ export enum FORMAT {
 }
 
 export enum ENUMERATION {
-  NONE = "없음",
-  NEW = "새로운 열거형",
+  NONE = "None",
+  NEW = "New enumeration",
 }
 
 export enum BASE_URL {
-  NONE = "미선택",
-  NEW = "새로운 베이스URL",
+  NONE = "Not selected",
+  NEW = "New base URL",
 }
 
 export const formats: { [k in FIELD_TYPE]: (string | undefined)[] } = {

@@ -52,7 +52,7 @@ function* getProperDoc<T extends Recordable>(
   const project = yield* select(ProjectSelectors.selectCurrentProject);
 
   if (!project) {
-    throw new Error("선택되어있는 프로젝트가 없습니다.");
+    throw new Error("There's no selected project.");
   }
 
   const { target } = values;
@@ -130,8 +130,8 @@ export function* submitProjectFormFlow() {
         put(
           UiActions.showNotification({
             message: isModification
-              ? "프로젝트 설정이 변경되었습니다."
-              : "새 프로젝트가 생성됐습니다.",
+              ? "Project settings have been modified."
+              : "New project is created.",
           })
         ),
         put(UiActions.hideProjectFormModal()),
@@ -152,8 +152,8 @@ export function* deleteProjectFlow() {
     const { payload: project } = yield* take(ProjectActions.deleteProject);
     yield* put(
       UiActions.showCriticalConfirmModal({
-        title: "프로젝트 삭제",
-        message: `프로젝트 하위의 작업들이 모두 삭제됩니다. 정말 프로젝트를 삭제하시겠습니까? 진행하시려면 {${project.title}}을 입력해주세요.`,
+        title: "Delete project",
+        message: `This will permanently delete the project, included operations and groups. Please type {${project.title}} to confirm.`,
         keyword: project.title,
       })
     );
@@ -167,7 +167,7 @@ export function* deleteProjectFlow() {
         yield* call(Firework.deleteProject, project.id);
         yield* put(
           UiActions.showNotification({
-            message: "프로젝트가 삭제됐습니다.",
+            message: "The project has been deleted.",
             type: "success",
           })
         );
@@ -218,7 +218,7 @@ export function* submitProjectUrlFormFlow() {
         yield* put(
           UiActions.showNotification({
             type: "success",
-            message: "URL 정보를 수정했습니다.",
+            message: "URL settings have been modified.",
           })
         );
       } else {
@@ -248,16 +248,14 @@ export function* submitProjectUrlFormFlow() {
         yield* put(
           UiActions.showNotification({
             type: "success",
-            message: "URL을 추가했습니다.",
+            message: "New base URL has been created.",
           })
         );
       }
     } catch (error) {
       yield* put(
         ErrorActions.catchError({
-          error: new Error(
-            "데이터 처리 도중에 오류가 발생했습니다. 반복될 경우 고객센터에 문의해주세요."
-          ),
+          error,
           isAlertOnly: true,
         })
       );
@@ -279,8 +277,8 @@ export function* deleteProjectUrlFlow() {
 
     if (isUsedBySome) {
       yield* call(Alert.message, {
-        title: "삭제 불가",
-        message: "사용하고 있는 리퀘스트가 있어 삭제가 불가합니다.",
+        title: "Deletion failure",
+        message: "The base URL is used by an operation.",
       });
       continue;
     }
@@ -290,7 +288,7 @@ export function* deleteProjectUrlFlow() {
       yield* put(
         UiActions.showNotification({
           type: "success",
-          message: "URL이 삭제되었습니다.",
+          message: "The base URL has been deleted.",
         })
       );
     } catch (error) {
@@ -307,8 +305,8 @@ export function* deleteModelFieldFlow() {
       ProjectActions.deleteModelField
     );
     const isConfirmed = yield* call(Alert.confirm, {
-      title: "필드 삭제",
-      message: `정말 ${modelField.fieldName.value} 필드를 삭제하시겠습니까?`,
+      title: "Delete field",
+      message: `Are you sure to delete field ${modelField.fieldName.value}?`,
     });
     if (isConfirmed) {
       try {
@@ -317,7 +315,7 @@ export function* deleteModelFieldFlow() {
         yield* put(
           UiActions.showNotification({
             type: "success",
-            message: "필드가 삭제되었습니다.",
+            message: "The field has been deleted.",
           })
         );
       } catch (error) {
@@ -378,7 +376,7 @@ export function* submitModelNameFormFlow() {
         yield* put(
           UiActions.showNotification({
             type: "success",
-            message: "모델이 수정됐습니다.",
+            message: "The model has been modified.",
           })
         );
       } else {
@@ -409,7 +407,7 @@ export function* submitModelNameFormFlow() {
         yield* put(
           UiActions.showNotification({
             type: "success",
-            message: "모델이 생성됐습니다.",
+            message: "New model has been created.",
           })
         );
       }
@@ -466,8 +464,8 @@ export function* deleteModelFlow() {
   while (true) {
     const { payload } = yield* take(ProjectActions.deleteModel);
     const isConfirmed = yield* call(Alert.confirm, {
-      title: "모델 삭제",
-      message: `정말 ${payload.name} 모델을 삭제하시겠습니까?`,
+      title: "Delete model",
+      message: `Are you sure to delete model ${payload.name}?`,
     });
     if (isConfirmed) {
       try {
@@ -480,12 +478,12 @@ export function* deleteModelFlow() {
         if (referringModels.length > 0) {
           yield* put(UiActions.hideLoading());
           yield* call(Alert.message, {
-            title: "삭제 불가",
+            title: "Deletion failure",
             message: `${referringModels
               .map((model) => model.name)
               .join(
                 ", "
-              )} 모델에서 참조 중인 모델입니다. 다른 모델에서 참조중인 모델은 삭제가 불가능합니다.`,
+              )} is(are) referring to the model. It's impossible to delete a model referred by another models.`,
           });
           continue;
         } else {
@@ -493,7 +491,7 @@ export function* deleteModelFlow() {
           yield* put(
             UiActions.showNotification({
               type: "success",
-              message: "모델이 삭제되었습니다.",
+              message: "The model has been deleted.",
             })
           );
         }
@@ -520,7 +518,7 @@ export function* selectAndCheckProject() {
   if (!currentProject) {
     yield* put(
       ErrorActions.catchError({
-        error: new Error("선택되어있는 프로젝트가 없습니다."),
+        error: new Error("There's no selected project."),
         isAlertOnly: true,
       })
     );
@@ -555,7 +553,7 @@ export function* submitModelFieldFormFlow() {
     if (!modelId) {
       yield* put(
         ErrorActions.catchError({
-          error: new Error("선택되어 있는 모델이 없습니다."),
+          error: new Error("There's no selected project."),
           isAlertOnly: true,
         })
       );
@@ -856,7 +854,7 @@ export function* submitEnumFormFlow() {
         yield* put(
           UiActions.showNotification({
             type: "success",
-            message: "열거형이 생성되었습니다.",
+            message: "New enumeration has been created.",
           })
         );
       }
@@ -874,8 +872,8 @@ export function* deleteEnumerationFlow() {
   while (true) {
     const { payload } = yield* take(ProjectActions.deleteEnumeration);
     const isConfirmed = yield* call(Alert.confirm, {
-      title: "열거형 삭제",
-      message: `정말 ${payload.name} 열거형을 삭제하시겠습니까?`,
+      title: "Delete enumeration",
+      message: `Are you sure to delete enumeration ${payload.name}?`,
     });
     if (isConfirmed) {
       try {
@@ -893,7 +891,7 @@ export function* deleteEnumerationFlow() {
               .map((model) => model.name)
               .join(
                 ", "
-              )} 모델에서 참조 중인 열거형입니다. 모델에서 참조중인 열거형은 삭제가 불가능합니다.`,
+              )} is(are) referring to the model. It's impossible to delete a model referred by another models.`,
           });
           continue;
         } else {
@@ -901,7 +899,7 @@ export function* deleteEnumerationFlow() {
           yield* put(
             UiActions.showNotification({
               type: "success",
-              message: "열거형이 삭제되었습니다.",
+              message: "The enumeration has been deleted.",
             })
           );
         }
@@ -937,7 +935,9 @@ export function* submitGroupFormFlow() {
       yield* put(
         UiActions.showNotification({
           type: "success",
-          message: target ? "그룹이 수정됐습니다." : "그룹이 생성됐습니다.",
+          message: target
+            ? "The group has been modified."
+            : "New group has been created.",
         })
       );
       yield* put(UiActions.hideGroupFormModal());
@@ -955,8 +955,8 @@ export function* deleteGroupFlow() {
     const { type, payload } = yield* take(ProjectActions.deleteGroup);
     yield* put(
       UiActions.showCriticalConfirmModal({
-        title: "그룹 삭제",
-        message: `그룹 하위의 작업들이 모두 삭제됩니다. 정말 그룹을 삭제하시겠습니까? 진행하시려면 {${payload.name}}을 입력해주세요.`,
+        title: "Delete group",
+        message: `This will permanently delete the group and included operations. Please type {${payload.name}} to confirm.`,
         keyword: payload.name,
       })
     );
@@ -972,7 +972,7 @@ export function* deleteGroupFlow() {
         yield* call(Firework.deleteGroup, payload);
         yield* put(
           UiActions.showNotification({
-            message: "그룹이 삭제됐습니다.",
+            message: "The group has been deleted.",
             type: "success",
           })
         );
@@ -1015,7 +1015,7 @@ export function* submitRequestFormFlow() {
       const newRequestRef = yield* call(Firework.addRequest, newRequest);
       yield* put(
         UiActions.showNotification({
-          message: "리퀘스트가 생성됐습니다.",
+          message: "New operation has been created.",
           type: "success",
         })
       );
@@ -1091,7 +1091,7 @@ export function* submitRequestParamFormFlow() {
     if (!requestId) {
       yield* put(
         ErrorActions.catchError({
-          error: new Error("선택되어 있는 리퀘스트가 없습니다."),
+          error: new Error("There's no selected operation."),
           isAlertOnly: true,
         })
       );
@@ -1336,8 +1336,8 @@ export function* deleteRequestParamFlow() {
       ProjectActions.deleteRequestParam
     );
     const isConfirmed = yield* call(Alert.confirm, {
-      title: "파라미터 삭제",
-      message: `정말 ${requestParam.fieldName.value}를 삭제하시겠습니까?`,
+      title: "Delete parameter",
+      message: `Are you sure to delete key ${requestParam.fieldName.value}?`,
     });
     if (isConfirmed) {
       try {
@@ -1349,7 +1349,7 @@ export function* deleteRequestParamFlow() {
         yield* put(
           UiActions.showNotification({
             type: "success",
-            message: "파라미터가 삭제되었습니다.",
+            message: "The parameter has been deleted.",
           })
         );
       } catch (error) {

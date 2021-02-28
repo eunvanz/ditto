@@ -83,16 +83,16 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
           autoFocus={autoFocusField === "name"}
           name="name"
           inputRef={register({
-            required: "이름을 지어주세요.",
+            required: "Name is required.",
             maxLength: {
               value: 40,
-              message: "이름이 너무 길어요.",
+              message: "Name is too long.",
             },
             validate: (data: string) => {
               const isDup = existingEnumerations.some(
                 (enumeration) => enumeration.name === data
               );
-              return isDup ? "중복되는 이름이 있어요." : true;
+              return isDup ? "Name is duplicated." : true;
             },
             pattern: patterns.wordsWithNoSpace,
           })}
@@ -100,7 +100,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
           required
           error={!!errors.name}
           helperText={errors.name?.message}
-          placeholder="열거형 명"
+          placeholder="Enumeration name"
         />
       </TableCell>
       <TableCell>
@@ -108,7 +108,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
           control={control}
           name="fieldType"
           defaultValue={defaultFieldType}
-          rules={{ required: "타입을 선택해주세요." }}
+          rules={{ required: "Type must be selected." }}
           render={({ value }) => {
             return (
               <Autocomplete
@@ -125,7 +125,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
                       {...params}
                       size="small"
                       required
-                      placeholder="타입"
+                      placeholder="Type"
                       autoFocus={autoFocusField === "fieldType"}
                       error={!!errors.fieldType}
                       helperText={errors.fieldType?.message}
@@ -148,22 +148,22 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
             trigger();
           }}
           inputRef={register({
-            required: "값을 입력해주세요.",
+            required: "Values are required.",
             maxLength: {
               value: 500,
-              message: "이렇게 많이 쓸일이 있을까요?",
+              message: "Values are too long.",
             },
             validate: {
               pattern: (value) => {
                 if (watchedFieldType === FIELD_TYPE.STRING) {
                   return (
-                    /^[a-z0-9_가-힣]+(,[a-z0-9_가-힣]+)*$/i.test(value) ||
-                    "일반문자와 숫자만 사용해서 1글자 이상씩 콤마로 구분해서 입력해주세요."
+                    /^[a-zA-Z0-9_가-힣]+(,[a-zA-Z0-9_가-힣]+)*$/i.test(value) ||
+                    "Try a mix of letters, numbers or underscore, separate values with comma."
                   );
                 } else if (watchedFieldType === FIELD_TYPE.INTEGER) {
                   return (
                     /^[0-9]+(,[0-9]+)*$/i.test(value) ||
-                    "숫자만 사용해서 1글자 이상씩 콤마로 구분해서 입력해주세요."
+                    "Only numbers are allowed, separate values with comma."
                   );
                 } else {
                   return true;
@@ -174,7 +174,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
                 let isExclusive =
                   uniq(splitValues).length === splitValues.length;
                 return !isExclusive
-                  ? "콤마로 구분된 값이 중복되지 않도록 입력해주세요."
+                  ? "Each values must not be the same."
                   : true;
               },
             },
@@ -183,7 +183,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
           required
           error={!!errors.items}
           helperText={errors.items?.message}
-          placeholder="콤마로 구분하여 입력"
+          placeholder="Separate values with comma"
         />
       </TableCell>
       <TableCell>
@@ -194,14 +194,14 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
           inputRef={register({
             maxLength: {
               value: 80,
-              message: "설명이 너무 길어요.",
+              message: "Description is too long.",
             },
           })}
           fullWidth
           required
           error={!!errors.description}
           helperText={errors.description?.message}
-          placeholder="설명"
+          placeholder="Description"
         />
       </TableCell>
       <TableCell align="right">

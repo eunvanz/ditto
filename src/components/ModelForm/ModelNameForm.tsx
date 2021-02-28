@@ -77,22 +77,22 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
         <Grid container spacing={3}>
           <Grid item sm={5}>
             <TextField
-              label="모델명"
+              label="Model name"
               autoFocus={!model}
               name="name"
               inputRef={(e) => {
                 nameInputRef.current = e;
                 register(e, {
-                  required: "모델명을 입력해주세요.",
+                  required: "Name is required.",
                   maxLength: {
                     value: 40,
-                    message: "모델명이 너무 길어요.",
+                    message: "Name is too long.",
                   },
                   validate: (data: string) => {
                     const isDup = existingModelNames.some(
                       (item) => item === data
                     );
-                    return isDup ? "중복되는 모델명이 있어요." : true;
+                    return isDup ? "Name is duplicated." : true;
                   },
                   pattern: patterns.wordsWithNoSpace,
                 });
@@ -113,7 +113,7 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
               inputRef={register({
                 maxLength: {
                   value: 100,
-                  message: "설명이 너무 길어요.",
+                  message: "Description is too long.",
                 },
               })}
               variant="outlined"

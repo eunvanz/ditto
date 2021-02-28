@@ -76,18 +76,18 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <Card>
-        <CardHeader title="프로젝트 기본정보" />
+        <CardHeader title="Project basic information" />
         <Divider />
         <CardContent>
           <Box mt={0}>
             <TextField
-              label="프로젝트 이름"
+              label="Project name"
               name="title"
               inputRef={register({
-                required: "프로젝트 이름을 지어주세요.",
+                required: "Project name is required.",
                 maxLength: {
                   value: 20,
-                  message: "이름이 너무 길어요.",
+                  message: "Project name is too long.",
                 },
               })}
               variant="outlined"
@@ -99,12 +99,12 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
           </Box>
           <Box mt={2}>
             <TextField
-              label="프로젝트 설명"
+              label="Description"
               name="description"
               inputRef={register({
                 maxLength: {
                   value: 50,
-                  message: "설명이 너무 길어요.",
+                  message: "Description is too long.",
                 },
               })}
               variant="outlined"
@@ -122,7 +122,7 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
             onClick={onDelete}
             variant="contained"
           >
-            프로젝트 삭제
+            Delete this project
           </Button>
           <Button
             color="secondary"
@@ -131,7 +131,7 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
             variant="contained"
             className={classes.submitButton}
           >
-            변경사항 저장
+            Apply modifications
           </Button>
         </Box>
       </Card>

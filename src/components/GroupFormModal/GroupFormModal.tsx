@@ -59,7 +59,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
 
   return existingGroupNames ? (
     <Modal
-      title={defaultValues ? "그룹 수정" : "그룹 생성"}
+      title={defaultValues ? "Modify group" : "Create group"}
       isVisible={isVisible}
       onClose={onClose}
     >
@@ -72,19 +72,19 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
         <Box mt={2}>
           <TextField
             autoFocus
-            label="그룹 이름"
+            label="Group name"
             name="name"
             inputRef={register({
-              required: "그룹 이름을 지어주세요.",
+              required: "Group name is required.",
               maxLength: {
                 value: 20,
-                message: "이름이 너무 길어요.",
+                message: "Group name is too long.",
               },
               validate: (data: string) => {
                 const isDup = existingGroupNames.some(
                   (groupName) => groupName === data
                 );
-                return isDup ? "중복되는 이름이 있어요." : true;
+                return isDup ? "Group name is duplicated." : true;
               },
             })}
             variant="outlined"
@@ -103,7 +103,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
             type="submit"
             variant="contained"
           >
-            {defaultValues ? "그룹 정보 변경" : "그룹 만들기"}
+            {defaultValues ? "Apply modifications" : "Create"}
           </Button>
         </Box>
         {defaultValues && (
@@ -117,7 +117,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
               variant="contained"
               onClick={onDelete}
             >
-              그룹 삭제
+              Delete this group
             </Button>
           </Box>
         )}

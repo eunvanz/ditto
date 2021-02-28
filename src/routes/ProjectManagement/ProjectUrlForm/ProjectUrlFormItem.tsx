@@ -30,14 +30,14 @@ const ProjectUrlFormItem: React.FC<ProjectUrlFormItemProps> = ({
           autoFocus={autoFocusField === "label"}
           name="label"
           inputRef={register({
-            required: "이름표를 붙여주세요.",
+            required: "Label is required.",
             maxLength: {
               value: 20,
-              message: "이름이 너무 길어요.",
+              message: "Label is too long.",
             },
             validate: (data: string) => {
               const isDup = existingUrls.some((item) => item.label === data);
-              return isDup ? "중복되는 이름이 있어요." : true;
+              return isDup ? "Label is duplicated." : true;
             },
           })}
           fullWidth
@@ -46,7 +46,7 @@ const ProjectUrlFormItem: React.FC<ProjectUrlFormItemProps> = ({
           helperText={errors.label?.message}
           onBlur={onBlur}
           onFocus={onFocus}
-          placeholder="라벨"
+          placeholder="Label"
         />
       </TableCell>
       <TableCell>
@@ -55,18 +55,18 @@ const ProjectUrlFormItem: React.FC<ProjectUrlFormItemProps> = ({
           autoFocus={autoFocusField === "url"}
           name="url"
           inputRef={register({
-            required: "URL을 입력해주세요.",
+            required: "URL is required.",
             maxLength: {
               value: 100,
-              message: "URL이 너무 길어요.",
+              message: "URL is too long.",
             },
             pattern: {
               value: regExps.url,
-              message: "URL형식으로 입력해주세요.",
+              message: "URL is not valid.",
             },
             validate: (data: string) => {
               const dupUrl = existingUrls.find((item) => item.url === data);
-              return dupUrl ? `이미 등록된 URL이에요. - ${dupUrl.label}` : true;
+              return dupUrl ? `URL is duplicated with ${dupUrl.label}` : true;
             },
           })}
           fullWidth
@@ -86,7 +86,7 @@ const ProjectUrlFormItem: React.FC<ProjectUrlFormItemProps> = ({
           inputRef={register({
             maxLength: {
               value: 100,
-              message: "설명이 너무 길어요.",
+              message: "Description is too long.",
             },
           })}
           fullWidth
@@ -94,7 +94,7 @@ const ProjectUrlFormItem: React.FC<ProjectUrlFormItemProps> = ({
           helperText={errors.description?.message}
           onBlur={onBlur}
           onFocus={onFocus}
-          placeholder="설명"
+          placeholder="Description"
         />
       </TableCell>
       <TableCell>

@@ -259,9 +259,7 @@ const NavItem: FC<NavItemProps> = ({
               type="add"
               depth={depth + 1}
               title={
-                depth === 0
-                  ? "새로운 그룹 또는 리퀘스트 추가"
-                  : "새로운 리퀘스트 추가"
+                depth === 0 ? "Add New Group / Operation" : "Add New Operation"
               }
               onClick={handleOnClickNewItem}
             />
@@ -282,8 +280,8 @@ const NavItem: FC<NavItemProps> = ({
               anchorEl={addNewItemButtonRef.current}
               getContentAnchorEl={null}
             >
-              <MenuItem onClick={handleOnClickAddGroup}>그룹</MenuItem>
-              <MenuItem onClick={handleOnClickAddRequest}>리퀘스트</MenuItem>
+              <MenuItem onClick={handleOnClickAddGroup}>Group</MenuItem>
+              <MenuItem onClick={handleOnClickAddRequest}>Operation</MenuItem>
             </Menu>
           )}
         </Collapse>

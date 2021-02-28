@@ -6,7 +6,7 @@ import GroupFormModal, { GroupFormModalProps } from "./GroupFormModal";
 const defaultProps: Partial<GroupFormModalProps> = {
   isSubmitting: false,
   isVisible: true,
-  existingGroupNames: ["존재하는그룹", "있는그룹"],
+  existingGroupNames: ["존재하는Group", "있는Group"],
 };
 
 export default {
@@ -28,6 +28,6 @@ export const 생성 = Template.bind({});
 export const 수정 = Template.bind({});
 수정.args = {
   defaultValues: {
-    name: "그룹이름",
+    name: "Group Name",
   },
 };

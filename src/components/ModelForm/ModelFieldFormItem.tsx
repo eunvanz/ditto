@@ -36,6 +36,7 @@ import {
   getIntentionPaddingByDepth,
   patterns,
 } from "../../helpers/projectHelpers";
+import { ModelTableColumns } from "../ModelTable/ModelTable";
 
 const useStyles = makeStyles(() => ({
   autocomplete: {
@@ -66,6 +67,7 @@ export interface ModelFieldFormItemProps {
   isSubmitting: boolean;
   isFormVisible: boolean;
   onClickCell?: () => void;
+  hiddenColumns?: ModelTableColumns[];
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -80,6 +82,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   isSubmitting,
   isFormVisible,
   onClickCell,
+  hiddenColumns,
 }) => {
   const classes = useStyles();
 
@@ -290,12 +293,26 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     );
   }, [modelField, projectEnumerations]);
 
+  const getHiddenColumnStyle = useCallback(
+    (column: ModelTableColumns) => {
+      if (hiddenColumns?.includes(column)) {
+        return { display: "none" };
+      } else {
+        return undefined;
+      }
+    },
+    [hiddenColumns]
+  );
+
   return (
     <>
       <TableRow>
         <TableCell
           onClick={createCellClickHandler("fieldName")}
-          style={{ paddingLeft: indentionPadding }}
+          style={{
+            ...getHiddenColumnStyle("fieldName"),
+            paddingLeft: indentionPadding,
+          }}
         >
           {isFormVisible ? (
             <Controller
@@ -303,10 +320,10 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
               name="fieldName"
               defaultValue={defaultValues.fieldName}
               rules={{
-                required: "필드명을 입력해주세요.",
+                required: "Field name is required.",
                 maxLength: {
                   value: 40,
-                  message: "필드명이 너무 길어요.",
+                  message: "Field name is too long.",
                 },
                 validate: (data: string) => {
                   const isDup = modelFields
@@ -316,7 +333,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                         item.fieldName.value !== defaultValues?.fieldName
                     )
                     .some((modelField) => modelField.fieldName.value === data);
-                  return isDup ? "중복되는 필드가 있어요." : true;
+                  return isDup ? "Field name is duplicated." : true;
                 },
                 pattern: patterns.wordsWithNoSpace,
               }}
@@ -331,7 +348,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                     required
                     error={!!errors.fieldName}
                     helperText={errors.fieldName?.message}
-                    placeholder="필드명"
+                    placeholder="Field name"
                   />
                 );
               }}
@@ -343,6 +360,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         <TableCell
           align="center"
           onClick={createCellClickHandler("isRequired")}
+          style={getHiddenColumnStyle("isRequired")}
         >
           {isFormVisible ? (
             <Controller
@@ -363,7 +381,11 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             ""
           )}
         </TableCell>
-        <TableCell align="center" onClick={createCellClickHandler("isArray")}>
+        <TableCell
+          align="center"
+          onClick={createCellClickHandler("isArray")}
+          style={getHiddenColumnStyle("isArray")}
+        >
           {isFormVisible ? (
             <Controller
               control={control}
@@ -383,13 +405,16 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             ""
           )}
         </TableCell>
-        <TableCell onClick={createCellClickHandler("fieldType")}>
+        <TableCell
+          onClick={createCellClickHandler("fieldType")}
+          style={getHiddenColumnStyle("fieldType")}
+        >
           {isFormVisible ? (
             <Controller
               control={control}
               name="fieldType"
               defaultValue={defaultValues.fieldType}
-              rules={{ required: "타입을 선택해주세요." }}
+              rules={{ required: "Type must be selected." }}
               render={({ value }) => {
                 return (
                   <Autocomplete
@@ -406,7 +431,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                         <TextField
                           {...params}
                           required
-                          placeholder="타입"
+                          placeholder="Type"
                           autoFocus={autoFocusField === "fieldType"}
                           error={!!errors.fieldType}
                           helperText={errors.fieldType?.message}
@@ -423,7 +448,10 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             modelField?.fieldType.value
           )}
         </TableCell>
-        <TableCell onClick={createCellClickHandler("format")}>
+        <TableCell
+          onClick={createCellClickHandler("format")}
+          style={getHiddenColumnStyle("format")}
+        >
           {isFormVisible ? (
             <Controller
               control={control}
@@ -448,7 +476,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                       <TextField
                         {...params}
                         autoFocus={autoFocusField === "format"}
-                        placeholder="포맷"
+                        placeholder="Format"
                       />
                     )}
                     onFocus={() => setIsDisabledEnterSubmit(true)}
@@ -464,7 +492,10 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             modelField?.format.value
           )}
         </TableCell>
-        <TableCell onClick={createCellClickHandler("enum")}>
+        <TableCell
+          onClick={createCellClickHandler("enum")}
+          style={getHiddenColumnStyle("enum")}
+        >
           {isFormVisible ? (
             <Controller
               control={control}
@@ -485,7 +516,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                       <TextField
                         {...params}
                         autoFocus={autoFocusField === "enum"}
-                        placeholder="열거형"
+                        placeholder="Enumerations"
                       />
                     )}
                     onFocus={() => setIsDisabledEnterSubmit(true)}
@@ -498,7 +529,10 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             enumDefaultValue
           )}
         </TableCell>
-        <TableCell onClick={createCellClickHandler("description")}>
+        <TableCell
+          onClick={createCellClickHandler("description")}
+          style={getHiddenColumnStyle("description")}
+        >
           {isFormVisible ? (
             <Controller
               control={control}
@@ -507,7 +541,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
               rules={{
                 maxLength: {
                   value: 200,
-                  message: "설명이 너무 길어요.",
+                  message: "Description is too long.",
                 },
               }}
               render={(props) => (
@@ -518,7 +552,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                   fullWidth
                   error={!!errors.description}
                   helperText={errors.description?.message}
-                  placeholder="설명"
+                  placeholder="Description"
                 />
               )}
             />

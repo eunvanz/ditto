@@ -27,7 +27,7 @@ const Alert = ({
   onClose,
   title,
   message,
-  okText = "확인",
+  okText = "OK",
   cancelText,
   onOk,
   onCancel,
@@ -126,7 +126,7 @@ Alert.confirm = ({
   title,
   message,
   okText,
-  cancelText = "취소",
+  cancelText = "CANCEL",
 }: {
   title: string;
   message: string;

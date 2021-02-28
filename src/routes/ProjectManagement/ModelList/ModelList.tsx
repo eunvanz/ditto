@@ -49,20 +49,18 @@ const ModelList: React.FC<ModelListProps> = ({
 
   return models ? (
     <Card>
-      <CardHeader title="모델 목록" />
+      <CardHeader title="Model list" />
       <Divider />
       <PerfectScrollbar>
         <Box minWidth={700}>
           <Table>
-            <caption>
-              등록된 모델은 프로젝트 내 어디에서든지 재사용 될 수 있습니다.
-            </caption>
+            <caption>Models are shared and reusable in this project.</caption>
             <TableHead>
               <TableRow>
                 <TableCell component="th" className={classes.nameCell}>
-                  모델명*
+                  Model name*
                 </TableCell>
-                <TableCell component="th">설명</TableCell>
+                <TableCell component="th">Description</TableCell>
                 <TableCell align="right"></TableCell>
               </TableRow>
             </TableHead>
@@ -96,7 +94,7 @@ const ModelList: React.FC<ModelListProps> = ({
                     color="secondary"
                     onClick={onClickAdd}
                   >
-                    <AddIcon fontSize="small" /> 새로운 모델 등록
+                    <AddIcon fontSize="small" /> Add new model
                   </Button>
                 </TableCell>
               </TableRow>

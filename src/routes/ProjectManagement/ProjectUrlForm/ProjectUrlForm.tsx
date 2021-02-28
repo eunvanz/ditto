@@ -212,21 +212,22 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
   return projectUrls ? (
     <form onSubmit={handleOnSubmit} noValidate>
       <Card>
-        <CardHeader title="베이스 URL" />
+        <CardHeader title="Base URL list" />
         <Divider />
         <PerfectScrollbar>
           <Box minWidth={700}>
             <Table>
               <caption>
-                베이스 URL은 리퀘스트 URL 설정 시에 편리하게 사용할 수 있습니다.
+                Base URLs are used for setting URL of operations in this
+                project.
               </caption>
               <TableHead>
                 <TableRow>
                   <TableCell component="th" className={classes.labelCell}>
-                    라벨*
+                    Label*
                   </TableCell>
                   <TableCell className={classes.urlCell}>URL*</TableCell>
-                  <TableCell>설명</TableCell>
+                  <TableCell>Description</TableCell>
                   <TableCell align="right"></TableCell>
                 </TableRow>
               </TableHead>
@@ -291,7 +292,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
                         color="secondary"
                         onClick={showNewForm}
                       >
-                        <AddIcon fontSize="small" /> 새로운 베이스 URL 등록
+                        <AddIcon fontSize="small" /> Add new base URL
                       </Button>
                     </TableCell>
                   )}

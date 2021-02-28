@@ -68,7 +68,7 @@ const defaultProps: Partial<DashboardLayoutProps> = {
           ],
         },
       ],
-      subheader: "내 프로젝트",
+      subheader: "My Projects",
     },
   ],
 };

@@ -5,9 +5,9 @@ import RequestParamForm, { RequestParamFormProps } from "./RequestParamForm";
 import { withRedux } from "../../helpers/storybookHelpers";
 import mockProject from "../../mocks/mockProject";
 import { initialRootState } from "../../store";
+import { REQUEST_PARAM_LOCATION } from "../../types";
 
 const defaultProps: Partial<RequestParamFormProps> = {
-  title: "Headers",
   checkIsSubmittingRequestParam: () => false,
 };
 
@@ -30,5 +30,7 @@ const Template: Story<RequestParamFormProps> = (args) => (
   <RequestParamForm {...args} />
 );
 
-export const 기본 = Template.bind({});
-기본.args = {};
+export const 헤더 = Template.bind({});
+헤더.args = {
+  location: REQUEST_PARAM_LOCATION.HEADER,
+};

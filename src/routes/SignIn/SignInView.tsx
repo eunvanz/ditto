@@ -51,7 +51,7 @@ const SignInView: React.FC<SignInViewProps> = () => {
             >
               <div>
                 <Typography color="textPrimary" gutterBottom variant="h2">
-                  로그인
+                  Sign in
                 </Typography>
               </div>
             </Box>

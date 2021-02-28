@@ -147,7 +147,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
     return (
       <Card>
         <CardHeader
-          title="모델 편집"
+          title="Modify model"
           action={
             onClose ? (
               <IconButton size="small" onClick={onClose}>

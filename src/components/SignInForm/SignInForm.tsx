@@ -40,7 +40,7 @@ const SignInForm: React.FC<SignInFormProps> = ({
         disabled={isSigningIn}
       >
         <img alt="Google" className={classes.providerIcon} src={googleImage} />
-        구글 계정으로 로그인
+        Sign in with Google
       </Button>
     </>
   );

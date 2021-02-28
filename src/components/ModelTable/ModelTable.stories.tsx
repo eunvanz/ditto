@@ -22,5 +22,10 @@ export default {
 
 const Template: Story<ModelTableProps> = (args) => <ModelTable {...args} />;
 
-export const 아이템있음 = Template.bind({});
-아이템있음.args = {};
+export const 기본 = Template.bind({});
+기본.args = {};
+
+export const 숨겨진_컬럼 = Template.bind({});
+숨겨진_컬럼.args = {
+  hiddenColumns: ["isRequired", "isArray", "fieldType"],
+};

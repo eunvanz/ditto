@@ -41,13 +41,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       <Box mt={2}>
         <TextField
           autoFocus
-          label="프로젝트 이름"
+          label="Project name"
           name="title"
           inputRef={register({
-            required: "프로젝트 이름을 지어주세요.",
+            required: "Project name is required.",
             maxLength: {
               value: 20,
-              message: "이름이 너무 길어요.",
+              message: "Project name is too long.",
             },
           })}
           variant="outlined"
@@ -59,12 +59,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       </Box>
       <Box mt={2}>
         <TextField
-          label="프로젝트 설명"
+          label="Description"
           name="description"
           inputRef={register({
             maxLength: {
               value: 50,
-              message: "설명이 너무 길어요.",
+              message: "Description is too long.",
             },
           })}
           variant="outlined"
@@ -82,7 +82,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           type="submit"
           variant="contained"
         >
-          {defaultValues ? "프로젝트 설정 저장" : "프로젝트 만들기"}
+          {defaultValues ? "Apply modifications" : "Create new project"}
         </Button>
       </Box>
     </form>

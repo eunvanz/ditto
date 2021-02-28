@@ -40,17 +40,17 @@ const QuickModelNameForm: React.FC<QuickModelNameFormProps> = ({
       <Box mt={2}>
         <TextField
           autoFocus
-          label="모델명"
+          label="Model name"
           name="name"
           inputRef={register({
-            required: "모델명을 입력해주세요.",
+            required: "Model name is required.",
             maxLength: {
               value: 40,
-              message: "모델명이 너무 길어요.",
+              message: "Model name is too long.",
             },
             validate: (data: string) => {
               const isDup = existingModelNames.some((item) => item === data);
-              return isDup ? "중복되는 모델이 있어요." : true;
+              return isDup ? "Model name is duplicated." : true;
             },
             pattern: patterns.wordsWithNoSpace,
           })}
@@ -63,12 +63,12 @@ const QuickModelNameForm: React.FC<QuickModelNameFormProps> = ({
       </Box>
       <Box mt={2}>
         <TextField
-          label="설명"
+          label="Description"
           name="description"
           inputRef={register({
             maxLength: {
               value: 100,
-              message: "설명이 너무 길어요.",
+              message: "Description is too long.",
             },
           })}
           variant="outlined"
@@ -86,7 +86,7 @@ const QuickModelNameForm: React.FC<QuickModelNameFormProps> = ({
           type="submit"
           variant="contained"
         >
-          {defaultValues ? "변경사항 저장" : "모델 생성"}
+          {defaultValues ? "Apply modifications" : "Create new model"}
         </Button>
       </Box>
     </form>

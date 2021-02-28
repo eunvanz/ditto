@@ -69,7 +69,7 @@ const defaultProps: Partial<NavBarProps> = {
           ],
         },
       ],
-      subheader: "내 프로젝트",
+      subheader: "My Projects",
     },
   ],
 };

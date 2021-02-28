@@ -37,11 +37,11 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
 
   const tabs = useMemo(() => {
     return [
-      { value: "basic", label: "기본정보" },
-      { value: "urls", label: "URL" },
-      { value: "members", label: "맴버" },
-      { value: "models", label: "모델" },
-      { value: "enums", label: "열거형" },
+      { value: "basic", label: "Basic" },
+      { value: "urls", label: "Base URLs" },
+      { value: "members", label: "Members" },
+      { value: "models", label: "Models" },
+      { value: "enums", label: "Enumerations" },
     ];
   }, []);
 

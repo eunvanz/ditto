@@ -135,7 +135,7 @@ const NavBar: FC<NavBarProps> = ({
               <NavItem
                 type="add"
                 depth={0}
-                title="새로운 프로젝트 추가"
+                title="Add New Project"
                 onClick={onClickAddNewProject}
               />
             </List>

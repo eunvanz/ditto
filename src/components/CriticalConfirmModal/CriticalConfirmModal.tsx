@@ -63,7 +63,7 @@ const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             inputRef={register({
               validate: (text: string) => {
                 return (
-                  text === keyword || `"${keyword}"를 정확하게 입력해주세요.`
+                  text === keyword || `Please type "${keyword}" correctly.`
                 );
               },
             })}
@@ -75,10 +75,10 @@ const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} type="button" color="primary">
-            취소
+            Cancel
           </Button>
           <Button disabled={!formState.isValid} type="submit" color="primary">
-            삭제
+            I understand the caution, proceed
           </Button>
         </DialogActions>
       </form>
