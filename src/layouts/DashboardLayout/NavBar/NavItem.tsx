@@ -259,7 +259,7 @@ const NavItem: FC<NavItemProps> = ({
               type="add"
               depth={depth + 1}
               title={
-                depth === 0 ? "Add New Group / Operation" : "Add New Operation"
+                depth === 0 ? "ADD NEW GROUP OR OPERATION" : "ADD NEW OPERATION"
               }
               onClick={handleOnClickNewItem}
             />

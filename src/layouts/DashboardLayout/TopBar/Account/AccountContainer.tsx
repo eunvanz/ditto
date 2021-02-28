@@ -13,8 +13,8 @@ const AccountContainer = () => {
 
   const logout = useCallback(async () => {
     const isConfirmed = await Alert.confirm({
-      title: "로그아웃",
-      message: "정말 로그아웃 하시겠습니까?",
+      title: "Sign out",
+      message: "Are you sure to sign out?",
     });
     if (isConfirmed) {
       dispatch(AuthActions.signOut());

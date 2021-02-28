@@ -11,9 +11,9 @@ export default {
 
 const defaultProps: Partial<AlertProps> = {
   isVisible: true,
-  title: "로그아웃",
-  cancelText: "취소",
-  message: "정말 로그아웃 하시겠습니까?",
+  title: "Sign out",
+  cancelText: "Cancel",
+  message: "Are you sure to sign out?",
 };
 
 const Template: Story<AlertProps> = (args) => (

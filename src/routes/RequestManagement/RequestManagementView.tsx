@@ -36,9 +36,9 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
 
   const tabs = useMemo(() => {
     return [
-      { value: "request", label: "요청" },
-      { value: "response", label: "응답" },
-      { value: "settings", label: "설정" },
+      { value: "request", label: "Request" },
+      { value: "response", label: "Response" },
+      { value: "settings", label: "Settings" },
     ];
   }, []);
 

@@ -128,8 +128,8 @@ const ModelTable: React.FC<ModelTableProps> = ({
 
   const addText = useMemo(() => {
     return depth
-      ? `Add New Field To ${model?.name}`
-      : `Add New ${customFieldName}`;
+      ? `ADD NEW FIELD TO ${model?.name}`
+      : `ADD NEW ${customFieldName?.toUpperCase() || "FIELD"}`;
   }, [customFieldName, depth, model]);
 
   const isNewFormVisible = useMemo(() => {
@@ -331,12 +331,12 @@ const Wrapper: React.FC<WrapperProps> = ({
             >
               {!isDetailVisible && (
                 <>
-                  <ExpandMore fontSize="small" /> {model?.name} 펼치기
+                  <ExpandMore fontSize="small" /> {model?.name}
                 </>
               )}
               {isDetailVisible && (
                 <>
-                  <ExpandLess fontSize="small" /> {model?.name} 접기
+                  <ExpandLess fontSize="small" /> {model?.name}
                   <Button
                     className={classes.addSubButton}
                     size="small"

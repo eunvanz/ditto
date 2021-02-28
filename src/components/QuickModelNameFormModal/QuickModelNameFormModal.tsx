@@ -15,7 +15,7 @@ const QuickModelNameFormModal: React.FC<QuickModelNameFormModalProps> = ({
 }) => {
   return (
     <Modal
-      title={isModification ? "모델명 수정" : "새로운 모델"}
+      title={isModification ? "Modify model" : "New model"}
       isVisible={isVisible}
       onClose={onClose}
     >

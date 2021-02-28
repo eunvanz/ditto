@@ -108,7 +108,7 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
           </Grid>
           <Grid item sm={7}>
             <TextField
-              label="설명"
+              label="Description"
               name="description"
               inputRef={register({
                 maxLength: {

@@ -69,7 +69,7 @@ const Account: FC<AccountProps> = ({ user, onLogout, onClickLogin }) => {
             </Hidden>
           </>
         ) : (
-          <>로그인</>
+          <>Sign in</>
         )}
       </Box>
       <Menu
@@ -85,7 +85,7 @@ const Account: FC<AccountProps> = ({ user, onLogout, onClickLogin }) => {
         open={isOpen}
       >
         <MenuItem component={RouterLink} to="/app/account">
-          설정
+          Settings
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -93,7 +93,7 @@ const Account: FC<AccountProps> = ({ user, onLogout, onClickLogin }) => {
             onLogout();
           }}
         >
-          로그아웃
+          Sign out
         </MenuItem>
       </Menu>
     </>
