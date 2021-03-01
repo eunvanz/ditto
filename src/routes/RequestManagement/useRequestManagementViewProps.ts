@@ -45,11 +45,12 @@ const useRequestManagementViewProps = () => {
   useEffect(() => {
     if (isLoaded(request)) {
       dispatch(UiActions.hideLoading());
+    } else {
+      dispatch(UiActions.showDelayedLoading());
     }
   }, [dispatch, request]);
 
   useEffect(() => {
-    dispatch(UiActions.showDelayedLoading());
     if (project) {
       dispatch(ProjectActions.receiveCurrentProject(project));
     } else {
