@@ -343,13 +343,8 @@ export interface RequestParamItem extends Omit<ModelFieldItem, "modelId"> {
   location: REQUEST_PARAM_LOCATION;
 }
 
-export interface RequestBodyItem extends Recordable {
+export interface RequestBodyItem extends Omit<ModelFieldItem, "modelId"> {
   requestId: string;
-  description?: string;
-  mediaType: string;
-  type: FIELD_TYPE;
-  format: string;
-  enum: string;
 }
 
 export interface ResponseItem extends Recordable {
@@ -367,7 +362,7 @@ export type RequestDoc = Doc<RequestItem, BaseSettings>;
 export type RequestParamDoc = Doc<RequestParamItem, BaseSettings> &
   ModelFieldDoc;
 
-export type RequestBodyDoc = Doc<RequestBodyItem, BaseSettings>;
+export type RequestBodyDoc = Doc<RequestBodyItem, BaseSettings> & ModelFieldDoc;
 
 export type ResponseDoc = Doc<ResponseItem, BaseSettings>;
 

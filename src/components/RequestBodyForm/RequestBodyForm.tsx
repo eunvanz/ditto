@@ -1,24 +1,24 @@
 import {
   Box,
-  Button,
   Card,
   CardHeader,
   Chip,
   Divider,
   makeStyles,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
+  TextField,
 } from "@material-ui/core";
-import { Add } from "@material-ui/icons";
+import { Autocomplete } from "@material-ui/lab";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import React, { useCallback, useEffect, useState } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { Theme } from "../../theme";
-import { RequestBodyDoc } from "../../types";
-import RequestBodyFormItem from "./RequestBodyFormItem";
+import { ModelFieldDoc, RequestBodyDoc } from "../../types";
+import { ModelFieldFormValues } from "../ModelForm/ModelForm";
+import ModelTable from "../ModelTable";
+import {
+  getTextFieldErrorProps,
+  mediaTypes,
+} from "../../helpers/projectHelpers";
 
 const useStyles = makeStyles((theme: Theme) => ({
   header: {
@@ -54,14 +54,25 @@ const useStyles = makeStyles((theme: Theme) => ({
   buttonCell: {
     width: 60,
   },
+  autocomplete: {
+    "& .MuiAutocomplete-inputRoot": {
+      paddingBottom: 0,
+    },
+  },
 }));
 
 export interface RequestBodyFormProps {
   requestBodies: RequestBodyDoc[];
+  onSubmit: (values: ModelFieldFormValues) => void;
+  onDelete: (requestBody: ModelFieldDoc) => void;
+  checkIsSubmittingRequestBody: (id?: string) => boolean;
 }
 
 const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
   requestBodies,
+  onSubmit,
+  onDelete,
+  checkIsSubmittingRequestBody,
 }: RequestBodyFormProps) => {
   const classes = useStyles();
 
@@ -73,22 +84,13 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
     setIsOpen((isOpen) => !isOpen);
   }, []);
 
-  const [isNewFormVisible, setIsNewFormVisible] = useState(false);
-
-  const showNewForm = useCallback(() => {
-    setIsNewFormVisible(true);
-  }, []);
-
-  const hideNewForm = useCallback(() => {
-    setIsNewFormVisible(false);
-  }, []);
-
   useEffect(() => {
     // 최초 로딩 시 requestParam이 undefined이므로 lazy loading 처리를 위해 적용
     if (requestBodies?.length) {
       setIsOpen(true);
     }
-  }, [requestBodies]);
+    // eslint-disable-next-line
+  }, [requestBodies?.length]);
 
   return (
     <Card>
@@ -115,7 +117,49 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
           <Divider />
           <PerfectScrollbar>
             <Box minWidth={700}>
-              <Table stickyHeader size="small">
+              <ModelTable
+                modelFields={requestBodies}
+                onSubmitModelFieldCustom={onSubmit}
+                onDeleteModelFieldCustom={onDelete}
+                checkIsSubmittingModelFieldCustom={checkIsSubmittingRequestBody}
+                customFieldName="Media-type"
+                hiddenColumns={["isRequired", "isArray"]}
+                customFieldNameInput={({
+                  renderProps,
+                  setValue,
+                  autoFocusField,
+                  inputRef,
+                  errors,
+                  setIsDisabledEnterSubmit,
+                }) => (
+                  <Autocomplete
+                    value={renderProps.value}
+                    openOnFocus
+                    className={classes.autocomplete}
+                    options={mediaTypes}
+                    onChange={(_e, value) => {
+                      setValue("mediaType", value, { shouldValidate: true });
+                    }}
+                    freeSolo
+                    renderInput={(params) => {
+                      return (
+                        <TextField
+                          {...params}
+                          inputRef={inputRef}
+                          required
+                          placeholder="Media-type"
+                          autoFocus={autoFocusField === "mediaType"}
+                          {...getTextFieldErrorProps(errors.mediaType)}
+                        />
+                      );
+                    }}
+                    onFocus={() => setIsDisabledEnterSubmit(true)}
+                    onBlur={() => setIsDisabledEnterSubmit(false)}
+                    size="small"
+                  />
+                )}
+              />
+              {/* <Table stickyHeader size="small">
                 <caption />
                 <TableHead>
                   <TableRow>
@@ -159,7 +203,7 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
                     </TableRow>
                   )}
                 </TableBody>
-              </Table>
+              </Table> */}
             </Box>
           </PerfectScrollbar>
         </>

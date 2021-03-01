@@ -17,7 +17,7 @@ import {
 } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import ModelTable from "../ModelTable";
-import { ModelTableColumns } from "../ModelTable/ModelTable";
+import { ModelFieldColumns } from "../ModelForm/ModelFieldFormItem";
 
 export interface RequestParamFormProps {
   location: REQUEST_PARAM_LOCATION;
@@ -103,7 +103,7 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
     }
   }, [location]);
 
-  const hiddenColumns: ModelTableColumns[] = useMemo(() => {
+  const hiddenColumns: ModelFieldColumns[] = useMemo(() => {
     switch (location) {
       case REQUEST_PARAM_LOCATION.COOKIE:
         return [];
@@ -121,7 +121,8 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
     if (requestParams?.length) {
       setIsOpen(true);
     }
-  }, [requestParams]);
+    // eslint-disable-next-line
+  }, [requestParams?.length]);
 
   return (
     <Card>

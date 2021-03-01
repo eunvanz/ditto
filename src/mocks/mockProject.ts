@@ -458,34 +458,6 @@ const request: RequestDoc = {
   },
 };
 
-const requestBody: RequestBodyDoc = {
-  id: "mockId",
-  requestId: "mockId",
-  mediaType: "application/json",
-  type: FIELD_TYPE.OBJECT,
-  format: FORMAT.NONE,
-  enum: ENUMERATION.NONE,
-  description: "",
-  updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
-  createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
-  updatedAt: {
-    seconds: 1601466174,
-    nanoseconds: 963000000,
-  },
-  createdAt: {
-    seconds: 1601466174,
-    nanoseconds: 963000000,
-  },
-  settingsByMember: {
-    aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
-      updatedAt: {
-        seconds: 1601466174,
-        nanoseconds: 963000000,
-      },
-    },
-  },
-};
-
 const mockProject = {
   project,
   projectUrls,
@@ -494,7 +466,6 @@ const mockProject = {
   models,
   enumerations,
   request,
-  requestBody,
 };
 
 export default mockProject;

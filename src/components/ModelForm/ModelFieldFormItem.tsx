@@ -15,7 +15,7 @@ import {
   SvgIcon,
   TableRow,
 } from "@material-ui/core";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, ControllerRenderProps, useForm } from "react-hook-form";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CheckIcon from "@material-ui/icons/Check";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
@@ -36,7 +36,15 @@ import {
   getIntentionPaddingByDepth,
   patterns,
 } from "../../helpers/projectHelpers";
-import { ModelTableColumns } from "../ModelTable/ModelTable";
+
+export type ModelFieldColumns =
+  | "fieldName"
+  | "isRequired"
+  | "isArray"
+  | "fieldType"
+  | "format"
+  | "enum"
+  | "description";
 
 const useStyles = makeStyles(() => ({
   autocomplete: {
@@ -67,8 +75,16 @@ export interface ModelFieldFormItemProps {
   isSubmitting: boolean;
   isFormVisible: boolean;
   onClickCell?: () => void;
-  hiddenColumns?: ModelTableColumns[];
+  hiddenColumns?: ModelFieldColumns[];
   customFieldName?: string;
+  customFieldNameInput?: (props: {
+    renderProps: ControllerRenderProps<Record<string, any>>;
+    setValue: any;
+    autoFocusField: any;
+    inputRef: React.MutableRefObject<HTMLInputElement | null>;
+    errors: any;
+    setIsDisabledEnterSubmit: any;
+  }) => JSX.Element;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -85,6 +101,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   onClickCell,
   hiddenColumns,
   customFieldName,
+  customFieldNameInput,
 }) => {
   const classes = useStyles();
 
@@ -296,7 +313,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [modelField, projectEnumerations]);
 
   const getHiddenColumnStyle = useCallback(
-    (column: ModelTableColumns) => {
+    (column: ModelFieldColumns) => {
       if (hiddenColumns?.includes(column)) {
         return { display: "none" };
       } else {
@@ -342,19 +359,30 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 pattern: patterns.wordsWithNoSpace,
               }}
               render={(props) => {
-                return (
-                  <TextField
-                    {...props}
-                    inputRef={fieldNameInputRef}
-                    size="small"
-                    autoFocus={autoFocusField === "fieldName"}
-                    fullWidth
-                    required
-                    error={!!errors.fieldName}
-                    helperText={errors.fieldName?.message}
-                    placeholder={customFieldName || "Field name"}
-                  />
-                );
+                if (customFieldNameInput) {
+                  return customFieldNameInput({
+                    renderProps: props,
+                    setValue,
+                    autoFocusField,
+                    inputRef: fieldNameInputRef,
+                    errors,
+                    setIsDisabledEnterSubmit,
+                  });
+                } else {
+                  return (
+                    <TextField
+                      {...props}
+                      inputRef={fieldNameInputRef}
+                      size="small"
+                      autoFocus={autoFocusField === "fieldName"}
+                      fullWidth
+                      required
+                      error={!!errors.fieldName}
+                      helperText={errors.fieldName?.message}
+                      placeholder={customFieldName || "Field name"}
+                    />
+                  );
+                }
               }}
             />
           ) : (

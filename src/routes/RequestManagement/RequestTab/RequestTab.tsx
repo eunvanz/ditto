@@ -16,13 +16,13 @@ const RequestTab: React.FC<RequestTabProps> = (_: RequestTabProps) => {
         <RequestParamForm location={REQUEST_PARAM_LOCATION.QUERY} />
       </Box>
       <Box mt={3}>
+        <RequestBodyForm />
+      </Box>
+      <Box mt={3}>
         <RequestParamForm location={REQUEST_PARAM_LOCATION.HEADER} />
       </Box>
       <Box mt={3}>
         <RequestParamForm location={REQUEST_PARAM_LOCATION.COOKIE} />
-      </Box>
-      <Box mt={3}>
-        <RequestBodyForm />
       </Box>
     </>
   );

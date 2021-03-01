@@ -12,7 +12,10 @@ import React, { useCallback, useMemo, useState } from "react";
 import { getIntentionPaddingByDepth } from "../../helpers/projectHelpers";
 import { Theme } from "../../theme";
 import { EnumerationDoc, ModelDoc, ModelFieldDoc } from "../../types";
-import ModelFieldFormItem from "../ModelForm/ModelFieldFormItem";
+import ModelFieldFormItem, {
+  ModelFieldColumns,
+  ModelFieldFormItemProps,
+} from "../ModelForm/ModelFieldFormItem";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -47,16 +50,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export type ModelTableColumns =
-  | "fieldName"
-  | "isRequired"
-  | "isArray"
-  | "fieldType"
-  | "format"
-  | "enum"
-  | "description";
-
-export interface ModelTableProps {
+export type ModelTableProps = {
   model?: ModelDoc;
   modelFields?: ModelFieldDoc[];
   onDeleteModelFieldCustom?: (modelField: ModelFieldDoc) => void;
@@ -79,9 +73,10 @@ export interface ModelTableProps {
   onSubmitModelField: (data: ModelFieldFormValues) => void;
   onShowNewForm?: () => void;
   checkIsNewFormDisabled?: () => boolean;
-  customFieldName?: string;
-  hiddenColumns?: ModelTableColumns[];
-}
+} & Pick<
+  ModelFieldFormItemProps,
+  "customFieldName" | "hiddenColumns" | "customFieldNameInput"
+>;
 
 const ModelTable: React.FC<ModelTableProps> = ({
   model,
@@ -102,6 +97,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
   checkIsNewFormDisabled,
   customFieldName,
   hiddenColumns,
+  customFieldNameInput,
 }) => {
   const classes = useStyles();
 
@@ -183,6 +179,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
           onCancel={resetEditingModelField}
           hiddenColumns={hiddenColumns}
           customFieldName={customFieldName}
+          customFieldNameInput={customFieldNameInput}
         />
       ))}
       {isNewFormVisible ? (
@@ -208,6 +205,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
           }
           hiddenColumns={hiddenColumns}
           customFieldName={customFieldName}
+          customFieldNameInput={customFieldNameInput}
         />
       ) : (
         <TableRow>
@@ -256,7 +254,7 @@ const Wrapper: React.FC<WrapperProps> = ({
   }, [depth]);
 
   const getHiddenColumnStyle = useCallback(
-    (column: ModelTableColumns) => {
+    (column: ModelFieldColumns) => {
       if (hiddenColumns?.includes(column)) {
         return { display: "none" };
       } else {

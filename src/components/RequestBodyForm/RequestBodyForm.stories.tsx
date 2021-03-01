@@ -3,7 +3,10 @@ import { Story, Meta } from "@storybook/react/types-6-0";
 
 import RequestBodyForm, { RequestBodyFormProps } from "./RequestBodyForm";
 
-const defaultProps: Partial<RequestBodyFormProps> = {};
+const defaultProps: Partial<RequestBodyFormProps> = {
+  requestBodies: [],
+  checkIsSubmittingRequestBody: () => false,
+};
 
 export default {
   title: "components/RequestBodyForm",

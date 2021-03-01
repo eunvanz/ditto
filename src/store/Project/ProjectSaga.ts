@@ -1371,6 +1371,14 @@ export function* deleteRequestParamFlow() {
   }
 }
 
+export function* submitRequestBodyFormFlow() {
+  while (true) {}
+}
+
+export function* deleteRequestBodyFlow() {
+  while (true) {}
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -1390,5 +1398,7 @@ export function* watchProjectActions() {
     fork(submitRequestUrlFormFlow),
     fork(submitRequestParamFormFlow),
     fork(deleteRequestParamFlow),
+    fork(submitRequestBodyFormFlow),
+    fork(deleteRequestBodyFlow),
   ]);
 }
