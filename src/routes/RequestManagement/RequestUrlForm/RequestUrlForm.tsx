@@ -1,15 +1,15 @@
 import { Box, InputAdornment, makeStyles, TextField } from "@material-ui/core";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import QuickUrlFormModal from "../../../../components/QuickUrlFormModal";
-import { regExps } from "../../../../helpers/commonHelpers";
-import { Theme } from "../../../../theme";
+import QuickUrlFormModal from "../../../components/QuickUrlFormModal";
+import { regExps } from "../../../helpers/commonHelpers";
+import { Theme } from "../../../theme";
 import {
   BASE_URL,
   ProjectUrlDoc,
   RequestDoc,
   REQUEST_METHOD,
-} from "../../../../types";
+} from "../../../types";
 
 const useStyles = makeStyles((theme: Theme) => ({
   methodField: {

@@ -17,7 +17,7 @@ import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
 import { EnumFormValues } from "../../routes/ProjectManagement/EnumForm/EnumForm";
 import { GroupFormValues } from "../../components/GroupFormModal/GroupFormModal";
 import { RequestFormValues } from "../../components/RequestFormModal/RequestFormModal";
-import { RequestUrlFormValues } from "../../routes/RequestManagement/RequestTab/RequestUrlForm/RequestUrlForm";
+import { RequestUrlFormValues } from "../../routes/RequestManagement/RequestUrlForm/RequestUrlForm";
 
 export type ProjectState = {
   editingModelField?: {

@@ -12,7 +12,7 @@ import Header from "../../components/Header";
 import { Theme } from "../../theme";
 import { RequestDoc } from "../../types";
 import RequestTab from "./RequestTab";
-import RequestUrlForm from "./RequestTab/RequestUrlForm";
+import RequestUrlForm from "./RequestUrlForm";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
