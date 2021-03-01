@@ -14,10 +14,11 @@ import {
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { Theme } from "../../theme";
 import { RequestBodyDoc } from "../../types";
+import RequestBodyFormItem from "./RequestBodyFormItem";
 
 const useStyles = makeStyles((theme: Theme) => ({
   header: {
@@ -45,10 +46,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: 200,
   },
   typeCell: {
-    width: 200,
+    width: 100,
   },
   formatCell: {
-    width: 200,
+    width: 150,
   },
   buttonCell: {
     width: 60,
@@ -77,6 +78,17 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
   const showNewForm = useCallback(() => {
     setIsNewFormVisible(true);
   }, []);
+
+  const hideNewForm = useCallback(() => {
+    setIsNewFormVisible(false);
+  }, []);
+
+  useEffect(() => {
+    // 최초 로딩 시 requestParam이 undefined이므로 lazy loading 처리를 위해 적용
+    if (requestBodies?.length) {
+      setIsOpen(true);
+    }
+  }, [requestBodies]);
 
   return (
     <Card>
@@ -114,7 +126,10 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
                       Type*
                     </TableCell>
                     <TableCell component="th" className={classes.formatCell}>
-                      Format*
+                      Format
+                    </TableCell>
+                    <TableCell component="th" className={classes.formatCell}>
+                      Enumeration
                     </TableCell>
                     <TableCell component="th">Description</TableCell>
                     <TableCell
@@ -124,18 +139,25 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableRow>
-                    <TableCell colSpan={5}>
-                      <Button
-                        className={classes.addButton}
-                        fullWidth
-                        color="secondary"
-                        onClick={showNewForm}
-                      >
-                        <Add fontSize="small" /> ADD NEW REQUEST BODY
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                  {requestBodies.map((requestBody) => (
+                    <RequestBodyFormItem requestBody={requestBody} />
+                  ))}
+                  {isNewFormVisible ? (
+                    <RequestBodyFormItem isNewForm onHideForm={hideNewForm} />
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6}>
+                        <Button
+                          className={classes.addButton}
+                          fullWidth
+                          color="secondary"
+                          onClick={showNewForm}
+                        >
+                          <Add fontSize="small" /> ADD NEW REQUEST BODY
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </Box>

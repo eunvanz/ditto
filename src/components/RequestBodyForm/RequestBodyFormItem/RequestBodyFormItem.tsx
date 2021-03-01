@@ -1,11 +1,26 @@
-import { makeStyles, TableCell, TableRow, TextField } from "@material-ui/core";
+import {
+  Box,
+  IconButton,
+  makeStyles,
+  SvgIcon,
+  TableCell,
+  TableRow,
+  TextField,
+} from "@material-ui/core";
+import { Check, Clear, DeleteOutline } from "@material-ui/icons";
 import { Autocomplete } from "@material-ui/lab";
-import React, { useCallback, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   getTextFieldErrorProps,
   mediaTypes,
-} from "../../helpers/projectHelpers";
+} from "../../../helpers/projectHelpers";
 import {
   ENUMERATION,
   EnumerationDoc,
@@ -15,7 +30,7 @@ import {
   formats,
   ModelDoc,
   RequestBodyDoc,
-} from "../../types";
+} from "../../../types";
 
 const useStyles = makeStyles(() => ({
   autocomplete: {
@@ -37,12 +52,14 @@ export interface RequestBodyFormItemProps {
   projectEnumerations: EnumerationDoc[];
   isSubmitting: boolean;
   isNewForm?: boolean;
+  onHideForm?: () => void;
 }
 
 export interface RequestBodyItemFormValues {
   mediaType: string;
   type: string;
   format: string;
+  enum: string;
   description: string;
   target?: RequestBodyDoc;
 }
@@ -55,6 +72,8 @@ const RequestBodyFormItem: React.FC<RequestBodyFormItemProps> = ({
   projectModels,
   isSubmitting,
   isNewForm,
+  projectEnumerations,
+  onHideForm,
 }) => {
   const classes = useStyles();
 
@@ -68,6 +87,16 @@ const RequestBodyFormItem: React.FC<RequestBodyFormItemProps> = ({
     [projectModels]
   );
 
+  const getEnumValue = useCallback(
+    (enumId: string) => {
+      return (
+        projectEnumerations.find((enumeration) => enumeration.id === enumId)
+          ?.name || ENUMERATION.NONE
+      );
+    },
+    [projectEnumerations]
+  );
+
   const defaultValues = useMemo(() => {
     return {
       mediaType: requestBody?.mediaType || "",
@@ -75,11 +104,21 @@ const RequestBodyFormItem: React.FC<RequestBodyFormItemProps> = ({
       format: requestBody?.format
         ? getFormatValue(requestBody.format)
         : FORMAT.NEW_MODEL,
+      enum: requestBody ? getEnumValue(requestBody.enum) : ENUMERATION.NONE,
       description: requestBody?.description || "",
     };
-  }, [getFormatValue, requestBody]);
+  }, [getEnumValue, getFormatValue, requestBody]);
 
-  const { control, setValue, errors, watch } = useForm({
+  const {
+    control,
+    setValue,
+    errors,
+    watch,
+    reset,
+    handleSubmit,
+    trigger,
+    getValues,
+  } = useForm({
     mode: "onChange",
     defaultValues,
   });
@@ -92,6 +131,7 @@ const RequestBodyFormItem: React.FC<RequestBodyFormItemProps> = ({
   const showForm = useCallback(
     (focusField: keyof RequestBodyItemFormValues) => {
       setAutoFocusField(focusField);
+      setIsFormVisible(true);
     },
     []
   );
@@ -136,6 +176,90 @@ const RequestBodyFormItem: React.FC<RequestBodyFormItemProps> = ({
     }
   }, [projectModels, requestBody, watchedType]);
 
+  const handleOnSubmit = useCallback(async () => {
+    trigger();
+    await handleSubmit((data) => {
+      const format =
+        data.type === FIELD_TYPE.OBJECT
+          ? projectModels.find((model) => model.name === data.format)?.id ||
+            FORMAT.NEW_MODEL
+          : data.format;
+      const enumValue =
+        projectEnumerations.find(
+          (enumeration) => enumeration.name === data.enum
+        )?.id || data.enum;
+      onSubmit({ ...data, format, enum: enumValue, target: requestBody });
+    })();
+  }, [
+    handleSubmit,
+    onSubmit,
+    projectEnumerations,
+    projectModels,
+    requestBody,
+    trigger,
+  ]);
+
+  const mediaTypeInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (isSubmitting) {
+      const nameInput = mediaTypeInputRef.current;
+      return () => {
+        // form의 값이 초기로 돌아가는 현상이 있어서 직접 리셋해줌
+        // FIXME: 새로운 필드를 만들고 나서 <-> enum 혹은 object 퀵모달을 띄웠다가 취소했을 시 상충되는 이슈가 있음. 구분할 방법이 필요
+        reset(!requestBody ? undefined : getValues());
+        nameInput?.focus();
+        onHideForm?.();
+      };
+    }
+  }, [getValues, isSubmitting, onHideForm, requestBody, reset]);
+
+  const handleOnCancel = useCallback(() => {
+    reset(defaultValues); // 폼의 변경사항들을 되돌림
+    setIsFormVisible(false);
+    onHideForm?.();
+  }, [defaultValues, onHideForm, reset]);
+
+  const enumOptions = useMemo(() => {
+    const result = [
+      ENUMERATION.NONE,
+      [FIELD_TYPE.INTEGER, FIELD_TYPE.STRING].includes(watchedType)
+        ? ENUMERATION.NEW
+        : undefined,
+      ...projectEnumerations
+        .filter((item) => item.fieldType === watchedType)
+        .map((item) => item.name),
+    ];
+    return result.filter((item) => !!item);
+  }, [projectEnumerations, watchedType]);
+
+  const enumDefaultValue = useMemo(() => {
+    return (
+      projectEnumerations.find((item) => item.id === requestBody?.enum)?.name ||
+      ENUMERATION.NONE
+    );
+  }, [requestBody, projectEnumerations]);
+
+  const handleOnPressKey = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        !isDisabledEnterSubmit && handleOnSubmit();
+      } else if (e.key === "Escape") {
+        !isSubmitting && handleOnCancel();
+      }
+    },
+    [handleOnCancel, handleOnSubmit, isDisabledEnterSubmit, isSubmitting]
+  );
+
+  useEffect(() => {
+    if (isFormVisible) {
+      document.addEventListener("keydown", handleOnPressKey);
+      return () => {
+        document.removeEventListener("keydown", handleOnPressKey);
+      };
+    }
+  }, [handleOnPressKey, isFormVisible]);
+
   return (
     <>
       <TableRow>
@@ -145,7 +269,15 @@ const RequestBodyFormItem: React.FC<RequestBodyFormItemProps> = ({
               control={control}
               name="mediaType"
               defaultValue={defaultValues.mediaType}
-              rules={{ required: "Media type is required." }}
+              rules={{
+                required: "Media-type is required.",
+                validate: (data: string) => {
+                  const isDup = requestBodies
+                    .filter((item) => item.id !== requestBody?.id)
+                    .some((item) => item.mediaType === data);
+                  return isDup ? "Media-type is duplicated." : true;
+                },
+              }}
               render={({ value }) => (
                 <Autocomplete
                   value={value}
@@ -160,8 +292,9 @@ const RequestBodyFormItem: React.FC<RequestBodyFormItemProps> = ({
                     return (
                       <TextField
                         {...params}
+                        inputRef={mediaTypeInputRef}
                         required
-                        placeholder="Media type"
+                        placeholder="Media-type"
                         autoFocus={autoFocusField === "mediaType"}
                         {...getTextFieldErrorProps(errors.mediaType)}
                       />
@@ -243,6 +376,7 @@ const RequestBodyFormItem: React.FC<RequestBodyFormItemProps> = ({
                         {...params}
                         autoFocus={autoFocusField === "format"}
                         placeholder="Format"
+                        {...getTextFieldErrorProps(errors.format)}
                       />
                     )}
                     onFocus={() => setIsDisabledEnterSubmit(true)}
@@ -258,6 +392,92 @@ const RequestBodyFormItem: React.FC<RequestBodyFormItemProps> = ({
             "-"
           ) : (
             requestBody?.format
+          )}
+        </TableCell>
+        <TableCell onClick={createCellClickHandler("enum")}>
+          {isFormVisible ? (
+            <Controller
+              control={control}
+              name="enum"
+              defaultValue={enumDefaultValue}
+              render={({ value }) => {
+                return (
+                  <Autocomplete
+                    value={value}
+                    openOnFocus
+                    className={classes.autocomplete}
+                    options={enumOptions}
+                    onChange={(_e, value) => {
+                      setValue("enum", value, { shouldValidate: true });
+                    }}
+                    disableClearable
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        autoFocus={autoFocusField === "enum"}
+                        placeholder="Enumerations"
+                      />
+                    )}
+                    onFocus={() => setIsDisabledEnterSubmit(true)}
+                    onBlur={() => setIsDisabledEnterSubmit(false)}
+                    size="small"
+                  />
+                );
+              }}
+            />
+          ) : enumDefaultValue === ENUMERATION.NONE ? (
+            "-"
+          ) : (
+            enumDefaultValue
+          )}
+        </TableCell>
+        <TableCell onClick={createCellClickHandler("description")}>
+          {isFormVisible ? (
+            <Controller
+              control={control}
+              name="description"
+              defaultValue={defaultValues.description}
+              rules={{
+                maxLength: {
+                  value: 200,
+                  message: "Description is too long.",
+                },
+              }}
+              render={(props) => (
+                <TextField
+                  {...props}
+                  size="small"
+                  autoFocus={autoFocusField === "description"}
+                  fullWidth
+                  {...getTextFieldErrorProps(errors.description)}
+                  placeholder="Description"
+                />
+              )}
+            />
+          ) : (
+            requestBody?.description
+          )}
+        </TableCell>
+        <TableCell align="right">
+          {isFormVisible ? (
+            <Box>
+              <IconButton onClick={handleOnSubmit}>
+                <SvgIcon fontSize="small">
+                  <Check />
+                </SvgIcon>
+              </IconButton>
+              <IconButton onClick={handleOnCancel}>
+                <SvgIcon fontSize="small">
+                  <Clear />
+                </SvgIcon>
+              </IconButton>
+            </Box>
+          ) : (
+            <IconButton onClick={onDelete}>
+              <SvgIcon fontSize="small">
+                <DeleteOutline />
+              </SvgIcon>
+            </IconButton>
           )}
         </TableCell>
       </TableRow>

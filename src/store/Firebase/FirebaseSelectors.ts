@@ -8,6 +8,7 @@ import {
   ModelFieldDoc,
   ProjectDoc,
   ProjectUrlDoc,
+  RequestBodyDoc,
   RequestDoc,
   RequestParamDoc,
   REQUEST_PARAM_LOCATION,
@@ -137,6 +138,11 @@ const createRequestParamsSelector = (
     }
   );
 
+const createRequestBodiesSelector = (projectId: string, requestId: string) =>
+  createOrderedSelector<RequestBodyDoc[]>(
+    `projects/${projectId}/requests/${requestId}/bodies`
+  );
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -151,6 +157,7 @@ const FirebaseSelectors = {
   createRequestSelectorByProjectIdAndRequestId,
   createProjectRequestsSelector,
   createRequestParamsSelector,
+  createRequestBodiesSelector,
 };
 
 export default FirebaseSelectors;
