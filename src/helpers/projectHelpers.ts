@@ -8,8 +8,12 @@ export const patterns = {
   },
 };
 
-export const getIntentionPaddingByDepth = (depth?: number) => {
+export const getIndentionPaddingByDepth = (depth?: number) => {
   return depth ? depth * 16 : undefined;
+};
+
+export const getButtonIndentionPaddingByDepth = (depth?: number) => {
+  return depth ? depth * 16 - 16 : undefined;
 };
 
 export const getTextFieldErrorProps = (error?: FieldError) => ({

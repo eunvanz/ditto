@@ -33,7 +33,7 @@ import {
   ENUMERATION,
 } from "../../types";
 import {
-  getIntentionPaddingByDepth,
+  getIndentionPaddingByDepth,
   patterns,
 } from "../../helpers/projectHelpers";
 
@@ -272,7 +272,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [handleOnPressKey, isFormVisible]);
 
   const indentionPadding = useMemo(() => {
-    return getIntentionPaddingByDepth(depth);
+    return getIndentionPaddingByDepth(depth);
   }, [depth]);
 
   const subModelId = useMemo(() => {

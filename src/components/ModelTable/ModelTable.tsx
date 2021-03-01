@@ -9,11 +9,13 @@ import {
 } from "@material-ui/core";
 import { EditOutlined, ExpandLess, ExpandMore, Add } from "@material-ui/icons";
 import React, { useCallback, useMemo, useState } from "react";
-import { getIntentionPaddingByDepth } from "../../helpers/projectHelpers";
+import {
+  getButtonIndentionPaddingByDepth,
+  getIndentionPaddingByDepth,
+} from "../../helpers/projectHelpers";
 import { Theme } from "../../theme";
 import { EnumerationDoc, ModelDoc, ModelFieldDoc } from "../../types";
 import ModelFieldFormItem, {
-  ModelFieldColumns,
   ModelFieldFormItemProps,
 } from "../ModelForm/ModelFieldFormItem";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
@@ -119,7 +121,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
   }, [onSetEditingModelField]);
 
   const indentionPadding = useMemo(() => {
-    return getIntentionPaddingByDepth(depth);
+    return getIndentionPaddingByDepth(depth);
   }, [depth]);
 
   const addText = useMemo(() => {
@@ -249,7 +251,7 @@ const Wrapper: React.FC<WrapperProps> = ({
   const [isDetailVisible, setIsDetailVisible] = useState(false);
 
   const indentionPadding = useMemo(() => {
-    return getIntentionPaddingByDepth(depth);
+    return getButtonIndentionPaddingByDepth(depth);
   }, [depth]);
 
   if (!depth) {
