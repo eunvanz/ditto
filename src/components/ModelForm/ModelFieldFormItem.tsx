@@ -75,7 +75,7 @@ export interface ModelFieldFormItemProps {
   isSubmitting: boolean;
   isFormVisible: boolean;
   onClickCell?: () => void;
-  hiddenColumns?: ModelFieldColumns[];
+  disabledColumns?: ModelFieldColumns[];
   customFieldName?: string;
   customFieldNameInput?: (props: {
     renderProps: ControllerRenderProps<Record<string, any>>;
@@ -99,7 +99,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   isSubmitting,
   isFormVisible,
   onClickCell,
-  hiddenColumns,
+  disabledColumns,
   customFieldName,
   customFieldNameInput,
 }) => {
@@ -312,24 +312,12 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     );
   }, [modelField, projectEnumerations]);
 
-  const getHiddenColumnStyle = useCallback(
-    (column: ModelFieldColumns) => {
-      if (hiddenColumns?.includes(column)) {
-        return { display: "none" };
-      } else {
-        return undefined;
-      }
-    },
-    [hiddenColumns]
-  );
-
   return (
     <>
       <TableRow>
         <TableCell
           onClick={createCellClickHandler("fieldName")}
           style={{
-            ...getHiddenColumnStyle("fieldName"),
             paddingLeft: indentionPadding,
           }}
         >
@@ -380,6 +368,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                       error={!!errors.fieldName}
                       helperText={errors.fieldName?.message}
                       placeholder={customFieldName || "Field name"}
+                      disabled={disabledColumns?.includes("fieldName")}
                     />
                   );
                 }
@@ -392,7 +381,6 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         <TableCell
           align="center"
           onClick={createCellClickHandler("isRequired")}
-          style={getHiddenColumnStyle("isRequired")}
         >
           {isFormVisible ? (
             <Controller
@@ -404,6 +392,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                   autoFocus={autoFocusField === "isRequired"}
                   checked={props.value}
                   onChange={(e) => props.onChange(e.target.checked)}
+                  disabled={disabledColumns?.includes("isRequired")}
                 />
               )}
             />
@@ -413,11 +402,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             ""
           )}
         </TableCell>
-        <TableCell
-          align="center"
-          onClick={createCellClickHandler("isArray")}
-          style={getHiddenColumnStyle("isArray")}
-        >
+        <TableCell align="center" onClick={createCellClickHandler("isArray")}>
           {isFormVisible ? (
             <Controller
               control={control}
@@ -428,6 +413,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                   autoFocus={autoFocusField === "isArray"}
                   checked={props.value}
                   onChange={(e) => props.onChange(e.target.checked)}
+                  disabled={disabledColumns?.includes("isArray")}
                 />
               )}
             />
@@ -437,10 +423,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             ""
           )}
         </TableCell>
-        <TableCell
-          onClick={createCellClickHandler("fieldType")}
-          style={getHiddenColumnStyle("fieldType")}
-        >
+        <TableCell onClick={createCellClickHandler("fieldType")}>
           {isFormVisible ? (
             <Controller
               control={control}
@@ -467,6 +450,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                           autoFocus={autoFocusField === "fieldType"}
                           error={!!errors.fieldType}
                           helperText={errors.fieldType?.message}
+                          disabled={disabledColumns?.includes("fieldType")}
                         />
                       );
                     }}
@@ -481,10 +465,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             modelField?.fieldType.value
           )}
         </TableCell>
-        <TableCell
-          onClick={createCellClickHandler("format")}
-          style={getHiddenColumnStyle("format")}
-        >
+        <TableCell onClick={createCellClickHandler("format")}>
           {isFormVisible ? (
             <Controller
               control={control}
@@ -510,6 +491,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                         {...params}
                         autoFocus={autoFocusField === "format"}
                         placeholder="Format"
+                        disabled={disabledColumns?.includes("format")}
                       />
                     )}
                     onFocus={() => setIsDisabledEnterSubmit(true)}
@@ -527,10 +509,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             modelField?.format.value
           )}
         </TableCell>
-        <TableCell
-          onClick={createCellClickHandler("enum")}
-          style={getHiddenColumnStyle("enum")}
-        >
+        <TableCell onClick={createCellClickHandler("enum")}>
           {isFormVisible ? (
             <Controller
               control={control}
@@ -552,6 +531,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                         {...params}
                         autoFocus={autoFocusField === "enum"}
                         placeholder="Enumerations"
+                        disabled={disabledColumns?.includes("enum")}
                       />
                     )}
                     onFocus={() => setIsDisabledEnterSubmit(true)}
@@ -567,10 +547,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             enumDefaultValue
           )}
         </TableCell>
-        <TableCell
-          onClick={createCellClickHandler("description")}
-          style={getHiddenColumnStyle("description")}
-        >
+        <TableCell onClick={createCellClickHandler("description")}>
           {isFormVisible ? (
             <Controller
               control={control}
@@ -591,6 +568,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                   error={!!errors.description}
                   helperText={errors.description?.message}
                   placeholder="Description"
+                  disabled={disabledColumns?.includes("description")}
                 />
               )}
             />
@@ -645,10 +623,8 @@ const SubModelForm: React.FC<SubModelFormProps> = ({
 }) => {
   switch (fieldType) {
     case FIELD_TYPE.OBJECT:
+      console.log("===== SubModelForm", depth);
       return <ModelForm depth={(depth || 1) + 1} defaultModelId={subModelId} />;
-    // return subModelId ? (
-    //   <ModelForm depth={(depth || 1) + 1} defaultModelId={subModelId} />
-    // ) : null;
     default:
       return null;
   }

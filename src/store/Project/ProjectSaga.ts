@@ -37,6 +37,9 @@ import {
   RequestParamItem,
   RequestParamDoc,
   REQUEST_METHOD,
+  ModifiableRequestBodyItem,
+  RequestBodyItem,
+  RequestBodyDoc,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -1372,11 +1375,284 @@ export function* deleteRequestParamFlow() {
 }
 
 export function* submitRequestBodyFormFlow() {
-  while (true) {}
+  while (true) {
+    const { type, payload } = yield* take(ProjectActions.submitRequestBodyForm);
+    const submitRequestBodyFormActionType = `${type}-${payload.target?.id}`;
+    yield* put(ProgressActions.startProgress(submitRequestBodyFormActionType));
+
+    const { requestId } = payload;
+
+    if (!requestId) {
+      yield* put(
+        ErrorActions.catchError({
+          error: new Error("There's no selected operation."),
+          isAlertOnly: true,
+        })
+      );
+      continue;
+    }
+
+    const currentProject = yield* call(selectAndCheckProject);
+    if (!currentProject) {
+      continue;
+    }
+
+    const { target } = payload;
+
+    const isNewModel =
+      payload.fieldType === FIELD_TYPE.OBJECT &&
+      payload.format === FORMAT.NEW_MODEL;
+
+    const isNewEnum = payload.enum === ENUMERATION.NEW;
+
+    let hasToBlurForm = true;
+
+    try {
+      if (!!target) {
+        delete payload.target;
+        const updatedRecordProps = yield* call(getUpdatedRecordProps);
+        const newRequestBodyItem: ModifiableRequestBodyItem = {
+          projectId: currentProject.id,
+          requestId,
+          fieldName: {
+            value: payload.fieldName,
+            ...updatedRecordProps,
+          },
+          isRequired: {
+            value: payload.isRequired,
+            ...updatedRecordProps,
+          },
+          isArray: {
+            value: payload.isArray,
+            ...updatedRecordProps,
+          },
+          fieldType: {
+            value: payload.fieldType,
+            ...updatedRecordProps,
+          },
+          format: {
+            value: payload.format,
+            ...updatedRecordProps,
+          },
+          enum: {
+            value: payload.enum,
+            ...updatedRecordProps,
+          },
+          description: {
+            value: payload.description,
+            ...updatedRecordProps,
+          },
+          ...updatedRecordProps,
+        };
+
+        if (isNewModel) {
+          yield* put(UiActions.showQuickModelNameFormModal());
+          const { submit, cancel } = yield* race({
+            submit: take(ProjectActions.submitQuickModelNameForm), // 모델 생성 액션
+            cancel: take(ProjectActions.cancelQuickModelNameForm), // 모델 생성 취소 액션
+          });
+          if (cancel) {
+            hasToBlurForm = false;
+            continue;
+          } else {
+            yield* put(ProjectActions.submitModelNameForm(submit!.payload));
+            yield* take(
+              ProjectActions.notifySubmissionQuickModelNameFormComplete
+            );
+            const createdModelId = yield* select(
+              (state: RootState) => state.project.createdModelId
+            );
+            yield* put(UiActions.showDelayedLoading(500));
+            yield* put(UiActions.hideQuickModelNameFormModal());
+            yield* call(Firework.updateRequestBody, target.id, {
+              ...newRequestBodyItem,
+              format: {
+                value: createdModelId,
+                ...updatedRecordProps,
+              },
+            });
+          }
+        } else if (isNewEnum) {
+          yield* putResolve(
+            ProjectActions.receiveFieldTypeToCreate(payload.fieldType)
+          );
+          yield* put(UiActions.showQuickEnumFormModal());
+          const { submit, cancel } = yield* race({
+            submit: take(ProjectActions.submitEnumForm),
+            cancel: take(UiActions.hideQuickEnumFormModal),
+          });
+          if (cancel) {
+            hasToBlurForm = false;
+            continue;
+          } else {
+            yield* put(ProjectActions.submitEnumForm(submit!.payload));
+            yield* take(ProjectActions.notifySubmissionQuickEnumFormComplete);
+            const createdEnumId = yield* select(
+              (state: RootState) => state.project.createdEnumId
+            );
+            yield* put(UiActions.showDelayedLoading(500));
+            yield* put(UiActions.hideQuickEnumFormModal());
+            yield* call(Firework.updateRequestBody, target.id, {
+              ...newRequestBodyItem,
+              enum: {
+                value: createdEnumId,
+                ...updatedRecordProps,
+              },
+            });
+          }
+        } else {
+          yield* put(UiActions.showDelayedLoading(500));
+          yield* call(
+            Firework.updateRequestBody,
+            target.id,
+            newRequestBodyItem
+          );
+        }
+      } else {
+        hasToBlurForm = false;
+        const recordableDocProps = yield* call(getRecordableDocProps);
+        const newRequestBodyItem: RequestBodyItem = {
+          projectId: currentProject.id,
+          requestId,
+          fieldName: {
+            value: payload.fieldName,
+            ...recordableDocProps,
+          },
+          isRequired: {
+            value: payload.isRequired,
+            ...recordableDocProps,
+          },
+          isArray: {
+            value: payload.isArray,
+            ...recordableDocProps,
+          },
+          fieldType: {
+            value: payload.fieldType,
+            ...recordableDocProps,
+          },
+          format: {
+            value: payload.format,
+            ...recordableDocProps,
+          },
+          enum: {
+            value: payload.enum,
+            ...recordableDocProps,
+          },
+          description: {
+            value: payload.description,
+            ...recordableDocProps,
+          },
+          ...recordableDocProps,
+        };
+
+        if (isNewModel) {
+          yield* put(UiActions.showQuickModelNameFormModal());
+          const { submit, cancel } = yield* race({
+            submit: take(ProjectActions.submitQuickModelNameForm), // 모델 생성 액션
+            cancel: take(ProjectActions.cancelQuickModelNameForm), // 모델 생성 취소 액션
+          });
+          if (cancel) {
+            continue;
+          } else {
+            yield* put(ProjectActions.submitModelNameForm(submit!.payload));
+            yield* take(
+              ProjectActions.notifySubmissionQuickModelNameFormComplete
+            );
+            const createdModelId = yield* select(
+              (state: RootState) => state.project.createdModelId
+            );
+            yield* put(UiActions.showDelayedLoading(500));
+            yield* put(UiActions.hideQuickModelNameFormModal());
+            yield* call(Firework.addRequestBody, {
+              ...newRequestBodyItem,
+              format: {
+                value: createdModelId!,
+                ...recordableDocProps,
+              },
+            });
+          }
+        } else if (isNewEnum) {
+          yield* putResolve(
+            ProjectActions.receiveFieldTypeToCreate(payload.fieldType)
+          );
+          yield* put(UiActions.showQuickEnumFormModal());
+          const { submit, cancel } = yield* race({
+            submit: take(ProjectActions.submitQuickEnumForm),
+            cancel: take(UiActions.hideQuickEnumFormModal),
+          });
+          if (cancel) {
+            continue;
+          } else {
+            yield* put(ProjectActions.submitEnumForm(submit!.payload));
+            yield* take(ProjectActions.notifySubmissionQuickEnumFormComplete);
+            const createdEnumId = yield* select(
+              (state: RootState) => state.project.createdEnumId
+            );
+            yield* put(UiActions.showDelayedLoading(500));
+            yield* put(UiActions.hideQuickEnumFormModal());
+            yield* call(Firework.addRequestBody, {
+              ...newRequestBodyItem,
+              enum: {
+                value: createdEnumId!,
+                ...recordableDocProps,
+              },
+            });
+          }
+        } else {
+          yield* put(UiActions.showDelayedLoading(500));
+          yield* call(Firework.addRequestBody, newRequestBodyItem);
+        }
+      }
+    } catch (error) {
+      yield* put(
+        ErrorActions.catchError({
+          error,
+          isAlertOnly: true,
+        })
+      );
+    } finally {
+      yield* putResolve(
+        ProgressActions.finishProgress(submitRequestBodyFormActionType)
+      );
+      if (hasToBlurForm) {
+        yield* put(ProjectActions.receiveEditingModelField(undefined));
+      }
+      yield* put(UiActions.hideLoading());
+    }
+  }
 }
 
 export function* deleteRequestBodyFlow() {
-  while (true) {}
+  while (true) {
+    const { payload: requestBody } = yield* take(
+      ProjectActions.deleteRequestBody
+    );
+    const isConfirmed = yield* call(Alert.confirm, {
+      title: "Delete body",
+      message: `Are you sure to delete media-type ${requestBody.fieldName.value}?`,
+    });
+    if (isConfirmed) {
+      try {
+        yield* put(UiActions.showDelayedLoading());
+        yield* call(Firework.deleteRequestBody, requestBody as RequestBodyDoc);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "The body has been deleted.",
+          })
+        );
+      } catch (error) {
+        yield* put(
+          ErrorActions.catchError({
+            error,
+            isAlertOnly: true,
+          })
+        );
+      } finally {
+        yield* put(UiActions.hideLoading());
+      }
+    }
+  }
 }
 
 export function* watchProjectActions() {

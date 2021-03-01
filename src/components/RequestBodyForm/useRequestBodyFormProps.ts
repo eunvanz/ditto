@@ -4,6 +4,7 @@ import { useFirestoreConnect } from "react-redux-firebase";
 import useProjectByParam from "../../hooks/useProjectByParam";
 import useRequestByParam from "../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
+import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { ModelFieldDoc } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
@@ -23,16 +24,35 @@ const useRequestBodyForm = () => {
     FirebaseSelectors.createRequestBodiesSelector(projectId, requestId)
   );
 
-  const onSubmit = useCallback((values: ModelFieldFormValues) => {}, []);
+  const onSubmit = useCallback(
+    (values: ModelFieldFormValues) => {
+      dispatch(ProjectActions.submitRequestBodyForm({ ...values, requestId }));
+    },
+    [dispatch, requestId]
+  );
 
-  const onDelete = useCallback((requestBody: ModelFieldDoc) => {}, []);
+  const onDelete = useCallback(
+    (requestBody: ModelFieldDoc) => {
+      dispatch(ProjectActions.deleteRequestBody(requestBody));
+    },
+    [dispatch]
+  );
 
-  const checkIsSubmittingRequestBody = useCallback(() => {
-    return false;
-  }, []);
+  const submittingRequestBodyActionsInProgress = useSelector(
+    ProgressSelectors.selectSubmitRequestBodyFormActions
+  );
+
+  const checkIsSubmittingRequestBody = useCallback(
+    (id?: string) => {
+      return submittingRequestBodyActionsInProgress.includes(
+        `${ProjectActions.submitRequestBodyForm}-${id}`
+      );
+    },
+    [submittingRequestBodyActionsInProgress]
+  );
 
   return {
-    requestBodies: requestBodies || [],
+    requestBodies,
     onSubmit,
     onDelete,
     checkIsSubmittingRequestBody,

@@ -28,10 +28,19 @@ const selectSubmitRequestParamFormActions = createSelector(
   (submitModelFieldFormActions) => submitModelFieldFormActions
 );
 
+const selectSubmitRequestBodyFormActions = createSelector(
+  (state: RootState) =>
+    state.progress.filter((item) =>
+      item.startsWith(ProjectActions.submitRequestBodyForm.type)
+    ),
+  (submitModelFieldFormActions) => submitModelFieldFormActions
+);
+
 const ProgressSelectors = {
   createInProgressSelector,
   selectSubmitModelFieldFormItemActions,
   selectSubmitRequestParamFormActions,
+  selectSubmitRequestBodyFormActions,
 };
 
 export default ProgressSelectors;

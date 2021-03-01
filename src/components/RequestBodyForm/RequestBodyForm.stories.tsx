@@ -2,6 +2,10 @@ import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
 
 import RequestBodyForm, { RequestBodyFormProps } from "./RequestBodyForm";
+import { withRedux } from "../../helpers/storybookHelpers";
+import { initialRootState } from "../../store";
+import mockProject from "../../mocks/mockProject";
+import { initialProjectState } from "../../store/Project/ProjectSlice";
 
 const defaultProps: Partial<RequestBodyFormProps> = {
   requestBodies: [],
@@ -15,6 +19,15 @@ export default {
   args: {
     ...defaultProps,
   },
+  decorators: [
+    withRedux({
+      ...initialRootState,
+      project: {
+        ...initialProjectState,
+        currentProject: mockProject.project,
+      },
+    }),
+  ],
 } as Meta;
 
 const Template: Story<RequestBodyFormProps> = (args) => (

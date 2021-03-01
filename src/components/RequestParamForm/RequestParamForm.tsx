@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   fieldNameCell: {
-    width: 150,
+    width: 100,
   },
   typeCell: {
     width: 100,
@@ -103,7 +103,7 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
     }
   }, [location]);
 
-  const hiddenColumns: ModelFieldColumns[] = useMemo(() => {
+  const disabledColumns: ModelFieldColumns[] = useMemo(() => {
     switch (location) {
       case REQUEST_PARAM_LOCATION.COOKIE:
         return [];
@@ -157,7 +157,7 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
                   checkIsSubmittingRequestParam
                 }
                 customFieldName="Key"
-                hiddenColumns={hiddenColumns}
+                disabledColumns={disabledColumns}
               />
             </Box>
           </PerfectScrollbar>

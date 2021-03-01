@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export interface RequestBodyFormProps {
-  requestBodies: RequestBodyDoc[];
+  requestBodies?: RequestBodyDoc[];
   onSubmit: (values: ModelFieldFormValues) => void;
   onDelete: (requestBody: ModelFieldDoc) => void;
   checkIsSubmittingRequestBody: (id?: string) => boolean;
@@ -123,7 +123,6 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
                 onDeleteModelFieldCustom={onDelete}
                 checkIsSubmittingModelFieldCustom={checkIsSubmittingRequestBody}
                 customFieldName="Media-type"
-                hiddenColumns={["isRequired", "isArray"]}
                 customFieldNameInput={({
                   renderProps,
                   setValue,
@@ -138,7 +137,7 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
                     className={classes.autocomplete}
                     options={mediaTypes}
                     onChange={(_e, value) => {
-                      setValue("mediaType", value, { shouldValidate: true });
+                      setValue("fieldName", value, { shouldValidate: true });
                     }}
                     freeSolo
                     renderInput={(params) => {
@@ -148,8 +147,8 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
                           inputRef={inputRef}
                           required
                           placeholder="Media-type"
-                          autoFocus={autoFocusField === "mediaType"}
-                          {...getTextFieldErrorProps(errors.mediaType)}
+                          autoFocus={autoFocusField === "fieldName"}
+                          {...getTextFieldErrorProps(errors.fieldName)}
                         />
                       );
                     }}
@@ -159,51 +158,6 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
                   />
                 )}
               />
-              {/* <Table stickyHeader size="small">
-                <caption />
-                <TableHead>
-                  <TableRow>
-                    <TableCell component="th" className={classes.mediaTypeCell}>
-                      Media-type*
-                    </TableCell>
-                    <TableCell component="th" className={classes.typeCell}>
-                      Type*
-                    </TableCell>
-                    <TableCell component="th" className={classes.formatCell}>
-                      Format
-                    </TableCell>
-                    <TableCell component="th" className={classes.formatCell}>
-                      Enumeration
-                    </TableCell>
-                    <TableCell component="th">Description</TableCell>
-                    <TableCell
-                      align="right"
-                      className={classes.buttonCell}
-                    ></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {requestBodies.map((requestBody) => (
-                    <RequestBodyFormItem requestBody={requestBody} />
-                  ))}
-                  {isNewFormVisible ? (
-                    <RequestBodyFormItem isNewForm onHideForm={hideNewForm} />
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={6}>
-                        <Button
-                          className={classes.addButton}
-                          fullWidth
-                          color="secondary"
-                          onClick={showNewForm}
-                        >
-                          <Add fontSize="small" /> ADD NEW REQUEST BODY
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table> */}
             </Box>
           </PerfectScrollbar>
         </>

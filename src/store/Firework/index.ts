@@ -17,6 +17,9 @@ import {
   RequestParamItem,
   RequestParamDoc,
   ModifiableRequestParamItem,
+  RequestBodyItem,
+  ModifiableRequestBodyItem,
+  RequestBodyDoc,
 } from "../../types";
 import { call } from "typed-redux-saga";
 
@@ -233,6 +236,31 @@ function* deleteRequestParam(data: RequestParamDoc) {
   );
 }
 
+function* addRequestBody(data: RequestBodyItem) {
+  return yield* call(
+    addDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/bodies`,
+    data
+  );
+}
+
+function* updateRequestBody(id: string, data: ModifiableRequestBodyItem) {
+  return yield* call(
+    updateDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/bodies`,
+    id,
+    data
+  );
+}
+
+function* deleteRequestBody(data: RequestBodyDoc) {
+  yield* call(
+    deleteDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/bodies`,
+    data.id
+  );
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -267,6 +295,9 @@ export const realFirework = {
   addRequestParam,
   updateRequestParam,
   deleteRequestParam,
+  addRequestBody,
+  updateRequestBody,
+  deleteRequestBody,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

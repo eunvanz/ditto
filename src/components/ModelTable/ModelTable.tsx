@@ -75,7 +75,7 @@ export type ModelTableProps = {
   checkIsNewFormDisabled?: () => boolean;
 } & Pick<
   ModelFieldFormItemProps,
-  "customFieldName" | "hiddenColumns" | "customFieldNameInput"
+  "customFieldName" | "disabledColumns" | "customFieldNameInput"
 >;
 
 const ModelTable: React.FC<ModelTableProps> = ({
@@ -96,7 +96,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
   onShowNewForm,
   checkIsNewFormDisabled,
   customFieldName,
-  hiddenColumns,
+  disabledColumns,
   customFieldNameInput,
 }) => {
   const classes = useStyles();
@@ -146,7 +146,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
       model={model}
       onClickQuickEditModelName={onClickQuickEditModelName}
       customFieldName={customFieldName}
-      hiddenColumns={hiddenColumns}
+      disabledColumns={disabledColumns}
     >
       {modelFields.map((modelField) => (
         <ModelFieldFormItem
@@ -177,7 +177,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
           onClickCell={() => onSetEditingModelField(modelField.id)}
           isFormVisible={editingModelFieldId === modelField.id}
           onCancel={resetEditingModelField}
-          hiddenColumns={hiddenColumns}
+          disabledColumns={disabledColumns}
           customFieldName={customFieldName}
           customFieldNameInput={customFieldNameInput}
         />
@@ -203,7 +203,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
                   checkIsSubmittingModelField
                 )()
           }
-          hiddenColumns={hiddenColumns}
+          disabledColumns={disabledColumns}
           customFieldName={customFieldName}
           customFieldNameInput={customFieldNameInput}
         />
@@ -231,7 +231,7 @@ type WrapperProps = Pick<
   | "model"
   | "onClickQuickEditModelName"
   | "customFieldName"
-  | "hiddenColumns"
+  | "disabledColumns"
 > & {
   existingModelNames: string[];
   children: React.ReactNode;
@@ -243,7 +243,6 @@ const Wrapper: React.FC<WrapperProps> = ({
   children,
   onClickQuickEditModelName,
   customFieldName,
-  hiddenColumns,
 }) => {
   const classes = useStyles();
 
@@ -253,65 +252,25 @@ const Wrapper: React.FC<WrapperProps> = ({
     return getIntentionPaddingByDepth(depth);
   }, [depth]);
 
-  const getHiddenColumnStyle = useCallback(
-    (column: ModelFieldColumns) => {
-      if (hiddenColumns?.includes(column)) {
-        return { display: "none" };
-      } else {
-        return undefined;
-      }
-    },
-    [hiddenColumns]
-  );
-
   if (!depth) {
     return (
       <Table stickyHeader size="small">
         <caption />
         <TableHead>
           <TableRow>
-            <TableCell
-              component="th"
-              className={classes.fieldNameCell}
-              style={getHiddenColumnStyle("fieldName")}
-            >
+            <TableCell component="th" className={classes.fieldNameCell}>
               {customFieldName ? `${customFieldName}*` : "Field name*"}
             </TableCell>
-            <TableCell
-              align="center"
-              className={classes.requiredCell}
-              style={getHiddenColumnStyle("isRequired")}
-            >
+            <TableCell align="center" className={classes.requiredCell}>
               Required
             </TableCell>
-            <TableCell
-              align="center"
-              className={classes.arrayCell}
-              style={getHiddenColumnStyle("isArray")}
-            >
+            <TableCell align="center" className={classes.arrayCell}>
               Array
             </TableCell>
-            <TableCell
-              className={classes.typeCell}
-              style={getHiddenColumnStyle("fieldType")}
-            >
-              Type*
-            </TableCell>
-            <TableCell
-              className={classes.formatCell}
-              style={getHiddenColumnStyle("format")}
-            >
-              Format
-            </TableCell>
-            <TableCell
-              className={classes.formatCell}
-              style={getHiddenColumnStyle("enum")}
-            >
-              Enumeration
-            </TableCell>
-            <TableCell style={getHiddenColumnStyle("description")}>
-              Description
-            </TableCell>
+            <TableCell className={classes.typeCell}>Type*</TableCell>
+            <TableCell className={classes.formatCell}>Format</TableCell>
+            <TableCell className={classes.formatCell}>Enumeration</TableCell>
+            <TableCell>Description</TableCell>
             <TableCell align="right" className={classes.buttonCell}></TableCell>
           </TableRow>
         </TableHead>

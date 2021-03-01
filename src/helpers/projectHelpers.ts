@@ -2,7 +2,7 @@ import { FieldError } from "react-hook-form";
 
 export const patterns = {
   wordsWithNoSpace: {
-    value: /^[\w-]+\S$/,
+    value: /^[\w-/]+\S$/,
     message:
       "Try a mix of letters or numbers more than 2 characters with no spaces.",
   },

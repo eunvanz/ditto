@@ -9,7 +9,6 @@ import {
   FIELD_TYPE,
   GroupDoc,
   REQUEST_PARAM_LOCATION,
-  RequestBodyDoc,
 } from "../../types";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
@@ -135,7 +134,7 @@ const ProjectSlice = createSlice({
       _,
       _action: PayloadAction<ModelFieldFormValues & { requestId: string }>
     ) => {},
-    deleteRequestBody: (_, _action: PayloadAction<RequestBodyDoc>) => {},
+    deleteRequestBody: (_, _action: PayloadAction<ModelFieldDoc>) => {},
   },
 });
 

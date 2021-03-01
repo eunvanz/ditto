@@ -27,5 +27,5 @@ export const 기본 = Template.bind({});
 
 export const 숨겨진_컬럼 = Template.bind({});
 숨겨진_컬럼.args = {
-  hiddenColumns: ["isRequired", "isArray", "fieldType"],
+  disabledColumns: ["isRequired", "isArray", "fieldType"],
 };

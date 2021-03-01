@@ -5,9 +5,6 @@ import {
   EnumerationDoc,
   RequestDoc,
   REQUEST_METHOD,
-  RequestBodyDoc,
-  FORMAT,
-  ENUMERATION,
 } from "../types";
 
 const project = {
