@@ -1018,6 +1018,12 @@ export function* submitRequestFormFlow() {
 
     try {
       const newRequestRef = yield* call(Firework.addRequest, newRequest);
+      yield* call(Firework.addResponseStatus, {
+        projectId,
+        requestId: newRequestRef.id,
+        statusCode: 200,
+        ...recordableDocProps,
+      });
       yield* put(
         UiActions.showNotification({
           message: "New operation has been created.",

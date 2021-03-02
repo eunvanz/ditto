@@ -21,6 +21,8 @@ import {
   ModifiableRequestBodyItem,
   RequestBodyDoc,
   RequestDoc,
+  ResponseStatusItem,
+  ResponseStatusDoc,
 } from "../../types";
 import { call } from "typed-redux-saga";
 
@@ -266,6 +268,31 @@ function* deleteRequest(data: RequestDoc) {
   yield* call(deleteDocument, `projects/${data.projectId}/requests`, data.id);
 }
 
+function* addResponseStatus(data: ResponseStatusItem) {
+  return yield* call(
+    addDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/responseStatuses`,
+    data
+  );
+}
+
+function* updateResponseStatus(id: string, data: Partial<ResponseStatusItem>) {
+  return yield* call(
+    updateDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/responseStatuses`,
+    id,
+    data
+  );
+}
+
+function* deleteResponseStatus(data: ResponseStatusDoc) {
+  yield* call(
+    deleteDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/responseStatuses`,
+    data.id
+  );
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -304,6 +331,9 @@ export const realFirework = {
   updateRequestBody,
   deleteRequestBody,
   deleteRequest,
+  addResponseStatus,
+  updateResponseStatus,
+  deleteResponseStatus,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

@@ -368,12 +368,14 @@ export interface RequestBodyItem extends Omit<ModelFieldItem, "modelId"> {
 }
 
 export interface ResponseStatusItem extends Recordable {
+  projectId: string;
   requestId: string;
   statusCode: number;
   description?: string;
 }
 
 export interface ResponseBodyItem extends Omit<ModelFieldItem, "modelId"> {
+  projectId: string;
   requestId: string;
   responseStatusId: string;
 }
