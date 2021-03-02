@@ -367,14 +367,15 @@ export interface RequestBodyItem extends Omit<ModelFieldItem, "modelId"> {
   requestId: string;
 }
 
-export interface ResponseItem extends Recordable {
+export interface ResponseStatusItem extends Recordable {
   requestId: string;
   statusCode: number;
   description?: string;
-  mediaType: string;
-  type: FIELD_TYPE;
-  format: string;
-  enum: string;
+}
+
+export interface ResponseBodyItem extends Omit<ModelFieldItem, "modelId"> {
+  requestId: string;
+  responseStatusId: string;
 }
 
 export type RequestDoc = Doc<RequestItem, BaseSettings>;
@@ -384,7 +385,10 @@ export type RequestParamDoc = Doc<RequestParamItem, BaseSettings> &
 
 export type RequestBodyDoc = Doc<RequestBodyItem, BaseSettings> & ModelFieldDoc;
 
-export type ResponseDoc = Doc<ResponseItem, BaseSettings>;
+export type ResponseStatusDoc = Doc<ResponseStatusItem, BaseSettings>;
+
+export type ResponseBodyDoc = Doc<ResponseBodyItem, BaseSettings> &
+  ModelFieldDoc;
 
 export interface ModalBase {
   isVisible: boolean;
