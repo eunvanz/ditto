@@ -1655,6 +1655,59 @@ export function* deleteRequestBodyFlow() {
   }
 }
 
+export function* submitRequestSettingFormFlow() {
+  while (true) {
+    const { type, payload } = yield* take(
+      ProjectActions.submitRequestSettingForm
+    );
+    yield* put(ProgressActions.startProgress(type));
+    try {
+      const target = payload.target;
+      assertNotEmpty(target);
+      delete payload.target;
+      const updatedRecordProps = yield* call(getUpdatedRecordProps);
+      const newRequest = {
+        projectId: target.projectId,
+        ...payload,
+        ...updatedRecordProps,
+      };
+      yield* put(UiActions.showDelayedLoading());
+      yield* call(Firework.updateRequest, target.id, newRequest);
+      yield* put(
+        UiActions.showNotification({
+          type: "success",
+          message: "The operation has been modified.",
+        })
+      );
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    } finally {
+      yield* put(UiActions.hideLoading());
+      yield* put(ProgressActions.finishProgress(type));
+    }
+  }
+}
+
+export function* deleteRequestFlow() {
+  while (true) {
+    const { payload } = yield* take(ProjectActions.deleteRequest);
+    const isConfirmed = yield* call(Alert.confirm, {
+      title: "Delete operation",
+      message: "Are you sure to delete this operation?",
+    });
+    if (isConfirmed) {
+      try {
+        yield* put(UiActions.showDelayedLoading());
+        yield* call(Firework.deleteRequest, payload);
+      } catch (error) {
+        yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+      } finally {
+        yield* put(UiActions.hideLoading());
+      }
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -1676,5 +1729,7 @@ export function* watchProjectActions() {
     fork(deleteRequestParamFlow),
     fork(submitRequestBodyFormFlow),
     fork(deleteRequestBodyFlow),
+    fork(submitRequestSettingFormFlow),
+    fork(deleteRequestFlow),
   ]);
 }

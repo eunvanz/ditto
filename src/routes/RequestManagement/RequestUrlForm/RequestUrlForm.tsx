@@ -120,7 +120,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             name="method"
             select
             variant="outlined"
-            inputRef={register()}
+            inputRef={register}
             className={classes.methodField}
             SelectProps={{ native: true }}
             onChange={validateAndSubmit}
@@ -136,7 +136,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             name="baseUrl"
             select
             variant="outlined"
-            inputRef={register()}
+            inputRef={register}
             className={classes.baseUrlField}
             SelectProps={{ native: true }}
             onChange={validateAndSubmit}

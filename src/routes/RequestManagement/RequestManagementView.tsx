@@ -13,6 +13,7 @@ import { Theme } from "../../theme";
 import { RequestDoc } from "../../types";
 import RequestTab from "./RequestTab";
 import RequestUrlForm from "./RequestUrlForm";
+import SettingsTab from "./SettingsTab";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -69,6 +70,7 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
       </Box>
       <Divider />
       <Box mt={3}>{activeTab === "request" && <RequestTab />}</Box>
+      <Box mt={3}>{activeTab === "settings" && <SettingsTab />}</Box>
     </Container>
   );
 };

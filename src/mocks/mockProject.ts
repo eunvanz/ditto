@@ -5,6 +5,7 @@ import {
   EnumerationDoc,
   RequestDoc,
   REQUEST_METHOD,
+  GroupDoc,
 } from "../types";
 
 const project = {
@@ -455,6 +456,78 @@ const request: RequestDoc = {
   },
 };
 
+const groups: GroupDoc[] = [
+  {
+    id: "uiHgP7mMOb8sC0r68kZo",
+    name: "Kakaotalk",
+    updatedAt: {
+      seconds: 1612988925,
+      nanoseconds: 834000000,
+    },
+    createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    createdAt: {
+      seconds: 1612984347,
+      nanoseconds: 464000000,
+    },
+    projectId: "imIYYtrWFJjpU9aeTRlQ",
+    settingsByMember: {
+      aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+        updatedAt: {
+          seconds: 1612988925,
+          nanoseconds: 834000000,
+        },
+      },
+    },
+    updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+  },
+  {
+    id: "S6BzFlmKVGDSW57XUfv5",
+    name: "Toss",
+    projectId: "imIYYtrWFJjpU9aeTRlQ",
+    createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    settingsByMember: {
+      aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+        updatedAt: {
+          seconds: 1612984508,
+          nanoseconds: 990000000,
+        },
+      },
+    },
+    createdAt: {
+      seconds: 1612984508,
+      nanoseconds: 990000000,
+    },
+    updatedAt: {
+      seconds: 1612984508,
+      nanoseconds: 990000000,
+    },
+    updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+  },
+  {
+    id: "0NCnRDCZ6obqSUpv0iMa",
+    name: "Naver",
+    createdAt: {
+      seconds: 1614528706,
+      nanoseconds: 639000000,
+    },
+    createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    projectId: "imIYYtrWFJjpU9aeTRlQ",
+    updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+    settingsByMember: {
+      aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+        updatedAt: {
+          seconds: 1614528706,
+          nanoseconds: 639000000,
+        },
+      },
+    },
+    updatedAt: {
+      seconds: 1614528706,
+      nanoseconds: 639000000,
+    },
+  },
+];
+
 const mockProject = {
   project,
   projectUrls,
@@ -463,6 +536,7 @@ const mockProject = {
   models,
   enumerations,
   request,
+  groups,
 };
 
 export default mockProject;

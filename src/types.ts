@@ -173,8 +173,8 @@ export const fieldTypes = Object.keys(FIELD_TYPE).map(
 );
 
 export enum FORMAT {
-  NONE = "None",
-  NEW_MODEL = "New model",
+  NONE = "[ None ]",
+  NEW_MODEL = "[ New model ]",
   INT32 = "int32",
   INT64 = "int64",
   FLOAT = "float",
@@ -187,13 +187,13 @@ export enum FORMAT {
 }
 
 export enum ENUMERATION {
-  NONE = "None",
-  NEW = "New enumeration",
+  NONE = "[ None ]",
+  NEW = "[ New enumeration ]",
 }
 
 export enum BASE_URL {
-  NONE = "Not selected",
-  NEW = "New base URL",
+  NONE = "[ Not selected ]",
+  NEW = "[ New base URL ]",
 }
 
 export const formats: { [k in FIELD_TYPE]: (string | undefined)[] } = {

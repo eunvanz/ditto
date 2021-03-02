@@ -9,6 +9,7 @@ import {
   FIELD_TYPE,
   GroupDoc,
   REQUEST_PARAM_LOCATION,
+  RequestDoc,
 } from "../../types";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
@@ -18,6 +19,7 @@ import { EnumFormValues } from "../../routes/ProjectManagement/EnumForm/EnumForm
 import { GroupFormValues } from "../../components/GroupFormModal/GroupFormModal";
 import { RequestFormValues } from "../../components/RequestFormModal/RequestFormModal";
 import { RequestUrlFormValues } from "../../routes/RequestManagement/RequestUrlForm/RequestUrlForm";
+import { RequestSettingFormValues } from "../../routes/RequestManagement/SettingsTab/SettingsTab";
 
 export type ProjectState = {
   editingModelField?: {
@@ -135,6 +137,11 @@ const ProjectSlice = createSlice({
       _action: PayloadAction<ModelFieldFormValues & { requestId: string }>
     ) => {},
     deleteRequestBody: (_, _action: PayloadAction<ModelFieldDoc>) => {},
+    submitRequestSettingForm: (
+      _,
+      _action: PayloadAction<RequestSettingFormValues>
+    ) => {},
+    deleteRequest: (_, _action: PayloadAction<RequestDoc>) => {},
   },
 });
 

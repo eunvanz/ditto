@@ -63,7 +63,7 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
             fullWidth
             error={!!errors.summary}
             helperText={errors.summary?.message}
-            placeholder="Summary of this operation."
+            placeholder="Summary of this operation"
           />
         </Box>
         <Box mt={2}>
@@ -75,14 +75,14 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
             inputRef={register({
               maxLength: {
                 value: 200,
-                message: "Description is too long",
+                message: "Description is too long.",
               },
             })}
             variant="outlined"
             fullWidth
             error={!!errors.description}
             helperText={errors.description?.message}
-            placeholder="Detailed description of this operation."
+            placeholder="Detailed description of this operation"
           />
         </Box>
         <Box mt={2}>

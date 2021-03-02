@@ -20,6 +20,7 @@ import {
   RequestBodyItem,
   ModifiableRequestBodyItem,
   RequestBodyDoc,
+  RequestDoc,
 } from "../../types";
 import { call } from "typed-redux-saga";
 
@@ -261,6 +262,10 @@ function* deleteRequestBody(data: RequestBodyDoc) {
   );
 }
 
+function* deleteRequest(data: RequestDoc) {
+  yield* call(deleteDocument, `projects/${data.projectId}/requests`, data.id);
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -298,6 +303,7 @@ export const realFirework = {
   addRequestBody,
   updateRequestBody,
   deleteRequestBody,
+  deleteRequest,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";
