@@ -46,6 +46,7 @@ export interface NavItemProps {
   onClickAddGroup?: () => void;
   onClickAddRequest?: () => void;
   onClick?: () => void;
+  isDeprecated?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -152,6 +153,7 @@ const NavItem: FC<NavItemProps> = ({
   onClickAddRequest,
   onClick,
   type,
+  isDeprecated,
   ...restProps
 }) => {
   if (type === "group") {
@@ -307,7 +309,9 @@ const NavItem: FC<NavItemProps> = ({
             <RequestMethodBadge requestMethod={requestMethod} />
           )}
           <NewBadge isVisible={hasNew} className={classes.newBadge}>
-            <span className={classes.title}>{title}</span>
+            <span className={classes.title}>
+              {isDeprecated ? <del>{title}</del> : title}
+            </span>
           </NewBadge>
         </Button>
       </ListItem>

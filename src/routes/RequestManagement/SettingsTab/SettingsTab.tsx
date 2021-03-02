@@ -178,15 +178,17 @@ const SettingTab: React.FC<SettingsTabProps> = ({
                   message: "Operation ID is too long",
                 },
                 validate: (data: string) => {
-                  const isDup = requests
-                    .filter((item) => item.id !== request.id)
-                    .some((item) => item.operationId === data);
+                  const isDup =
+                    data &&
+                    requests
+                      .filter((item) => item.id !== request.id)
+                      .some((item) => item.operationId === data);
                   return isDup ? "Operation ID is duplicated." : true;
                 },
               })}
               variant="outlined"
               fullWidth
-              {...getTextFieldErrorProps(errors.description)}
+              {...getTextFieldErrorProps(errors.operationId)}
               placeholder="Unique string used to identify an operation"
             />
           </Box>
@@ -211,7 +213,13 @@ const SettingTab: React.FC<SettingsTabProps> = ({
           <Box mt={2}>
             <FormControlLabel
               label="Deprecated"
-              control={<Checkbox name="isDeprecated" inputRef={register} />}
+              control={
+                <Checkbox
+                  name="isDeprecated"
+                  inputRef={register}
+                  defaultChecked={defaultValues.isDeprecated}
+                />
+              }
             />
           </Box>
         </CardContent>

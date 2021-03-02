@@ -26,6 +26,7 @@ export interface SectionItem
   items?: SectionItem[];
   title: string;
   type: "request" | "project" | "group";
+  isDeprecated?: boolean;
 }
 
 export interface Section {

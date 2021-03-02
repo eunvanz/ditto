@@ -6,7 +6,7 @@ import ROUTE from "../../paths";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { UiActions } from "../../store/Ui/UiSlice";
-import { GroupDoc, ProjectDoc } from "../../types";
+import { GroupDoc, ProjectDoc, RequestDoc } from "../../types";
 import { SectionItem } from "./NavBar/NavBar";
 
 const useDashboardLayoutProps = () => {
@@ -67,19 +67,27 @@ const useDashboardLayoutProps = () => {
     )
   );
 
+  const getRequestSectionItem = useCallback(
+    (projectId: string, request: RequestDoc) => {
+      return {
+        title: request.name,
+        type: "request" as const,
+        hasNew: false,
+        href: `${ROUTE.PROJECTS}/${projectId}${ROUTE.REQUESTS}/${request.id}`,
+        requestMethod: request.method,
+        isDeprecated: request.isDeprecated,
+      };
+    },
+    []
+  );
+
   const getGroupSubItems = useCallback(
     (project: ProjectDoc, group: GroupDoc) => {
       return groupedProjectRequests[project.id]
         ?.filter((request) => request.groupId === group.id)
-        .map((request) => ({
-          title: request.name,
-          type: "request" as const,
-          hasNew: false,
-          href: `${ROUTE.PROJECTS}/${project.id}${ROUTE.REQUESTS}/${request.id}`,
-          requestMethod: request.method,
-        }));
+        .map((request) => getRequestSectionItem(project.id, request));
     },
-    [groupedProjectRequests]
+    [getRequestSectionItem, groupedProjectRequests]
   );
 
   const getProjectSubItems = useCallback(
@@ -103,18 +111,13 @@ const useDashboardLayoutProps = () => {
       groupedProjectRequests[project.id]
         ?.filter((request) => !request.groupId)
         .forEach((request) => {
-          subItems.push({
-            title: request.name,
-            type: "request" as const,
-            hasNew: false,
-            href: `${ROUTE.PROJECTS}/${project.id}${ROUTE.REQUESTS}/${request.id}`,
-            requestMethod: request.method,
-          });
+          subItems.push(getRequestSectionItem(project.id, request));
         });
       return subItems;
     },
     [
       getGroupSubItems,
+      getRequestSectionItem,
       groupedProjectGroups,
       groupedProjectRequests,
       location.pathname,
