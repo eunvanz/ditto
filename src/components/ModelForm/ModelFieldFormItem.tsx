@@ -623,7 +623,6 @@ const SubModelForm: React.FC<SubModelFormProps> = ({
 }) => {
   switch (fieldType) {
     case FIELD_TYPE.OBJECT:
-      console.log("===== SubModelForm", depth);
       return <ModelForm depth={(depth || 1) + 1} defaultModelId={subModelId} />;
     default:
       return null;

@@ -1,6 +1,7 @@
 import { Box, Button, makeStyles } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import React, { useCallback, useEffect, useState } from "react";
+import ResponseBodyForm from "../../../components/ResponseBodyForm";
 import ResponseStatusFormModal from "../../../components/ResponseStatusFormModal";
 import {
   ResponseStatusFormModalProps,
@@ -44,11 +45,10 @@ const ResponseTab: React.FC<ResponseTabProps> = ({
   });
 
   const closeResponseStatusFormModal = useCallback(() => {
-    setResponseStatusFormModalState({
+    setResponseStatusFormModalState((state) => ({
+      ...state,
       isVisible: false,
-      existingStatusCodes: [],
-      defaultValues: undefined,
-    });
+    }));
   }, []);
 
   const showResponseStatusFormModal = useCallback(
@@ -84,6 +84,14 @@ const ResponseTab: React.FC<ResponseTabProps> = ({
 
   return (
     <>
+      {responseStatuses.map((item) => (
+        <Box mt={3}>
+          <ResponseBodyForm
+            responseStatus={item}
+            onEditResponseStatus={() => showResponseStatusFormModal(item)}
+          />
+        </Box>
+      ))}
       <Box mt={3}>
         <Button
           className={classes.addButton}

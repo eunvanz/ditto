@@ -1,6 +1,6 @@
 import { Box, Button, TextField } from "@material-ui/core";
 import isEqual from "lodash/isEqual";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { getTextFieldErrorProps } from "../../helpers/projectHelpers";
 import { ResponseStatusDoc } from "../../types";
@@ -29,7 +29,7 @@ const ResponseStatusFormModal: React.FC<ResponseStatusFormModalProps> = ({
   onSubmit,
   isSubmitting,
 }) => {
-  const { register, handleSubmit, errors, formState, watch } = useForm<
+  const { register, handleSubmit, errors, formState, watch, reset } = useForm<
     ResponseStatusFormValues
   >({
     mode: "onChange",
@@ -45,6 +45,10 @@ const ResponseStatusFormModal: React.FC<ResponseStatusFormModalProps> = ({
   const isNotModified = useMemo(() => {
     return isEqual(defaultValues, watchedValues);
   }, [defaultValues, watchedValues]);
+
+  useEffect(() => {
+    reset(defaultValues || {});
+  }, [defaultValues, reset]);
 
   return (
     <Modal
@@ -86,11 +90,13 @@ const ResponseStatusFormModal: React.FC<ResponseStatusFormModalProps> = ({
             variant="outlined"
             fullWidth
             required
+            disabled={defaultValues?.statusCode === 200}
             {...getTextFieldErrorProps(errors.statusCode)}
           />
         </Box>
         <Box mt={2}>
           <TextField
+            autoFocus={defaultValues?.statusCode === 200}
             label="Description"
             name="description"
             inputRef={register({
