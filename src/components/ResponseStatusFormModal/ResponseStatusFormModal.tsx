@@ -58,7 +58,12 @@ const ResponseStatusFormModal: React.FC<ResponseStatusFormModalProps> = ({
     >
       <form
         onSubmit={handleSubmit((values) =>
-          onSubmit({ ...values, target: defaultValues?.target })
+          onSubmit({
+            ...values,
+            // 알 수 없는 버그로 인해 직접 세팅
+            statusCode: watchedValues.statusCode,
+            target: defaultValues?.target,
+          })
         )}
         noValidate
       >
