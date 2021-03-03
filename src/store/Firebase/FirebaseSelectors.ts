@@ -12,6 +12,7 @@ import {
   RequestDoc,
   RequestParamDoc,
   REQUEST_PARAM_LOCATION,
+  ResponseStatusDoc,
 } from "../../types";
 import AuthSelectors from "../Auth/AuthSelector";
 
@@ -143,6 +144,11 @@ const createRequestBodiesSelector = (projectId: string, requestId: string) =>
     `projects/${projectId}/requests/${requestId}/bodies`
   );
 
+const createResponseStatusesSelector = (projectId: string, requestId: string) =>
+  createOrderedSelector<ResponseStatusDoc[]>(
+    `projects/${projectId}/requests/${requestId}/responseStatuses`
+  );
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -158,6 +164,7 @@ const FirebaseSelectors = {
   createProjectRequestsSelector,
   createRequestParamsSelector,
   createRequestBodiesSelector,
+  createResponseStatusesSelector,
 };
 
 export default FirebaseSelectors;

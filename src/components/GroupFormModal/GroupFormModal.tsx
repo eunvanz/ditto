@@ -69,7 +69,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
         )}
         noValidate
       >
-        <Box mt={2}>
+        <Box mt={0}>
           <TextField
             autoFocus
             label="Group name"

@@ -2,8 +2,11 @@ import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
 
 import ResponseTab, { ResponseTabProps } from "./ResponseTab";
+import mockProject from "../../../mocks/mockProject";
 
-const defaultProps: Partial<ResponseTabProps> = {};
+const defaultProps: Partial<ResponseTabProps> = {
+  responseStatuses: [mockProject.responseStatus],
+};
 
 export default {
   title: "components/ResponseTab",

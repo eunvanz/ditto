@@ -40,6 +40,7 @@ import {
   ModifiableRequestBodyItem,
   RequestBodyItem,
   RequestBodyDoc,
+  ResponseStatusItem,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -1018,12 +1019,13 @@ export function* submitRequestFormFlow() {
 
     try {
       const newRequestRef = yield* call(Firework.addRequest, newRequest);
-      yield* call(Firework.addResponseStatus, {
+      const newResponseStatus = {
         projectId,
         requestId: newRequestRef.id,
         statusCode: 200,
         ...recordableDocProps,
-      });
+      };
+      yield* call(Firework.addResponseStatus, newResponseStatus);
       yield* put(
         UiActions.showNotification({
           message: "New operation has been created.",
@@ -1705,6 +1707,86 @@ export function* deleteRequestFlow() {
       try {
         yield* put(UiActions.showDelayedLoading());
         yield* call(Firework.deleteRequest, payload);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "The operation has been deleted.",
+          })
+        );
+      } catch (error) {
+        yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+      } finally {
+        yield* put(UiActions.hideLoading());
+      }
+    }
+  }
+}
+
+export function* submitResponseStatusFlow() {
+  while (true) {
+    const { type, payload } = yield* take(ProjectActions.submitResponseStatus);
+    yield* put(ProgressActions.startProgress(type));
+    yield* put(UiActions.showDelayedLoading());
+    const target = payload.target;
+    delete payload.target;
+    try {
+      if (!target) {
+        const recordableDocProps = yield* call(getRecordableDocProps);
+        const newResponseStatus: ResponseStatusItem = {
+          ...payload,
+          ...recordableDocProps,
+        };
+        yield* call(Firework.addResponseStatus, newResponseStatus);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "New status code has been created.",
+          })
+        );
+      } else {
+        const updatedRecordProps = yield* call(getUpdatedRecordProps);
+        const newResponseStatus = {
+          ...payload,
+          ...updatedRecordProps,
+        };
+        yield* call(
+          Firework.updateResponseStatus,
+          target.id,
+          newResponseStatus
+        );
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "The status code has been modified.",
+          })
+        );
+      }
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    } finally {
+      yield* put(UiActions.hideLoading());
+      yield* put(ProgressActions.finishProgress(type));
+    }
+  }
+}
+
+export function* deleteResponseStatusFlow() {
+  while (true) {
+    const { payload } = yield* take(ProjectActions.deleteResponseStatus);
+    const isConfirmed = yield* call(Alert.confirm, {
+      title: "Delete status code",
+      message: "Are you sure to delete this status code?",
+    });
+    if (isConfirmed) {
+      try {
+        yield* put(UiActions.showDelayedLoading());
+        yield* call(Firework.deleteResponseStatus, payload);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "The status code has been deleted.",
+          })
+        );
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
       } finally {
@@ -1737,5 +1819,7 @@ export function* watchProjectActions() {
     fork(deleteRequestBodyFlow),
     fork(submitRequestSettingFormFlow),
     fork(deleteRequestFlow),
+    fork(submitResponseStatusFlow),
+    fork(deleteResponseStatusFlow),
   ]);
 }

@@ -6,6 +6,7 @@ import {
   RequestDoc,
   REQUEST_METHOD,
   GroupDoc,
+  ResponseStatusDoc,
 } from "../types";
 
 const project = {
@@ -528,6 +529,31 @@ const groups: GroupDoc[] = [
   },
 ];
 
+const responseStatus: ResponseStatusDoc = {
+  id: "mockId",
+  projectId: "mockId",
+  requestId: "mockId",
+  statusCode: 200,
+  settingsByMember: {
+    aYMTrCiTE7avCY1yeNHVt9XHX4N2: {
+      updatedAt: {
+        seconds: 1614528706,
+        nanoseconds: 639000000,
+      },
+    },
+  },
+  updatedAt: {
+    seconds: 1614528706,
+    nanoseconds: 639000000,
+  },
+  createdAt: {
+    seconds: 1614528706,
+    nanoseconds: 639000000,
+  },
+  createdBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+  updatedBy: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+};
+
 const mockProject = {
   project,
   projectUrls,
@@ -537,6 +563,7 @@ const mockProject = {
   enumerations,
   request,
   groups,
+  responseStatus,
 };
 
 export default mockProject;
