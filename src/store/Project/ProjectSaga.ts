@@ -1023,6 +1023,7 @@ export function* submitRequestFormFlow() {
         projectId,
         requestId: newRequestRef.id,
         statusCode: 200,
+        description: "OK",
         ...recordableDocProps,
       };
       yield* call(Firework.addResponseStatus, newResponseStatus);
