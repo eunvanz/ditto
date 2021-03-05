@@ -1,6 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { OptionsObject } from "notistack";
-import { THEMES, ProjectDoc, ModelDoc, GroupDoc } from "../../types";
+import {
+  THEMES,
+  ProjectDoc,
+  ModelDoc,
+  GroupDoc,
+  RequestDoc,
+} from "../../types";
 
 export interface Notification {
   key: React.ReactText;
@@ -35,6 +41,7 @@ export interface RequestFormModalState {
   isVisible: boolean;
   projectId?: string;
   groupId?: string;
+  requests: RequestDoc[];
 }
 
 export interface CriticalConfirmModalState {
@@ -99,6 +106,7 @@ export const initialUiState: UiState = {
     isVisible: false,
     projectId: undefined,
     groupId: undefined,
+    requests: [],
   },
   quickUrlFormModal: {
     isVisible: false,
@@ -229,6 +237,7 @@ const UiSlice = createSlice({
       state.requestFormModal.isVisible = true;
       state.requestFormModal.projectId = action.payload.projectId;
       state.requestFormModal.groupId = action.payload.groupId;
+      state.requestFormModal.requests = action.payload.requests;
     },
     hideRequestFormModal: (state, _action: PayloadAction<void>) => {
       state.requestFormModal.isVisible = false;

@@ -35,18 +35,6 @@ const useDashboardLayoutProps = () => {
 
   const location = useLocation();
 
-  const showRequestFormModal = useCallback(
-    (project: ProjectDoc, group?: any) => {
-      dispatch(
-        UiActions.showRequestFormModal({
-          projectId: project.id,
-          groupId: group?.id,
-        })
-      );
-    },
-    [dispatch]
-  );
-
   const showGroupFormModal = useCallback(
     (project: ProjectDoc, group?: GroupDoc) => {
       dispatch(ProjectActions.receiveCurrentProject(project));
@@ -65,6 +53,19 @@ const useDashboardLayoutProps = () => {
     FirebaseSelectors.createGroupedProjectRequestsSelector(
       projects.map((project) => project.id)
     )
+  );
+
+  const showRequestFormModal = useCallback(
+    (project: ProjectDoc, group?: any) => {
+      dispatch(
+        UiActions.showRequestFormModal({
+          projectId: project.id,
+          groupId: group?.id,
+          requests: groupedProjectRequests[project.id],
+        })
+      );
+    },
+    [dispatch, groupedProjectRequests]
   );
 
   const getRequestSectionItem = useCallback(

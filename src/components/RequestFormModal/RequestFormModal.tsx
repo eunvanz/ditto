@@ -1,12 +1,13 @@
 import { Box, Button, TextField } from "@material-ui/core";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { ModalBase } from "../../types";
+import { ModalBase, RequestDoc } from "../../types";
 import Modal from "../Modal";
 
 export interface RequestFormModalProps extends ModalBase {
   onSubmit: (values: RequestFormValues) => void;
   isSubmitting: boolean;
+  requests: RequestDoc[];
 }
 
 export interface RequestFormValues {
@@ -20,6 +21,7 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
   onClose,
   onSubmit,
   isSubmitting,
+  requests,
 }) => {
   const { register, handleSubmit, errors, formState } = useForm<
     RequestFormValues
@@ -40,6 +42,10 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
               maxLength: {
                 value: 30,
                 message: "Operation name is too long.",
+              },
+              validate: (data: string) => {
+                const isDup = requests.some((item) => item.name === data);
+                return isDup ? "Operation name is duplicated." : true;
               },
             })}
             variant="outlined"

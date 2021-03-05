@@ -34,6 +34,10 @@ function* addProject(data: ProjectItem) {
   return yield* call(addDocument, "projects", data);
 }
 
+function batch() {
+  return db.batch();
+}
+
 function getMyProjectsRef(uid: string) {
   return db.collection("projects").where(`members.${uid}`, "==", true);
 }
@@ -130,6 +134,10 @@ function getModelFieldsRef(model: ModelDoc) {
   );
 }
 
+function getGroupRef(projectId: string, groupId: string) {
+  return db.collection(`projects/${projectId}/groups`).doc(groupId);
+}
+
 function* deleteModelField(modelField: ModelFieldDoc) {
   yield* call(
     deleteDocument,
@@ -212,6 +220,12 @@ function* updateRequest(id: string, data: Partial<RequestItem>) {
     id,
     data
   );
+}
+
+function getGroupRequestsRef(projectId: string, groupId: string) {
+  return db
+    .collection(`projects/${projectId}/requests`)
+    .where("groupId", "==", groupId);
 }
 
 function* addRequestParam(data: RequestParamItem) {
@@ -318,6 +332,44 @@ function* deleteResponseBody(data: ResponseBodyDoc) {
   );
 }
 
+export interface RunBatchItem {
+  operation: "set" | "update" | "delete";
+  ref: firebase.firestore.DocumentReference<firebase.firestore.DocumentData>;
+  data?: Partial<firebase.firestore.DocumentData>;
+}
+
+async function runBatch(operations: RunBatchItem[]) {
+  const batch = db.batch();
+  operations.forEach((item) => {
+    if (item.operation === "delete") {
+      batch[item.operation](item.ref);
+    } else if (item.operation === "update") {
+      batch[item.operation](item.ref, item.data!);
+    } else {
+      batch[item.operation](item.ref, item.data!);
+    }
+  });
+  await batch.commit();
+}
+
+async function runTaskForEachDocs(
+  collectionRef: firebase.firestore.Query<firebase.firestore.DocumentData>,
+  task: (
+    doc: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
+  ) => void
+) {
+  return new Promise((resolve) => {
+    collectionRef.onSnapshot((snapshot) => {
+      snapshot.docs.forEach((doc, index) => {
+        task(doc);
+        if (index === snapshot.docs.length - 1) {
+          resolve(undefined);
+        }
+      });
+    });
+  });
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -362,6 +414,11 @@ export const realFirework = {
   addResponseBody,
   updateResponseBody,
   deleteResponseBody,
+  batch,
+  getGroupRequestsRef,
+  getGroupRef,
+  runBatch,
+  runTaskForEachDocs,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

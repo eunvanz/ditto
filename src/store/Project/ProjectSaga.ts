@@ -10,7 +10,7 @@ import {
 } from "typed-redux-saga";
 import { ProjectActions } from "./ProjectSlice";
 import { ProgressActions } from "../Progress/ProgressSlice";
-import Firework from "../Firework";
+import Firework, { RunBatchItem } from "../Firework";
 import { UiActions } from "../Ui/UiSlice";
 import AuthSelectors from "../Auth/AuthSelector";
 import Alert from "../../components/Alert";
@@ -1019,9 +1019,24 @@ export function* deleteGroupFlow() {
     if (isConfirmed) {
       yield* put(UiActions.showLoading());
       try {
-        // TODO: 하위 항목들 모두 삭제
         yield* put(ProgressActions.startProgress(type));
-        yield* call(Firework.deleteGroup, payload);
+        const groupRef = yield* call(
+          Firework.getGroupRef,
+          payload.projectId,
+          payload.id
+        );
+        const requestGroupRef = yield* call(
+          Firework.getGroupRequestsRef,
+          payload.projectId,
+          payload.id
+        );
+        const batchItems: RunBatchItem[] = [
+          { operation: "delete", ref: groupRef },
+        ];
+        yield* call(Firework.runTaskForEachDocs, requestGroupRef, (doc) =>
+          batchItems.push({ operation: "delete", ref: doc.ref })
+        );
+        yield* call(Firework.runBatch, batchItems);
         yield* put(
           UiActions.showNotification({
             message: "The group has been deleted.",

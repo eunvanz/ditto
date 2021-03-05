@@ -33,6 +33,7 @@ const useRequestFormModalProps = () => {
     onClose,
     onSubmit,
     isSubmitting,
+    requests: requestFormModalState.requests,
   };
 };
 
