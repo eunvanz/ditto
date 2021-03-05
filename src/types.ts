@@ -229,17 +229,16 @@ export interface ModelFieldItem extends Recordable {
   settingsByMember: Record<string, BaseSettings>;
 }
 
-export interface ModifiableModelFieldItem
-  extends Omit<
-    Partial<ModelFieldItem>,
-    | "fieldName"
-    | "isRequired"
-    | "isArray"
-    | "fieldType"
-    | "format"
-    | "enum"
-    | "description"
-  > {
+export type Modifiable<T extends CommonModelFieldItem> = Omit<
+  Partial<T>,
+  | "fieldName"
+  | "isRequired"
+  | "isArray"
+  | "fieldType"
+  | "format"
+  | "enum"
+  | "description"
+> & {
   fieldName: Partial<ModelCell<string>>;
   isRequired: Partial<ModelCell<boolean>>;
   isArray: Partial<ModelCell<boolean>>;
@@ -247,47 +246,11 @@ export interface ModifiableModelFieldItem
   format: Partial<ModelCell<string>>;
   enum: Partial<ModelCell<string>>;
   description: Partial<ModelCell<string>>;
-}
+};
 
-export interface ModifiableRequestParamItem
-  extends Omit<
-    Partial<RequestParamItem>,
-    | "fieldName"
-    | "isRequired"
-    | "isArray"
-    | "fieldType"
-    | "format"
-    | "enum"
-    | "description"
-  > {
-  fieldName: Partial<ModelCell<string>>;
-  isRequired: Partial<ModelCell<boolean>>;
-  isArray: Partial<ModelCell<boolean>>;
-  fieldType: Partial<ModelCell<FIELD_TYPE>>;
-  format: Partial<ModelCell<string>>;
-  enum: Partial<ModelCell<string>>;
-  description: Partial<ModelCell<string>>;
-}
+export type CommonModelFieldItem = Omit<ModelFieldItem, "modelId">;
 
-export interface ModifiableRequestBodyItem
-  extends Omit<
-    Partial<RequestBodyItem>,
-    | "fieldName"
-    | "isRequired"
-    | "isArray"
-    | "fieldType"
-    | "format"
-    | "enum"
-    | "description"
-  > {
-  fieldName: Partial<ModelCell<string>>;
-  isRequired: Partial<ModelCell<boolean>>;
-  isArray: Partial<ModelCell<boolean>>;
-  fieldType: Partial<ModelCell<FIELD_TYPE>>;
-  format: Partial<ModelCell<string>>;
-  enum: Partial<ModelCell<string>>;
-  description: Partial<ModelCell<string>>;
-}
+export type CustomizedModelFieldPart<T> = Omit<T, keyof CommonModelFieldItem>;
 
 export interface ModelItem extends Recordable {
   projectId: string;
@@ -358,12 +321,12 @@ export enum REQUEST_PARAM_LOCATION {
   COOKIE = "COOKIE",
 }
 
-export interface RequestParamItem extends Omit<ModelFieldItem, "modelId"> {
+export interface RequestParamItem extends CommonModelFieldItem {
   requestId: string;
   location: REQUEST_PARAM_LOCATION;
 }
 
-export interface RequestBodyItem extends Omit<ModelFieldItem, "modelId"> {
+export interface RequestBodyItem extends CommonModelFieldItem {
   requestId: string;
 }
 
@@ -374,7 +337,7 @@ export interface ResponseStatusItem extends Recordable {
   description?: string;
 }
 
-export interface ResponseBodyItem extends Omit<ModelFieldItem, "modelId"> {
+export interface ResponseBodyItem extends CommonModelFieldItem {
   projectId: string;
   requestId: string;
   responseStatusId: string;

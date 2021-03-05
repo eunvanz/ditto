@@ -21,7 +21,6 @@ import {
   ModelItem,
   ModelDoc,
   ModelFieldItem,
-  ModifiableModelFieldItem,
   FORMAT,
   EnumerationItem,
   EnumerationDoc,
@@ -33,14 +32,17 @@ import {
   Recordable,
   RequestItem,
   BASE_URL,
-  ModifiableRequestParamItem,
   RequestParamItem,
   RequestParamDoc,
   REQUEST_METHOD,
-  ModifiableRequestBodyItem,
   RequestBodyItem,
   RequestBodyDoc,
   ResponseStatusItem,
+  ResponseBodyItem,
+  Modifiable,
+  CustomizedModelFieldPart,
+  CommonModelFieldItem,
+  ResponseBodyDoc,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -50,6 +52,8 @@ import ROUTE from "../../paths";
 import ProjectSelectors from "./ProjectSelectors";
 import FirebaseSelectors from "../Firebase/FirebaseSelectors";
 import UiSelectors from "../Ui/UiSelectors";
+import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
+import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
 
 function* getProperDoc<T extends Recordable>(
   values: any & { target?: Doc<T, BaseSettings> }
@@ -547,18 +551,41 @@ export function* getUpdatedRecordProps() {
   };
 }
 
-export function* submitModelFieldFormFlow() {
+export interface CommonModelFieldFormFlowParams<
+  T extends CommonModelFieldItem,
+  FormValues extends ModelFieldFormValues
+> {
+  actionToTrigger: ActionCreatorWithPayload<FormValues>;
+  checkIsNotEmpty?: (payload: FormValues) => boolean;
+  buildNewModelField: (payload: FormValues) => CustomizedModelFieldPart<T>;
+  addModelField: (modelFieldItem: T) => void;
+}
+
+export type CommonModelFieldFormFlow<
+  CustomModelFieldItem extends CommonModelFieldItem,
+  FormValues extends ModelFieldFormValues
+> = (
+  args: CommonModelFieldFormFlowParams<CustomModelFieldItem, FormValues>
+) => Generator;
+
+export function* commonModelFieldFormFlow<
+  CustomModelFieldItem extends CommonModelFieldItem,
+  FormValues extends ModelFieldFormValues
+>({
+  actionToTrigger,
+  checkIsNotEmpty,
+  buildNewModelField,
+  addModelField,
+}: CommonModelFieldFormFlowParams<CustomModelFieldItem, FormValues>) {
   while (true) {
-    const { type, payload } = yield* take(ProjectActions.submitModelFieldForm);
+    const { type, payload } = yield* take(actionToTrigger);
     const submitModelFieldFormActionType = `${type}-${payload.target?.id}`;
     yield* put(ProgressActions.startProgress(submitModelFieldFormActionType));
 
-    const { modelId } = payload;
-
-    if (!modelId) {
+    if (!!checkIsNotEmpty && !checkIsNotEmpty(payload)) {
       yield* put(
         ErrorActions.catchError({
-          error: new Error("There's no selected project."),
+          error: new Error("There's no required value."),
           isAlertOnly: true,
         })
       );
@@ -582,12 +609,11 @@ export function* submitModelFieldFormFlow() {
 
     try {
       if (!!target) {
-        delete payload.target;
-        delete payload.modelId;
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
-        const newModelField: ModifiableModelFieldItem = {
+        // @ts-ignore
+        const newModelField: Modifiable<CustomModelFieldItem> = {
+          ...buildNewModelField(payload),
           projectId: currentProject.id,
-          modelId,
           fieldName: {
             value: payload.fieldName,
             ...updatedRecordProps,
@@ -681,9 +707,10 @@ export function* submitModelFieldFormFlow() {
       } else {
         hasToBlurForm = false;
         const recordableDocProps = yield* call(getRecordableDocProps);
-        const newModelField: ModelFieldItem = {
+        // @ts-ignore
+        const newModelField: CustomModelFieldItem = {
+          ...buildNewModelField(payload),
           projectId: currentProject.id,
-          modelId,
           fieldName: {
             value: payload.fieldName,
             ...recordableDocProps,
@@ -733,7 +760,7 @@ export function* submitModelFieldFormFlow() {
             );
             yield* put(UiActions.showDelayedLoading(500));
             yield* put(UiActions.hideQuickModelNameFormModal());
-            yield* call(Firework.addModelField, {
+            yield* call(addModelField, {
               ...newModelField,
               format: {
                 value: createdModelId!,
@@ -760,7 +787,7 @@ export function* submitModelFieldFormFlow() {
             );
             yield* put(UiActions.showDelayedLoading(500));
             yield* put(UiActions.hideQuickEnumFormModal());
-            yield* call(Firework.addModelField, {
+            yield* call(addModelField, {
               ...newModelField,
               enum: {
                 value: createdEnumId!,
@@ -770,7 +797,7 @@ export function* submitModelFieldFormFlow() {
           }
         } else {
           yield* put(UiActions.showDelayedLoading(500));
-          yield* call(Firework.addModelField, newModelField);
+          yield* call(addModelField, newModelField);
         }
       }
     } catch (error) {
@@ -790,6 +817,264 @@ export function* submitModelFieldFormFlow() {
       yield* put(UiActions.hideLoading());
     }
   }
+}
+
+export function* submitModelFieldFormFlow() {
+  yield* fork<
+    CommonModelFieldFormFlow<
+      ModelFieldItem,
+      ModelFieldFormValues & { modelId?: string }
+    >
+  >(commonModelFieldFormFlow, {
+    actionToTrigger: ProjectActions.submitModelFieldForm,
+    checkIsNotEmpty: (payload) => {
+      return !!payload.modelId;
+    },
+    buildNewModelField: (payload) => ({ modelId: payload.modelId! }),
+    addModelField: Firework.addModelField,
+  });
+  // while (true) {
+  //   const { type, payload } = yield* take(ProjectActions.submitModelFieldForm);
+  //   const submitModelFieldFormActionType = `${type}-${payload.target?.id}`;
+  //   yield* put(ProgressActions.startProgress(submitModelFieldFormActionType));
+
+  //   const { modelId } = payload;
+
+  //   if (!modelId) {
+  //     yield* put(
+  //       ErrorActions.catchError({
+  //         error: new Error("There's no selected project."),
+  //         isAlertOnly: true,
+  //       })
+  //     );
+  //     continue;
+  //   }
+
+  //   const currentProject = yield* call(selectAndCheckProject);
+  //   if (!currentProject) {
+  //     continue;
+  //   }
+
+  //   const { target } = payload;
+
+  //   const isNewModel =
+  //     payload.fieldType === FIELD_TYPE.OBJECT &&
+  //     payload.format === FORMAT.NEW_MODEL;
+
+  //   const isNewEnum = payload.enum === ENUMERATION.NEW;
+
+  //   let hasToBlurForm = true;
+
+  //   try {
+  //     if (!!target) {
+  //       delete payload.target;
+  //       delete payload.modelId;
+  //       const updatedRecordProps = yield* call(getUpdatedRecordProps);
+  //       const newModelField: Modifiable<ModelFieldItem> = {
+  //         projectId: currentProject.id,
+  //         modelId,
+  //         fieldName: {
+  //           value: payload.fieldName,
+  //           ...updatedRecordProps,
+  //         },
+  //         isRequired: {
+  //           value: payload.isRequired,
+  //           ...updatedRecordProps,
+  //         },
+  //         isArray: {
+  //           value: payload.isArray,
+  //           ...updatedRecordProps,
+  //         },
+  //         fieldType: {
+  //           value: payload.fieldType,
+  //           ...updatedRecordProps,
+  //         },
+  //         format: {
+  //           value: payload.format,
+  //           ...updatedRecordProps,
+  //         },
+  //         enum: {
+  //           value: payload.enum,
+  //           ...updatedRecordProps,
+  //         },
+  //         description: {
+  //           value: payload.description,
+  //           ...updatedRecordProps,
+  //         },
+  //         ...updatedRecordProps,
+  //       };
+
+  //       if (isNewModel) {
+  //         yield* put(UiActions.showQuickModelNameFormModal());
+  //         const { submit, cancel } = yield* race({
+  //           submit: take(ProjectActions.submitQuickModelNameForm), // 모델 생성 액션
+  //           cancel: take(ProjectActions.cancelQuickModelNameForm), // 모델 생성 취소 액션
+  //         });
+  //         if (cancel) {
+  //           hasToBlurForm = false;
+  //           continue;
+  //         } else {
+  //           yield* put(ProjectActions.submitModelNameForm(submit!.payload));
+  //           yield* take(
+  //             ProjectActions.notifySubmissionQuickModelNameFormComplete
+  //           );
+  //           const createdModelId = yield* select(
+  //             (state: RootState) => state.project.createdModelId
+  //           );
+  //           yield* put(UiActions.showDelayedLoading(500));
+  //           yield* put(UiActions.hideQuickModelNameFormModal());
+  //           yield* call(Firework.updateModelField, target.id, {
+  //             ...newModelField,
+  //             format: {
+  //               value: createdModelId,
+  //               ...updatedRecordProps,
+  //             },
+  //           });
+  //         }
+  //       } else if (isNewEnum) {
+  //         yield* putResolve(
+  //           ProjectActions.receiveFieldTypeToCreate(payload.fieldType)
+  //         );
+  //         yield* put(UiActions.showQuickEnumFormModal());
+  //         const { submit, cancel } = yield* race({
+  //           submit: take(ProjectActions.submitEnumForm),
+  //           cancel: take(UiActions.hideQuickEnumFormModal),
+  //         });
+  //         if (cancel) {
+  //           hasToBlurForm = false;
+  //           continue;
+  //         } else {
+  //           yield* put(ProjectActions.submitEnumForm(submit!.payload));
+  //           yield* take(ProjectActions.notifySubmissionQuickEnumFormComplete);
+  //           const createdEnumId = yield* select(
+  //             (state: RootState) => state.project.createdEnumId
+  //           );
+  //           yield* put(UiActions.showDelayedLoading(500));
+  //           yield* put(UiActions.hideQuickEnumFormModal());
+  //           yield* call(Firework.updateModelField, target.id, {
+  //             ...newModelField,
+  //             enum: {
+  //               value: createdEnumId,
+  //               ...updatedRecordProps,
+  //             },
+  //           });
+  //         }
+  //       } else {
+  //         yield* put(UiActions.showDelayedLoading(500));
+  //         yield* call(Firework.updateModelField, target.id, newModelField);
+  //       }
+  //     } else {
+  //       hasToBlurForm = false;
+  //       const recordableDocProps = yield* call(getRecordableDocProps);
+  //       const newModelField: ModelFieldItem = {
+  //         projectId: currentProject.id,
+  //         modelId,
+  //         fieldName: {
+  //           value: payload.fieldName,
+  //           ...recordableDocProps,
+  //         },
+  //         isRequired: {
+  //           value: payload.isRequired,
+  //           ...recordableDocProps,
+  //         },
+  //         isArray: {
+  //           value: payload.isArray,
+  //           ...recordableDocProps,
+  //         },
+  //         fieldType: {
+  //           value: payload.fieldType,
+  //           ...recordableDocProps,
+  //         },
+  //         format: {
+  //           value: payload.format,
+  //           ...recordableDocProps,
+  //         },
+  //         enum: {
+  //           value: payload.enum,
+  //           ...recordableDocProps,
+  //         },
+  //         description: {
+  //           value: payload.description,
+  //           ...recordableDocProps,
+  //         },
+  //         ...recordableDocProps,
+  //       };
+
+  //       if (isNewModel) {
+  //         yield* put(UiActions.showQuickModelNameFormModal());
+  //         const { submit, cancel } = yield* race({
+  //           submit: take(ProjectActions.submitQuickModelNameForm), // 모델 생성 액션
+  //           cancel: take(ProjectActions.cancelQuickModelNameForm), // 모델 생성 취소 액션
+  //         });
+  //         if (cancel) {
+  //           continue;
+  //         } else {
+  //           yield* put(ProjectActions.submitModelNameForm(submit!.payload));
+  //           yield* take(
+  //             ProjectActions.notifySubmissionQuickModelNameFormComplete
+  //           );
+  //           const createdModelId = yield* select(
+  //             (state: RootState) => state.project.createdModelId
+  //           );
+  //           yield* put(UiActions.showDelayedLoading(500));
+  //           yield* put(UiActions.hideQuickModelNameFormModal());
+  //           yield* call(Firework.addModelField, {
+  //             ...newModelField,
+  //             format: {
+  //               value: createdModelId!,
+  //               ...recordableDocProps,
+  //             },
+  //           });
+  //         }
+  //       } else if (isNewEnum) {
+  //         yield* putResolve(
+  //           ProjectActions.receiveFieldTypeToCreate(payload.fieldType)
+  //         );
+  //         yield* put(UiActions.showQuickEnumFormModal());
+  //         const { submit, cancel } = yield* race({
+  //           submit: take(ProjectActions.submitQuickEnumForm),
+  //           cancel: take(UiActions.hideQuickEnumFormModal),
+  //         });
+  //         if (cancel) {
+  //           continue;
+  //         } else {
+  //           yield* put(ProjectActions.submitEnumForm(submit!.payload));
+  //           yield* take(ProjectActions.notifySubmissionQuickEnumFormComplete);
+  //           const createdEnumId = yield* select(
+  //             (state: RootState) => state.project.createdEnumId
+  //           );
+  //           yield* put(UiActions.showDelayedLoading(500));
+  //           yield* put(UiActions.hideQuickEnumFormModal());
+  //           yield* call(Firework.addModelField, {
+  //             ...newModelField,
+  //             enum: {
+  //               value: createdEnumId!,
+  //               ...recordableDocProps,
+  //             },
+  //           });
+  //         }
+  //       } else {
+  //         yield* put(UiActions.showDelayedLoading(500));
+  //         yield* call(Firework.addModelField, newModelField);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     yield* put(
+  //       ErrorActions.catchError({
+  //         error,
+  //         isAlertOnly: true,
+  //       })
+  //     );
+  //   } finally {
+  //     yield* putResolve(
+  //       ProgressActions.finishProgress(submitModelFieldFormActionType)
+  //     );
+  //     if (hasToBlurForm) {
+  //       yield* put(ProjectActions.receiveEditingModelField(undefined));
+  //     }
+  //     yield* put(UiActions.hideLoading());
+  //   }
+  // }
 }
 
 export function* proceedQuickModelNameFormFlow() {
@@ -1134,7 +1419,7 @@ export function* submitRequestParamFormFlow() {
       if (!!target) {
         delete payload.target;
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
-        const newRequestParamItem: ModifiableRequestParamItem = {
+        const newRequestParamItem: Modifiable<RequestParamItem> = {
           projectId: currentProject.id,
           requestId,
           location,
@@ -1420,7 +1705,7 @@ export function* submitRequestBodyFormFlow() {
       if (!!target) {
         delete payload.target;
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
-        const newRequestBodyItem: ModifiableRequestBodyItem = {
+        const newRequestBodyItem: Modifiable<RequestBodyItem> = {
           projectId: currentProject.id,
           requestId,
           fieldName: {
@@ -1797,6 +2082,58 @@ export function* deleteResponseStatusFlow() {
   }
 }
 
+export function* submitResponseBodyFlow() {
+  yield* fork<
+    CommonModelFieldFormFlow<
+      ResponseBodyItem,
+      ModelFieldFormValues & {
+        requestId: string;
+        projectId: string;
+        responseStatusId: string;
+      }
+    >
+  >(commonModelFieldFormFlow, {
+    actionToTrigger: ProjectActions.submitResponseBodyForm,
+    buildNewModelField: ({ projectId, requestId, responseStatusId }) => ({
+      projectId,
+      requestId,
+      responseStatusId,
+    }),
+    addModelField: Firework.addResponseBody,
+  });
+}
+
+export function* deleteResponseBodyFlow() {
+  while (true) {
+    const { payload } = yield* take(ProjectActions.deleteResponseBody);
+    const isConfirmed = yield* call(Alert.confirm, {
+      title: "Delete body",
+      message: `Are you sure to delete media-type ${payload.fieldName.value}?`,
+    });
+    if (isConfirmed) {
+      try {
+        yield* put(UiActions.showDelayedLoading());
+        yield* call(Firework.deleteResponseBody, payload as ResponseBodyDoc);
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "The body has been deleted.",
+          })
+        );
+      } catch (error) {
+        yield* put(
+          ErrorActions.catchError({
+            error,
+            isAlertOnly: true,
+          })
+        );
+      } finally {
+        yield* put(UiActions.hideLoading());
+      }
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -1822,5 +2159,7 @@ export function* watchProjectActions() {
     fork(deleteRequestFlow),
     fork(submitResponseStatusFlow),
     fork(deleteResponseStatusFlow),
+    fork(submitResponseBodyFlow),
+    fork(deleteResponseBodyFlow),
   ]);
 }

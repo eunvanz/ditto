@@ -8,7 +8,6 @@ import {
   ModelFieldItem,
   ModelDoc,
   ModelFieldDoc,
-  ModifiableModelFieldItem,
   EnumerationItem,
   EnumerationDoc,
   GroupItem,
@@ -16,13 +15,14 @@ import {
   RequestItem,
   RequestParamItem,
   RequestParamDoc,
-  ModifiableRequestParamItem,
   RequestBodyItem,
-  ModifiableRequestBodyItem,
   RequestBodyDoc,
   RequestDoc,
   ResponseStatusItem,
   ResponseStatusDoc,
+  ResponseBodyItem,
+  ResponseBodyDoc,
+  Modifiable,
 } from "../../types";
 import { call } from "typed-redux-saga";
 
@@ -85,7 +85,7 @@ function* updateModel(id: string, model: Partial<ModelItem>) {
   yield* call(updateDocument, `projects/${model.projectId}/models`, id, model);
 }
 
-function* updateModelField(id: string, modelField: ModifiableModelFieldItem) {
+function* updateModelField(id: string, modelField: Modifiable<ModelFieldItem>) {
   yield* call(
     updateDocument,
     `projects/${modelField.projectId}/models/${modelField.modelId}/modelFields`,
@@ -222,7 +222,7 @@ function* addRequestParam(data: RequestParamItem) {
   );
 }
 
-function* updateRequestParam(id: string, data: ModifiableRequestParamItem) {
+function* updateRequestParam(id: string, data: Modifiable<RequestParamItem>) {
   return yield* call(
     updateDocument,
     `projects/${data.projectId}/requests/${data.requestId}/params`,
@@ -247,7 +247,7 @@ function* addRequestBody(data: RequestBodyItem) {
   );
 }
 
-function* updateRequestBody(id: string, data: ModifiableRequestBodyItem) {
+function* updateRequestBody(id: string, data: Modifiable<RequestBodyItem>) {
   return yield* call(
     updateDocument,
     `projects/${data.projectId}/requests/${data.requestId}/bodies`,
@@ -293,6 +293,31 @@ function* deleteResponseStatus(data: ResponseStatusDoc) {
   );
 }
 
+function* addResponseBody(data: ResponseBodyItem) {
+  return yield* call(
+    addDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/bodies`,
+    data
+  );
+}
+
+function* updateResponseBody(id: string, data: Modifiable<ResponseBodyItem>) {
+  return yield* call(
+    updateDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/bodies`,
+    id,
+    data
+  );
+}
+
+function* deleteResponseBody(data: ResponseBodyDoc) {
+  yield* call(
+    deleteDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/bodies`,
+    data.id
+  );
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -334,6 +359,9 @@ export const realFirework = {
   addResponseStatus,
   updateResponseStatus,
   deleteResponseStatus,
+  addResponseBody,
+  updateResponseBody,
+  deleteResponseBody,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

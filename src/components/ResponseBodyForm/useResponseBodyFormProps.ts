@@ -1,10 +1,11 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { firestoreConnect } from "react-redux-firebase";
+import { useFirestoreConnect } from "react-redux-firebase";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { ModelFieldDoc, ResponseStatusDoc } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
+import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 
 export interface UseResponseBodyFormPropsParams {
   responseStatus: ResponseStatusDoc;
@@ -17,7 +18,7 @@ const useResponseBodyFormProps = ({
 }: UseResponseBodyFormPropsParams) => {
   const dispatch = useDispatch();
 
-  firestoreConnect([
+  useFirestoreConnect([
     {
       collection: `projects/${responseStatus.projectId}/requests/${responseStatus.requestId}/responseStatuses/${responseStatus.id}/bodies`,
       orderBy: ["createdAt", "asc"],
@@ -31,18 +32,47 @@ const useResponseBodyFormProps = ({
       responseStatus.id
     )
   );
+  console.log("===== responseBodies", responseBodies);
 
   const onDeleteResponseStatus = useCallback(() => {
     dispatch(ProjectActions.deleteResponseStatus(responseStatus));
   }, [dispatch, responseStatus]);
 
-  const onSubmitResponseBody = useCallback((values: ModelFieldFormValues) => {},
-  []);
+  const onSubmitResponseBody = useCallback(
+    (values: ModelFieldFormValues) => {
+      dispatch(
+        ProjectActions.submitResponseBodyForm({
+          ...values,
+          requestId: responseStatus.requestId,
+          projectId: responseStatus.projectId,
+          responseStatusId: responseStatus.id,
+        })
+      );
+    },
+    [
+      dispatch,
+      responseStatus.id,
+      responseStatus.projectId,
+      responseStatus.requestId,
+    ]
+  );
 
-  const onDeleteResponseBody = useCallback((responseBody: ModelFieldDoc) => {},
-  []);
+  const onDeleteResponseBody = useCallback(
+    (responseBody: ModelFieldDoc) => {
+      dispatch(ProjectActions.deleteResponseBody(responseBody));
+    },
+    [dispatch]
+  );
 
-  const checkIsSubmittingResponseBody = (id?: string) => false;
+  const submittingRequestBodyActionsInProgress = useSelector(
+    ProgressSelectors.selectSubmitResponseBodyFormActions
+  );
+
+  const checkIsSubmittingResponseBody = (id?: string) => {
+    return submittingRequestBodyActionsInProgress.includes(
+      `${ProjectActions.submitResponseBodyForm}-${id}`
+    );
+  };
 
   return {
     responseStatus,

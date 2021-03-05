@@ -151,6 +151,17 @@ const ProjectSlice = createSlice({
       >
     ) => {},
     deleteResponseStatus: (_, _action: PayloadAction<ResponseStatusDoc>) => {},
+    submitResponseBodyForm: (
+      _,
+      _action: PayloadAction<
+        ModelFieldFormValues & {
+          requestId: string;
+          projectId: string;
+          responseStatusId: string;
+        }
+      >
+    ) => {},
+    deleteResponseBody: (_, _action: PayloadAction<ModelFieldDoc>) => {},
   },
 });
 
