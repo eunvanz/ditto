@@ -85,7 +85,7 @@ const ResponseTab: React.FC<ResponseTabProps> = ({
   return (
     <>
       {responseStatuses.map((item) => (
-        <Box mt={3}>
+        <Box mt={3} key={item.id}>
           <ResponseBodyForm
             responseStatus={item}
             onEditResponseStatus={() => showResponseStatusFormModal(item)}

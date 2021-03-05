@@ -32,7 +32,6 @@ const useResponseBodyFormProps = ({
       responseStatus.id
     )
   );
-  console.log("===== responseBodies", responseBodies);
 
   const onDeleteResponseStatus = useCallback(() => {
     dispatch(ProjectActions.deleteResponseStatus(responseStatus));
