@@ -9,10 +9,11 @@ import {
   styled,
   SvgIcon,
   TextField,
+  Collapse,
 } from "@material-ui/core";
 import { Edit, ExpandLess, ExpandMore } from "@material-ui/icons";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import React, { FC, useCallback, useMemo, useState } from "react";
+import React, { FC, useCallback, useMemo, useState, useEffect } from "react";
 import { Theme } from "../../theme";
 import { ModelFieldDoc, ResponseBodyDoc, ResponseStatusDoc } from "../../types";
 import ModelTable from "../ModelTable";
@@ -114,6 +115,14 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
   const toggleOpen = useCallback(() => {
     setIsOpen((isOpen) => !isOpen);
   }, []);
+
+  useEffect(() => {
+    if (responseBodies?.length) {
+      setIsOpen(true);
+    }
+    // eslint-disable-next-line
+  }, [responseBodies?.length]);
+
   return (
     <Card>
       <CardHeader
@@ -164,64 +173,60 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
         }
         onClick={toggleOpen}
       />
-      {isOpen && (
-        <>
-          {responseStatus.description && (
-            <Box p={2} pt={0} className={classes.description}>
-              {responseStatus.description}
-            </Box>
-          )}
-          <Divider />
-          <PerfectScrollbar>
-            <Box minWidth={700}>
-              <ModelTable
-                modelFields={responseBodies}
-                onSubmitModelFieldCustom={onSubmitResponseBody}
-                onDeleteModelFieldCustom={onDeleteResponseBody}
-                checkIsSubmittingModelFieldCustom={
-                  checkIsSubmittingResponseBody
-                }
-                customFieldName="Media-type"
-                disabledColumns={["isRequired"]}
-                customFieldNameInput={({
-                  renderProps,
-                  setValue,
-                  autoFocusField,
-                  inputRef,
-                  errors,
-                  setIsDisabledEnterSubmit,
-                }) => (
-                  <Autocomplete
-                    value={renderProps.value}
-                    openOnFocus
-                    className={classes.autocomplete}
-                    options={mediaTypes}
-                    onChange={(_e, value) => {
-                      setValue("fieldName", value, { shouldValidate: true });
-                    }}
-                    freeSolo
-                    renderInput={(params) => {
-                      return (
-                        <TextField
-                          {...params}
-                          inputRef={inputRef}
-                          required
-                          placeholder="Media-type"
-                          autoFocus={autoFocusField === "fieldName"}
-                          {...getTextFieldErrorProps(errors.fieldName)}
-                        />
-                      );
-                    }}
-                    onFocus={() => setIsDisabledEnterSubmit(true)}
-                    onBlur={() => setIsDisabledEnterSubmit(false)}
-                    size="small"
-                  />
-                )}
-              />
-            </Box>
-          </PerfectScrollbar>
-        </>
-      )}
+      <Collapse in={isOpen}>
+        {responseStatus.description && (
+          <Box p={2} pt={0} className={classes.description}>
+            {responseStatus.description}
+          </Box>
+        )}
+        <Divider />
+        <PerfectScrollbar>
+          <Box minWidth={700}>
+            <ModelTable
+              modelFields={responseBodies}
+              onSubmitModelFieldCustom={onSubmitResponseBody}
+              onDeleteModelFieldCustom={onDeleteResponseBody}
+              checkIsSubmittingModelFieldCustom={checkIsSubmittingResponseBody}
+              customFieldName="Media-type"
+              disabledColumns={["isRequired"]}
+              customFieldNameInput={({
+                renderProps,
+                setValue,
+                autoFocusField,
+                inputRef,
+                errors,
+                setIsDisabledEnterSubmit,
+              }) => (
+                <Autocomplete
+                  value={renderProps.value}
+                  openOnFocus
+                  className={classes.autocomplete}
+                  options={mediaTypes}
+                  onChange={(_e, value) => {
+                    setValue("fieldName", value, { shouldValidate: true });
+                  }}
+                  freeSolo
+                  renderInput={(params) => {
+                    return (
+                      <TextField
+                        {...params}
+                        inputRef={inputRef}
+                        required
+                        placeholder="Media-type"
+                        autoFocus={autoFocusField === "fieldName"}
+                        {...getTextFieldErrorProps(errors.fieldName)}
+                      />
+                    );
+                  }}
+                  onFocus={() => setIsDisabledEnterSubmit(true)}
+                  onBlur={() => setIsDisabledEnterSubmit(false)}
+                  size="small"
+                />
+              )}
+            />
+          </Box>
+        </PerfectScrollbar>
+      </Collapse>
     </Card>
   );
 };

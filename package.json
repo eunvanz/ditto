@@ -31,6 +31,7 @@
     "react-redux-firebase": "^3.7.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
+    "react-transition-group": "^4.4.1",
     "redux": "^4.0.5",
     "redux-firestore": "^0.14.0",
     "redux-saga": "^1.1.3",

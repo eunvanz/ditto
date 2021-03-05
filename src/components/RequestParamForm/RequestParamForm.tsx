@@ -6,6 +6,7 @@ import {
   Chip,
   Divider,
   makeStyles,
+  Collapse,
 } from "@material-ui/core";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import PerfectScrollbar from "react-perfect-scrollbar";
@@ -144,25 +145,21 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
         action={isOpen ? <ExpandLess /> : <ExpandMore />}
         onClick={toggleOpen}
       />
-      {isOpen && (
-        <>
-          <Divider />
-          <PerfectScrollbar>
-            <Box minWidth={700}>
-              <ModelTable
-                modelFields={requestParams}
-                onSubmitModelFieldCustom={onSubmitRequestParamForm}
-                onDeleteModelFieldCustom={onDeleteRequestParam}
-                checkIsSubmittingModelFieldCustom={
-                  checkIsSubmittingRequestParam
-                }
-                customFieldName="Key"
-                disabledColumns={disabledColumns}
-              />
-            </Box>
-          </PerfectScrollbar>
-        </>
-      )}
+      <Collapse in={isOpen}>
+        <Divider />
+        <PerfectScrollbar>
+          <Box minWidth={700}>
+            <ModelTable
+              modelFields={requestParams}
+              onSubmitModelFieldCustom={onSubmitRequestParamForm}
+              onDeleteModelFieldCustom={onDeleteRequestParam}
+              checkIsSubmittingModelFieldCustom={checkIsSubmittingRequestParam}
+              customFieldName="Key"
+              disabledColumns={disabledColumns}
+            />
+          </Box>
+        </PerfectScrollbar>
+      </Collapse>
     </Card>
   );
 };

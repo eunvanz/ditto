@@ -6,6 +6,7 @@ import {
   Divider,
   makeStyles,
   TextField,
+  Collapse,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
@@ -112,56 +113,54 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
         action={isOpen ? <ExpandLess /> : <ExpandMore />}
         onClick={toggleOpen}
       />
-      {isOpen && (
-        <>
-          <Divider />
-          <PerfectScrollbar>
-            <Box minWidth={700}>
-              <ModelTable
-                modelFields={requestBodies}
-                onSubmitModelFieldCustom={onSubmit}
-                onDeleteModelFieldCustom={onDelete}
-                checkIsSubmittingModelFieldCustom={checkIsSubmittingRequestBody}
-                customFieldName="Media-type"
-                customFieldNameInput={({
-                  renderProps,
-                  setValue,
-                  autoFocusField,
-                  inputRef,
-                  errors,
-                  setIsDisabledEnterSubmit,
-                }) => (
-                  <Autocomplete
-                    value={renderProps.value}
-                    openOnFocus
-                    className={classes.autocomplete}
-                    options={mediaTypes}
-                    onChange={(_e, value) => {
-                      setValue("fieldName", value, { shouldValidate: true });
-                    }}
-                    freeSolo
-                    renderInput={(params) => {
-                      return (
-                        <TextField
-                          {...params}
-                          inputRef={inputRef}
-                          required
-                          placeholder="Media-type"
-                          autoFocus={autoFocusField === "fieldName"}
-                          {...getTextFieldErrorProps(errors.fieldName)}
-                        />
-                      );
-                    }}
-                    onFocus={() => setIsDisabledEnterSubmit(true)}
-                    onBlur={() => setIsDisabledEnterSubmit(false)}
-                    size="small"
-                  />
-                )}
-              />
-            </Box>
-          </PerfectScrollbar>
-        </>
-      )}
+      <Collapse in={isOpen}>
+        <Divider />
+        <PerfectScrollbar>
+          <Box minWidth={700}>
+            <ModelTable
+              modelFields={requestBodies}
+              onSubmitModelFieldCustom={onSubmit}
+              onDeleteModelFieldCustom={onDelete}
+              checkIsSubmittingModelFieldCustom={checkIsSubmittingRequestBody}
+              customFieldName="Media-type"
+              customFieldNameInput={({
+                renderProps,
+                setValue,
+                autoFocusField,
+                inputRef,
+                errors,
+                setIsDisabledEnterSubmit,
+              }) => (
+                <Autocomplete
+                  value={renderProps.value}
+                  openOnFocus
+                  className={classes.autocomplete}
+                  options={mediaTypes}
+                  onChange={(_e, value) => {
+                    setValue("fieldName", value, { shouldValidate: true });
+                  }}
+                  freeSolo
+                  renderInput={(params) => {
+                    return (
+                      <TextField
+                        {...params}
+                        inputRef={inputRef}
+                        required
+                        placeholder="Media-type"
+                        autoFocus={autoFocusField === "fieldName"}
+                        {...getTextFieldErrorProps(errors.fieldName)}
+                      />
+                    );
+                  }}
+                  onFocus={() => setIsDisabledEnterSubmit(true)}
+                  onBlur={() => setIsDisabledEnterSubmit(false)}
+                  size="small"
+                />
+              )}
+            />
+          </Box>
+        </PerfectScrollbar>
+      </Collapse>
     </Card>
   );
 };
