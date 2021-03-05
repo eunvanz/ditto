@@ -217,12 +217,13 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
 
   useEffect(() => {
     if (isSubmitting) {
-      const nameInput = fieldNameInputRef.current;
+      // const nameInput = fieldNameInputRef.current;
       return () => {
         // form의 값이 초기로 돌아가는 현상이 있어서 직접 리셋해줌
         // FIXME: 새로운 필드를 만들고 나서 <-> enum 혹은 object 퀵모달을 띄웠다가 취소했을 시 상충되는 이슈가 있음. 구분할 방법이 필요
         reset(!modelField ? undefined : getValues());
-        nameInput?.focus();
+        // setTimeout(nameInput?.focus, 500);
+        // nameInput?.focus();
       };
     }
   }, [getValues, isSubmitting, modelField, reset]);

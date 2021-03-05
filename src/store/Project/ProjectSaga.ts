@@ -560,6 +560,7 @@ export interface CommonModelFieldFormFlowParams<
   checkIsNotEmpty?: (payload: FormValues) => boolean;
   buildNewModelField: (payload: FormValues) => CustomizedModelFieldPart<T>;
   addModelField: (modelFieldItem: T) => void;
+  updateModelField: (id: string, modelFieldItem: Modifiable<T>) => void;
 }
 
 export type CommonModelFieldFormFlow<
@@ -577,6 +578,7 @@ export function* commonModelFieldFormFlow<
   checkIsNotEmpty,
   buildNewModelField,
   addModelField,
+  updateModelField,
 }: CommonModelFieldFormFlowParams<CustomModelFieldItem, FormValues>) {
   while (true) {
     const { type, payload } = yield* take(actionToTrigger);
@@ -665,7 +667,7 @@ export function* commonModelFieldFormFlow<
             );
             yield* put(UiActions.showDelayedLoading(500));
             yield* put(UiActions.hideQuickModelNameFormModal());
-            yield* call(Firework.updateModelField, target.id, {
+            yield* call(updateModelField, target.id, {
               ...newModelField,
               format: {
                 value: createdModelId,
@@ -693,7 +695,7 @@ export function* commonModelFieldFormFlow<
             );
             yield* put(UiActions.showDelayedLoading(500));
             yield* put(UiActions.hideQuickEnumFormModal());
-            yield* call(Firework.updateModelField, target.id, {
+            yield* call(updateModelField, target.id, {
               ...newModelField,
               enum: {
                 value: createdEnumId,
@@ -703,7 +705,7 @@ export function* commonModelFieldFormFlow<
           }
         } else {
           yield* put(UiActions.showDelayedLoading(500));
-          yield* call(Firework.updateModelField, target.id, newModelField);
+          yield* call(updateModelField, target.id, newModelField);
         }
       } else {
         hasToBlurForm = false;
@@ -833,6 +835,7 @@ export function* submitModelFieldFormFlow() {
     },
     buildNewModelField: (payload) => ({ modelId: payload.modelId! }),
     addModelField: Firework.addModelField,
+    updateModelField: Firework.updateModelField,
   });
 }
 
@@ -1155,6 +1158,7 @@ export function* submitRequestParamFormFlow() {
       location: payload.location,
     }),
     addModelField: Firework.addRequestParam,
+    updateModelField: Firework.updateRequestParam,
   });
 }
 
@@ -1208,6 +1212,7 @@ export function* submitRequestBodyFormFlow() {
       requestId: payload.requestId,
     }),
     addModelField: Firework.addRequestBody,
+    updateModelField: Firework.updateRequestBody,
   });
 }
 
@@ -1395,6 +1400,7 @@ export function* submitResponseBodyFlow() {
       responseStatusId,
     }),
     addModelField: Firework.addResponseBody,
+    updateModelField: Firework.updateResponseBody,
   });
 }
 
