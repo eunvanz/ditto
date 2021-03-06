@@ -37,7 +37,7 @@ const QuickModelNameForm: React.FC<QuickModelNameFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
-      <Box mt={2}>
+      <Box>
         <TextField
           autoFocus
           label="Model name"
