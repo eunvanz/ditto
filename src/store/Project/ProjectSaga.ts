@@ -561,6 +561,7 @@ export interface CommonModelFieldFormFlowParams<
   buildNewModelField: (payload: FormValues) => CustomizedModelFieldPart<T>;
   addModelField: (modelFieldItem: T) => void;
   updateModelField: (id: string, modelFieldItem: Modifiable<T>) => void;
+  hasToBlurFormAlways?: boolean;
 }
 
 export type CommonModelFieldFormFlow<
@@ -579,6 +580,7 @@ export function* commonModelFieldFormFlow<
   buildNewModelField,
   addModelField,
   updateModelField,
+  hasToBlurFormAlways,
 }: CommonModelFieldFormFlowParams<CustomModelFieldItem, FormValues>) {
   while (true) {
     const { type, payload } = yield* take(actionToTrigger);
@@ -770,6 +772,7 @@ export function* commonModelFieldFormFlow<
                 ...recordableDocProps,
               },
             });
+            hasToBlurForm = true;
           }
         } else if (isNewEnum) {
           yield* putResolve(
@@ -811,12 +814,12 @@ export function* commonModelFieldFormFlow<
         })
       );
     } finally {
+      if (hasToBlurFormAlways || hasToBlurForm) {
+        yield* put(ProjectActions.receiveEditingModelField(undefined));
+      }
       yield* putResolve(
         ProgressActions.finishProgress(submitModelFieldFormActionType)
       );
-      if (hasToBlurForm) {
-        yield* put(ProjectActions.receiveEditingModelField(undefined));
-      }
       yield* put(UiActions.hideLoading());
     }
   }
@@ -1174,6 +1177,7 @@ export function* submitRequestParamFormFlow() {
     }),
     addModelField: Firework.addRequestParam,
     updateModelField: Firework.updateRequestParam,
+    hasToBlurFormAlways: true,
   });
 }
 
@@ -1228,6 +1232,7 @@ export function* submitRequestBodyFormFlow() {
     }),
     addModelField: Firework.addRequestBody,
     updateModelField: Firework.updateRequestBody,
+    hasToBlurFormAlways: true,
   });
 }
 
@@ -1416,6 +1421,7 @@ export function* submitResponseBodyFlow() {
     }),
     addModelField: Firework.addResponseBody,
     updateModelField: Firework.updateResponseBody,
+    hasToBlurFormAlways: true,
   });
 }
 

@@ -165,6 +165,7 @@ export enum FIELD_TYPE {
   STRING = "string",
   BOOLEAN = "boolean",
   OBJECT = "object",
+  FILE = "file",
 }
 
 export const fieldTypes = Object.keys(FIELD_TYPE).map(
@@ -209,6 +210,7 @@ export const formats: { [k in FIELD_TYPE]: (string | undefined)[] } = {
   ],
   [FIELD_TYPE.BOOLEAN]: [FORMAT.NONE],
   [FIELD_TYPE.OBJECT]: [FORMAT.NEW_MODEL],
+  [FIELD_TYPE.FILE]: [FORMAT.NONE],
 };
 
 export interface ModelCell<T> extends Recordable {
