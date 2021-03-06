@@ -1,7 +1,7 @@
 import { Box, Button, TextField } from "@material-ui/core";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { getTextFieldErrorProps } from "../../helpers/projectHelpers";
+import { getTextFieldErrorProps, patterns } from "../../helpers/projectHelpers";
 import { ModalBase, RequestDoc } from "../../types";
 import Modal from "../Modal";
 
@@ -71,6 +71,7 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
                   data && requests.some((item) => item.operationId === data);
                 return isDup ? "Operation ID is duplicated." : true;
               },
+              pattern: patterns.wordsWithNoSpace,
             })}
             variant="outlined"
             fullWidth
@@ -81,7 +82,6 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
         <Box mt={2}>
           <TextField
             rows={2}
-            multiline
             label="Description"
             name="description"
             inputRef={register({

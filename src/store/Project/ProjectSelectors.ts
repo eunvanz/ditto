@@ -16,10 +16,16 @@ const selectFieldTypeToCreate = createSelector(
   (fieldType) => fieldType
 );
 
+const selectEditingModelField = createSelector(
+  (state: RootState) => state.project.editingModelField,
+  (editingModelField) => editingModelField
+);
+
 const ProjectSelectors = {
   selectCurrentProject,
   selectFieldTypeToCreate,
   selectCurrentModel,
+  selectEditingModelField,
 };
 
 export default ProjectSelectors;

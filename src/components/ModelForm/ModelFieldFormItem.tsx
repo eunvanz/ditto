@@ -14,6 +14,8 @@ import {
   IconButton,
   SvgIcon,
   TableRow,
+  Tooltip,
+  Button,
 } from "@material-ui/core";
 import { Controller, ControllerRenderProps, useForm } from "react-hook-form";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -51,6 +53,14 @@ const useStyles = makeStyles(() => ({
     "& .MuiAutocomplete-inputRoot": {
       paddingBottom: 0,
     },
+  },
+  enumerationTooltip: {
+    fontSize: "0.875rem",
+    fontWeight: "normal",
+  },
+  enumerationButton: {
+    fontSize: "0.875rem",
+    fontWeight: "normal",
   },
 }));
 
@@ -281,7 +291,11 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [modelField]);
 
   const objectFormatDefaultValue = useMemo(() => {
-    if (watchedFieldType !== FIELD_TYPE.OBJECT) {
+    if (
+      watchedFieldType
+        ? watchedFieldType !== FIELD_TYPE.OBJECT
+        : defaultValues.fieldType !== FIELD_TYPE.OBJECT
+    ) {
       return FORMAT.NEW_MODEL;
     } else if (modelField?.format) {
       return (
@@ -291,7 +305,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     } else {
       return FORMAT.NEW_MODEL;
     }
-  }, [modelField, projectModels, watchedFieldType]);
+  }, [defaultValues.fieldType, modelField, projectModels, watchedFieldType]);
 
   const enumOptions = useMemo(() => {
     const result = [
@@ -306,12 +320,26 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     return result.filter((item) => !!item);
   }, [projectEnumerations, watchedFieldType]);
 
-  const enumDefaultValue = useMemo(() => {
-    return (
-      projectEnumerations.find((item) => item.id === modelField?.enum.value)
-        ?.name || ENUMERATION.NONE
+  const currentEnumeration = useMemo(() => {
+    return projectEnumerations.find(
+      (item) => item.id === modelField?.enum.value
     );
   }, [modelField, projectEnumerations]);
+
+  const enumDefaultValue = useMemo(() => {
+    return currentEnumeration?.name || ENUMERATION.NONE;
+  }, [currentEnumeration]);
+
+  const checkIsColumnDisabled = useCallback(
+    (name: ModelFieldColumns) => {
+      return disabledColumns?.includes(name);
+    },
+    [disabledColumns]
+  );
+
+  const enumValues = useMemo(() => {
+    return currentEnumeration?.items.join(" | ");
+  }, [currentEnumeration]);
 
   return (
     <>
@@ -363,13 +391,16 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                       {...props}
                       inputRef={fieldNameInputRef}
                       size="small"
-                      autoFocus={autoFocusField === "fieldName"}
+                      autoFocus={
+                        !checkIsColumnDisabled("fieldName") &&
+                        autoFocusField === "fieldName"
+                      }
+                      disabled={checkIsColumnDisabled("fieldName")}
                       fullWidth
                       required
                       error={!!errors.fieldName}
                       helperText={errors.fieldName?.message}
                       placeholder={customFieldName || "Field name"}
-                      disabled={disabledColumns?.includes("fieldName")}
                     />
                   );
                 }
@@ -387,13 +418,17 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             <Controller
               control={control}
               name="isRequired"
+              defaultValue={defaultValues.isRequired}
               render={(props) => (
                 <Checkbox
                   {...props}
-                  autoFocus={autoFocusField === "isRequired"}
+                  autoFocus={
+                    !checkIsColumnDisabled("isRequired") &&
+                    autoFocusField === "isRequired"
+                  }
+                  disabled={checkIsColumnDisabled("isRequired")}
                   checked={props.value}
                   onChange={(e) => props.onChange(e.target.checked)}
-                  disabled={disabledColumns?.includes("isRequired")}
                 />
               )}
             />
@@ -408,13 +443,17 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             <Controller
               control={control}
               name="isArray"
+              defaultValue={defaultValues.isArray}
               render={(props) => (
                 <Checkbox
                   {...props}
-                  autoFocus={autoFocusField === "isArray"}
+                  autoFocus={
+                    !checkIsColumnDisabled("isArray") &&
+                    autoFocusField === "isArray"
+                  }
+                  disabled={checkIsColumnDisabled("isArray")}
                   checked={props.value}
                   onChange={(e) => props.onChange(e.target.checked)}
-                  disabled={disabledColumns?.includes("isArray")}
                 />
               )}
             />
@@ -502,7 +541,11 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 );
               }}
             />
-          ) : watchedFieldType === FIELD_TYPE.OBJECT ? (
+          ) : (
+              watchedFieldType
+                ? watchedFieldType === FIELD_TYPE.OBJECT
+                : defaultValues.fieldType === FIELD_TYPE.OBJECT
+            ) ? (
             objectFormatDefaultValue
           ) : modelField?.format.value === FORMAT.NONE ? (
             "-"
@@ -530,9 +573,12 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        autoFocus={autoFocusField === "enum"}
+                        autoFocus={
+                          !checkIsColumnDisabled("enum") &&
+                          autoFocusField === "enum"
+                        }
+                        disabled={checkIsColumnDisabled("enum")}
                         placeholder="Enumerations"
-                        disabled={disabledColumns?.includes("enum")}
                       />
                     )}
                     onFocus={() => setIsDisabledEnterSubmit(true)}
@@ -545,7 +591,19 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
           ) : enumDefaultValue === ENUMERATION.NONE ? (
             "-"
           ) : (
-            enumDefaultValue
+            <Tooltip
+              title={
+                <span className={classes.enumerationTooltip}>
+                  {enumValues || ""}
+                </span>
+              }
+              placement="top"
+              arrow
+            >
+              <Button className={classes.enumerationButton}>
+                {enumDefaultValue}
+              </Button>
+            </Tooltip>
           )}
         </TableCell>
         <TableCell onClick={createCellClickHandler("description")}>
@@ -564,12 +622,15 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 <TextField
                   {...props}
                   size="small"
-                  autoFocus={autoFocusField === "description"}
+                  autoFocus={
+                    !checkIsColumnDisabled("description") &&
+                    autoFocusField === "description"
+                  }
+                  disabled={checkIsColumnDisabled("description")}
                   fullWidth
                   error={!!errors.description}
                   helperText={errors.description?.message}
                   placeholder="Description"
-                  disabled={disabledColumns?.includes("description")}
                 />
               )}
             />

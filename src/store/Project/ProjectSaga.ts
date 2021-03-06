@@ -587,6 +587,10 @@ export function* commonModelFieldFormFlow<
     const submitModelFieldFormActionType = `${type}-${payload.target?.id}`;
     yield* put(ProgressActions.startProgress(submitModelFieldFormActionType));
 
+    const editingModelField = yield* select(
+      ProjectSelectors.selectEditingModelField
+    );
+
     if (!!checkIsNotEmpty && !checkIsNotEmpty(payload)) {
       yield* put(
         ErrorActions.catchError({
@@ -707,10 +711,13 @@ export function* commonModelFieldFormFlow<
           }
         } else {
           yield* put(UiActions.showDelayedLoading(500));
+          yield* put(ProjectActions.receiveEditingModelField(undefined));
           yield* call(updateModelField, target.id, newModelField);
         }
       } else {
-        hasToBlurForm = false;
+        if (!hasToBlurFormAlways) {
+          hasToBlurForm = false;
+        }
         const recordableDocProps = yield* call(getRecordableDocProps);
         // @ts-ignore
         const newModelField: CustomModelFieldItem = {
@@ -748,6 +755,7 @@ export function* commonModelFieldFormFlow<
         };
 
         if (isNewModel) {
+          hasToBlurForm = false;
           yield* put(UiActions.showQuickModelNameFormModal());
           const { submit, cancel } = yield* race({
             submit: take(ProjectActions.submitQuickModelNameForm), // 모델 생성 액션
@@ -775,6 +783,7 @@ export function* commonModelFieldFormFlow<
             hasToBlurForm = true;
           }
         } else if (isNewEnum) {
+          hasToBlurForm = false;
           yield* putResolve(
             ProjectActions.receiveFieldTypeToCreate(payload.fieldType)
           );
@@ -800,9 +809,14 @@ export function* commonModelFieldFormFlow<
                 ...recordableDocProps,
               },
             });
+            if (hasToBlurFormAlways) {
+              hasToBlurForm = true;
+            }
           }
         } else {
           yield* put(UiActions.showDelayedLoading(500));
+          yield* put(ProjectActions.receiveEditingModelField(undefined));
+          hasToBlurForm = Boolean(hasToBlurFormAlways);
           yield* call(addModelField, newModelField);
         }
       }
@@ -814,8 +828,8 @@ export function* commonModelFieldFormFlow<
         })
       );
     } finally {
-      if (hasToBlurFormAlways || hasToBlurForm) {
-        yield* put(ProjectActions.receiveEditingModelField(undefined));
+      if (!hasToBlurForm) {
+        yield* put(ProjectActions.receiveEditingModelField(editingModelField));
       }
       yield* putResolve(
         ProgressActions.finishProgress(submitModelFieldFormActionType)

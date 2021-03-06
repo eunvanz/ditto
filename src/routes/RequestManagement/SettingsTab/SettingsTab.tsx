@@ -13,7 +13,10 @@ import {
 import isEqual from "lodash/isEqual";
 import React, { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { getTextFieldErrorProps } from "../../../helpers/projectHelpers";
+import {
+  getTextFieldErrorProps,
+  patterns,
+} from "../../../helpers/projectHelpers";
 import { getDangerButtonStyle } from "../../../styles";
 import { Theme } from "../../../theme";
 import { GroupDoc, RequestDoc } from "../../../types";
@@ -150,6 +153,7 @@ const SettingTab: React.FC<SettingsTabProps> = ({
                       .some((item) => item.operationId === data);
                   return isDup ? "Operation ID is duplicated." : true;
                 },
+                pattern: patterns.wordsWithNoSpace,
               })}
               variant="outlined"
               fullWidth
@@ -160,7 +164,6 @@ const SettingTab: React.FC<SettingsTabProps> = ({
           <Box mt={2}>
             <TextField
               rows={2}
-              multiline
               label="Description"
               name="description"
               inputRef={register({

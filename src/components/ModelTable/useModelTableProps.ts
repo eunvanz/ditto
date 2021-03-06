@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import shortId from "shortid";
 import { assertNotEmpty } from "../../helpers/commonHelpers";
-import { RootState } from "../../store";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
@@ -55,7 +54,7 @@ const useModelTableProps = ({
   );
 
   const editingModelField = useSelector(
-    (state: RootState) => state.project.editingModelField
+    ProjectSelectors.selectEditingModelField
   );
 
   const onSetEditingModelField = useCallback(
