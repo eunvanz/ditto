@@ -97,6 +97,7 @@ export function* submitProjectFormFlow() {
     }
 
     const project = yield* select(ProjectSelectors.selectCurrentProject);
+    const projects = yield* select(FirebaseSelectors.selectOrderedMyProjects);
 
     const isModification = payload.type === "modify";
 
@@ -105,9 +106,8 @@ export function* submitProjectFormFlow() {
       put(UiActions.showLoading()),
     ]);
     const timestamp = yield* call(getTimestamp);
-    const projectCount = yield* select(
-      (state: RootState) => state.firestore.ordered.projects?.length
-    );
+    const lastProjectSeq =
+      projects[projects.length - 1]?.settingsByMember[auth.uid].seq || 0;
     try {
       if (isModification) {
         yield* call(Firework.updateProject, (project as ProjectDoc).id, {
@@ -131,7 +131,7 @@ export function* submitProjectFormFlow() {
           settingsByMember: {
             [auth.uid]: {
               updatedAt: timestamp,
-              seq: projectCount ? projectCount + 1 : 1,
+              seq: lastProjectSeq + 1,
             },
           },
         });

@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   description: {
     color: theme.palette.text.hint,
+    marginLeft: 4,
   },
   expandIcon: {
     padding: 4,
@@ -133,6 +134,11 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
               {isOpen ? <ExpandLess /> : <ExpandMore />}
             </SvgIcon>
             Status code <StatusBadge statusCode={responseStatus.statusCode} />
+            {responseStatus.description && (
+              <span className={classes.description}>
+                {responseStatus.description}
+              </span>
+            )}
             {responseBodies?.length ? (
               <Chip
                 className={classes.countChip}
@@ -174,11 +180,6 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
         onClick={toggleOpen}
       />
       <Collapse in={isOpen}>
-        {responseStatus.description && (
-          <Box p={2} pt={0} className={classes.description}>
-            {responseStatus.description}
-          </Box>
-        )}
         <Divider />
         <PerfectScrollbar>
           <Box minWidth={700}>

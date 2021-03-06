@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { isLoaded, useFirestoreConnect } from "react-redux-firebase";
 import { useParams } from "react-router-dom";
@@ -42,23 +42,30 @@ const useRequestManagementViewProps = () => {
     FirebaseSelectors.createProjectSelectorByProjectId(projectId)
   );
 
+  const requests = useSelector(
+    FirebaseSelectors.createProjectRequestsSelector(projectId)
+  );
+
+  const [isNotExist, setIsNotExist] = useState(false);
+
   useEffect(() => {
-    if (isLoaded(request)) {
+    if (isLoaded(requests)) {
       dispatch(UiActions.hideLoading());
+      if (!request) {
+        setIsNotExist(true);
+      }
     } else {
       dispatch(UiActions.showDelayedLoading());
     }
-  }, [dispatch, request]);
+  }, [dispatch, request, requests]);
 
   useEffect(() => {
     if (project) {
       dispatch(ProjectActions.receiveCurrentProject(project));
-    } else {
-      // TODO: NOT FOUND 페이지로 이동
     }
   }, [dispatch, project]);
 
-  return { request, key: request?.id };
+  return { request, key: request?.id, isNotExist };
 };
 
 export default useRequestManagementViewProps;

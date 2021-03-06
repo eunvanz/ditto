@@ -1,8 +1,7 @@
 import React from "react";
 import ProjectManagementView from "./ProjectManagementView";
-import { Redirect } from "react-router-dom";
-import ROUTE from "../../paths";
 import useProjectManagementViewProps from "./useProjectManagementViewProps";
+import NotFoundView from "../NotFound";
 
 const ProjectManagementContainer = () => {
   const { project, key } = useProjectManagementViewProps();
@@ -10,7 +9,10 @@ const ProjectManagementContainer = () => {
   return project ? (
     <ProjectManagementView project={project} key={key} />
   ) : (
-    <Redirect to={ROUTE.ROOT} />
+    <NotFoundView
+      title="The project you are looking for isn't here"
+      description="The project doesn't exist or might be deleted."
+    />
   );
 };
 

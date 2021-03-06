@@ -40,7 +40,7 @@ export interface SettingsTabProps {
 export interface RequestSettingFormValues {
   name: string;
   groupId?: string;
-  summary?: string;
+  // summary?: string;
   description?: string;
   operationId?: string;
   isDeprecated: boolean;
@@ -60,7 +60,7 @@ const SettingTab: React.FC<SettingsTabProps> = ({
   const defaultValues = useMemo(() => {
     return {
       name: request.name || "",
-      summary: request.summary || "",
+      // summary: request.summary || "",
       description: request.description || "",
       operationId: request.operationId || "",
       isDeprecated: request.isDeprecated,
@@ -72,7 +72,6 @@ const SettingTab: React.FC<SettingsTabProps> = ({
     request.isDeprecated,
     request.name,
     request.operationId,
-    request.summary,
   ]);
 
   const { register, errors, watch, handleSubmit } = useForm({
@@ -118,7 +117,7 @@ const SettingTab: React.FC<SettingsTabProps> = ({
               inputRef={register({
                 required: "Operation name is required.",
                 maxLength: {
-                  value: 20,
+                  value: 50,
                   message: "Operation name is too long",
                 },
                 validate: (data: string) => {
@@ -136,45 +135,11 @@ const SettingTab: React.FC<SettingsTabProps> = ({
           </Box>
           <Box mt={2}>
             <TextField
-              label="Summary"
-              name="summary"
-              inputRef={register({
-                maxLength: {
-                  value: 30,
-                  message: "Summary is too long.",
-                },
-              })}
-              variant="outlined"
-              fullWidth
-              {...getTextFieldErrorProps(errors.summary)}
-              placeholder="Summary of this operation"
-            />
-          </Box>
-          <Box mt={2}>
-            <TextField
-              rows={3}
-              multiline
-              label="Description"
-              name="description"
-              inputRef={register({
-                maxLength: {
-                  value: 200,
-                  message: "Description is too long",
-                },
-              })}
-              variant="outlined"
-              fullWidth
-              {...getTextFieldErrorProps(errors.description)}
-              placeholder="Detailed description of this operation"
-            />
-          </Box>
-          <Box mt={2}>
-            <TextField
               label="Operation ID"
               name="operationId"
               inputRef={register({
                 maxLength: {
-                  value: 40,
+                  value: 50,
                   message: "Operation ID is too long",
                 },
                 validate: (data: string) => {
@@ -190,6 +155,24 @@ const SettingTab: React.FC<SettingsTabProps> = ({
               fullWidth
               {...getTextFieldErrorProps(errors.operationId)}
               placeholder="Unique string used to identify an operation"
+            />
+          </Box>
+          <Box mt={2}>
+            <TextField
+              rows={2}
+              multiline
+              label="Description"
+              name="description"
+              inputRef={register({
+                maxLength: {
+                  value: 200,
+                  message: "Description is too long",
+                },
+              })}
+              variant="outlined"
+              fullWidth
+              {...getTextFieldErrorProps(errors.description)}
+              placeholder="Detailed description of this operation"
             />
           </Box>
           <Box mt={2}>

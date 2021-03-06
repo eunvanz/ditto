@@ -22,6 +22,8 @@ function RoutedApp() {
             path={`${ROUTE.PROJECTS}/:projectId`}
             component={Routes.ProjectManagement}
           />
+          <Route path={`${ROUTE.NOT_FOUND}`} component={Routes.NotFound} />
+          <Route component={Routes.NotFound} />
         </Switch>
       </DashboardLayout>
     </Router>

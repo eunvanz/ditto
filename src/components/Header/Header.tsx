@@ -4,8 +4,8 @@ import { Typography, makeStyles, Box } from "@material-ui/core";
 
 interface HeaderProps {
   className?: string;
-  title: string;
-  description?: string;
+  title: React.ReactNode;
+  description?: React.ReactNode;
 }
 
 const useStyles = makeStyles(() => ({
@@ -25,7 +25,7 @@ const Header: FC<HeaderProps> = ({
       <Typography variant="h3" color="textPrimary">
         {title}
       </Typography>
-      <Box mt={1}>
+      <Box mt={2}>
         <Typography variant="h6" color="textSecondary">
           {description || ""}
         </Typography>

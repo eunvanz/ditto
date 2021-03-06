@@ -1,6 +1,7 @@
 import {
   Box,
   Card,
+  Chip,
   Container,
   Divider,
   makeStyles,
@@ -22,6 +23,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: "100%",
     paddingTop: theme.spacing(3),
     paddingBottom: theme.spacing(3),
+  },
+  operationIdChip: {
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -50,7 +54,22 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
 
   return (
     <Container className={classes.root} maxWidth="lg">
-      <Header title={request.name} description={request.summary} />
+      <Header
+        title={
+          <>
+            {request.name}
+            {request.operationId && (
+              <Chip
+                size="small"
+                color="secondary"
+                label={request.operationId}
+                className={classes.operationIdChip}
+              />
+            )}
+          </>
+        }
+        description={request.description}
+      />
       <Box mt={3}>
         <Card>
           <RequestUrlForm />

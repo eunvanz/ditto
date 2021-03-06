@@ -257,6 +257,7 @@ export interface ModelItem extends Recordable {
   name: string;
   extends?: string;
   description?: string;
+  isAnonymous?: boolean;
   settingsByMember: Record<string, BaseSettings>;
 }
 

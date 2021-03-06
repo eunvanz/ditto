@@ -61,7 +61,7 @@ const useDashboardLayoutProps = () => {
         UiActions.showRequestFormModal({
           projectId: project.id,
           groupId: group?.id,
-          requests: groupedProjectRequests[project.id],
+          requests: groupedProjectRequests[project.id] || [],
         })
       );
     },

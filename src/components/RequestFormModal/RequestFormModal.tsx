@@ -1,6 +1,7 @@
 import { Box, Button, TextField } from "@material-ui/core";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { getTextFieldErrorProps } from "../../helpers/projectHelpers";
 import { ModalBase, RequestDoc } from "../../types";
 import Modal from "../Modal";
 
@@ -12,8 +13,9 @@ export interface RequestFormModalProps extends ModalBase {
 
 export interface RequestFormValues {
   name: string;
-  summary: string;
+  // summary: string;
   description: string;
+  operationId: string;
 }
 
 const RequestFormModal: React.FC<RequestFormModalProps> = ({
@@ -40,7 +42,7 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
             inputRef={register({
               required: "Operation name is required.",
               maxLength: {
-                value: 30,
+                value: 50,
                 message: "Operation name is too long.",
               },
               validate: (data: string) => {
@@ -57,24 +59,28 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
         </Box>
         <Box mt={2}>
           <TextField
-            label="Summary"
-            name="summary"
+            label="Operation ID"
+            name="operationId"
             inputRef={register({
               maxLength: {
-                value: 30,
-                message: "Summary is too long.",
+                value: 50,
+                message: "Operation ID is too long",
+              },
+              validate: (data: string) => {
+                const isDup =
+                  data && requests.some((item) => item.operationId === data);
+                return isDup ? "Operation ID is duplicated." : true;
               },
             })}
             variant="outlined"
             fullWidth
-            error={!!errors.summary}
-            helperText={errors.summary?.message}
-            placeholder="Summary of this operation"
+            {...getTextFieldErrorProps(errors.operationId)}
+            placeholder="Unique string used to identify an operation"
           />
         </Box>
         <Box mt={2}>
           <TextField
-            rows={3}
+            rows={2}
             multiline
             label="Description"
             name="description"
