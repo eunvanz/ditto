@@ -44,57 +44,6 @@ export enum DATA_TYPE {
   OBJECT = "OBJECT",
 }
 
-// export enum QUERY_PARAM_TYPE {
-//   STRING = "STRING",
-//   NUMBER = "NUMBER",
-//   ENUM = "ENUM",
-// }
-
-// export interface QueryParam extends Recordable {
-//   key: string;
-//   type: QUERY_PARAM_TYPE;
-//   customEnumId?: string;
-//   description?: string;
-// }
-
-// export interface CustomEnumItem extends Recordable {
-//   customEnumItemId: string;
-//   title?: string; // 없을경우 anonymous
-//   key: string;
-//   value: string;
-//   description?: string;
-// }
-
-// export interface CustomEnum extends Recordable {
-//   customEnumId: string;
-//   customEnumItems: CustomEnumItem[];
-// }
-
-// export interface RequestHeader extends Recordable {
-//   requestHeaderId: string;
-//   key: string;
-//   description?: string;
-// }
-
-// export interface RequestBody extends Recordable {
-//   requestBodyId: string;
-//   key: string;
-//   type: DATA_TYPE;
-// }
-
-// export interface RequestItem extends Recordable {
-//   requestItemId: string;
-//   projectItemId: string;
-//   groupItemId?: string;
-//   seq: number;
-//   title: string;
-//   method: REQUEST_METHOD;
-//   url?: string;
-//   queryParams?: QueryParam[];
-//   headers?: RequestHeader[];
-//   body?: RequestBody[];
-// }
-
 export interface User {
   auth: FirebaseReducer.AuthState;
 }
