@@ -11,7 +11,6 @@ import Alert from "../../components/Alert";
 import { ErrorActions } from "../Error/ErrorSlice";
 import FirebaseSelectors from "../Firebase/FirebaseSelectors";
 import { getTimestamp } from "../../firebase";
-import Firework from "../Firework";
 
 export function* requireSignIn() {
   const auth = yield* select(AuthSelectors.selectAuth);

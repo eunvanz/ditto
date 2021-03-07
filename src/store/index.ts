@@ -44,7 +44,7 @@ export const createStore = (preloadedState: RootState = initialRootState) =>
   configureStore({
     reducer: rootReducer,
     middleware,
-    devTools: true,
+    devTools: process.env.NODE_ENV === "development",
     preloadedState,
   });
 
