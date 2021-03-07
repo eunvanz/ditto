@@ -38,7 +38,7 @@ const useEnumFormProps = () => {
     [dispatch]
   );
 
-  useLoading(enumerations);
+  useLoading(enumerations, `loadingExistingEnumerations-${project.id}`);
 
   return {
     enumerations,

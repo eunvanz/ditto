@@ -35,7 +35,7 @@ const QuickEnumFormContainer = () => {
     [dispatch]
   );
 
-  useLoading(existingEnumerations);
+  useLoading(existingEnumerations, `loadingExistingEnumerations-${project.id}`);
 
   return (
     <QuickEnumForm

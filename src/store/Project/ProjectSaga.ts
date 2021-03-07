@@ -104,7 +104,7 @@ export function* submitProjectFormFlow() {
 
     yield* all([
       put(ProgressActions.startProgress(type)),
-      put(UiActions.showLoading()),
+      put(UiActions.showLoading("submitProject")),
     ]);
     const timestamp = yield* call(getTimestamp);
     const lastProjectSeq =
@@ -152,7 +152,7 @@ export function* submitProjectFormFlow() {
     } finally {
       yield* all([
         put(ProgressActions.finishProgress(type)),
-        put(UiActions.hideLoading()),
+        put(UiActions.hideLoading("submitProject")),
       ]);
     }
   }
@@ -174,7 +174,7 @@ export function* deleteProjectFlow() {
     });
     if (isConfirmed) {
       try {
-        yield* put(UiActions.showLoading());
+        yield* put(UiActions.showLoading("deleteProject"));
         yield* call(Firework.deleteProject, project.id);
         yield* put(
           UiActions.showNotification({
@@ -186,7 +186,7 @@ export function* deleteProjectFlow() {
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
       } finally {
-        yield* put(UiActions.hideLoading());
+        yield* put(UiActions.hideLoading("deleteProject"));
       }
     }
   }
@@ -294,7 +294,9 @@ export function* deleteProjectUrlFlow() {
       continue;
     }
     try {
-      yield* put(UiActions.showDelayedLoading());
+      yield* put(
+        UiActions.showDelayedLoading({ taskName: "deleteProjectUrl" })
+      );
       yield* call(Firework.deleteProjectUrl, projectUrl);
       yield* put(
         UiActions.showNotification({
@@ -305,7 +307,7 @@ export function* deleteProjectUrlFlow() {
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
-      yield* put(UiActions.hideLoading());
+      yield* put(UiActions.hideLoading("deleteProjectUrl"));
     }
   }
 }
@@ -321,7 +323,9 @@ export function* deleteModelFieldFlow() {
     });
     if (isConfirmed) {
       try {
-        yield* put(UiActions.showDelayedLoading());
+        yield* put(
+          UiActions.showDelayedLoading({ taskName: "deleteModelField" })
+        );
         yield* call(Firework.deleteModelField, modelField);
         yield* put(
           UiActions.showNotification({
@@ -337,7 +341,7 @@ export function* deleteModelFieldFlow() {
           })
         );
       } finally {
-        yield* put(UiActions.hideLoading());
+        yield* put(UiActions.hideLoading("deleteModelField"));
       }
     }
   }
@@ -376,7 +380,9 @@ export function* submitModelNameFormFlow() {
     try {
       if (!!target) {
         // 수정인 경우
-        yield* put(UiActions.showDelayedLoading());
+        yield* put(
+          UiActions.showDelayedLoading({ taskName: "submitModelName" })
+        );
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
         const newModel: Partial<ModelItem> = {
           projectId: currentProject.id,
@@ -393,7 +399,7 @@ export function* submitModelNameFormFlow() {
       } else {
         // 생성인 경우
         // 모델을 생성하지 않고 필드를 수정할 수 없으므로 loading을 보여줌
-        yield* put(UiActions.showLoading());
+        yield* put(UiActions.showLoading("submitModelName"));
         const recordableDocProps = yield* call(getRecordableDocProps);
         const newModel: ModelItem = {
           projectId: currentProject.id,
@@ -431,7 +437,7 @@ export function* submitModelNameFormFlow() {
       );
     } finally {
       yield* put(ProjectActions.notifySubmissionQuickModelNameFormComplete());
-      yield* put(UiActions.hideLoading());
+      yield* put(UiActions.hideLoading("submitModelName"));
     }
   }
 }
@@ -480,14 +486,14 @@ export function* deleteModelFlow() {
     });
     if (isConfirmed) {
       try {
-        yield* put(UiActions.showDelayedLoading());
+        yield* put(UiActions.showDelayedLoading({ taskName: "deleteModel" }));
         const referringModels = yield* call(
           getReferringModels,
           "model",
           payload
         );
         if (referringModels.length > 0) {
-          yield* put(UiActions.hideLoading());
+          yield* put(UiActions.hideLoading("deleteModel"));
           yield* call(Alert.message, {
             title: "Deletion failure",
             message: `${referringModels
@@ -514,7 +520,7 @@ export function* deleteModelFlow() {
           })
         );
       } finally {
-        yield* put(UiActions.hideLoading());
+        yield* put(UiActions.hideLoading("deleteModel"));
       }
     }
   }
@@ -672,7 +678,12 @@ export function* commonModelFieldFormFlow<
             const createdModelId = yield* select(
               (state: RootState) => state.project.createdModelId
             );
-            yield* put(UiActions.showDelayedLoading(500));
+            yield* put(
+              UiActions.showDelayedLoading({
+                taskName: "submitCommonModelField",
+                delay: 500,
+              })
+            );
             yield* put(UiActions.hideQuickModelNameFormModal());
             yield* call(updateModelField, target.id, {
               ...newModelField,
@@ -700,7 +711,12 @@ export function* commonModelFieldFormFlow<
             const createdEnumId = yield* select(
               (state: RootState) => state.project.createdEnumId
             );
-            yield* put(UiActions.showDelayedLoading(500));
+            yield* put(
+              UiActions.showDelayedLoading({
+                taskName: "submitCommonModelField",
+                delay: 500,
+              })
+            );
             yield* put(UiActions.hideQuickEnumFormModal());
             yield* call(updateModelField, target.id, {
               ...newModelField,
@@ -711,7 +727,12 @@ export function* commonModelFieldFormFlow<
             });
           }
         } else {
-          yield* put(UiActions.showDelayedLoading(500));
+          yield* put(
+            UiActions.showDelayedLoading({
+              taskName: "submitCommonModelField",
+              delay: 500,
+            })
+          );
           yield* put(ProjectActions.receiveEditingModelField(undefined));
           yield* call(updateModelField, target.id, newModelField);
         }
@@ -772,7 +793,12 @@ export function* commonModelFieldFormFlow<
             const createdModelId = yield* select(
               (state: RootState) => state.project.createdModelId
             );
-            yield* put(UiActions.showDelayedLoading(500));
+            yield* put(
+              UiActions.showDelayedLoading({
+                taskName: "submitCommonModelField",
+                delay: 500,
+              })
+            );
             yield* put(UiActions.hideQuickModelNameFormModal());
             yield* call(addModelField, {
               ...newModelField,
@@ -801,7 +827,12 @@ export function* commonModelFieldFormFlow<
             const createdEnumId = yield* select(
               (state: RootState) => state.project.createdEnumId
             );
-            yield* put(UiActions.showDelayedLoading(500));
+            yield* put(
+              UiActions.showDelayedLoading({
+                taskName: "submitCommonModelField",
+                delay: 500,
+              })
+            );
             yield* put(UiActions.hideQuickEnumFormModal());
             yield* call(addModelField, {
               ...newModelField,
@@ -815,7 +846,12 @@ export function* commonModelFieldFormFlow<
             }
           }
         } else {
-          yield* put(UiActions.showDelayedLoading(500));
+          yield* put(
+            UiActions.showDelayedLoading({
+              taskName: "submitCommonModelField",
+              delay: 500,
+            })
+          );
           yield* put(ProjectActions.receiveEditingModelField(undefined));
           hasToBlurForm = Boolean(hasToBlurFormAlways);
           yield* call(addModelField, newModelField);
@@ -835,7 +871,7 @@ export function* commonModelFieldFormFlow<
       yield* putResolve(
         ProgressActions.finishProgress(submitModelFieldFormActionType)
       );
-      yield* put(UiActions.hideLoading());
+      yield* put(UiActions.hideLoading("submitCommonModelField"));
     }
   }
 }
@@ -871,7 +907,7 @@ export function* proceedQuickModelNameFormFlow() {
       continue;
     } else {
       yield* putResolve(ProjectActions.submitModelNameForm(submit!.payload));
-      yield* put(UiActions.showDelayedLoading(500));
+      // yield* put(UiActions.showDelayedLoading(500));
       yield* put(UiActions.hideQuickModelNameFormModal());
     }
   }
@@ -896,7 +932,9 @@ export function* submitEnumFormFlow() {
           ? payload.items.split(",").map((item) => Number(item))
           : payload.items.split(",");
       if (!!target) {
-        yield* put(UiActions.showDelayedLoading());
+        yield* put(
+          UiActions.showDelayedLoading({ taskName: "submitEnumForm" })
+        );
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
         const newEnumeration: Partial<EnumerationItem> = {
           projectId: currentProject.id,
@@ -906,7 +944,9 @@ export function* submitEnumFormFlow() {
         };
         yield* call(Firework.updateEnumeration, target.id, newEnumeration);
       } else {
-        yield* put(UiActions.showDelayedLoading());
+        yield* put(
+          UiActions.showDelayedLoading({ taskName: "submitEnumForm" })
+        );
         const recordableDocProps = yield* call(getRecordableDocProps);
         const newEnumeration: EnumerationItem = {
           projectId: currentProject.id,
@@ -931,7 +971,7 @@ export function* submitEnumFormFlow() {
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
-      yield* put(UiActions.hideLoading());
+      yield* put(UiActions.hideLoading("submitEnumForm"));
       yield* put(ProgressActions.finishProgress(type));
       yield* put(ProjectActions.notifySubmissionQuickEnumFormComplete());
     }
@@ -947,14 +987,16 @@ export function* deleteEnumerationFlow() {
     });
     if (isConfirmed) {
       try {
-        yield* put(UiActions.showDelayedLoading());
+        yield* put(
+          UiActions.showDelayedLoading({ taskName: "deleteEnumeration" })
+        );
         const referringModels = yield* call(
           getReferringModels,
           "enum",
           payload
         );
         if (referringModels.length > 0) {
-          yield* put(UiActions.hideLoading());
+          yield* put(UiActions.hideLoading("deleteEnumeration"));
           yield* call(Alert.message, {
             title: "삭제 불가",
             message: `${referringModels
@@ -981,7 +1023,7 @@ export function* deleteEnumerationFlow() {
           })
         );
       } finally {
-        yield* put(UiActions.hideLoading());
+        yield* put(UiActions.hideLoading("deleteEnumeration"));
       }
     }
   }
@@ -996,7 +1038,7 @@ export function* submitGroupFormFlow() {
     const newGroup = yield* call(getProperDoc, payload);
 
     try {
-      yield* put(UiActions.showLoading());
+      yield* put(UiActions.showLoading("submitGroupForm"));
       if (!!target) {
         yield* call(Firework.updateGroup, target.id, newGroup);
       } else {
@@ -1015,7 +1057,7 @@ export function* submitGroupFormFlow() {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
       yield* put(ProgressActions.finishProgress(type));
-      yield* put(UiActions.hideLoading());
+      yield* put(UiActions.hideLoading("submitGroupForm"));
     }
   }
 }
@@ -1035,7 +1077,7 @@ export function* deleteGroupFlow() {
       isCanceled: take(UiActions.hideCriticalConfirmModal),
     });
     if (isConfirmed) {
-      yield* put(UiActions.showLoading());
+      yield* put(UiActions.showLoading("deleteGroup"));
       try {
         yield* put(ProgressActions.startProgress(type));
         const groupRef = yield* call(
@@ -1066,7 +1108,7 @@ export function* deleteGroupFlow() {
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
       } finally {
-        yield* put(UiActions.hideLoading());
+        yield* put(UiActions.hideLoading("deleteGroup"));
         yield* put(ProgressActions.finishProgress(type));
       }
     }
@@ -1077,7 +1119,7 @@ export function* submitRequestFormFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.submitRequestForm);
     yield* put(ProgressActions.startProgress(type));
-    yield* put(UiActions.showLoading());
+    yield* put(UiActions.showLoading("submitRequestForm"));
 
     const { groupId, projectId } = yield* select(
       UiSelectors.selectRequestFormModal
@@ -1121,7 +1163,7 @@ export function* submitRequestFormFlow() {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
       yield* put(ProgressActions.finishProgress(type));
-      yield* put(UiActions.hideLoading());
+      yield* put(UiActions.hideLoading("submitRequestForm"));
     }
   }
 }
@@ -1163,13 +1205,15 @@ export function* submitRequestUrlFormFlow() {
         }
       }
 
-      yield* put(UiActions.showDelayedLoading());
+      yield* put(
+        UiActions.showDelayedLoading({ taskName: "submitRequestUrlForm" })
+      );
       yield* call(Firework.updateRequest, target!.id, newRequest);
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
       yield* put(ProgressActions.finishProgress(type));
-      yield* put(UiActions.hideLoading());
+      yield* put(UiActions.hideLoading("submitRequestUrlForm"));
     }
   }
 }
@@ -1206,7 +1250,9 @@ export function* deleteRequestParamFlow() {
     });
     if (isConfirmed) {
       try {
-        yield* put(UiActions.showDelayedLoading());
+        yield* put(
+          UiActions.showDelayedLoading({ taskName: "deleteRequestParam" })
+        );
         yield* call(
           Firework.deleteRequestParam,
           requestParam as RequestParamDoc
@@ -1225,7 +1271,7 @@ export function* deleteRequestParamFlow() {
           })
         );
       } finally {
-        yield* put(UiActions.hideLoading());
+        yield* put(UiActions.hideLoading("deleteRequestParam"));
       }
     }
   }
@@ -1261,7 +1307,9 @@ export function* deleteRequestBodyFlow() {
     });
     if (isConfirmed) {
       try {
-        yield* put(UiActions.showDelayedLoading());
+        yield* put(
+          UiActions.showDelayedLoading({ taskName: "deleteRequestBody" })
+        );
         yield* call(Firework.deleteRequestBody, requestBody as RequestBodyDoc);
         yield* put(
           UiActions.showNotification({
@@ -1277,7 +1325,7 @@ export function* deleteRequestBodyFlow() {
           })
         );
       } finally {
-        yield* put(UiActions.hideLoading());
+        yield* put(UiActions.hideLoading("deleteRequestBody"));
       }
     }
   }
@@ -1299,7 +1347,9 @@ export function* submitRequestSettingFormFlow() {
         ...payload,
         ...updatedRecordProps,
       };
-      yield* put(UiActions.showDelayedLoading());
+      yield* put(
+        UiActions.showDelayedLoading({ taskName: "submitRequestSettingForm" })
+      );
       yield* call(Firework.updateRequest, target.id, newRequest);
       yield* put(
         UiActions.showNotification({
@@ -1310,7 +1360,7 @@ export function* submitRequestSettingFormFlow() {
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
-      yield* put(UiActions.hideLoading());
+      yield* put(UiActions.hideLoading("submitRequestSettingForm"));
       yield* put(ProgressActions.finishProgress(type));
     }
   }
@@ -1325,7 +1375,7 @@ export function* deleteRequestFlow() {
     });
     if (isConfirmed) {
       try {
-        yield* put(UiActions.showDelayedLoading());
+        yield* put(UiActions.showDelayedLoading({ taskName: "deleteRequest" }));
         yield* call(Firework.deleteRequest, payload);
         yield* put(
           UiActions.showNotification({
@@ -1336,7 +1386,7 @@ export function* deleteRequestFlow() {
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
       } finally {
-        yield* put(UiActions.hideLoading());
+        yield* put(UiActions.hideLoading("deleteRequest"));
       }
     }
   }
@@ -1346,7 +1396,9 @@ export function* submitResponseStatusFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.submitResponseStatus);
     yield* put(ProgressActions.startProgress(type));
-    yield* put(UiActions.showDelayedLoading());
+    yield* put(
+      UiActions.showDelayedLoading({ taskName: "submitResponseStatus" })
+    );
     const target = payload.target;
     delete payload.target;
     try {
@@ -1384,7 +1436,7 @@ export function* submitResponseStatusFlow() {
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
-      yield* put(UiActions.hideLoading());
+      yield* put(UiActions.hideLoading("submitResponseStatus"));
       yield* put(ProgressActions.finishProgress(type));
     }
   }
@@ -1399,7 +1451,9 @@ export function* deleteResponseStatusFlow() {
     });
     if (isConfirmed) {
       try {
-        yield* put(UiActions.showDelayedLoading());
+        yield* put(
+          UiActions.showDelayedLoading({ taskName: "deleteResponseStatus" })
+        );
         yield* call(Firework.deleteResponseStatus, payload);
         yield* put(
           UiActions.showNotification({
@@ -1410,7 +1464,7 @@ export function* deleteResponseStatusFlow() {
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
       } finally {
-        yield* put(UiActions.hideLoading());
+        yield* put(UiActions.hideLoading("deleteResponseStatus"));
       }
     }
   }
@@ -1448,7 +1502,9 @@ export function* deleteResponseBodyFlow() {
     });
     if (isConfirmed) {
       try {
-        yield* put(UiActions.showDelayedLoading());
+        yield* put(
+          UiActions.showDelayedLoading({ taskName: "deleteResponseBody" })
+        );
         yield* call(Firework.deleteResponseBody, payload as ResponseBodyDoc);
         yield* put(
           UiActions.showNotification({
@@ -1464,7 +1520,7 @@ export function* deleteResponseBodyFlow() {
           })
         );
       } finally {
-        yield* put(UiActions.hideLoading());
+        yield* put(UiActions.hideLoading("deleteResponseBody"));
       }
     }
   }
@@ -1502,7 +1558,9 @@ export function* deleteResponseHeaderFlow() {
     });
     if (isConfirmed) {
       try {
-        yield* put(UiActions.showDelayedLoading());
+        yield* put(
+          UiActions.showDelayedLoading({ taskName: "deleteResponseHeader" })
+        );
         yield* call(
           Firework.deleteResponseHeader,
           payload as ResponseHeaderDoc
@@ -1521,7 +1579,7 @@ export function* deleteResponseHeaderFlow() {
           })
         );
       } finally {
-        yield* put(UiActions.hideLoading());
+        yield* put(UiActions.hideLoading("deleteResponseHeader"));
       }
     }
   }

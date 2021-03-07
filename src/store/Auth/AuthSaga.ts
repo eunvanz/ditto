@@ -30,7 +30,7 @@ export function* signInWithGoogleFlow() {
   while (true) {
     const { type } = yield* take(AuthActions.signInWithGoogle);
     yield* put(ProgressActions.startProgress(type));
-    yield* put(UiActions.showLoading());
+    yield* put(UiActions.showLoading("signInWithGoogle"));
     try {
       const firebase = yield* call(getFirebase);
       yield* call(firebase.login, { provider: "google", type: "redirect" });
@@ -43,7 +43,7 @@ export function* signInWithGoogleFlow() {
       );
     } finally {
       yield* put(ProgressActions.finishProgress(type));
-      yield* put(UiActions.hideLoading());
+      yield* put(UiActions.hideLoading("signInWithGoogle"));
     }
   }
 }
@@ -51,7 +51,7 @@ export function* signInWithGoogleFlow() {
 export function* signOutFlow() {
   while (true) {
     yield* take(AuthActions.signOut);
-    yield* put(UiActions.showLoading());
+    yield* put(UiActions.showLoading("signOut"));
     try {
       const firebase = yield* call(getFirebase);
       yield* call(firebase.logout);
@@ -65,7 +65,7 @@ export function* signOutFlow() {
         })
       );
     } finally {
-      yield* put(UiActions.hideLoading());
+      yield* put(UiActions.hideLoading("signOut"));
     }
   }
 }

@@ -39,19 +39,18 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
   useEffect(() => {
     if (auth.isLoaded && auth.isEmpty) {
       setIsDataInitialized(true);
-      dispatch(UiActions.hideLoading());
     }
   }, [auth.isEmpty, auth.isLoaded, dispatch]);
 
   useEffect(() => {
     if (isLoaded(projects)) {
       setIsDataInitialized(true);
-      dispatch(UiActions.hideLoading());
+      dispatch(UiActions.hideLoading("loadingProjects"));
     }
   }, [dispatch, projects]);
 
   useEffect(() => {
-    dispatch(UiActions.showLoading());
+    dispatch(UiActions.showLoading("loadingProjects"));
   }, [dispatch]);
 
   return <>{isDataInitialized ? children : null}</>;

@@ -36,7 +36,7 @@ const useProjectUrlFormProps = () => {
     FirebaseSelectors.createProjectUrlsSelector(projectId)
   );
 
-  useLoading(projectUrls);
+  useLoading(projectUrls, `loadingProjectUrls-${projectId}`);
 
   return {
     onSubmit,

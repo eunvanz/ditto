@@ -18,6 +18,7 @@ export interface Notification {
 export type UiState = {
   theme: THEMES;
   notifications: Notification[];
+  loadingTasks: string[];
   isLoading: boolean;
   projectFormModal: ProjectFormModalState;
   signInModal: {
@@ -75,6 +76,7 @@ export const initialUiState: UiState = {
     ? THEMES.DARK
     : THEMES.LIGHT,
   notifications: [],
+  loadingTasks: [],
   isLoading: false,
   projectFormModal: {
     isVisible: false,
@@ -135,11 +137,17 @@ const UiSlice = createSlice({
         type?: "default" | "warning" | "success" | "error" | "info";
       }>
     ) => {},
-    showLoading: (state, _: PayloadAction<void>) => {
+    showLoading: (state, action: PayloadAction<string>) => {
+      state.loadingTasks.push(action.payload);
       state.isLoading = true;
     },
-    hideLoading: (state, _: PayloadAction<void>) => {
-      state.isLoading = false;
+    hideLoading: (state, action: PayloadAction<string>) => {
+      state.loadingTasks = state.loadingTasks.filter(
+        (task) => task !== action.payload
+      );
+      if (state.loadingTasks.length === 0) {
+        state.isLoading = false;
+      }
     },
     receiveProjectFormModal: (
       state,
@@ -163,7 +171,10 @@ const UiSlice = createSlice({
     hideSignInModal: (state, _: PayloadAction<void>) => {
       state.signInModal.isVisible = false;
     },
-    showDelayedLoading: (_, _action: PayloadAction<number | undefined>) => {},
+    showDelayedLoading: (
+      _,
+      _action: PayloadAction<{ taskName: string; delay?: number }>
+    ) => {},
     receiveQuickModelNameFormModal: (
       state,
       action: PayloadAction<QuickModelNameFormModalState>

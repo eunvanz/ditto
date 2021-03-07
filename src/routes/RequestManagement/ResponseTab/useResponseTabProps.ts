@@ -41,7 +41,10 @@ const useResponseTabProps = () => {
     )
   );
 
-  useLoading(responseStatuses);
+  useLoading(
+    responseStatuses,
+    `loadingResponseStatuses-${projectId}-${requestId}`
+  );
 
   return {
     responseStatuses,

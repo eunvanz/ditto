@@ -60,11 +60,11 @@ export function* handleShowDelayedLoading(
   action: ReturnType<typeof UiActions.showDelayedLoading>
 ) {
   const { isDelayed } = yield* race({
-    isDelayed: call(delay, action.payload || 200),
+    isDelayed: call(delay, action.payload.delay || 200),
     isLoadingHidden: take(UiActions.hideLoading),
   });
   if (isDelayed) {
-    yield* put(UiActions.showLoading());
+    yield* put(UiActions.showLoading(action.payload.taskName));
   }
 }
 

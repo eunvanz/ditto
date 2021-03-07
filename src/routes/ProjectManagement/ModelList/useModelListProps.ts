@@ -55,7 +55,7 @@ const useModelListProps: () => ModelListProps &
     }, 50);
   }, [dispatch]);
 
-  useLoading(models);
+  useLoading(models, `loadingModels-${project.id}`);
 
   const model = useSelector(ProjectSelectors.selectCurrentModel);
 

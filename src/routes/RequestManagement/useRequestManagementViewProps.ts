@@ -50,14 +50,18 @@ const useRequestManagementViewProps = () => {
 
   useEffect(() => {
     if (isLoaded(requests)) {
-      dispatch(UiActions.hideLoading());
+      dispatch(UiActions.hideLoading(`loadingRequests-${projectId}`));
       if (!request) {
         setIsNotExist(true);
       }
     } else {
-      dispatch(UiActions.showDelayedLoading());
+      dispatch(
+        UiActions.showDelayedLoading({
+          taskName: `loadingRequests-${projectId}`,
+        })
+      );
     }
-  }, [dispatch, request, requests]);
+  }, [dispatch, projectId, request, requests]);
 
   useEffect(() => {
     if (project) {
