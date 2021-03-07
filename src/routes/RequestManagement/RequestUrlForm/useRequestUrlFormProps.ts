@@ -31,6 +31,10 @@ const useRequestUrlFormProps = () => {
     FirebaseSelectors.createProjectUrlsSelector(project?.id || "")
   );
 
+  const requests = useSelector(
+    FirebaseSelectors.createProjectRequestsSelector(projectId)
+  );
+
   const onSubmit = useCallback(
     (values: RequestUrlFormValues) => {
       dispatch(ProjectActions.submitRequestUrlForm(values));
@@ -53,6 +57,7 @@ const useRequestUrlFormProps = () => {
     request,
     baseUrls,
     key,
+    requests,
   };
 };
 

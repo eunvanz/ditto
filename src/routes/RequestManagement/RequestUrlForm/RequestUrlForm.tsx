@@ -11,7 +11,10 @@ import {
   RequestDoc,
   REQUEST_METHOD,
 } from "../../../types";
-import { methodOptions } from "../../../helpers/projectHelpers";
+import {
+  getTextFieldErrorProps,
+  methodOptions,
+} from "../../../helpers/projectHelpers";
 
 const useStyles = makeStyles((theme: Theme) => ({
   methodField: {
@@ -31,6 +34,7 @@ export interface RequestUrlFormProps {
   onSubmit: (values: RequestUrlFormValues) => void;
   request: RequestDoc;
   baseUrls: ProjectUrlDoc[];
+  requests: RequestDoc[];
 }
 
 export interface RequestUrlFormValues {
@@ -44,6 +48,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
   onSubmit,
   request,
   baseUrls,
+  requests,
 }) => {
   const classes = useStyles();
 
@@ -112,6 +117,22 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
 
   const pathInputRef = useRef<HTMLInputElement>(null);
 
+  const checkIsDuplicatedUrl = useCallback(
+    (url: string) => {
+      return requests
+        .filter((item) => item.id !== request.id)
+        .some((item) => {
+          return (
+            `${item.method}${item.baseUrl}${item.path}`.replace(
+              /{[a-zA-Z]+}/g,
+              "{}"
+            ) === url.replace(/{[a-zA-Z]+}/g, "{}")
+          );
+        });
+    },
+    [request.id, requests]
+  );
+
   return (
     <Box p={2}>
       <form onSubmit={validateAndSubmit}>
@@ -125,6 +146,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             className={classes.methodField}
             SelectProps={{ native: true }}
             onChange={validateAndSubmit}
+            {...getTextFieldErrorProps(errors.method)}
           >
             {methodOptions.map((method) => (
               <option key={method} value={method}>
@@ -141,6 +163,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             className={classes.baseUrlField}
             SelectProps={{ native: true }}
             onChange={validateAndSubmit}
+            {...getTextFieldErrorProps(errors.baseUrl)}
           >
             {baseUrlOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -178,20 +201,29 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
                     watchedBaseUrl !== BASE_URL.NEW &&
                     watchedBaseUrl !== BASE_URL.NONE
                   ) {
-                    return !isValidUrl
-                      ? "URL is not valid."
-                      : isParamWrappedProperly ||
-                          "Please wrap path parameter with '{}'";
-                  } else {
-                    return true;
+                    if (!isValidUrl) {
+                      return "URL is not valid.";
+                    } else if (!isParamWrappedProperly) {
+                      return "Please wrap path parameter with '{}'.";
+                    }
                   }
+                  if (
+                    checkIsDuplicatedUrl(
+                      `${watchedValues.method}${watchedValues.baseUrl}${data}`
+                    )
+                  ) {
+                    return "URL is duplicated.";
+                  }
+                  if (data.endsWith("/")) {
+                    return "URL cannot ends with '/'";
+                  }
+                  return true;
                 },
               });
             }}
             className={classes.pathField}
             placeholder="user/{userId}"
-            error={!!errors.path}
-            helperText={errors.path?.message}
+            {...getTextFieldErrorProps(errors.path)}
             onBlur={validateAndSubmit}
           />
         </Box>
