@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
-import useLoading from "../../hooks/useLoading";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
@@ -64,8 +63,6 @@ const useGroupFormModal = () => {
       ProjectActions.deleteGroup.type,
     ])
   );
-
-  useLoading(project ? existingGroups : true, `loadingProject-${project?.id}`);
 
   return {
     defaultValues,

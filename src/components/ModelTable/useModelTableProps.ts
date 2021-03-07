@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import shortId from "shortid";
-import { assertNotEmpty } from "../../helpers/commonHelpers";
+import useProjectByParam from "../../hooks/useProjectByParam";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
@@ -26,31 +26,30 @@ const useModelTableProps = ({
 
   const dispatch = useDispatch();
 
-  const project = useSelector(ProjectSelectors.selectCurrentProject);
-  assertNotEmpty(project);
+  const { projectId } = useProjectByParam();
 
   const firestoreQuery = useMemo(() => {
     const query = [
       {
-        collection: `projects/${project.id}/enumerations`,
+        collection: `projects/${projectId}/enumerations`,
         orderBy: ["createdAt", "asc"],
       },
       {
-        collection: `projects/${project.id}/models`,
+        collection: `projects/${projectId}/models`,
         orderBy: ["createdAt", "asc"],
       },
     ];
     return query;
-  }, [project.id]);
+  }, [projectId]);
 
   useFirestoreConnect(firestoreQuery as any);
 
   const projectModels = useSelector(
-    FirebaseSelectors.createProjectModelsSelector(project.id)
+    FirebaseSelectors.createProjectModelsSelector(projectId)
   );
 
   const projectEnumerations = useSelector(
-    FirebaseSelectors.createProjectEnumerationsSelector(project.id)
+    FirebaseSelectors.createProjectEnumerationsSelector(projectId)
   );
 
   const editingModelField = useSelector(

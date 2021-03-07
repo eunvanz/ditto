@@ -1,3 +1,3 @@
-import RequestTab from "./RequestTab";
+import RequestTabContainer from "./RequestTabContainer";
 
-export default RequestTab;
+export default RequestTabContainer;
