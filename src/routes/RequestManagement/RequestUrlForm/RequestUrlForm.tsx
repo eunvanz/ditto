@@ -1,6 +1,7 @@
 import { Box, InputAdornment, makeStyles, TextField } from "@material-ui/core";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
+import isEqual from "lodash/isEqual";
 import QuickUrlFormModal from "../../../components/QuickUrlFormModal";
 import { regExps } from "../../../helpers/commonHelpers";
 import { Theme } from "../../../theme";
@@ -68,7 +69,9 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
     defaultValues,
   });
 
-  const watchedBaseUrl = watch("baseUrl");
+  const watchedValues = watch();
+
+  const watchedBaseUrl = watchedValues.baseUrl;
 
   const baseUrlOptions = useMemo(() => {
     const projectUrlOptions = baseUrls.map((baseUrl) => ({
@@ -96,13 +99,16 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
 
   const validateAndSubmit = useCallback(
     async (e) => {
+      if (isEqual(watchedValues, defaultValues)) {
+        return;
+      }
       e.preventDefault();
       trigger();
       await handleSubmit((data) => {
         onSubmit({ ...data, target: request });
       })();
     },
-    [handleSubmit, onSubmit, request, trigger]
+    [defaultValues, handleSubmit, onSubmit, request, trigger, watchedValues]
   );
 
   useEffect(() => {
@@ -110,6 +116,8 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
       reset(defaultValues);
     }
   }, [defaultValues, request, reset]);
+
+  const pathInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <Box p={2}>
@@ -151,33 +159,42 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             label="Path"
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start">{urlPrefix}</InputAdornment>
+                <InputAdornment
+                  position="start"
+                  onClick={() => pathInputRef.current?.focus()}
+                >
+                  {urlPrefix}
+                </InputAdornment>
               ),
             }}
             name="path"
             variant="outlined"
-            inputRef={register({
-              validate: (data: string) => {
-                const fullUrl = `${urlPrefix}${data}`;
-                const isValidUrl = regExps.pathParamUrl.test(fullUrl);
-                const braceRemovedUrl = fullUrl.replace(/{[a-zA-Z]+}/g, "");
-                const isParamWrappedProperly = regExps.url.test(
-                  braceRemovedUrl
-                );
-                if (
-                  data &&
-                  watchedBaseUrl !== BASE_URL.NEW &&
-                  watchedBaseUrl !== BASE_URL.NONE
-                ) {
-                  return !isValidUrl
-                    ? "URL is not valid."
-                    : isParamWrappedProperly ||
-                        "Please wrap path parameter with '{}'";
-                } else {
-                  return true;
-                }
-              },
-            })}
+            inputRef={(e) => {
+              // @ts-ignore
+              pathInputRef.current = e;
+              register(e, {
+                validate: (data: string) => {
+                  const fullUrl = `${urlPrefix}${data}`;
+                  const isValidUrl = regExps.pathParamUrl.test(fullUrl);
+                  const braceRemovedUrl = fullUrl.replace(/{[a-zA-Z]+}/g, "");
+                  const isParamWrappedProperly = regExps.url.test(
+                    braceRemovedUrl
+                  );
+                  if (
+                    data &&
+                    watchedBaseUrl !== BASE_URL.NEW &&
+                    watchedBaseUrl !== BASE_URL.NONE
+                  ) {
+                    return !isValidUrl
+                      ? "URL is not valid."
+                      : isParamWrappedProperly ||
+                          "Please wrap path parameter with '{}'";
+                  } else {
+                    return true;
+                  }
+                },
+              });
+            }}
             className={classes.pathField}
             placeholder="user/{userId}"
             error={!!errors.path}

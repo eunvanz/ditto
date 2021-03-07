@@ -38,6 +38,7 @@ import {
   getIndentionPaddingByDepth,
   patterns,
 } from "../../helpers/projectHelpers";
+import isEqual from "lodash/isEqual";
 
 export type ModelFieldColumns =
   | "fieldName"
@@ -173,7 +174,9 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     getValues,
   } = formProps;
 
-  const watchedFieldType = watch("fieldType");
+  const watchedValues = watch();
+
+  const watchedFieldType = watchedValues.fieldType;
 
   const formatOptions = useMemo(() => {
     switch (watchedFieldType) {
@@ -201,6 +204,9 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [modelField, watchedFieldType, setValue]);
 
   const handleOnSubmit = useCallback(async () => {
+    if (isEqual(watchedValues, defaultValues)) {
+      return onCancel();
+    }
     trigger();
     await handleSubmit((data) => {
       const format =
@@ -215,12 +221,15 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       onSubmit({ ...data, format, enum: enumValue, target: modelField });
     })();
   }, [
+    defaultValues,
     handleSubmit,
     modelField,
+    onCancel,
     onSubmit,
     projectEnumerations,
     projectModels,
     trigger,
+    watchedValues,
   ]);
 
   const fieldNameInputRef = useRef<HTMLInputElement | null>(null);

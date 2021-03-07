@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import { ResponseStatusFormValues } from "../../../components/ResponseStatusFormModal/ResponseStatusFormModal";
+import useLoading from "../../../hooks/useLoading";
 import useProjectByParam from "../../../hooks/useProjectByParam";
 import useRequestByParam from "../../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
@@ -39,6 +40,8 @@ const useResponseTabProps = () => {
       ProjectActions.submitResponseStatus.type
     )
   );
+
+  useLoading(responseStatuses);
 
   return {
     responseStatuses,
