@@ -40,3 +40,20 @@ export const methodOptions = [
   REQUEST_METHOD.PATCH,
   REQUEST_METHOD.DELETE,
 ];
+
+export const getRequestMethodColor = (method?: REQUEST_METHOD) => {
+  switch (method) {
+    case REQUEST_METHOD.GET:
+      return "success";
+    case REQUEST_METHOD.POST:
+      return "warning";
+    case REQUEST_METHOD.PUT:
+      return "primary";
+    case REQUEST_METHOD.DELETE:
+      return "error";
+    case REQUEST_METHOD.PATCH:
+      return "secondary";
+    default:
+      return "default";
+  }
+};

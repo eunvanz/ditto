@@ -1,4 +1,4 @@
-import _ from "lodash";
+import merge from "lodash/merge";
 import {
   colors,
   unstable_createMuiStrictModeTheme as createMuiTheme,
@@ -180,7 +180,7 @@ export const createTheme = (config: ThemeConfig = {}): Theme => {
   }
 
   let theme = createMuiTheme(
-    _.merge({}, baseOptions, themeOptions, { direction: config.direction })
+    merge({}, baseOptions, themeOptions, { direction: config.direction })
   );
 
   if (config.responsiveFontSizes) {

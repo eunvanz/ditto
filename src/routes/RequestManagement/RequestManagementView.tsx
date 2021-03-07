@@ -61,8 +61,8 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
             {request.operationId && (
               <Chip
                 size="small"
-                color="secondary"
                 label={request.operationId}
+                color="primary"
                 className={classes.operationIdChip}
               />
             )}

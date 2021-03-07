@@ -30,6 +30,7 @@ import { REQUEST_METHOD } from "../../../types";
 import Label from "../../../components/Label";
 import NewBadge from "../../../components/NewBadge";
 import { assertNotEmpty } from "../../../helpers/commonHelpers";
+import { getRequestMethodColor } from "../../../helpers/projectHelpers";
 
 export interface NavItemProps {
   children?: ReactNode;
@@ -357,20 +358,21 @@ const RequestMethodBadge: FC<RequestMethodBadgeProps> = ({ requestMethod }) => {
   const { color, text } = useMemo(() => {
     switch (requestMethod) {
       case REQUEST_METHOD.GET:
-        return { color: "success" as const, text: "GET" };
+        return { color: getRequestMethodColor(requestMethod), text: "GET" };
       case REQUEST_METHOD.POST:
-        return { color: "warning" as const, text: "POST" };
+        return { color: getRequestMethodColor(requestMethod), text: "POST" };
       case REQUEST_METHOD.PUT:
-        return { color: "primary" as const, text: "PUT" };
+        return { color: getRequestMethodColor(requestMethod), text: "PUT" };
       case REQUEST_METHOD.DELETE:
-        return { color: "error" as const, text: "DEL" };
+        return { color: getRequestMethodColor(requestMethod), text: "DEL" };
       case REQUEST_METHOD.PATCH:
-        return { color: "secondary" as const, text: "PATCH" };
+        return { color: getRequestMethodColor(requestMethod), text: "PATCH" };
       default:
         return { color: "error" as const, text: "" };
     }
   }, [requestMethod]);
 
+  // @ts-ignore
   return <RequestMethodLabel color={color}>{text}</RequestMethodLabel>;
 };
 
