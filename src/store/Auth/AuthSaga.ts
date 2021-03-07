@@ -9,6 +9,9 @@ import { ProgressActions } from "../Progress/ProgressSlice";
 import AuthSelectors from "./AuthSelector";
 import Alert from "../../components/Alert";
 import { ErrorActions } from "../Error/ErrorSlice";
+import FirebaseSelectors from "../Firebase/FirebaseSelectors";
+import { getTimestamp } from "../../firebase";
+import Firework from "../Firework";
 
 export function* requireSignIn() {
   const auth = yield* select(AuthSelectors.selectAuth);
@@ -70,6 +73,26 @@ export function* signOutFlow() {
   }
 }
 
+export function* refreshProfileFlow() {
+  while (true) {
+    yield* take(AuthActions.refreshProfile);
+    const profile = yield* select(FirebaseSelectors.selectUserProfile);
+    if (!profile.isRegistered) {
+      const firebase = yield* call(getFirebase);
+      const timestamp = yield* call(getTimestamp);
+      yield* call(firebase.updateProfile, {
+        isRegistered: true,
+        registeredAt: timestamp,
+        updatedAt: timestamp,
+      });
+    }
+  }
+}
+
 export function* watchAuthActions() {
-  yield* all([fork(signInWithGoogleFlow), fork(signOutFlow)]);
+  yield* all([
+    fork(signInWithGoogleFlow),
+    fork(signOutFlow),
+    fork(refreshProfileFlow),
+  ]);
 }

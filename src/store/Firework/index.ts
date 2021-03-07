@@ -25,6 +25,7 @@ import {
   Modifiable,
   ResponseHeaderItem,
   ResponseHeaderDoc,
+  UserProfile,
 } from "../../types";
 import { call } from "typed-redux-saga";
 
@@ -42,6 +43,10 @@ function batch() {
 
 function getMyProjectsRef(uid: string) {
   return db.collection("projects").where(`members.${uid}`, "==", true);
+}
+
+function* addUserProfile(data: UserProfile) {
+  return yield* call(addDocument, "users", data);
 }
 
 function updateDocument<T>(path: string, id: string, data: Partial<T>) {
@@ -452,6 +457,7 @@ export const realFirework = {
   getGroupRef,
   runBatch,
   runTaskForEachDocs,
+  addUserProfile,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

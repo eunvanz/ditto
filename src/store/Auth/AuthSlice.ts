@@ -10,6 +10,7 @@ const AuthSlice = createSlice({
   reducers: {
     signInWithGoogle: (_, _action: PayloadAction<void>) => {},
     signOut: (_, _action: PayloadAction<void>) => {},
+    refreshProfile: (_, _action: PayloadAction<void>) => {},
   },
 });
 

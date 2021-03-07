@@ -59,9 +59,11 @@ const Account: FC<AccountProps> = ({ user, onLogout, onClickLogin }) => {
       >
         {user ? (
           <>
-            <Avatar alt="User" className={classes.avatar}>
-              {user.auth.displayName?.charAt(0)}
-            </Avatar>
+            <Avatar
+              alt={user.auth.displayName || "User"}
+              src={user.auth.photoURL || ""}
+              className={classes.avatar}
+            />
             <Hidden smDown>
               <Typography variant="h6" color="inherit">
                 {user.auth.displayName}

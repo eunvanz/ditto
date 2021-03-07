@@ -169,6 +169,11 @@ const createResponseHeadersSelector = (
     `projects/${projectId}/requests/${requestId}/responseStatuses/${responseStatusId}/headers`
   );
 
+const selectUserProfile = createSelector(
+  (state: RootState) => state.firebase.profile,
+  (profile) => profile
+);
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -187,6 +192,7 @@ const FirebaseSelectors = {
   createResponseStatusesSelector,
   createResponseBodiesSelector,
   createResponseHeadersSelector,
+  selectUserProfile,
 };
 
 export default FirebaseSelectors;

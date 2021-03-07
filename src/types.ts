@@ -44,6 +44,12 @@ export enum DATA_TYPE {
   OBJECT = "OBJECT",
 }
 
+export interface UserProfile {
+  isRegistered: boolean;
+  registeredAt: firebase.firestore.FieldValue;
+  updatedAt: firebase.firestore.FieldValue;
+}
+
 export interface User {
   auth: FirebaseReducer.AuthState;
 }

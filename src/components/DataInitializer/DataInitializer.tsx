@@ -4,6 +4,7 @@ import AuthSelectors from "../../store/Auth/AuthSelector";
 import { UiActions } from "../../store/Ui/UiSlice";
 import { isLoaded, useFirestoreConnect } from "react-redux-firebase";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
+import { AuthActions } from "../../store/Auth/AuthSlice";
 
 /**
  * 필수적인 데이터들을 로딩후에 하위 컴포넌트들을 렌더링
@@ -37,9 +38,13 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (auth.isLoaded && auth.isEmpty) {
-      setIsDataInitialized(true);
-      dispatch(UiActions.hideLoading("loadingProjects"));
+    if (auth.isLoaded) {
+      if (auth.isEmpty) {
+        setIsDataInitialized(true);
+        dispatch(UiActions.hideLoading("loadingProjects"));
+      } else {
+        dispatch(AuthActions.refreshProfile());
+      }
     }
   }, [auth.isEmpty, auth.isLoaded, dispatch]);
 
