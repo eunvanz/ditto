@@ -1,4 +1,5 @@
 import { FieldError } from "react-hook-form";
+import { REQUEST_METHOD } from "../types";
 
 export const patterns = {
   wordsWithNoSpace: {
@@ -30,4 +31,12 @@ export const mediaTypes = [
   "text/html",
   "application/pdf",
   "image/png",
+];
+
+export const methodOptions = [
+  REQUEST_METHOD.GET,
+  REQUEST_METHOD.POST,
+  REQUEST_METHOD.PUT,
+  REQUEST_METHOD.PATCH,
+  REQUEST_METHOD.DELETE,
 ];

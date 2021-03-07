@@ -11,6 +11,7 @@ import {
   RequestDoc,
   REQUEST_METHOD,
 } from "../../../types";
+import { methodOptions } from "../../../helpers/projectHelpers";
 
 const useStyles = makeStyles((theme: Theme) => ({
   methodField: {
@@ -25,14 +26,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(2),
   },
 }));
-
-const methodOptions = [
-  REQUEST_METHOD.GET,
-  REQUEST_METHOD.POST,
-  REQUEST_METHOD.PUT,
-  REQUEST_METHOD.PATCH,
-  REQUEST_METHOD.DELETE,
-];
 
 export interface RequestUrlFormProps {
   onSubmit: (values: RequestUrlFormValues) => void;

@@ -1,8 +1,12 @@
-import { Box, Button, TextField } from "@material-ui/core";
+import { Box, Button, makeStyles, TextField } from "@material-ui/core";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { getTextFieldErrorProps, patterns } from "../../helpers/projectHelpers";
-import { ModalBase, RequestDoc } from "../../types";
+import {
+  getTextFieldErrorProps,
+  methodOptions,
+  patterns,
+} from "../../helpers/projectHelpers";
+import { ModalBase, RequestDoc, REQUEST_METHOD } from "../../types";
 import Modal from "../Modal";
 
 export interface RequestFormModalProps extends ModalBase {
@@ -13,7 +17,7 @@ export interface RequestFormModalProps extends ModalBase {
 
 export interface RequestFormValues {
   name: string;
-  // summary: string;
+  method: REQUEST_METHOD;
   description: string;
   operationId: string;
 }
@@ -34,7 +38,7 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
   return (
     <Modal title="Create new operation" isVisible={isVisible} onClose={onClose}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Box mt={2}>
+        <Box>
           <TextField
             autoFocus
             label="Operation name"
@@ -56,6 +60,25 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
             error={!!errors.name}
             helperText={errors.name?.message}
           />
+        </Box>
+        <Box mt={2}>
+          <TextField
+            label="Method"
+            name="method"
+            select
+            variant="outlined"
+            inputRef={register}
+            SelectProps={{ native: true }}
+            fullWidth
+            required
+            {...getTextFieldErrorProps(errors.method)}
+          >
+            {methodOptions.map((method) => (
+              <option key={method} value={method}>
+                {method}
+              </option>
+            ))}
+          </TextField>
         </Box>
         <Box mt={2}>
           <TextField

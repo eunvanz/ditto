@@ -7,6 +7,7 @@ import {
   makeStyles,
   TextField,
   Collapse,
+  SvgIcon,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
@@ -60,6 +61,10 @@ const useStyles = makeStyles((theme: Theme) => ({
       paddingBottom: 0,
     },
   },
+  expandIcon: {
+    paddingRight: 4,
+    paddingLeft: 0,
+  },
 }));
 
 export interface RequestBodyFormProps {
@@ -99,6 +104,9 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
         className={classes.header}
         title={
           <>
+            <SvgIcon fontSize="small" className={classes.expandIcon}>
+              {isOpen ? <ExpandLess /> : <ExpandMore />}
+            </SvgIcon>
             Body
             {requestBodies?.length ? (
               <Chip
@@ -110,7 +118,6 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
             )}
           </>
         }
-        action={isOpen ? <ExpandLess /> : <ExpandMore />}
         onClick={toggleOpen}
       />
       <Collapse in={isOpen}>
