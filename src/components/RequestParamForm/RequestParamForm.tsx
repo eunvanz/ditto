@@ -7,22 +7,19 @@ import {
   Divider,
   makeStyles,
   Collapse,
+  SvgIcon,
 } from "@material-ui/core";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { Theme } from "../../theme";
-import {
-  ModelFieldDoc,
-  RequestParamDoc,
-  REQUEST_PARAM_LOCATION,
-} from "../../types";
+import { ModelFieldDoc, REQUEST_PARAM_LOCATION } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import ModelTable from "../ModelTable";
 import { ModelFieldColumns } from "../ModelForm/ModelFieldFormItem";
 
 export interface RequestParamFormProps {
   location: REQUEST_PARAM_LOCATION;
-  requestParams?: RequestParamDoc[];
+  requestParams?: ModelFieldDoc[];
   onSubmitRequestParamForm: (values: ModelFieldFormValues) => void;
   onDeleteRequestParam: (requestParam: ModelFieldDoc) => void;
   checkIsSubmittingRequestParam: (id?: string) => boolean;
@@ -71,6 +68,10 @@ const useStyles = makeStyles((theme: Theme) => ({
       paddingLeft: 8,
       paddingRight: 8,
     },
+  },
+  expandIcon: {
+    paddingRight: 4,
+    paddingLeft: 0,
   },
 }));
 
@@ -131,6 +132,9 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
         className={classes.header}
         title={
           <>
+            <SvgIcon fontSize="small" className={classes.expandIcon}>
+              {isOpen ? <ExpandLess /> : <ExpandMore />}
+            </SvgIcon>
             {title}
             {requestParams?.length ? (
               <Chip
@@ -142,7 +146,6 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
             )}
           </>
         }
-        action={isOpen ? <ExpandLess /> : <ExpandMore />}
         onClick={toggleOpen}
       />
       <Collapse in={isOpen}>

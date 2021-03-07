@@ -23,10 +23,22 @@ const useResponseBodyFormProps = ({
       collection: `projects/${responseStatus.projectId}/requests/${responseStatus.requestId}/responseStatuses/${responseStatus.id}/bodies`,
       orderBy: ["createdAt", "asc"],
     },
+    {
+      collection: `projects/${responseStatus.projectId}/requests/${responseStatus.requestId}/responseStatuses/${responseStatus.id}/headers`,
+      orderBy: ["createdAt", "asc"],
+    },
   ]);
 
   const responseBodies = useSelector(
     FirebaseSelectors.createResponseBodiesSelector(
+      responseStatus.projectId,
+      responseStatus.requestId,
+      responseStatus.id
+    )
+  );
+
+  const responseHeaders = useSelector(
+    FirebaseSelectors.createResponseHeadersSelector(
       responseStatus.projectId,
       responseStatus.requestId,
       responseStatus.id
@@ -73,6 +85,42 @@ const useResponseBodyFormProps = ({
     );
   };
 
+  const onSubmitResponseHeader = useCallback(
+    (values: ModelFieldFormValues) => {
+      dispatch(
+        ProjectActions.submitResponseHeaderForm({
+          ...values,
+          requestId: responseStatus.requestId,
+          projectId: responseStatus.projectId,
+          responseStatusId: responseStatus.id,
+        })
+      );
+    },
+    [
+      dispatch,
+      responseStatus.id,
+      responseStatus.projectId,
+      responseStatus.requestId,
+    ]
+  );
+
+  const onDeleteResponseHeader = useCallback(
+    (responseHeader: ModelFieldDoc) => {
+      dispatch(ProjectActions.deleteResponseHeader(responseHeader));
+    },
+    [dispatch]
+  );
+
+  const submittingRequestHeaderActionsInProgress = useSelector(
+    ProgressSelectors.selectSubmitResponseHeaderFormActions
+  );
+
+  const checkIsSubmittingResponseHeader = (id?: string) => {
+    return submittingRequestHeaderActionsInProgress.includes(
+      `${ProjectActions.submitResponseHeaderForm}-${id}`
+    );
+  };
+
   return {
     responseStatus,
     responseBodies,
@@ -80,7 +128,11 @@ const useResponseBodyFormProps = ({
     onSubmitResponseBody,
     onDeleteResponseBody,
     checkIsSubmittingResponseBody,
+    onSubmitResponseHeader,
+    onDeleteResponseHeader,
+    checkIsSubmittingResponseHeader,
     onEditResponseStatus,
+    responseHeaders,
   };
 };
 

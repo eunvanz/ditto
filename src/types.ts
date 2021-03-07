@@ -295,6 +295,12 @@ export interface ResponseBodyItem extends CommonModelFieldItem {
   responseStatusId: string;
 }
 
+export interface ResponseHeaderItem extends CommonModelFieldItem {
+  projectId: string;
+  requestId: string;
+  responseStatusId: string;
+}
+
 export type RequestDoc = Doc<RequestItem, BaseSettings>;
 
 export type RequestParamDoc = Doc<RequestParamItem, BaseSettings> &
@@ -305,6 +311,9 @@ export type RequestBodyDoc = Doc<RequestBodyItem, BaseSettings> & ModelFieldDoc;
 export type ResponseStatusDoc = Doc<ResponseStatusItem, BaseSettings>;
 
 export type ResponseBodyDoc = Doc<ResponseBodyItem, BaseSettings> &
+  ModelFieldDoc;
+
+export type ResponseHeaderDoc = Doc<ResponseHeaderItem, BaseSettings> &
   ModelFieldDoc;
 
 export interface ModalBase {

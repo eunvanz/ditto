@@ -44,6 +44,8 @@ import {
   CommonModelFieldItem,
   ResponseBodyDoc,
   REQUEST_PARAM_LOCATION,
+  ResponseHeaderItem,
+  ResponseHeaderDoc,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -1470,6 +1472,63 @@ export function* deleteResponseBodyFlow() {
   }
 }
 
+export function* submitResponseHeaderFlow() {
+  yield* fork<
+    CommonModelFieldFormFlow<
+      ResponseHeaderItem,
+      ModelFieldFormValues & {
+        requestId: string;
+        projectId: string;
+        responseStatusId: string;
+      }
+    >
+  >(commonModelFieldFormFlow, {
+    actionToTrigger: ProjectActions.submitResponseHeaderForm,
+    buildNewModelField: ({ projectId, requestId, responseStatusId }) => ({
+      projectId,
+      requestId,
+      responseStatusId,
+    }),
+    addModelField: Firework.addResponseHeader,
+    updateModelField: Firework.updateResponseHeader,
+    hasToBlurFormAlways: true,
+  });
+}
+
+export function* deleteResponseHeaderFlow() {
+  while (true) {
+    const { payload } = yield* take(ProjectActions.deleteResponseHeader);
+    const isConfirmed = yield* call(Alert.confirm, {
+      title: "Delete header",
+      message: `Are you sure to delete key ${payload.fieldName.value}?`,
+    });
+    if (isConfirmed) {
+      try {
+        yield* put(UiActions.showDelayedLoading());
+        yield* call(
+          Firework.deleteResponseHeader,
+          payload as ResponseHeaderDoc
+        );
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "The body has been deleted.",
+          })
+        );
+      } catch (error) {
+        yield* put(
+          ErrorActions.catchError({
+            error,
+            isAlertOnly: true,
+          })
+        );
+      } finally {
+        yield* put(UiActions.hideLoading());
+      }
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -1497,5 +1556,7 @@ export function* watchProjectActions() {
     fork(deleteResponseStatusFlow),
     fork(submitResponseBodyFlow),
     fork(deleteResponseBodyFlow),
+    fork(submitResponseHeaderFlow),
+    fork(deleteResponseHeaderFlow),
   ]);
 }

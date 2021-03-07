@@ -15,7 +15,12 @@ import { Edit, ExpandLess, ExpandMore } from "@material-ui/icons";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import React, { FC, useCallback, useMemo, useState, useEffect } from "react";
 import { Theme } from "../../theme";
-import { ModelFieldDoc, ResponseBodyDoc, ResponseStatusDoc } from "../../types";
+import {
+  ModelFieldDoc,
+  ResponseBodyDoc,
+  ResponseHeaderDoc,
+  ResponseStatusDoc,
+} from "../../types";
 import ModelTable from "../ModelTable";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import Clear from "@material-ui/icons/Clear";
@@ -25,6 +30,7 @@ import {
   getTextFieldErrorProps,
   mediaTypes,
 } from "../../helpers/projectHelpers";
+import ResponseHeaderForm from "./ResponseHeaderForm";
 
 const useStyles = makeStyles((theme: Theme) => ({
   header: {
@@ -96,6 +102,10 @@ export interface ResponseBodyFormProps {
   onDeleteResponseBody: (responseBody: ModelFieldDoc) => void;
   checkIsSubmittingResponseBody: (id?: string) => boolean;
   onEditResponseStatus: () => void;
+  responseHeaders?: ResponseHeaderDoc[];
+  onSubmitResponseHeader: (values: ModelFieldFormValues) => void;
+  onDeleteResponseHeader: (responseHeader: ModelFieldDoc) => void;
+  checkIsSubmittingResponseHeader: (id?: string) => boolean;
 }
 
 const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
@@ -106,11 +116,15 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
   onDeleteResponseBody,
   checkIsSubmittingResponseBody,
   onEditResponseStatus,
+  responseHeaders,
+  onSubmitResponseHeader,
+  onDeleteResponseHeader,
+  checkIsSubmittingResponseHeader,
 }) => {
   const classes = useStyles();
 
   const [isOpen, setIsOpen] = useState<boolean>(
-    responseBodies?.length ? true : false
+    responseBodies?.length || responseHeaders?.length ? true : false
   );
 
   const toggleOpen = useCallback(() => {
@@ -118,11 +132,11 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
   }, []);
 
   useEffect(() => {
-    if (responseBodies?.length) {
+    if (responseBodies?.length || responseHeaders?.length) {
       setIsOpen(true);
     }
     // eslint-disable-next-line
-  }, [responseBodies?.length]);
+  }, [responseBodies?.length, responseHeaders?.length]);
 
   return (
     <Card>
@@ -227,6 +241,15 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
             />
           </Box>
         </PerfectScrollbar>
+        <Divider />
+        <Box>
+          <ResponseHeaderForm
+            responseHeaders={responseHeaders}
+            onSubmit={onSubmitResponseHeader}
+            onDelete={onDeleteResponseHeader}
+            checkIsSubmitting={checkIsSubmittingResponseHeader}
+          />
+        </Box>
       </Collapse>
     </Card>
   );

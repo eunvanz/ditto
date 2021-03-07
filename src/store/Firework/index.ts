@@ -23,6 +23,8 @@ import {
   ResponseBodyItem,
   ResponseBodyDoc,
   Modifiable,
+  ResponseHeaderItem,
+  ResponseHeaderDoc,
 } from "../../types";
 import { call } from "typed-redux-saga";
 
@@ -332,6 +334,34 @@ function* deleteResponseBody(data: ResponseBodyDoc) {
   );
 }
 
+function* addResponseHeader(data: ResponseHeaderItem) {
+  return yield* call(
+    addDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/headers`,
+    data
+  );
+}
+
+function* updateResponseHeader(
+  id: string,
+  data: Modifiable<ResponseHeaderItem>
+) {
+  return yield* call(
+    updateDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/headers`,
+    id,
+    data
+  );
+}
+
+function* deleteResponseHeader(data: ResponseHeaderDoc) {
+  yield* call(
+    deleteDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/headers`,
+    data.id
+  );
+}
+
 export interface RunBatchItem {
   operation: "set" | "update" | "delete";
   ref: firebase.firestore.DocumentReference<firebase.firestore.DocumentData>;
@@ -414,6 +444,9 @@ export const realFirework = {
   addResponseBody,
   updateResponseBody,
   deleteResponseBody,
+  addResponseHeader,
+  updateResponseHeader,
+  deleteResponseHeader,
   batch,
   getGroupRequestsRef,
   getGroupRef,
