@@ -34,7 +34,6 @@ import {
   BASE_URL,
   RequestParamItem,
   RequestParamDoc,
-  REQUEST_METHOD,
   RequestBodyItem,
   RequestBodyDoc,
   ResponseStatusItem,
@@ -1090,7 +1089,6 @@ export function* submitRequestFormFlow() {
     const recordableDocProps = yield* call(getRecordableDocProps);
     const newRequest: RequestItem = {
       projectId,
-      method: REQUEST_METHOD.GET,
       ...payload,
       ...recordableDocProps,
     };
