@@ -79,7 +79,11 @@ export function* refreshProfileFlow() {
     if (!profile.isRegistered) {
       const firebase = yield* call(getFirebase);
       const timestamp = yield* call(getTimestamp);
+      const auth = yield* select(AuthSelectors.selectAuth);
       yield* call(firebase.updateProfile, {
+        name: auth.displayName,
+        email: auth.email,
+        photoUrl: auth.photoURL,
         isRegistered: true,
         registeredAt: timestamp,
         updatedAt: timestamp,

@@ -7,6 +7,7 @@ import {
   Divider,
   makeStyles,
 } from "@material-ui/core";
+import { Helmet } from "react-helmet";
 import Header from "../../components/Header";
 import { ProjectDoc } from "../../types";
 import ProjectBasicForm from "./ProjectBasicForm";
@@ -51,6 +52,9 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
 
   return (
     <Container className={classes.root} maxWidth="lg">
+      <Helmet>
+        <title>{project.title} - Drafto</title>
+      </Helmet>
       <Header title={project.title} description={project.description} />
       <Box mt={3}>
         <Tabs

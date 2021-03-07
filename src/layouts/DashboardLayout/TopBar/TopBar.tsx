@@ -43,6 +43,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   toolbar: {
     minHeight: 64,
   },
+  logo: {
+    fontFamily: "'Pacifico', cursive",
+    color: theme.name === THEMES.LIGHT ? "#fff" : theme.palette.text.primary,
+    textDecoration: "unset",
+    fontSize: "x-large",
+  },
 }));
 
 const TopBar: FC<TopBarProps> = ({
@@ -65,7 +71,9 @@ const TopBar: FC<TopBarProps> = ({
           </IconButton>
         </Hidden>
         <Hidden mdDown>
-          <RouterLink to="/">Codit</RouterLink>
+          <RouterLink to="/" className={classes.logo}>
+            Drafto
+          </RouterLink>
         </Hidden>
         <Box ml={2} flexGrow={1} />
         <Switch

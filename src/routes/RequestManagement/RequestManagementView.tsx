@@ -9,6 +9,7 @@ import {
   Tabs,
 } from "@material-ui/core";
 import React, { useCallback, useMemo, useState } from "react";
+import { Helmet } from "react-helmet";
 import Header from "../../components/Header";
 import { Theme } from "../../theme";
 import { RequestDoc } from "../../types";
@@ -25,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: theme.spacing(3),
   },
   operationIdChip: {
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(2),
   },
 }));
 
@@ -54,6 +55,9 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
 
   return (
     <Container className={classes.root} maxWidth="lg">
+      <Helmet>
+        <title>{request.name} - Drafto</title>
+      </Helmet>
       <Header
         title={
           <>

@@ -9,6 +9,7 @@ import {
   useMediaQuery,
   makeStyles,
 } from "@material-ui/core";
+import { Helmet } from "react-helmet";
 import { Theme } from "../../theme";
 import notFoundImage from "../../imgs/not_found.svg";
 
@@ -39,6 +40,9 @@ const NotFoundView: FC<NotFoundViewProps> = ({ title, description }) => {
 
   return (
     <div className={classes.root}>
+      <Helmet>
+        <title>404 Not found - Drafto</title>
+      </Helmet>
       <Container maxWidth="lg">
         <Typography
           align="center"

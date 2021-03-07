@@ -45,9 +45,22 @@ export enum DATA_TYPE {
 }
 
 export interface UserProfile {
+  name: string;
+  photoUrl?: string;
+  email: string;
   isRegistered: boolean;
   registeredAt: firebase.firestore.FieldValue;
   updatedAt: firebase.firestore.FieldValue;
+}
+
+export interface UserProfileDoc {
+  id: string;
+  name: string;
+  photoUrl?: string;
+  email: string;
+  isRegistered: boolean;
+  registeredAt: DocTimestamp;
+  updatedAt: DocTimestamp;
 }
 
 export interface User {

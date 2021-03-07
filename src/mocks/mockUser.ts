@@ -1,5 +1,5 @@
-import { User } from "../types";
-import { FirebaseReducer } from "react-redux-firebase";
+import { User, UserProfileDoc } from "../types";
+import { FirebaseReducer, UserProfile } from "react-redux-firebase";
 
 const auth: FirebaseReducer.AuthState = {
   uid: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
@@ -44,9 +44,45 @@ const user: User = {
   auth,
 };
 
+const userProfiles: UserProfileDoc[] = [
+  {
+    id: "mockId",
+    email: "eunvanz@gmail.com",
+    photoUrl:
+      "https://lh4.googleusercontent.com/-_ae-P8Td7mk/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuck-2LHkf6uoEPzJgtBFLsO3PyX8Xg/photo.jpg",
+    updatedAt: {
+      seconds: 1615136122,
+      nanoseconds: 353000000,
+    },
+    registeredAt: {
+      seconds: 1615136122,
+      nanoseconds: 353000000,
+    },
+    name: "이웅희",
+    isRegistered: true,
+  },
+  {
+    id: "mockId2",
+    email: "eunvanz@gmail.com",
+    photoUrl:
+      "https://lh4.googleusercontent.com/-_ae-P8Td7mk/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuck-2LHkf6uoEPzJgtBFLsO3PyX8Xg/photo.jpg",
+    updatedAt: {
+      seconds: 1615136122,
+      nanoseconds: 353000000,
+    },
+    registeredAt: {
+      seconds: 1615136122,
+      nanoseconds: 353000000,
+    },
+    name: "이웅희",
+    isRegistered: true,
+  },
+];
+
 const mockUser = {
   user,
   auth,
+  userProfiles,
 };
 
 export default mockUser;
