@@ -27,7 +27,7 @@ import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 
 const useStyles = makeStyles((theme: Theme) => ({
   fieldNameCell: {
-    width: 150,
+    width: "15%",
   },
   typeCell: {
     width: 100,
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: 50,
   },
   formatCell: {
-    width: 120,
+    width: "15%",
   },
   requiredCell: {
     width: 50,
@@ -233,7 +233,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
             <TableRow>
               <TableCell
                 colSpan={8}
-                style={{ paddingLeft: buttonIndentionPadding }}
+                style={{ paddingLeft: buttonIndentionPadding, paddingRight: 4 }}
               >
                 <Button
                   className={classes.addButton}
@@ -314,7 +314,10 @@ const Wrapper: React.FC<WrapperProps> = ({
     return (
       <>
         <TableRow>
-          <TableCell colSpan={8} style={{ paddingLeft: indentionPadding }}>
+          <TableCell
+            colSpan={8}
+            style={{ paddingLeft: indentionPadding, paddingRight: 4 }}
+          >
             <Button
               className={classes.addButton}
               fullWidth
