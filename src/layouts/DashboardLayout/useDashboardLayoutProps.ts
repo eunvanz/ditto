@@ -22,14 +22,16 @@ const useDashboardLayoutProps = () => {
   const firestoreQuery = useMemo(() => {
     const query: any[] = [];
     projects.forEach((project) => {
-      query.push({
-        collection: `projects/${project.id}/groups`,
-        orderBy: ["createdAt", "asc"],
-      });
-      query.push({
-        collection: `projects/${project.id}/requests`,
-        orderBy: ["createdAt", "asc"],
-      });
+      if (project) {
+        query.push({
+          collection: `projects/${project.id}/groups`,
+          orderBy: ["createdAt", "asc"],
+        });
+        query.push({
+          collection: `projects/${project.id}/requests`,
+          orderBy: ["createdAt", "asc"],
+        });
+      }
     });
     return query;
   }, [projects]);

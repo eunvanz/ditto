@@ -12,7 +12,6 @@ import React, { useCallback, useMemo, useState } from "react";
 import {
   checkHasAuthorization,
   getButtonIndentionPaddingByDepth,
-  getIndentionPaddingByDepth,
 } from "../../helpers/projectHelpers";
 import { Theme } from "../../theme";
 import {
@@ -128,8 +127,8 @@ const ModelTable: React.FC<ModelTableProps> = ({
     onSetEditingModelField(undefined);
   }, [onSetEditingModelField]);
 
-  const indentionPadding = useMemo(() => {
-    return getIndentionPaddingByDepth(depth);
+  const buttonIndentionPadding = useMemo(() => {
+    return getButtonIndentionPaddingByDepth(depth ? depth + 1 : undefined);
   }, [depth]);
 
   const addText = useMemo(() => {
@@ -232,7 +231,10 @@ const ModelTable: React.FC<ModelTableProps> = ({
             />
           ) : (
             <TableRow>
-              <TableCell colSpan={8} style={{ paddingLeft: indentionPadding }}>
+              <TableCell
+                colSpan={8}
+                style={{ paddingLeft: buttonIndentionPadding }}
+              >
                 <Button
                   className={classes.addButton}
                   fullWidth

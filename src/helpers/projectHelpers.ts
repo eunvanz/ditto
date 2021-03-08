@@ -19,7 +19,7 @@ export const getIndentionPaddingByDepth = (depth?: number) => {
 };
 
 export const getButtonIndentionPaddingByDepth = (depth?: number) => {
-  return depth ? depth * 16 - 16 : undefined;
+  return depth ? depth * 16 - 28 : 4;
 };
 
 export const getTextFieldErrorProps = (error?: FieldError) => ({
