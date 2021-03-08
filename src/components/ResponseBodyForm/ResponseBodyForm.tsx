@@ -147,7 +147,7 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
             <SvgIcon fontSize="small" className={classes.expandIcon}>
               {isOpen ? <ExpandLess /> : <ExpandMore />}
             </SvgIcon>
-            Status code <StatusBadge statusCode={responseStatus.statusCode} />
+            <StatusBadge statusCode={responseStatus.statusCode} />
             {responseStatus.description && (
               <span className={classes.description}>
                 {responseStatus.description}
