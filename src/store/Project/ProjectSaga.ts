@@ -56,6 +56,7 @@ import FirebaseSelectors from "../Firebase/FirebaseSelectors";
 import UiSelectors from "../Ui/UiSelectors";
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
+import { getProjectKeyByRole } from "../../helpers/projectHelpers";
 
 function* getProperDoc<T extends Recordable>(
   values: any & { target?: Doc<T, BaseSettings> }
@@ -1585,6 +1586,101 @@ export function* deleteResponseHeaderFlow() {
   }
 }
 
+export function* addMembersFlow() {
+  while (true) {
+    const { type, payload } = yield* take(ProjectActions.addMembers);
+    yield* put(ProgressActions.startProgress(type));
+    yield* put(UiActions.showLoading(type));
+    try {
+      const { role, members } = payload;
+      const project = yield* select(ProjectSelectors.selectCurrentProject);
+      assertNotEmpty(project);
+      const newMembers: Record<string, boolean> = {};
+      const key = getProjectKeyByRole(role);
+      members.forEach((member) => {
+        newMembers[member.id] = true;
+      });
+      yield* call(Firework.updateProject, project.id, {
+        members: {
+          ...project.members,
+          ...newMembers,
+        },
+        [key]: {
+          ...project[key],
+          ...newMembers,
+        },
+      });
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    } finally {
+      yield* put(ProgressActions.finishProgress(type));
+      yield* put(UiActions.hideLoading(type));
+    }
+  }
+}
+
+export function* deleteMemberFlow() {
+  while (true) {
+    const { type, payload } = yield* take(ProjectActions.deleteMember);
+    const { member, role } = payload;
+    const isConfirmed = yield* call(Alert.confirm, {
+      title: "Delete user",
+      message: `Are you sure to delete user ${member.name}?`,
+    });
+    if (isConfirmed) {
+      try {
+        yield* put(UiActions.showLoading(type));
+        const project = yield* select(ProjectSelectors.selectCurrentProject);
+        assertNotEmpty(project);
+        const key = getProjectKeyByRole(role);
+        const newMembers = { [member.id]: false };
+        yield* call(Firework.updateProject, project.id, {
+          members: {
+            ...project.members,
+            ...newMembers,
+          },
+          [key]: {
+            ...project[key],
+            ...newMembers,
+          },
+        });
+      } catch (error) {
+        yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+      } finally {
+        yield* put(UiActions.hideLoading(type));
+      }
+    }
+  }
+}
+
+export function* changeMemberRoleFlow() {
+  while (true) {
+    const { type, payload } = yield* take(ProjectActions.changeMemberRole);
+    const { member, oldRole, newRole } = payload;
+    const oldKey = getProjectKeyByRole(oldRole);
+    const newKey = getProjectKeyByRole(newRole);
+    try {
+      yield* put(UiActions.showDelayedLoading({ taskName: type }));
+      const project = yield* select(ProjectSelectors.selectCurrentProject);
+      assertNotEmpty(project);
+      yield* call(Firework.updateProject, project.id, {
+        [oldKey]: {
+          ...project[oldKey],
+          [member.id]: false,
+        },
+        [newKey]: {
+          ...project[newKey],
+          [member.id]: true,
+        },
+      });
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    } finally {
+      yield* put(UiActions.hideLoading(type));
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -1614,5 +1710,8 @@ export function* watchProjectActions() {
     fork(deleteResponseBodyFlow),
     fork(submitResponseHeaderFlow),
     fork(deleteResponseHeaderFlow),
+    fork(addMembersFlow),
+    fork(deleteMemberFlow),
+    fork(changeMemberRoleFlow),
   ]);
 }

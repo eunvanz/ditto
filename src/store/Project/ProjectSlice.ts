@@ -177,11 +177,19 @@ const ProjectSlice = createSlice({
     deleteResponseHeader: (_, _action: PayloadAction<ModelFieldDoc>) => {},
     changeMemberRole: (
       _,
-      _action: PayloadAction<{ member: UserProfileDoc; role: MemberRole }>
+      _action: PayloadAction<{
+        member: UserProfileDoc;
+        oldRole: MemberRole;
+        newRole: MemberRole;
+      }>
     ) => {},
     deleteMember: (
       _,
       _action: PayloadAction<{ member: UserProfileDoc; role: MemberRole }>
+    ) => {},
+    addMembers: (
+      _,
+      _action: PayloadAction<{ members: UserProfileDoc[]; role: MemberRole }>
     ) => {},
   },
 });

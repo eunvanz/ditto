@@ -51,6 +51,11 @@ const selectQuickUrlFormModal = createSelector(
   (quickUrlFormModal) => quickUrlFormModal
 );
 
+const selectSearchUserFormModal = createSelector(
+  (state: RootState) => state.ui.searchUserFormModal,
+  (searchUserFormModal) => searchUserFormModal
+);
+
 const UiSelectors = {
   selectTheme,
   selectProjectFormModal,
@@ -62,6 +67,7 @@ const UiSelectors = {
   selectIsModalEscapeDisabled,
   selectRequestFormModal,
   selectQuickUrlFormModal,
+  selectSearchUserFormModal,
 };
 
 export default UiSelectors;

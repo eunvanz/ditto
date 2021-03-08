@@ -6,6 +6,7 @@ import {
   ModelDoc,
   GroupDoc,
   RequestDoc,
+  MemberRole,
 } from "../../types";
 
 export interface Notification {
@@ -32,7 +33,13 @@ export type UiState = {
   isModalEscapeDisabled: boolean;
   requestFormModal: RequestFormModalState;
   quickUrlFormModal: QuickUrlFormModalState;
+  searchUserFormModal: SearchUserFormModalState;
 };
+
+export interface SearchUserFormModalState {
+  isVisible: boolean;
+  role: MemberRole;
+}
 
 export interface QuickUrlFormModalState {
   isVisible: boolean;
@@ -112,6 +119,10 @@ export const initialUiState: UiState = {
   },
   quickUrlFormModal: {
     isVisible: false,
+  },
+  searchUserFormModal: {
+    isVisible: false,
+    role: "guest",
   },
 };
 
@@ -258,6 +269,13 @@ const UiSlice = createSlice({
     },
     hideQuickUrlFormModal: (state, _action: PayloadAction<void>) => {
       state.quickUrlFormModal.isVisible = false;
+    },
+    showSearchUserFormModal: (state, action: PayloadAction<MemberRole>) => {
+      state.searchUserFormModal.isVisible = true;
+      state.searchUserFormModal.role = action.payload;
+    },
+    hideSearchUserFormModal: (state, _action: PayloadAction<void>) => {
+      state.searchUserFormModal.isVisible = false;
     },
   },
 });

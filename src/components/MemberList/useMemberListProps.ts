@@ -4,6 +4,8 @@ import useProjectByParam from "../../hooks/useProjectByParam";
 import { useMemo, useCallback } from "react";
 import { UserProfileDoc, MemberRole } from "../../types";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
+import { UiActions } from "../../store/Ui/UiSlice";
+import { getProjectKeyByRole } from "../../helpers/projectHelpers";
 
 const useMemberListProps = ({
   title,
@@ -14,24 +16,33 @@ const useMemberListProps = ({
 
   const { project } = useProjectByParam();
 
+  const role = useMemo(() => {
+    switch (title) {
+      case "Owners":
+        return "owner";
+      case "Managers":
+        return "manager";
+      case "Guests":
+        return "guest";
+    }
+  }, [title]);
+
   const members = useMemo(() => {
     if (!project) {
       return [];
     }
-    const role =
-      title === "Owners"
-        ? "owners"
-        : title === "Managers"
-        ? "managers"
-        : "guests";
-    return allMembers.filter((member) => project[role][member.id]);
-  }, [allMembers, project, title]);
+    return allMembers.filter(
+      (member) => project[getProjectKeyByRole(role)][member.id]
+    );
+  }, [allMembers, project, role]);
 
   const onClickMoveTo = useCallback(
-    (member: UserProfileDoc, role: MemberRole) => {
-      dispatch(ProjectActions.changeMemberRole({ member, role }));
+    (member: UserProfileDoc, newRole: MemberRole) => {
+      dispatch(
+        ProjectActions.changeMemberRole({ member, newRole, oldRole: role })
+      );
     },
-    [dispatch]
+    [dispatch, role]
   );
 
   const onClickDelete = useCallback(
@@ -41,9 +52,12 @@ const useMemberListProps = ({
     [dispatch]
   );
 
-  const onClickAdd = useCallback((role: MemberRole) => {
-    // TODO
-  }, []);
+  const onClickAdd = useCallback(
+    (role: MemberRole) => {
+      dispatch(UiActions.showSearchUserFormModal(role));
+    },
+    [dispatch]
+  );
 
   return {
     title,

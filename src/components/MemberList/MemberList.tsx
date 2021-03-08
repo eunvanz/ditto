@@ -34,7 +34,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   memberName: {
     padding: 5,
-
     fontSize: "1rem",
   },
   outerBox: {
@@ -110,7 +109,7 @@ const MemberList: React.FC<MemberListProps> = ({
           size="large"
           onClick={() => onClickAdd(role)}
         >
-          <Add /> ADD NEW MEMBER
+          <Add /> ADD NEW MEMBERS
         </Button>
       </Box>
     </Card>

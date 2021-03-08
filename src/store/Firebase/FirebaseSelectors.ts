@@ -178,6 +178,10 @@ const selectUserProfile = createSelector(
 const createProjectMembersSelector = (projectId: string) =>
   createOrderedSelector<UserProfileDoc[]>(`projectMembers/${projectId}`);
 
+const selectSearchUserResult = createOrderedSelector<UserProfileDoc[]>(
+  "searchUserResult"
+);
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -198,6 +202,7 @@ const FirebaseSelectors = {
   createResponseHeadersSelector,
   selectUserProfile,
   createProjectMembersSelector,
+  selectSearchUserResult,
 };
 
 export default FirebaseSelectors;

@@ -1,5 +1,5 @@
 import { FieldError } from "react-hook-form";
-import { REQUEST_METHOD } from "../types";
+import { REQUEST_METHOD, MemberRole } from "../types";
 
 export const patterns = {
   wordsWithNoSpace: {
@@ -55,5 +55,16 @@ export const getRequestMethodColor = (method?: REQUEST_METHOD) => {
       return "secondary";
     default:
       return "default";
+  }
+};
+
+export const getProjectKeyByRole = (role: MemberRole) => {
+  switch (role) {
+    case "owner":
+      return "owners";
+    case "manager":
+      return "managers";
+    case "guest":
+      return "guests";
   }
 };
