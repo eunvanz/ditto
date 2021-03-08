@@ -24,7 +24,7 @@ const selectMyProjects = (state: RootState) =>
 
 const selectExampleProject = createSelector(
   (state: RootState) => state.firestore.ordered.exampleProject,
-  (projects) => (projects[0] as ProjectDoc) || undefined
+  (projects) => (projects?.[0] as ProjectDoc) || undefined
 );
 
 const selectOrderedMyProjects = createSelector(
@@ -34,7 +34,7 @@ const selectOrderedMyProjects = createSelector(
   (projects: ProjectDoc[], auth, exampleProject) => {
     return auth
       ? [
-          ...(exampleProject.members[auth.uid] ? [] : [exampleProject]),
+          ...(exampleProject?.members[auth.uid] ? [] : [exampleProject]),
           ...orderBy(projects, [`settingsByMember.${auth.uid}.seq`], ["asc"]),
         ]
       : [];

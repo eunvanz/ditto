@@ -686,6 +686,7 @@ export function* commonModelFieldFormFlow<
               })
             );
             yield* put(UiActions.hideQuickModelNameFormModal());
+            yield* put(ProjectActions.receiveEditingModelField(undefined));
             yield* call(updateModelField, target.id, {
               ...newModelField,
               format: {
@@ -801,6 +802,9 @@ export function* commonModelFieldFormFlow<
               })
             );
             yield* put(UiActions.hideQuickModelNameFormModal());
+            if (hasToBlurFormAlways) {
+              yield* put(ProjectActions.receiveEditingModelField(undefined));
+            }
             yield* call(addModelField, {
               ...newModelField,
               format: {
@@ -808,7 +812,6 @@ export function* commonModelFieldFormFlow<
                 ...recordableDocProps,
               },
             });
-            hasToBlurForm = true;
           }
         } else if (isNewEnum) {
           hasToBlurForm = false;
