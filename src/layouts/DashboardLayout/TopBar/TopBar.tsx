@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: 64,
   },
   logo: {
-    fontFamily: "'Pacifico', cursive",
+    fontFamily: "'Leckerli One', cursive",
     color: theme.name === THEMES.LIGHT ? "#fff" : theme.palette.text.primary,
     textDecoration: "unset",
     fontSize: "x-large",
