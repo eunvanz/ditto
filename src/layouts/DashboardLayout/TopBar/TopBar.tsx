@@ -72,7 +72,7 @@ const TopBar: FC<TopBarProps> = ({
         </Hidden>
         <Hidden mdDown>
           <RouterLink to="/" className={classes.logo}>
-            draffto
+            diitto
           </RouterLink>
         </Hidden>
         <Box ml={2} flexGrow={1} />
