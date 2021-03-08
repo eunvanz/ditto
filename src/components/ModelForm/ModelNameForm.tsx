@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { ModelDoc } from "../../types";
 import { patterns } from "../../helpers/projectHelpers";
 import { isEqual } from "lodash";
+import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
 
 const useStyles = makeStyles(() => ({
   submit: {
@@ -41,10 +42,12 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
     };
   }, [model]);
 
-  const { register, errors, handleSubmit, getValues } = useForm({
+  const { register, errors, handleSubmit, getValues, reset } = useForm({
     mode: "onChange",
     defaultValues,
   });
+
+  useSyncDefaultValues(reset, defaultValues);
 
   const submit = useCallback(
     (e?: React.FormEvent<HTMLFormElement>) => {

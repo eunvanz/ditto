@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { getTextFieldErrorProps } from "../../helpers/projectHelpers";
 import { ResponseStatusDoc } from "../../types";
 import Modal from "../Modal";
+import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
 
 export interface ResponseStatusFormValues {
   statusCode: number;
@@ -35,6 +36,8 @@ const ResponseStatusFormModal: React.FC<ResponseStatusFormModalProps> = ({
     mode: "onChange",
     defaultValues,
   });
+
+  useSyncDefaultValues(reset, defaultValues);
 
   const watchedValues = watch();
 

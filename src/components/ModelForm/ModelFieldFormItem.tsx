@@ -39,6 +39,7 @@ import {
   patterns,
 } from "../../helpers/projectHelpers";
 import isEqual from "lodash/isEqual";
+import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
 
 export type ModelFieldColumns =
   | "fieldName"
@@ -173,6 +174,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     trigger,
     getValues,
   } = formProps;
+
+  useSyncDefaultValues(reset, defaultValues);
 
   const watchedValues = watch();
 

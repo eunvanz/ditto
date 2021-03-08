@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo } from "react";
 import {
   Card,
   CardHeader,
@@ -14,6 +14,7 @@ import isEqual from "lodash/isEqual";
 import { ProjectDoc } from "../../../types";
 import { Theme } from "../../../theme";
 import { getDangerButtonStyle } from "../../../styles";
+import useSyncDefaultValues from "../../../hooks/useSyncDefaultValues";
 
 const useStyles = makeStyles((theme: Theme) => ({
   submitButton: {
@@ -53,15 +54,10 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
     ProjectBasicFormValues
   >({
     mode: "onChange",
-    defaultValues: {
-      title: project.title,
-      description: project.description,
-    },
+    defaultValues: defaultValues,
   });
 
-  useEffect(() => {
-    reset(defaultValues);
-  }, [defaultValues, reset]);
+  useSyncDefaultValues(reset, defaultValues);
 
   const watchedValues = watch();
 

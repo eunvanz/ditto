@@ -15,6 +15,7 @@ import {
   getTextFieldErrorProps,
   methodOptions,
 } from "../../../helpers/projectHelpers";
+import useSyncDefaultValues from "../../../hooks/useSyncDefaultValues";
 
 const useStyles = makeStyles((theme: Theme) => ({
   methodField: {
@@ -66,6 +67,8 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
     mode: "onChange",
     defaultValues,
   });
+
+  useSyncDefaultValues(reset, defaultValues);
 
   const watchedValues = watch();
 

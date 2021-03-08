@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { TextField, Box, Button } from "@material-ui/core";
 import isEqual from "lodash/isEqual";
+import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
 
 export interface ProjectFormProps {
   onSubmit: (values: ProjectFormValues) => void;
@@ -19,7 +20,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   isSubmitting,
   defaultValues,
 }) => {
-  const { register, handleSubmit, errors, watch, formState } = useForm<
+  const { register, handleSubmit, errors, watch, formState, reset } = useForm<
     ProjectFormValues
   >({
     mode: "onChange",
@@ -35,6 +36,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const isNotModified = useMemo(() => {
     return isEqual(defaultValues, watchedValues);
   }, [defaultValues, watchedValues]);
+
+  useSyncDefaultValues(reset, defaultValues);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>

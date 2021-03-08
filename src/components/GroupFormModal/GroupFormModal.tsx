@@ -5,6 +5,7 @@ import { Box, Button, makeStyles, TextField, Theme } from "@material-ui/core";
 import Modal from "../Modal";
 import { GroupDoc } from "../../types";
 import { getDangerButtonStyle } from "../../styles";
+import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
 
 const useStyles = makeStyles((theme: Theme) => ({
   deleteButton: getDangerButtonStyle(theme),
@@ -42,6 +43,8 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
     mode: "onChange",
     defaultValues,
   });
+
+  useSyncDefaultValues(reset, defaultValues);
 
   const watchedValues = watch();
 

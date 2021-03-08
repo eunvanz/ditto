@@ -20,6 +20,7 @@ import {
 import { getDangerButtonStyle } from "../../../styles";
 import { Theme } from "../../../theme";
 import { GroupDoc, RequestDoc } from "../../../types";
+import useSyncDefaultValues from "../../../hooks/useSyncDefaultValues";
 
 const useStyles = makeStyles((theme: Theme) => ({
   submitButton: {
@@ -77,10 +78,12 @@ const SettingTab: React.FC<SettingsTabProps> = ({
     request.operationId,
   ]);
 
-  const { register, errors, watch, handleSubmit } = useForm({
+  const { register, errors, watch, handleSubmit, reset } = useForm({
     mode: "onChange",
     defaultValues,
   });
+
+  useSyncDefaultValues(reset, defaultValues);
 
   const watchedValues = watch();
 

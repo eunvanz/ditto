@@ -7,6 +7,7 @@ import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { ModelNameFormValues } from "./ModelNameForm";
 import useProjectByParam from "../../hooks/useProjectByParam";
+import useLoading from "../../hooks/useLoading";
 
 const useModelFormProps: (defaultModelId?: string) => any = (
   defaultModelId
@@ -62,6 +63,9 @@ const useModelFormProps: (defaultModelId?: string) => any = (
       ? editingModelField.modelFieldId
       : undefined;
   }, [editingModelField, formId]);
+
+  useLoading(modelFields, `loadingModelFields-${model?.id}`, !model);
+  useLoading(projectModels, `loadingProjectModels-${projectId}`);
 
   return {
     model,

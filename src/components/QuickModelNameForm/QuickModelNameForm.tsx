@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import isEqual from "lodash/isEqual";
 import { patterns } from "../../helpers/projectHelpers";
 import { ModelNameFormValues } from "../ModelForm/ModelNameForm";
+import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
 
 export interface QuickModelNameFormProps {
   onSubmit: (values: ModelNameFormValues) => void;
@@ -18,12 +19,14 @@ const QuickModelNameForm: React.FC<QuickModelNameFormProps> = ({
   defaultValues,
   existingModelNames,
 }) => {
-  const { register, handleSubmit, errors, watch, formState } = useForm<
+  const { register, handleSubmit, errors, watch, formState, reset } = useForm<
     ModelNameFormValues
   >({
     mode: "onChange",
     defaultValues,
   });
+
+  useSyncDefaultValues(reset, defaultValues);
 
   const watchedValues = watch();
 
