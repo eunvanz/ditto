@@ -340,3 +340,5 @@ export interface ModalBase {
   isVisible: boolean;
   onClose: () => void;
 }
+
+export type MemberRole = "owner" | "manager" | "guest";

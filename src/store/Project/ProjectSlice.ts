@@ -12,6 +12,7 @@ import {
   RequestDoc,
   ResponseStatusDoc,
   UserProfileDoc,
+  MemberRole,
 } from "../../types";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
@@ -23,7 +24,6 @@ import { RequestFormValues } from "../../components/RequestFormModal/RequestForm
 import { RequestUrlFormValues } from "../../routes/RequestManagement/RequestUrlForm/RequestUrlForm";
 import { RequestSettingFormValues } from "../../routes/RequestManagement/SettingsTab/SettingsTab";
 import { ResponseStatusFormValues } from "../../components/ResponseStatusFormModal/ResponseStatusFormModal";
-import { MemberRole } from "../../components/MemberList/MemberList";
 
 export type ProjectState = {
   editingModelField?: {

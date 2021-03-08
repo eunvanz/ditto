@@ -14,7 +14,7 @@ import {
 import { MoreHoriz, Add } from "@material-ui/icons";
 import React, { useRef, useState, useMemo } from "react";
 import { Theme } from "../../theme";
-import { UserProfileDoc } from "../../types";
+import { UserProfileDoc, MemberRole } from "../../types";
 
 const useStyles = makeStyles((theme: Theme) => ({
   countChip: {
@@ -116,8 +116,6 @@ const MemberList: React.FC<MemberListProps> = ({
     </Card>
   );
 };
-
-export type MemberRole = "owner" | "manager" | "guest";
 
 export interface MemberItemProps
   extends Pick<MemberListProps, "onClickMoveTo" | "onClickDelete"> {

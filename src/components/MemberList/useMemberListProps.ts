@@ -2,8 +2,7 @@ import { MemberListContainerProps } from "./MemberListContainer";
 import { useDispatch } from "react-redux";
 import useProjectByParam from "../../hooks/useProjectByParam";
 import { useMemo, useCallback } from "react";
-import { MemberRole } from "./MemberList";
-import { UserProfileDoc } from "../../types";
+import { UserProfileDoc, MemberRole } from "../../types";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 
 const useMemberListProps = ({
