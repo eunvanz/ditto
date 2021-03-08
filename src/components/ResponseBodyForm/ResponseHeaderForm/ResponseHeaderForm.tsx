@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  MemberRole,
   ModelFieldDoc,
   REQUEST_PARAM_LOCATION,
   ResponseHeaderDoc,
@@ -12,6 +13,7 @@ export interface ResponseHeaderFormProps {
   onSubmit: (values: ModelFieldFormValues) => void;
   onDelete: (responseHeader: ModelFieldDoc) => void;
   checkIsSubmitting: (id?: string) => boolean;
+  role: MemberRole;
 }
 
 const ResponseHeaderForm: React.FC<ResponseHeaderFormProps> = ({
@@ -19,6 +21,7 @@ const ResponseHeaderForm: React.FC<ResponseHeaderFormProps> = ({
   onSubmit,
   onDelete,
   checkIsSubmitting,
+  role,
 }) => {
   return (
     <RequestParamForm
@@ -27,6 +30,7 @@ const ResponseHeaderForm: React.FC<ResponseHeaderFormProps> = ({
       onSubmitRequestParamForm={onSubmit}
       onDeleteRequestParam={onDelete}
       checkIsSubmittingRequestParam={checkIsSubmitting}
+      role={role}
     />
   );
 };

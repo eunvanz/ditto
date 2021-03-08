@@ -6,6 +6,7 @@ import { UserProfileDoc, MemberRole } from "../../types";
 import UiSelectors from "../../store/Ui/UiSelectors";
 import useProjectByParam from "../../hooks/useProjectByParam";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
+import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 
 const useSearchUserFormProps = () => {
   const dispatch = useDispatch();
@@ -45,11 +46,15 @@ const useSearchUserFormProps = () => {
 
   const { role } = useSelector(UiSelectors.selectSearchUserFormModal);
 
+  const isSubmitting = useSelector(
+    ProgressSelectors.createInProgressSelector(ProjectActions.addMembers.type)
+  );
+
   return {
-    resultItems: resultItems?.filter((item) => !project?.members[item.id]),
+    resultItems: resultItems?.filter((item) => !project?.members[item.uid]),
     onSearch,
     onSubmit,
-    isSubmitting: false,
+    isSubmitting,
     role,
   };
 };

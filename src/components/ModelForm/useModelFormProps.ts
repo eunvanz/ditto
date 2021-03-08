@@ -8,6 +8,7 @@ import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { ModelNameFormValues } from "./ModelNameForm";
 import useProjectByParam from "../../hooks/useProjectByParam";
 import useLoading from "../../hooks/useLoading";
+import useProjectRole from "../../hooks/useProjectRole";
 
 const useModelFormProps: (defaultModelId?: string) => any = (
   defaultModelId
@@ -18,7 +19,7 @@ const useModelFormProps: (defaultModelId?: string) => any = (
 
   const dispatch = useDispatch();
 
-  const { projectId } = useProjectByParam();
+  const { projectId, project } = useProjectByParam();
 
   const firestoreQuery = useMemo(() => {
     const query = [];
@@ -67,12 +68,15 @@ const useModelFormProps: (defaultModelId?: string) => any = (
   useLoading(modelFields, `loadingModelFields-${model?.id}`, !model);
   useLoading(projectModels, `loadingProjectModels-${projectId}`);
 
+  const role = useProjectRole(project);
+
   return {
     model,
     modelFields: modelFields || [],
     onSubmitModel,
     projectModels: projectModels || [],
     editingModelFieldId,
+    role,
   };
 };
 

@@ -14,12 +14,13 @@ import isEqual from "lodash/isEqual";
 import React, { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import {
+  checkHasAuthorization,
   getTextFieldErrorProps,
   patterns,
 } from "../../../helpers/projectHelpers";
 import { getDangerButtonStyle } from "../../../styles";
 import { Theme } from "../../../theme";
-import { GroupDoc, RequestDoc } from "../../../types";
+import { GroupDoc, MemberRole, RequestDoc } from "../../../types";
 import useSyncDefaultValues from "../../../hooks/useSyncDefaultValues";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -39,6 +40,7 @@ export interface SettingsTabProps {
   onSubmit: (values: RequestSettingFormValues) => void;
   isSubmitting: boolean;
   onDelete: () => void;
+  role: MemberRole;
 }
 
 export interface RequestSettingFormValues {
@@ -58,6 +60,7 @@ const SettingTab: React.FC<SettingsTabProps> = ({
   onSubmit,
   isSubmitting,
   onDelete,
+  role,
 }) => {
   const classes = useStyles();
 
@@ -82,6 +85,10 @@ const SettingTab: React.FC<SettingsTabProps> = ({
     mode: "onChange",
     defaultValues,
   });
+
+  const hasManagerAuthorization = useMemo(() => {
+    return checkHasAuthorization(role, "manager");
+  }, [role]);
 
   useSyncDefaultValues(reset, defaultValues);
 
@@ -137,6 +144,7 @@ const SettingTab: React.FC<SettingsTabProps> = ({
               fullWidth
               required
               {...getTextFieldErrorProps(errors.name)}
+              disabled={!hasManagerAuthorization}
             />
           </Box>
           <Box mt={2}>
@@ -162,6 +170,7 @@ const SettingTab: React.FC<SettingsTabProps> = ({
               fullWidth
               {...getTextFieldErrorProps(errors.operationId)}
               placeholder="Unique string used to identify an operation"
+              disabled={!hasManagerAuthorization}
             />
           </Box>
           <Box mt={2}>
@@ -179,6 +188,7 @@ const SettingTab: React.FC<SettingsTabProps> = ({
               fullWidth
               {...getTextFieldErrorProps(errors.description)}
               placeholder="Detailed description of this operation"
+              disabled={!hasManagerAuthorization}
             />
           </Box>
           <Box mt={2}>
@@ -190,6 +200,7 @@ const SettingTab: React.FC<SettingsTabProps> = ({
               inputRef={register}
               className={classes.groupSelect}
               SelectProps={{ native: true }}
+              disabled={!hasManagerAuthorization}
             >
               <option value="none">[ None ]</option>
               {projectGroups.map((group) => (
@@ -207,31 +218,38 @@ const SettingTab: React.FC<SettingsTabProps> = ({
                   name="isDeprecated"
                   inputRef={register}
                   defaultChecked={defaultValues.isDeprecated}
+                  disabled={!hasManagerAuthorization}
                 />
               }
             />
           </Box>
         </CardContent>
-        <Divider />
-        <Box p={2} display="flex" justifyContent="flex-end">
-          <Button
-            className={classes.deleteButton}
-            disabled={isSubmitting}
-            onClick={onDelete}
-            variant="contained"
-          >
-            Delete operation
-          </Button>
-          <Button
-            color="secondary"
-            disabled={isSubmitDisabled}
-            type="submit"
-            variant="contained"
-            className={classes.submitButton}
-          >
-            Apply modifications
-          </Button>
-        </Box>
+        {hasManagerAuthorization && (
+          <>
+            <Divider />
+            <Box p={2} display="flex" justifyContent="flex-end">
+              {checkHasAuthorization(role, "owner") && (
+                <Button
+                  className={classes.deleteButton}
+                  disabled={isSubmitting}
+                  onClick={onDelete}
+                  variant="contained"
+                >
+                  Delete operation
+                </Button>
+              )}
+              <Button
+                color="secondary"
+                disabled={isSubmitDisabled}
+                type="submit"
+                variant="contained"
+                className={classes.submitButton}
+              >
+                Apply modifications
+              </Button>
+            </Box>
+          </>
+        )}
       </Card>
     </form>
   );

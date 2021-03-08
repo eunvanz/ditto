@@ -9,8 +9,10 @@ export interface MemberListContainerProps
 }
 
 const MemberListContainer = (containerProps: MemberListContainerProps) => {
-  const props = useMemberListProps(containerProps);
-  return <MemberList {...props} />;
+  const { userProfile, ...props } = useMemberListProps(containerProps);
+  return userProfile ? (
+    <MemberList userProfile={userProfile} {...props} />
+  ) : null;
 };
 
 export default MemberListContainer;

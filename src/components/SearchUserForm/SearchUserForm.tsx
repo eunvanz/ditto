@@ -107,7 +107,7 @@ const SearchUserForm = ({
 
   const removeMember = useCallback((member: UserProfileDoc) => {
     setSelectedMembers((members) =>
-      members.filter((item) => item.id !== member.id)
+      members.filter((item) => item.uid !== member.uid)
     );
   }, []);
 
@@ -138,7 +138,7 @@ const SearchUserForm = ({
           resultItems
             ?.filter(
               (item) =>
-                !selectedMembers.map((item) => item.id).includes(item.id)
+                !selectedMembers.map((item) => item.uid).includes(item.uid)
             )
             .map((item) => (
               <MemberItem

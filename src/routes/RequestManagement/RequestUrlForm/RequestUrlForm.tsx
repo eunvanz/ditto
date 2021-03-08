@@ -7,11 +7,13 @@ import { regExps } from "../../../helpers/commonHelpers";
 import { Theme } from "../../../theme";
 import {
   BASE_URL,
+  MemberRole,
   ProjectUrlDoc,
   RequestDoc,
   REQUEST_METHOD,
 } from "../../../types";
 import {
+  checkHasAuthorization,
   getTextFieldErrorProps,
   methodOptions,
 } from "../../../helpers/projectHelpers";
@@ -36,6 +38,7 @@ export interface RequestUrlFormProps {
   request: RequestDoc;
   baseUrls: ProjectUrlDoc[];
   requests: RequestDoc[];
+  role: MemberRole;
 }
 
 export interface RequestUrlFormValues {
@@ -50,6 +53,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
   request,
   baseUrls,
   requests,
+  role,
 }) => {
   const classes = useStyles();
 
@@ -67,6 +71,10 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
     mode: "onChange",
     defaultValues,
   });
+
+  const hasManagerAuthorization = useMemo(() => {
+    return checkHasAuthorization(role, "manager");
+  }, [role]);
 
   useSyncDefaultValues(reset, defaultValues);
 
@@ -100,7 +108,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
 
   const validateAndSubmit = useCallback(
     async (e) => {
-      if (isEqual(watchedValues, defaultValues)) {
+      if (isEqual(watchedValues, defaultValues) || !hasManagerAuthorization) {
         return;
       }
       e.preventDefault();
@@ -109,7 +117,15 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
         onSubmit({ ...data, target: request });
       })();
     },
-    [defaultValues, handleSubmit, onSubmit, request, trigger, watchedValues]
+    [
+      defaultValues,
+      handleSubmit,
+      hasManagerAuthorization,
+      onSubmit,
+      request,
+      trigger,
+      watchedValues,
+    ]
   );
 
   useEffect(() => {
@@ -150,6 +166,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             SelectProps={{ native: true }}
             onChange={validateAndSubmit}
             {...getTextFieldErrorProps(errors.method)}
+            disabled={!hasManagerAuthorization}
           >
             {methodOptions.map((method) => (
               <option key={method} value={method}>
@@ -167,6 +184,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             SelectProps={{ native: true }}
             onChange={validateAndSubmit}
             {...getTextFieldErrorProps(errors.baseUrl)}
+            disabled={!hasManagerAuthorization}
           >
             {baseUrlOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -228,6 +246,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
             placeholder="user/{userId}"
             {...getTextFieldErrorProps(errors.path)}
             onBlur={validateAndSubmit}
+            disabled={!hasManagerAuthorization}
           />
         </Box>
       </form>

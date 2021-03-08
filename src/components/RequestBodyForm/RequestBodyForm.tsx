@@ -14,7 +14,7 @@ import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import React, { useCallback, useEffect, useState } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { Theme } from "../../theme";
-import { ModelFieldDoc, RequestBodyDoc } from "../../types";
+import { MemberRole, ModelFieldDoc, RequestBodyDoc } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import ModelTable from "../ModelTable";
 import {
@@ -72,6 +72,7 @@ export interface RequestBodyFormProps {
   onSubmit: (values: ModelFieldFormValues) => void;
   onDelete: (requestBody: ModelFieldDoc) => void;
   checkIsSubmittingRequestBody: (id?: string) => boolean;
+  role: MemberRole;
 }
 
 const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
@@ -79,6 +80,7 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
   onSubmit,
   onDelete,
   checkIsSubmittingRequestBody,
+  role,
 }: RequestBodyFormProps) => {
   const classes = useStyles();
 
@@ -164,6 +166,7 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
                   size="small"
                 />
               )}
+              role={role}
             />
           </Box>
         </PerfectScrollbar>

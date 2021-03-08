@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
+import useProjectRole from "../../hooks/useProjectRole";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
@@ -64,6 +65,8 @@ const useGroupFormModal = () => {
     ])
   );
 
+  const role = useProjectRole(project);
+
   return {
     defaultValues,
     isVisible,
@@ -72,6 +75,7 @@ const useGroupFormModal = () => {
     onSubmit,
     isSubmitting,
     onDelete,
+    role,
   };
 };
 

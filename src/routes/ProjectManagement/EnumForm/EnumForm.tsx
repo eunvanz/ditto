@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -17,9 +17,10 @@ import {
 import PerfectScrollbar from "react-perfect-scrollbar";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import AddIcon from "@material-ui/icons/Add";
-import { EnumerationDoc, FIELD_TYPE } from "../../../types";
+import { EnumerationDoc, FIELD_TYPE, MemberRole } from "../../../types";
 import { useForm } from "react-hook-form";
 import EnumFormItem from "./EnumFormItem";
+import { checkHasAuthorization } from "../../../helpers/projectHelpers";
 
 const useStyles = makeStyles(() => ({
   nameCell: {
@@ -48,12 +49,14 @@ export interface EnumFormProps {
   enumerations?: EnumerationDoc[];
   onDelete: (enumeration: EnumerationDoc) => void;
   onSubmit: (data: EnumFormValues) => void;
+  role: MemberRole;
 }
 
 const EnumForm: React.FC<EnumFormProps> = ({
   enumerations,
   onDelete,
   onSubmit,
+  role,
 }) => {
   const classes = useStyles();
 
@@ -72,15 +75,22 @@ const EnumForm: React.FC<EnumFormProps> = ({
 
   const { setValue, reset, clearErrors } = formProps;
 
+  const hasManagerAuthorization = useMemo(() => {
+    return checkHasAuthorization(role, "manager");
+  }, [role]);
+
   const showEditForm = useCallback(
     (enumeration: EnumerationDoc, fieldName: keyof EnumFormValues) => {
+      if (!hasManagerAuthorization) {
+        return;
+      }
       setCurrentEnumeration(enumeration);
       setIsNewFormVisible(false);
       setIsEditFormVisible(true);
       setFieldNameToFocus(fieldName);
       setTimeout(clearErrors);
     },
-    [clearErrors]
+    [clearErrors, hasManagerAuthorization]
   );
 
   const hideForm = useCallback(() => {
@@ -185,38 +195,42 @@ const EnumForm: React.FC<EnumFormProps> = ({
                         {enumeration.description}
                       </TableCell>
                       <TableCell align="right">
-                        <IconButton onClick={() => onDelete(enumeration)}>
-                          <SvgIcon fontSize="small">
-                            <DeleteOutlineIcon />
-                          </SvgIcon>
-                        </IconButton>
+                        {hasManagerAuthorization && (
+                          <IconButton onClick={() => onDelete(enumeration)}>
+                            <SvgIcon fontSize="small">
+                              <DeleteOutlineIcon />
+                            </SvgIcon>
+                          </IconButton>
+                        )}
                       </TableCell>
                     </>
                   )}
                 </TableRow>
               ))}
-              <TableRow>
-                {isNewFormVisible ? (
-                  <EnumFormItem
-                    formProps={formProps}
-                    autoFocusField={fieldNameToFocus}
-                    onSubmit={submitAndHideForm}
-                    onCancel={hideForm}
-                    existingEnumerations={enumerations}
-                  />
-                ) : (
-                  <TableCell colSpan={5}>
-                    <Button
-                      className={classes.addButton}
-                      fullWidth
-                      color="secondary"
-                      onClick={showNewForm}
-                    >
-                      <AddIcon fontSize="small" /> Add new enumeration
-                    </Button>
-                  </TableCell>
-                )}
-              </TableRow>
+              {hasManagerAuthorization && (
+                <TableRow>
+                  {isNewFormVisible ? (
+                    <EnumFormItem
+                      formProps={formProps}
+                      autoFocusField={fieldNameToFocus}
+                      onSubmit={submitAndHideForm}
+                      onCancel={hideForm}
+                      existingEnumerations={enumerations}
+                    />
+                  ) : (
+                    <TableCell colSpan={5}>
+                      <Button
+                        className={classes.addButton}
+                        fullWidth
+                        color="secondary"
+                        onClick={showNewForm}
+                      >
+                        <AddIcon fontSize="small" /> Add new enumeration
+                      </Button>
+                    </TableCell>
+                  )}
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </Box>

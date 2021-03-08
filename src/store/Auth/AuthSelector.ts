@@ -13,7 +13,10 @@ const selectUser = createSelector(
   }
 );
 
-const selectAuth = (state: RootState) => state.firebase.auth;
+const selectAuth = createSelector(
+  (state: RootState) => state.firebase.auth,
+  (auth) => auth
+);
 
 const AuthSelectors = {
   selectUser,

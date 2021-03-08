@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useProjectByParam from "../../hooks/useProjectByParam";
+import useProjectRole from "../../hooks/useProjectRole";
 import useRequestByParam from "../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
@@ -16,7 +17,7 @@ export interface UseRequestParamFormPropsParams {
 const useRequestParamFormProps: (
   params: UseRequestParamFormPropsParams
 ) => RequestParamFormProps = ({ location }: UseRequestParamFormPropsParams) => {
-  const { projectId } = useProjectByParam();
+  const { projectId, project } = useProjectByParam();
   const { requestId } = useRequestByParam();
 
   const requestParams = useSelector(
@@ -62,12 +63,15 @@ const useRequestParamFormProps: (
     [submittingRequestParamActionsInProgress]
   );
 
+  const role = useProjectRole(project);
+
   return {
     location,
     requestParams,
     onSubmitRequestParamForm,
     onDeleteRequestParam,
     checkIsSubmittingRequestParam,
+    role,
   };
 };
 

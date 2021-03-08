@@ -12,6 +12,7 @@ const ModelListContainer = () => {
     isVisible,
     onClose,
     defaultModelId,
+    role,
   } = useModelListProps();
 
   return (
@@ -21,6 +22,7 @@ const ModelListContainer = () => {
         onDelete={onDelete}
         onClickName={onClickName}
         onClickAdd={onClickAdd}
+        role={role}
       />
       <ModelForm
         isVisible={isVisible}

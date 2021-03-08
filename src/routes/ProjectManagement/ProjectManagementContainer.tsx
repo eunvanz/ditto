@@ -4,10 +4,10 @@ import useProjectManagementViewProps from "./useProjectManagementViewProps";
 import NotFoundView from "../NotFound";
 
 const ProjectManagementContainer = () => {
-  const { project, key } = useProjectManagementViewProps();
+  const { project, key, role } = useProjectManagementViewProps();
 
   return project ? (
-    <ProjectManagementView project={project} key={key} />
+    <ProjectManagementView project={project} key={key} role={role} />
   ) : (
     <NotFoundView
       title="The project you are looking for isn't here"

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import { assertNotEmpty } from "../../../helpers/commonHelpers";
 import useLoading from "../../../hooks/useLoading";
+import useProjectRole from "../../../hooks/useProjectRole";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 import ProjectSelectors from "../../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
@@ -40,10 +41,13 @@ const useEnumFormProps = () => {
 
   useLoading(enumerations, `loadingExistingEnumerations-${project.id}`);
 
+  const role = useProjectRole(project);
+
   return {
     enumerations,
     onSubmit,
     onDelete,
+    role,
   };
 };
 

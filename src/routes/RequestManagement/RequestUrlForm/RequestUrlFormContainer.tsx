@@ -9,6 +9,7 @@ const RequestUrlFormContainer = () => {
     onSubmit,
     key,
     requests,
+    role,
   } = useRequestUrlFormProps();
 
   return !!request && !!baseUrls ? (
@@ -18,6 +19,7 @@ const RequestUrlFormContainer = () => {
       onSubmit={onSubmit}
       key={key}
       requests={requests}
+      role={role}
     />
   ) : null;
 };

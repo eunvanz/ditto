@@ -12,7 +12,7 @@ import {
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { Theme } from "../../theme";
-import { ModelFieldDoc, REQUEST_PARAM_LOCATION } from "../../types";
+import { MemberRole, ModelFieldDoc, REQUEST_PARAM_LOCATION } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import ModelTable from "../ModelTable";
 import { ModelFieldColumns } from "../ModelForm/ModelFieldFormItem";
@@ -23,6 +23,7 @@ export interface RequestParamFormProps {
   onSubmitRequestParamForm: (values: ModelFieldFormValues) => void;
   onDeleteRequestParam: (requestParam: ModelFieldDoc) => void;
   checkIsSubmittingRequestParam: (id?: string) => boolean;
+  role: MemberRole;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -81,6 +82,7 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
   onSubmitRequestParamForm,
   onDeleteRequestParam,
   checkIsSubmittingRequestParam,
+  role,
 }) => {
   const classes = useStyles();
 
@@ -159,6 +161,7 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
               checkIsSubmittingModelFieldCustom={checkIsSubmittingRequestParam}
               customFieldName="Key"
               disabledColumns={disabledColumns}
+              role={role}
             />
           </Box>
         </PerfectScrollbar>

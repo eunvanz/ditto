@@ -1,5 +1,5 @@
-import React from "react";
-import { ModelDoc } from "../../../types";
+import React, { useMemo } from "react";
+import { MemberRole, ModelDoc } from "../../../types";
 import {
   Card,
   CardHeader,
@@ -18,6 +18,7 @@ import {
 import PerfectScrollbar from "react-perfect-scrollbar";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import AddIcon from "@material-ui/icons/Add";
+import { checkHasAuthorization } from "../../../helpers/projectHelpers";
 
 const useStyles = makeStyles(() => ({
   nameCell: {
@@ -37,6 +38,7 @@ export interface ModelListProps {
   onDelete: (model: ModelDoc) => void;
   onClickName: (model: ModelDoc) => void;
   onClickAdd: () => void;
+  role: MemberRole;
 }
 
 const ModelList: React.FC<ModelListProps> = ({
@@ -44,8 +46,13 @@ const ModelList: React.FC<ModelListProps> = ({
   onDelete,
   onClickName,
   onClickAdd,
+  role,
 }) => {
   const classes = useStyles();
+
+  const hasManagerAuthorization = useMemo(() => {
+    return checkHasAuthorization(role, "manager");
+  }, [role]);
 
   return models ? (
     <Card>
@@ -78,26 +85,30 @@ const ModelList: React.FC<ModelListProps> = ({
                   </TableCell>
                   <TableCell>{model.description}</TableCell>
                   <TableCell align="right">
-                    <IconButton onClick={() => onDelete(model)}>
-                      <SvgIcon fontSize="small">
-                        <DeleteOutlineIcon />
-                      </SvgIcon>
-                    </IconButton>
+                    {hasManagerAuthorization && (
+                      <IconButton onClick={() => onDelete(model)}>
+                        <SvgIcon fontSize="small">
+                          <DeleteOutlineIcon />
+                        </SvgIcon>
+                      </IconButton>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
-              <TableRow>
-                <TableCell colSpan={3}>
-                  <Button
-                    className={classes.addButton}
-                    fullWidth
-                    color="secondary"
-                    onClick={onClickAdd}
-                  >
-                    <AddIcon fontSize="small" /> Add new model
-                  </Button>
-                </TableCell>
-              </TableRow>
+              {hasManagerAuthorization && (
+                <TableRow>
+                  <TableCell colSpan={3}>
+                    <Button
+                      className={classes.addButton}
+                      fullWidth
+                      color="secondary"
+                      onClick={onClickAdd}
+                    >
+                      <AddIcon fontSize="small" /> Add new model
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </Box>

@@ -1,11 +1,13 @@
 import { MemberListContainerProps } from "./MemberListContainer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useProjectByParam from "../../hooks/useProjectByParam";
 import { useMemo, useCallback } from "react";
 import { UserProfileDoc, MemberRole } from "../../types";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { UiActions } from "../../store/Ui/UiSlice";
 import { getProjectKeyByRole } from "../../helpers/projectHelpers";
+import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
+import useLoading from "../../hooks/useLoading";
 
 const useMemberListProps = ({
   title,
@@ -15,6 +17,8 @@ const useMemberListProps = ({
   const dispatch = useDispatch();
 
   const { project } = useProjectByParam();
+
+  const userProfile = useSelector(FirebaseSelectors.selectUserProfile);
 
   const role = useMemo(() => {
     switch (title) {
@@ -32,7 +36,7 @@ const useMemberListProps = ({
       return [];
     }
     return allMembers.filter(
-      (member) => project[getProjectKeyByRole(role)][member.id]
+      (member) => project[getProjectKeyByRole(role)][member.uid]
     );
   }, [allMembers, project, role]);
 
@@ -59,6 +63,8 @@ const useMemberListProps = ({
     [dispatch]
   );
 
+  useLoading(userProfile, "loadingUserProfile");
+
   return {
     title,
     members,
@@ -66,6 +72,7 @@ const useMemberListProps = ({
     onClickMoveTo,
     onClickDelete,
     onClickAdd,
+    userProfile,
   };
 };
 

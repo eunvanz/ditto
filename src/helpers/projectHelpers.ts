@@ -1,5 +1,10 @@
 import { FieldError } from "react-hook-form";
-import { REQUEST_METHOD, MemberRole } from "../types";
+import {
+  REQUEST_METHOD,
+  MemberRole,
+  ProjectDoc,
+  UserProfileDoc,
+} from "../types";
 
 export const patterns = {
   wordsWithNoSpace: {
@@ -66,5 +71,37 @@ export const getProjectKeyByRole = (role: MemberRole) => {
       return "managers";
     case "guest":
       return "guests";
+  }
+};
+
+export const checkHasAuthorization = (
+  role: MemberRole,
+  targetRole: MemberRole
+) => {
+  if (targetRole === "owner") {
+    return role === "owner";
+  } else if (targetRole === "manager") {
+    return role === "owner" || role === "manager";
+  } else {
+    return false;
+  }
+};
+
+export const getProjectRole = ({
+  userProfile,
+  project,
+}: {
+  userProfile?: UserProfileDoc;
+  project?: ProjectDoc;
+}) => {
+  const uid = userProfile?.uid;
+  if (!uid) {
+    return "guest";
+  } else if (project?.owners[uid]) {
+    return "owner";
+  } else if (project?.managers[uid]) {
+    return "manager";
+  } else {
+    return "guest";
   }
 };

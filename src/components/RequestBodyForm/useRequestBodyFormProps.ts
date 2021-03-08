@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import useProjectByParam from "../../hooks/useProjectByParam";
+import useProjectRole from "../../hooks/useProjectRole";
 import useRequestByParam from "../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
@@ -12,7 +13,7 @@ import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 const useRequestBodyForm = () => {
   const dispatch = useDispatch();
 
-  const { projectId } = useProjectByParam();
+  const { projectId, project } = useProjectByParam();
   const { requestId } = useRequestByParam();
 
   useFirestoreConnect({
@@ -51,11 +52,14 @@ const useRequestBodyForm = () => {
     [submittingRequestBodyActionsInProgress]
   );
 
+  const role = useProjectRole(project);
+
   return {
     requestBodies,
     onSubmit,
     onDelete,
     checkIsSubmittingRequestBody,
+    role,
   };
 };
 

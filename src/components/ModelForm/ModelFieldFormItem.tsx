@@ -33,8 +33,10 @@ import {
   FORMAT,
   EnumerationDoc,
   ENUMERATION,
+  MemberRole,
 } from "../../types";
 import {
+  checkHasAuthorization,
   getIndentionPaddingByDepth,
   patterns,
 } from "../../helpers/projectHelpers";
@@ -97,6 +99,7 @@ export interface ModelFieldFormItemProps {
     errors: any;
     setIsDisabledEnterSubmit: any;
   }) => JSX.Element;
+  role: MemberRole;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -114,6 +117,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   disabledColumns,
   customFieldName,
   customFieldNameInput,
+  role,
 }) => {
   const classes = useStyles();
 
@@ -352,6 +356,10 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   const enumValues = useMemo(() => {
     return currentEnumeration?.items.join(" | ");
   }, [currentEnumeration]);
+
+  const hasManagerAuthorization = useMemo(() => {
+    return checkHasAuthorization(role, "manager");
+  }, [role]);
 
   return (
     <>
@@ -651,25 +659,29 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
           )}
         </TableCell>
         <TableCell align="right">
-          {isFormVisible ? (
-            <Box>
-              <IconButton onClick={handleOnSubmit}>
-                <SvgIcon fontSize="small">
-                  <CheckIcon />
-                </SvgIcon>
-              </IconButton>
-              <IconButton onClick={handleOnCancel}>
-                <SvgIcon fontSize="small">
-                  <ClearIcon />
-                </SvgIcon>
-              </IconButton>
-            </Box>
-          ) : (
-            <IconButton onClick={onDelete}>
-              <SvgIcon fontSize="small">
-                <DeleteOutlineIcon />
-              </SvgIcon>
-            </IconButton>
+          {hasManagerAuthorization && (
+            <>
+              {isFormVisible ? (
+                <Box>
+                  <IconButton onClick={handleOnSubmit}>
+                    <SvgIcon fontSize="small">
+                      <CheckIcon />
+                    </SvgIcon>
+                  </IconButton>
+                  <IconButton onClick={handleOnCancel}>
+                    <SvgIcon fontSize="small">
+                      <ClearIcon />
+                    </SvgIcon>
+                  </IconButton>
+                </Box>
+              ) : (
+                <IconButton onClick={onDelete}>
+                  <SvgIcon fontSize="small">
+                    <DeleteOutlineIcon />
+                  </SvgIcon>
+                </IconButton>
+              )}
+            </>
           )}
         </TableCell>
       </TableRow>

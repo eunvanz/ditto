@@ -4,6 +4,7 @@ import { useFirestoreConnect } from "react-redux-firebase";
 import { ModelFormContainerProps } from "../../../components/ModelForm/ModelFormContainer";
 import { assertNotEmpty } from "../../../helpers/commonHelpers";
 import useLoading from "../../../hooks/useLoading";
+import useProjectRole from "../../../hooks/useProjectRole";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 import ProjectSelectors from "../../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
@@ -59,6 +60,8 @@ const useModelListProps: () => ModelListProps &
 
   const model = useSelector(ProjectSelectors.selectCurrentModel);
 
+  const role = useProjectRole(project);
+
   return {
     models,
     onDelete,
@@ -67,6 +70,7 @@ const useModelListProps: () => ModelListProps &
     isVisible: isModelFormVisible,
     onClose,
     defaultModelId: model?.id,
+    role,
   };
 };
 

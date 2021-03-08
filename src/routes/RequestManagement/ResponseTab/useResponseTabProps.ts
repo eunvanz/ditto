@@ -4,13 +4,14 @@ import { useFirestoreConnect } from "react-redux-firebase";
 import { ResponseStatusFormValues } from "../../../components/ResponseStatusFormModal/ResponseStatusFormModal";
 import useLoading from "../../../hooks/useLoading";
 import useProjectByParam from "../../../hooks/useProjectByParam";
+import useProjectRole from "../../../hooks/useProjectRole";
 import useRequestByParam from "../../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../../store/Progress/ProgressSelectors";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
 
 const useResponseTabProps = () => {
-  const { projectId } = useProjectByParam();
+  const { projectId, project } = useProjectByParam();
   const { requestId } = useRequestByParam();
 
   useFirestoreConnect([
@@ -46,10 +47,13 @@ const useResponseTabProps = () => {
     `loadingResponseStatuses-${projectId}-${requestId}`
   );
 
+  const role = useProjectRole(project);
+
   return {
     responseStatuses,
     onSubmitResponseStatusForm,
     isSubmittingResponseStatusForm,
+    role,
   };
 };
 

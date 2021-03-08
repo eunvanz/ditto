@@ -1,14 +1,15 @@
 import { Box, Button, makeStyles } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ResponseBodyForm from "../../../components/ResponseBodyForm";
 import ResponseStatusFormModal from "../../../components/ResponseStatusFormModal";
 import {
   ResponseStatusFormModalProps,
   ResponseStatusFormValues,
 } from "../../../components/ResponseStatusFormModal/ResponseStatusFormModal";
+import { checkHasAuthorization } from "../../../helpers/projectHelpers";
 import { Theme } from "../../../theme";
-import { ResponseStatusDoc } from "../../../types";
+import { MemberRole, ResponseStatusDoc } from "../../../types";
 
 const useStyles = makeStyles((_theme: Theme) => ({
   addButton: {
@@ -21,14 +22,20 @@ export interface ResponseTabProps {
   responseStatuses: ResponseStatusDoc[];
   onSubmitResponseStatusForm: (values: ResponseStatusFormValues) => void;
   isSubmittingResponseStatusForm: boolean;
+  role: MemberRole;
 }
 
 const ResponseTab: React.FC<ResponseTabProps> = ({
   responseStatuses,
   onSubmitResponseStatusForm,
   isSubmittingResponseStatusForm,
+  role,
 }) => {
   const classes = useStyles();
+
+  const hasManagerAuthorization = useMemo(() => {
+    return checkHasAuthorization(role, "manager");
+  }, [role]);
 
   const [
     responseStatusFormModalState,
@@ -92,26 +99,32 @@ const ResponseTab: React.FC<ResponseTabProps> = ({
           />
         </Box>
       ))}
-      <Box mt={3}>
-        <Button
-          className={classes.addButton}
-          variant="outlined"
-          color="secondary"
-          fullWidth
-          size="large"
-          onClick={() => showResponseStatusFormModal()}
-        >
-          <Add /> ADD NEW STATUS CODE
-        </Button>
-      </Box>
-      <ResponseStatusFormModal
-        isVisible={responseStatusFormModalState.isVisible}
-        existingStatusCodes={responseStatusFormModalState.existingStatusCodes}
-        defaultValues={responseStatusFormModalState.defaultValues}
-        onSubmit={onSubmitResponseStatusForm}
-        isSubmitting={isSubmittingResponseStatusForm}
-        onClose={closeResponseStatusFormModal}
-      />
+      {hasManagerAuthorization && (
+        <>
+          <Box mt={3}>
+            <Button
+              className={classes.addButton}
+              variant="outlined"
+              color="secondary"
+              fullWidth
+              size="large"
+              onClick={() => showResponseStatusFormModal()}
+            >
+              <Add /> ADD NEW STATUS CODE
+            </Button>
+          </Box>
+          <ResponseStatusFormModal
+            isVisible={responseStatusFormModalState.isVisible}
+            existingStatusCodes={
+              responseStatusFormModalState.existingStatusCodes
+            }
+            defaultValues={responseStatusFormModalState.defaultValues}
+            onSubmit={onSubmitResponseStatusForm}
+            isSubmitting={isSubmittingResponseStatusForm}
+            onClose={closeResponseStatusFormModal}
+          />
+        </>
+      )}
     </>
   );
 };

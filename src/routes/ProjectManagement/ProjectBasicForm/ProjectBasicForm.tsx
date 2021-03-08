@@ -11,10 +11,11 @@ import {
 } from "@material-ui/core";
 import { useForm } from "react-hook-form";
 import isEqual from "lodash/isEqual";
-import { ProjectDoc } from "../../../types";
+import { MemberRole, ProjectDoc } from "../../../types";
 import { Theme } from "../../../theme";
 import { getDangerButtonStyle } from "../../../styles";
 import useSyncDefaultValues from "../../../hooks/useSyncDefaultValues";
+import { checkHasAuthorization } from "../../../helpers/projectHelpers";
 
 const useStyles = makeStyles((theme: Theme) => ({
   submitButton: {
@@ -33,6 +34,7 @@ export interface ProjectBasicFormProps {
   onSubmit: (values: ProjectBasicFormValues) => void;
   isSubmitting: boolean;
   onDelete: () => void;
+  role: MemberRole;
 }
 
 const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
@@ -40,6 +42,7 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
   onSubmit,
   isSubmitting,
   onDelete,
+  role,
 }) => {
   const classes = useStyles();
 
@@ -91,6 +94,7 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
               required
               error={!!errors.title}
               helperText={errors.title?.message}
+              disabled={!checkHasAuthorization(role, "manager")}
             />
           </Box>
           <Box mt={2}>
@@ -107,29 +111,36 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
               fullWidth
               error={!!errors.description}
               helperText={errors.description?.message}
+              disabled={!checkHasAuthorization(role, "manager")}
             />
           </Box>
         </CardContent>
-        <Divider />
-        <Box p={2} display="flex" justifyContent="flex-end">
-          <Button
-            className={classes.deleteButton}
-            disabled={isSubmitting}
-            onClick={onDelete}
-            variant="contained"
-          >
-            Delete project
-          </Button>
-          <Button
-            color="secondary"
-            disabled={isSubmitDisabled}
-            type="submit"
-            variant="contained"
-            className={classes.submitButton}
-          >
-            Apply modifications
-          </Button>
-        </Box>
+        {checkHasAuthorization(role, "manager") && (
+          <>
+            <Divider />
+            <Box p={2} display="flex" justifyContent="flex-end">
+              {checkHasAuthorization(role, "owner") && (
+                <Button
+                  className={classes.deleteButton}
+                  disabled={isSubmitting}
+                  onClick={onDelete}
+                  variant="contained"
+                >
+                  Delete project
+                </Button>
+              )}
+              <Button
+                color="secondary"
+                disabled={isSubmitDisabled}
+                type="submit"
+                variant="contained"
+                className={classes.submitButton}
+              >
+                Apply modifications
+              </Button>
+            </Box>
+          </>
+        )}
       </Card>
     </form>
   );

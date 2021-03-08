@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import useProjectByParam from "../../../hooks/useProjectByParam";
+import useProjectRole from "../../../hooks/useProjectRole";
 import useRequestByParam from "../../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
@@ -52,12 +53,15 @@ const useRequestUrlFormProps = () => {
     }
   }, [isVisible]);
 
+  const role = useProjectRole(project);
+
   return {
     onSubmit,
     request,
     baseUrls,
     key,
     requests,
+    role,
   };
 };
 

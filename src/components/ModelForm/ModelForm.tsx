@@ -8,7 +8,7 @@ import {
   Divider,
   Dialog,
 } from "@material-ui/core";
-import { ModelFieldDoc, ModelDoc, FIELD_TYPE } from "../../types";
+import { ModelFieldDoc, ModelDoc, FIELD_TYPE, MemberRole } from "../../types";
 import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
 import CloseIcon from "@material-ui/icons/Close";
 import useModalKeyControl from "../../hooks/useModalKeyControl";
@@ -77,6 +77,7 @@ export interface ModelFormProps {
   checkIsSubmittingModelField: (modelId?: string) => boolean;
   editingModelFieldId?: string;
   isVisible?: boolean;
+  role: MemberRole;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -88,6 +89,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   depth,
   editingModelFieldId,
   isVisible,
+  role,
 }) => {
   const classes = useStyles();
 
@@ -163,6 +165,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
           onSubmit={onSubmitModel}
           model={model}
           existingModelNames={existingModelNames}
+          role={role}
         />
         <Divider />
         <Box minWidth={700} className={classes.tableContainer}>
@@ -171,12 +174,20 @@ const ModelForm: React.FC<ModelFormProps> = ({
             modelFields={modelFields}
             checkIsNewFormDisabled={checkIsNewFormDisabled}
             onShowNewForm={checkModelNameInput}
+            role={role}
           />
         </Box>
       </Card>
     );
   } else {
-    return <ModelTable model={model} modelFields={modelFields} depth={depth} />;
+    return (
+      <ModelTable
+        model={model}
+        modelFields={modelFields}
+        depth={depth}
+        role={role}
+      />
+    );
   }
 };
 

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import shortId from "shortid";
 import useProjectByParam from "../../hooks/useProjectByParam";
+import useProjectRole from "../../hooks/useProjectRole";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
@@ -26,7 +27,7 @@ const useModelTableProps = ({
 
   const dispatch = useDispatch();
 
-  const { projectId } = useProjectByParam();
+  const { projectId, project } = useProjectByParam();
 
   const firestoreQuery = useMemo(() => {
     const query = [
@@ -116,6 +117,8 @@ const useModelTableProps = ({
     [submittingModelFieldActionsInProgress]
   );
 
+  const role = useProjectRole(project);
+
   return {
     model,
     modelFields,
@@ -127,6 +130,7 @@ const useModelTableProps = ({
     onDeleteModelField,
     onSubmitModelField,
     checkIsSubmittingModelField,
+    role,
   };
 };
 

@@ -11,7 +11,7 @@ import FirebaseSlice, {
 import ErrorSlice, { initialErrorState } from "./Error/ErrorSlice";
 import AuthSlice, { initialAuthState } from "./Auth/AuthSlice";
 import { FirebaseReducer } from "react-redux-firebase";
-import { UserProfile } from "../types";
+import { UserProfileDoc } from "../types";
 
 export const rootReducer = combineReducers({
   firebase: FirebaseSlice.firebaseReducer,
@@ -24,7 +24,7 @@ export const rootReducer = combineReducers({
 });
 
 export type RootState = {
-  firebase: FirebaseReducer.Reducer<UserProfile, any>;
+  firebase: FirebaseReducer.Reducer<UserProfileDoc, any>;
 } & Omit<ReturnType<typeof rootReducer>, "firebase">;
 
 export const initialRootState: RootState = {

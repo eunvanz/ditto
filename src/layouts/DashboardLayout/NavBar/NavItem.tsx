@@ -48,6 +48,7 @@ export interface NavItemProps {
   onClickAddRequest?: () => void;
   onClick?: () => void;
   isDeprecated?: boolean;
+  hasNoAuth?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -155,6 +156,7 @@ const NavItem: FC<NavItemProps> = ({
   onClick,
   type,
   isDeprecated,
+  hasNoAuth,
   ...restProps
 }) => {
   if (type === "group") {
@@ -243,49 +245,61 @@ const NavItem: FC<NavItemProps> = ({
               <Chip className={classes.countChip} label={childrenCount} />
             ) : null}
           </span>
-          <Button
-            className={classes.insideButton}
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              onClickConfig?.();
-            }}
-          >
-            <SettingsIcon fontSize="small" />
-          </Button>
+          {(type === "group" ? !hasNoAuth : true) && (
+            <Button
+              className={classes.insideButton}
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClickConfig?.();
+              }}
+            >
+              <SettingsIcon fontSize="small" />
+            </Button>
+          )}
           {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </Button>
         <Collapse in={isOpen}>
           {children}
-          <RootRef rootRef={addNewItemButtonRef}>
-            <NavItem
-              type="add"
-              depth={depth + 1}
-              title={
-                depth === 0 ? "ADD NEW GROUP OR OPERATION" : "ADD NEW OPERATION"
-              }
-              onClick={handleOnClickNewItem}
-            />
-          </RootRef>
-          {type === "project" && (
-            <Menu
-              className={classes.configMenu}
-              keepMounted
-              open={isNewItemMenuOpen}
-              onClose={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-                e.stopPropagation();
-                setIsNewItemMenuOpen(false);
-              }}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: 45,
-              }}
-              anchorEl={addNewItemButtonRef.current}
-              getContentAnchorEl={null}
-            >
-              <MenuItem onClick={handleOnClickAddGroup}>Group</MenuItem>
-              <MenuItem onClick={handleOnClickAddRequest}>Operation</MenuItem>
-            </Menu>
+          {!hasNoAuth && (
+            <>
+              <RootRef rootRef={addNewItemButtonRef}>
+                <NavItem
+                  type="add"
+                  depth={depth + 1}
+                  title={
+                    depth === 0
+                      ? "ADD NEW GROUP OR OPERATION"
+                      : "ADD NEW OPERATION"
+                  }
+                  onClick={handleOnClickNewItem}
+                />
+              </RootRef>
+              {type === "project" && (
+                <Menu
+                  className={classes.configMenu}
+                  keepMounted
+                  open={isNewItemMenuOpen}
+                  onClose={(
+                    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                  ) => {
+                    e.stopPropagation();
+                    setIsNewItemMenuOpen(false);
+                  }}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: 45,
+                  }}
+                  anchorEl={addNewItemButtonRef.current}
+                  getContentAnchorEl={null}
+                >
+                  <MenuItem onClick={handleOnClickAddGroup}>Group</MenuItem>
+                  <MenuItem onClick={handleOnClickAddRequest}>
+                    Operation
+                  </MenuItem>
+                </Menu>
+              )}
+            </>
           )}
         </Collapse>
       </ListItem>

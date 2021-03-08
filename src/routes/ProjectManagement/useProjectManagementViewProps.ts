@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import useAuth from "../../hooks/useAuth";
 import useProjectByParam from "../../hooks/useProjectByParam";
+import useProjectRole from "../../hooks/useProjectRole";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 
 const useProjectManagementViewProps = () => {
@@ -17,7 +18,9 @@ const useProjectManagementViewProps = () => {
     }
   }, [dispatch, project]);
 
-  return { project, key: projectId };
+  const role = useProjectRole(project);
+
+  return { project, key: projectId, role };
 };
 
 export default useProjectManagementViewProps;

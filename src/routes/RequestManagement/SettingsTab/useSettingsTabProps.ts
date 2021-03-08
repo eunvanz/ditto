@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import useProjectByParam from "../../../hooks/useProjectByParam";
+import useProjectRole from "../../../hooks/useProjectRole";
 import useRequestByParam from "../../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../../store/Progress/ProgressSelectors";
@@ -11,7 +12,7 @@ import { RequestSettingFormValues } from "./SettingsTab";
 const useSettingsTabProps = () => {
   const dispatch = useDispatch();
 
-  const { projectId } = useProjectByParam();
+  const { projectId, project } = useProjectByParam();
   const { request } = useRequestByParam();
 
   firestoreConnect([
@@ -49,6 +50,8 @@ const useSettingsTabProps = () => {
     request && dispatch(ProjectActions.deleteRequest(request));
   }, [dispatch, request]);
 
+  const role = useProjectRole(project);
+
   return {
     request,
     projectGroups,
@@ -56,6 +59,7 @@ const useSettingsTabProps = () => {
     onSubmit,
     isSubmitting,
     onDelete,
+    role,
   };
 };
 

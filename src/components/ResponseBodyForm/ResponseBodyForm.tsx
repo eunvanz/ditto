@@ -16,6 +16,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import React, { FC, useCallback, useMemo, useState, useEffect } from "react";
 import { Theme } from "../../theme";
 import {
+  MemberRole,
   ModelFieldDoc,
   ResponseBodyDoc,
   ResponseHeaderDoc,
@@ -27,6 +28,7 @@ import Clear from "@material-ui/icons/Clear";
 import Label from "../Label";
 import { Autocomplete } from "@material-ui/lab";
 import {
+  checkHasAuthorization,
   getTextFieldErrorProps,
   mediaTypes,
 } from "../../helpers/projectHelpers";
@@ -106,6 +108,7 @@ export interface ResponseBodyFormProps {
   onSubmitResponseHeader: (values: ModelFieldFormValues) => void;
   onDeleteResponseHeader: (responseHeader: ModelFieldDoc) => void;
   checkIsSubmittingResponseHeader: (id?: string) => boolean;
+  role: MemberRole;
 }
 
 const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
@@ -120,6 +123,7 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
   onSubmitResponseHeader,
   onDeleteResponseHeader,
   checkIsSubmittingResponseHeader,
+  role,
 }) => {
   const classes = useStyles();
 
@@ -137,6 +141,10 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
     }
     // eslint-disable-next-line
   }, [responseBodies?.length, responseHeaders?.length]);
+
+  const hasManagerAuthorization = useMemo(() => {
+    return checkHasAuthorization(role, "manager");
+  }, [role]);
 
   return (
     <Card>
@@ -164,32 +172,34 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
           </>
         }
         action={
-          <>
-            <IconButton
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEditResponseStatus();
-              }}
-            >
-              <SvgIcon fontSize="small">
-                <Edit />
-              </SvgIcon>
-            </IconButton>
-            {responseStatus.statusCode !== 200 && (
+          hasManagerAuthorization && (
+            <>
               <IconButton
                 size="small"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onDeleteResponseStatus();
+                  onEditResponseStatus();
                 }}
               >
                 <SvgIcon fontSize="small">
-                  <Clear />
+                  <Edit />
                 </SvgIcon>
               </IconButton>
-            )}
-          </>
+              {responseStatus.statusCode !== 200 && (
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteResponseStatus();
+                  }}
+                >
+                  <SvgIcon fontSize="small">
+                    <Clear />
+                  </SvgIcon>
+                </IconButton>
+              )}
+            </>
+          )
         }
         onClick={toggleOpen}
       />
@@ -238,6 +248,7 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
                   size="small"
                 />
               )}
+              role={role}
             />
           </Box>
         </PerfectScrollbar>
@@ -248,6 +259,7 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
             onSubmit={onSubmitResponseHeader}
             onDelete={onDeleteResponseHeader}
             checkIsSubmitting={checkIsSubmittingResponseHeader}
+            role={role}
           />
         </Box>
       </Collapse>

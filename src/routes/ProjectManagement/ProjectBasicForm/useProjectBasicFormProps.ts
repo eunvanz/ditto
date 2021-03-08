@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { assertNotEmpty } from "../../../helpers/commonHelpers";
 import useProjectByParam from "../../../hooks/useProjectByParam";
+import useProjectRole from "../../../hooks/useProjectRole";
 import ProgressSelectors from "../../../store/Progress/ProgressSelectors";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
 import {
@@ -34,11 +35,14 @@ const useProjectBasicFormProps: () => ProjectBasicFormProps = () => {
     dispatch(ProjectActions.deleteProject(project));
   }, [dispatch, project]);
 
+  const role = useProjectRole(project);
+
   return {
     project,
     isSubmitting,
     onSubmit,
     onDelete,
+    role,
   };
 };
 

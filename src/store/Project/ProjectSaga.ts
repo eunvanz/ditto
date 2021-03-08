@@ -1598,7 +1598,7 @@ export function* addMembersFlow() {
       const newMembers: Record<string, boolean> = {};
       const key = getProjectKeyByRole(role);
       members.forEach((member) => {
-        newMembers[member.id] = true;
+        newMembers[member.uid] = true;
       });
       yield* call(Firework.updateProject, project.id, {
         members: {
@@ -1633,7 +1633,7 @@ export function* deleteMemberFlow() {
         const project = yield* select(ProjectSelectors.selectCurrentProject);
         assertNotEmpty(project);
         const key = getProjectKeyByRole(role);
-        const newMembers = { [member.id]: false };
+        const newMembers = { [member.uid]: false };
         yield* call(Firework.updateProject, project.id, {
           members: {
             ...project.members,
@@ -1666,11 +1666,11 @@ export function* changeMemberRoleFlow() {
       yield* call(Firework.updateProject, project.id, {
         [oldKey]: {
           ...project[oldKey],
-          [member.id]: false,
+          [member.uid]: false,
         },
         [newKey]: {
           ...project[newKey],
-          [member.id]: true,
+          [member.uid]: true,
         },
       });
     } catch (error) {

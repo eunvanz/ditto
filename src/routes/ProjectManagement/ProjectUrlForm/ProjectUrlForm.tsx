@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import isEqual from "lodash/isEqual";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import AddIcon from "@material-ui/icons/Add";
-import { ProjectUrlDoc } from "../../../types";
+import { MemberRole, ProjectUrlDoc } from "../../../types";
 import {
   makeStyles,
   Divider,
@@ -27,6 +27,7 @@ import {
 } from "@material-ui/core";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import ProjectUrlFormItem from "./ProjectUrlFormItem";
+import { checkHasAuthorization } from "../../../helpers/projectHelpers";
 
 const useStyles = makeStyles(() => ({
   root: {},
@@ -55,12 +56,14 @@ export interface ProjectUrlFormProps {
   onSubmit: (values: ProjectUrlFormValues) => void;
   onDelete: (projectUrl: ProjectUrlDoc) => void;
   projectUrls?: ProjectUrlDoc[];
+  role: MemberRole;
 }
 
 const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
   onSubmit,
   onDelete,
   projectUrls,
+  role,
 }) => {
   const formProps = useForm<ProjectUrlFormValues>({
     mode: "onChange",
@@ -168,6 +171,9 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
 
   const showEditForm = useCallback(
     (projectUrl: ProjectUrlDoc, fieldName: keyof ProjectUrlFormValues) => {
+      if (!checkHasAuthorization(role, "manager")) {
+        return;
+      }
       if (isNewFormVisible) {
         setIsNewFormVisible(false);
       } else {
@@ -176,7 +182,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
         setFieldNameToFocus(fieldName);
       }
     },
-    [isNewFormVisible]
+    [isNewFormVisible, role]
   );
 
   useEffect(() => {
@@ -265,38 +271,42 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
                           {projectUrl.description}
                         </TableCell>
                         <TableCell align="right">
-                          <IconButton onClick={() => onDelete(projectUrl)}>
-                            <SvgIcon fontSize="small">
-                              <DeleteOutlineIcon />
-                            </SvgIcon>
-                          </IconButton>
+                          {checkHasAuthorization(role, "manager") && (
+                            <IconButton onClick={() => onDelete(projectUrl)}>
+                              <SvgIcon fontSize="small">
+                                <DeleteOutlineIcon />
+                              </SvgIcon>
+                            </IconButton>
+                          )}
                         </TableCell>
                       </>
                     )}
                   </TableRow>
                 ))}
-                <TableRow>
-                  {isNewFormVisible ? (
-                    <ProjectUrlFormItem
-                      formProps={formProps}
-                      autoFocusField={fieldNameToFocus}
-                      onBlur={handleOnBlur}
-                      onFocus={handleOnFocus}
-                      existingUrls={projectUrls}
-                    />
-                  ) : (
-                    <TableCell colSpan={4}>
-                      <Button
-                        className={classes.addButton}
-                        fullWidth
-                        color="secondary"
-                        onClick={showNewForm}
-                      >
-                        <AddIcon fontSize="small" /> Add new base URL
-                      </Button>
-                    </TableCell>
-                  )}
-                </TableRow>
+                {checkHasAuthorization(role, "manager") && (
+                  <TableRow>
+                    {isNewFormVisible ? (
+                      <ProjectUrlFormItem
+                        formProps={formProps}
+                        autoFocusField={fieldNameToFocus}
+                        onBlur={handleOnBlur}
+                        onFocus={handleOnFocus}
+                        existingUrls={projectUrls}
+                      />
+                    ) : (
+                      <TableCell colSpan={4}>
+                        <Button
+                          className={classes.addButton}
+                          fullWidth
+                          color="secondary"
+                          onClick={showNewForm}
+                        >
+                          <AddIcon fontSize="small" /> Add new base URL
+                        </Button>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </Box>

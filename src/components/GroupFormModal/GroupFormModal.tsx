@@ -3,9 +3,10 @@ import { useForm } from "react-hook-form";
 import isEqual from "lodash/isEqual";
 import { Box, Button, makeStyles, TextField, Theme } from "@material-ui/core";
 import Modal from "../Modal";
-import { GroupDoc } from "../../types";
+import { GroupDoc, MemberRole } from "../../types";
 import { getDangerButtonStyle } from "../../styles";
 import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
+import { checkHasAuthorization } from "../../helpers/projectHelpers";
 
 const useStyles = makeStyles((theme: Theme) => ({
   deleteButton: getDangerButtonStyle(theme),
@@ -24,6 +25,7 @@ export interface GroupFormModalProps {
   onClose: () => void;
   existingGroupNames?: string[];
   onDelete: () => void;
+  role: MemberRole;
 }
 
 const GroupFormModal: React.FC<GroupFormModalProps> = ({
@@ -34,6 +36,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
   onClose,
   existingGroupNames,
   onDelete,
+  role,
 }) => {
   const classes = useStyles();
 
@@ -59,6 +62,10 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
   useEffect(() => {
     reset(defaultValues || { name: "" });
   }, [defaultValues, reset]);
+
+  const hasManagerAuthorization = useMemo(() => {
+    return checkHasAuthorization(role, "manager");
+  }, [role]);
 
   return existingGroupNames ? (
     <Modal
@@ -95,34 +102,41 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
             required
             error={!!errors.name}
             helperText={errors.name?.message}
+            disabled={!hasManagerAuthorization}
           />
         </Box>
-        <Box mt={2}>
-          <Button
-            color="secondary"
-            disabled={isSubmitDisabled || isNotModified || !formState.isValid}
-            fullWidth
-            size="large"
-            type="submit"
-            variant="contained"
-          >
-            {defaultValues ? "Apply modifications" : "Create new group"}
-          </Button>
-        </Box>
-        {defaultValues && (
-          <Box mt={2}>
-            <Button
-              className={classes.deleteButton}
-              disabled={isSubmitting}
-              fullWidth
-              size="large"
-              type="button"
-              variant="contained"
-              onClick={onDelete}
-            >
-              Delete group
-            </Button>
-          </Box>
+        {hasManagerAuthorization && (
+          <>
+            <Box mt={2}>
+              <Button
+                color="secondary"
+                disabled={
+                  isSubmitDisabled || isNotModified || !formState.isValid
+                }
+                fullWidth
+                size="large"
+                type="submit"
+                variant="contained"
+              >
+                {defaultValues ? "Apply modifications" : "Create new group"}
+              </Button>
+            </Box>
+            {defaultValues && (
+              <Box mt={2}>
+                <Button
+                  className={classes.deleteButton}
+                  disabled={isSubmitting}
+                  fullWidth
+                  size="large"
+                  type="button"
+                  variant="contained"
+                  onClick={onDelete}
+                >
+                  Delete group
+                </Button>
+              </Box>
+            )}
+          </>
         )}
       </form>
     </Modal>

@@ -9,13 +9,14 @@ import {
 } from "@material-ui/core";
 import { Helmet } from "react-helmet";
 import Header from "../../components/Header";
-import { ProjectDoc } from "../../types";
+import { MemberRole, ProjectDoc } from "../../types";
 import ProjectBasicForm from "./ProjectBasicForm";
 import { Theme } from "../../theme";
 import ProjectUrlForm from "./ProjectUrlForm";
 import ModelList from "./ModelList";
 import EnumForm from "./EnumForm";
 import MembersTab from "./MembersTab";
+import { checkHasAuthorization } from "../../helpers/projectHelpers";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -28,10 +29,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export interface ProjectManagementViewProps {
   project: ProjectDoc;
+  role: MemberRole;
 }
 
 const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
   project,
+  role,
 }) => {
   const classes = useStyles();
 
@@ -51,6 +54,10 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
     setActiveTab(value);
   }, []);
 
+  const hasManagerAuthorization = useMemo(() => {
+    return checkHasAuthorization(role, "manager");
+  }, [role]);
+
   return (
     <Container className={classes.root} maxWidth="lg">
       <Helmet>
@@ -65,9 +72,13 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
           variant="scrollable"
           textColor="secondary"
         >
-          {tabs.map((tab) => (
-            <Tab key={tab.value} label={tab.label} value={tab.value} />
-          ))}
+          {tabs
+            .filter((tab) =>
+              hasManagerAuthorization ? true : tab.value !== "members"
+            )
+            .map((tab) => (
+              <Tab key={tab.value} label={tab.label} value={tab.value} />
+            ))}
         </Tabs>
       </Box>
       <Divider />

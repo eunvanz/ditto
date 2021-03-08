@@ -10,11 +10,17 @@ import {
 import { EditOutlined, ExpandLess, ExpandMore, Add } from "@material-ui/icons";
 import React, { useCallback, useMemo, useState } from "react";
 import {
+  checkHasAuthorization,
   getButtonIndentionPaddingByDepth,
   getIndentionPaddingByDepth,
 } from "../../helpers/projectHelpers";
 import { Theme } from "../../theme";
-import { EnumerationDoc, ModelDoc, ModelFieldDoc } from "../../types";
+import {
+  EnumerationDoc,
+  MemberRole,
+  ModelDoc,
+  ModelFieldDoc,
+} from "../../types";
 import ModelFieldFormItem, {
   ModelFieldFormItemProps,
 } from "../ModelForm/ModelFieldFormItem";
@@ -75,6 +81,7 @@ export type ModelTableProps = {
   onSubmitModelField: (data: ModelFieldFormValues) => void;
   onShowNewForm?: () => void;
   checkIsNewFormDisabled?: () => boolean;
+  role: MemberRole;
 } & Pick<
   ModelFieldFormItemProps,
   "customFieldName" | "disabledColumns" | "customFieldNameInput"
@@ -100,6 +107,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
   customFieldName,
   disabledColumns,
   customFieldNameInput,
+  role,
 }) => {
   const classes = useStyles();
 
@@ -141,6 +149,10 @@ const ModelTable: React.FC<ModelTableProps> = ({
     }
   }, [checkIsNewFormDisabled, onSetEditingModelField, onShowNewForm]);
 
+  const hasManagerAuthorization = useMemo(() => {
+    return checkHasAuthorization(role, "manager");
+  }, [role]);
+
   return (
     <Wrapper
       existingModelNames={existingModelNames}
@@ -149,6 +161,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
       onClickQuickEditModelName={onClickQuickEditModelName}
       customFieldName={customFieldName}
       disabledColumns={disabledColumns}
+      role={role}
     >
       {modelFields.map((modelField) => (
         <ModelFieldFormItem
@@ -176,52 +189,62 @@ const ModelTable: React.FC<ModelTableProps> = ({
                   checkIsSubmittingModelField
                 )(modelField.id)
           }
-          onClickCell={() => onSetEditingModelField(modelField.id)}
+          onClickCell={
+            hasManagerAuthorization
+              ? () => onSetEditingModelField(modelField.id)
+              : () => {}
+          }
           isFormVisible={editingModelFieldId === modelField.id}
           onCancel={resetEditingModelField}
           disabledColumns={disabledColumns}
           customFieldName={customFieldName}
           customFieldNameInput={customFieldNameInput}
+          role={role}
         />
       ))}
-      {isNewFormVisible ? (
-        <ModelFieldFormItem
-          modelFields={modelFields}
-          onSubmit={
-            depth
-              ? onSubmitModelField
-              : onSubmitModelFieldCustom || onSubmitModelField
-          }
-          isFormVisible
-          projectModels={projectModels}
-          projectEnumerations={projectEnumerations}
-          depth={depth}
-          onCancel={resetEditingModelField}
-          isSubmitting={
-            depth
-              ? checkIsSubmittingModelField()
-              : (
-                  checkIsSubmittingModelFieldCustom ||
-                  checkIsSubmittingModelField
-                )()
-          }
-          disabledColumns={disabledColumns}
-          customFieldName={customFieldName}
-          customFieldNameInput={customFieldNameInput}
-        />
-      ) : (
-        <TableRow>
-          <TableCell colSpan={8} style={{ paddingLeft: indentionPadding }}>
-            <Button
-              className={classes.addButton}
-              fullWidth
-              color="secondary"
-              onClick={showNewForm}
-            >
-              <Add fontSize="small" /> {addText}
-            </Button>
-          </TableCell>
-        </TableRow>
+      {hasManagerAuthorization && (
+        <>
+          {isNewFormVisible ? (
+            <ModelFieldFormItem
+              modelFields={modelFields}
+              onSubmit={
+                depth
+                  ? onSubmitModelField
+                  : onSubmitModelFieldCustom || onSubmitModelField
+              }
+              isFormVisible
+              projectModels={projectModels}
+              projectEnumerations={projectEnumerations}
+              depth={depth}
+              onCancel={resetEditingModelField}
+              isSubmitting={
+                depth
+                  ? checkIsSubmittingModelField()
+                  : (
+                      checkIsSubmittingModelFieldCustom ||
+                      checkIsSubmittingModelField
+                    )()
+              }
+              disabledColumns={disabledColumns}
+              customFieldName={customFieldName}
+              customFieldNameInput={customFieldNameInput}
+              role={role}
+            />
+          ) : (
+            <TableRow>
+              <TableCell colSpan={8} style={{ paddingLeft: indentionPadding }}>
+                <Button
+                  className={classes.addButton}
+                  fullWidth
+                  color="secondary"
+                  onClick={showNewForm}
+                >
+                  <Add fontSize="small" /> {addText}
+                </Button>
+              </TableCell>
+            </TableRow>
+          )}
+        </>
       )}
     </Wrapper>
   );
@@ -234,6 +257,7 @@ type WrapperProps = Pick<
   | "onClickQuickEditModelName"
   | "customFieldName"
   | "disabledColumns"
+  | "role"
 > & {
   existingModelNames: string[];
   children: React.ReactNode;
@@ -245,6 +269,7 @@ const Wrapper: React.FC<WrapperProps> = ({
   children,
   onClickQuickEditModelName,
   customFieldName,
+  role,
 }) => {
   const classes = useStyles();
 
@@ -253,6 +278,10 @@ const Wrapper: React.FC<WrapperProps> = ({
   const indentionPadding = useMemo(() => {
     return getButtonIndentionPaddingByDepth(depth);
   }, [depth]);
+
+  const hasManagerAuthorization = useMemo(() => {
+    return checkHasAuthorization(role, "manager");
+  }, [role]);
 
   if (!depth) {
     return (
@@ -298,16 +327,18 @@ const Wrapper: React.FC<WrapperProps> = ({
               {isDetailVisible && (
                 <>
                   <ExpandLess fontSize="small" /> {model?.name}
-                  <Button
-                    className={classes.addSubButton}
-                    size="small"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onClickQuickEditModelName(model!);
-                    }}
-                  >
-                    <EditOutlined fontSize="small" />
-                  </Button>
+                  {hasManagerAuthorization && (
+                    <Button
+                      className={classes.addSubButton}
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onClickQuickEditModelName(model!);
+                      }}
+                    >
+                      <EditOutlined fontSize="small" />
+                    </Button>
+                  )}
                 </>
               )}
             </Button>

@@ -46,7 +46,7 @@ const user: User = {
 
 const userProfiles: UserProfileDoc[] = [
   {
-    id: "mockId",
+    uid: "mockId",
     email: "eunvanz@gmail.com",
     photoUrl:
       "https://lh4.googleusercontent.com/-_ae-P8Td7mk/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuck-2LHkf6uoEPzJgtBFLsO3PyX8Xg/photo.jpg",
@@ -62,7 +62,7 @@ const userProfiles: UserProfileDoc[] = [
     isRegistered: true,
   },
   {
-    id: "mockId2",
+    uid: "mockId2",
     email: "eunvanz@gmail.com",
     photoUrl:
       "https://lh4.googleusercontent.com/-_ae-P8Td7mk/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuck-2LHkf6uoEPzJgtBFLsO3PyX8Xg/photo.jpg",

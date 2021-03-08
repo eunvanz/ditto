@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from "react";
 import { CardContent, Grid, TextField, makeStyles } from "@material-ui/core";
 import { useForm } from "react-hook-form";
-import { ModelDoc } from "../../types";
-import { patterns } from "../../helpers/projectHelpers";
+import { MemberRole, ModelDoc } from "../../types";
+import { checkHasAuthorization, patterns } from "../../helpers/projectHelpers";
 import { isEqual } from "lodash";
 import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
 
@@ -24,6 +24,7 @@ export interface ModelNameFormProps {
   isCancelingRef: React.MutableRefObject<boolean>;
   onSubmit: (data: ModelNameFormValues) => void;
   existingModelNames: string[];
+  role: MemberRole;
 }
 
 const ModelNameForm: React.FC<ModelNameFormProps> = ({
@@ -32,8 +33,13 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
   isCancelingRef,
   onSubmit,
   existingModelNames,
+  role,
 }) => {
   const classes = useStyles();
+
+  const hasManagerAuthorization = useMemo(() => {
+    return checkHasAuthorization(role, "manager");
+  }, [role]);
 
   const defaultValues = useMemo(() => {
     return {
@@ -51,6 +57,9 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
 
   const submit = useCallback(
     (e?: React.FormEvent<HTMLFormElement>) => {
+      if (!hasManagerAuthorization) {
+        return;
+      }
       e?.preventDefault();
       // @ts-ignore
       handleSubmit(() =>
@@ -60,7 +69,7 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
         })
       )();
     },
-    [getValues, handleSubmit, model, onSubmit]
+    [getValues, handleSubmit, hasManagerAuthorization, model, onSubmit]
   );
 
   const handleOnBlur = useCallback(() => {
@@ -107,6 +116,7 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
               helperText={errors.name?.message}
               size="small"
               onBlur={handleOnBlur}
+              disabled={!hasManagerAuthorization}
             />
           </Grid>
           <Grid item sm={7}>
@@ -125,6 +135,7 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
               helperText={errors.description?.message}
               size="small"
               onBlur={handleOnBlur}
+              disabled={!hasManagerAuthorization}
             />
           </Grid>
         </Grid>

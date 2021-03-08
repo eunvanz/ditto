@@ -2,6 +2,10 @@ import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import { matchPath, useHistory, useLocation } from "react-router-dom";
+import {
+  checkHasAuthorization,
+  getProjectRole,
+} from "../../helpers/projectHelpers";
 import ROUTE from "../../paths";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
@@ -13,6 +17,7 @@ const useDashboardLayoutProps = () => {
   const dispatch = useDispatch();
 
   const projects = useSelector(FirebaseSelectors.selectOrderedMyProjects);
+  const userProfile = useSelector(FirebaseSelectors.selectUserProfile);
 
   const firestoreQuery = useMemo(() => {
     const query: any[] = [];
@@ -96,6 +101,8 @@ const useDashboardLayoutProps = () => {
       const subItems: SectionItem[] = [];
       groupedProjectGroups[project.id]?.forEach((group) => {
         const items = getGroupSubItems(project, group);
+        const role = getProjectRole({ userProfile, project });
+        const hasNoAuth = !checkHasAuthorization(role, "manager");
         subItems.push({
           title: group.name,
           type: "group" as const,
@@ -107,6 +114,7 @@ const useDashboardLayoutProps = () => {
             matchPath(location.pathname, { path: item.href, exact: false })
           ),
           items,
+          hasNoAuth,
         });
       });
       groupedProjectRequests[project.id]
@@ -124,6 +132,7 @@ const useDashboardLayoutProps = () => {
       location.pathname,
       showGroupFormModal,
       showRequestFormModal,
+      userProfile,
     ]
   );
 
@@ -133,6 +142,8 @@ const useDashboardLayoutProps = () => {
         subheader: "MY PROJECTS",
         items: projects?.map((project) => {
           const items = getProjectSubItems(project);
+          const role = getProjectRole({ userProfile, project });
+          const hasNoAuth = !checkHasAuthorization(role, "manager");
           return (
             {
               title: project.title,
@@ -143,6 +154,7 @@ const useDashboardLayoutProps = () => {
               onClickAddRequest: () => showRequestFormModal(project),
               onClickAddGroup: () => showGroupFormModal(project),
               type: "project" as const,
+              hasNoAuth,
               items,
               isOpen: items.some(
                 (item) =>
@@ -160,6 +172,7 @@ const useDashboardLayoutProps = () => {
   }, [
     projects,
     getProjectSubItems,
+    userProfile,
     history,
     showRequestFormModal,
     showGroupFormModal,

@@ -53,6 +53,7 @@ export interface MemberListProps {
   onClickMoveTo: (member: UserProfileDoc, memberRole: MemberRole) => void;
   onClickDelete: (member: UserProfileDoc, memberRole: MemberRole) => void;
   onClickAdd: (memberRole: MemberRole) => void;
+  userProfile: UserProfileDoc;
 }
 
 const MemberList: React.FC<MemberListProps> = ({
@@ -62,6 +63,7 @@ const MemberList: React.FC<MemberListProps> = ({
   onClickMoveTo,
   onClickDelete,
   onClickAdd,
+  userProfile,
 }) => {
   const classes = useStyles();
 
@@ -92,9 +94,9 @@ const MemberList: React.FC<MemberListProps> = ({
       />
       {members.map((member) => (
         <MemberItem
-          key={member.id}
+          key={member.uid}
           member={member}
-          hasAuthorization={hasAuthorization}
+          hasAuthorization={userProfile.uid !== member.uid && hasAuthorization}
           memberRole={role}
           onClickMoveTo={onClickMoveTo}
           onClickDelete={onClickDelete}

@@ -6,6 +6,8 @@ import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { ModelFieldDoc, ResponseStatusDoc } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
+import useProjectRole from "../../hooks/useProjectRole";
+import useProjectByParam from "../../hooks/useProjectByParam";
 
 export interface UseResponseBodyFormPropsParams {
   responseStatus: ResponseStatusDoc;
@@ -121,6 +123,10 @@ const useResponseBodyFormProps = ({
     );
   };
 
+  const { project } = useProjectByParam();
+
+  const role = useProjectRole(project);
+
   return {
     responseStatus,
     responseBodies,
@@ -133,6 +139,7 @@ const useResponseBodyFormProps = ({
     checkIsSubmittingResponseHeader,
     onEditResponseStatus,
     responseHeaders,
+    role,
   };
 };
 
