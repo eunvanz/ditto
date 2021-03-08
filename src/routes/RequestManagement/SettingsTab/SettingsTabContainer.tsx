@@ -9,18 +9,14 @@ const SettingsTabContainer = () => {
     request,
     ...restProps
   } = useSettingsTabProps();
-  return (
-    projectGroups &&
-    requests &&
-    request && (
-      <SettingsTab
-        {...restProps}
-        projectGroups={projectGroups}
-        requests={requests}
-        request={request}
-      />
-    )
-  );
+  return projectGroups && requests && request ? (
+    <SettingsTab
+      {...restProps}
+      projectGroups={projectGroups}
+      requests={requests}
+      request={request}
+    />
+  ) : null;
 };
 
 export default SettingsTabContainer;

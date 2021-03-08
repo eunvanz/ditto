@@ -2,12 +2,11 @@ import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import shortId from "shortid";
-import { assertNotEmpty } from "../../helpers/commonHelpers";
 import { RootState } from "../../store";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
-import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { ModelNameFormValues } from "./ModelNameForm";
+import useProjectByParam from "../../hooks/useProjectByParam";
 
 const useModelFormProps: (defaultModelId?: string) => any = (
   defaultModelId
@@ -18,28 +17,27 @@ const useModelFormProps: (defaultModelId?: string) => any = (
 
   const dispatch = useDispatch();
 
-  const project = useSelector(ProjectSelectors.selectCurrentProject);
-  assertNotEmpty(project);
+  const { projectId } = useProjectByParam();
 
   const firestoreQuery = useMemo(() => {
     const query = [];
     if (defaultModelId) {
       query.push({
-        collection: `projects/${project.id}/models/${defaultModelId}/modelFields`,
+        collection: `projects/${projectId}/models/${defaultModelId}/modelFields`,
         orderBy: ["createdAt", "asc"],
       });
     }
     return query;
-  }, [defaultModelId, project.id]);
+  }, [defaultModelId, projectId]);
 
   useFirestoreConnect(firestoreQuery as any);
 
   const projectModels = useSelector(
-    FirebaseSelectors.createProjectModelsSelector(project.id)
+    FirebaseSelectors.createProjectModelsSelector(projectId)
   );
 
   const modelFields = useSelector(
-    FirebaseSelectors.createModelFieldsSelector(project.id, defaultModelId)
+    FirebaseSelectors.createModelFieldsSelector(projectId, defaultModelId)
   );
 
   const editingModelField = useSelector(
