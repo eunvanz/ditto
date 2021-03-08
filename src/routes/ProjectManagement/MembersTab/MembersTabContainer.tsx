@@ -3,8 +3,8 @@ import MembersTab from "./MembersTab";
 import useMembersTabProps from "./useMembersTabProps";
 
 const MembersTabContainer = () => {
-  const props = useMembersTabProps();
-  return props.allMembers ? <MembersTab {...props} /> : null;
+  const { allMembers, ...props } = useMembersTabProps();
+  return allMembers ? <MembersTab allMembers={allMembers} {...props} /> : null;
 };
 
 export default MembersTabContainer;
