@@ -53,7 +53,7 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
   return (
     <Container className={classes.root} maxWidth="lg">
       <Helmet>
-        <title>{project.title} - Drafto</title>
+        <title>{project.title} - Draffto</title>
       </Helmet>
       <Header title={project.title} description={project.description} />
       <Box mt={3}>

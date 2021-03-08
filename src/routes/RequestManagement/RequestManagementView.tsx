@@ -56,7 +56,7 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
   return (
     <Container className={classes.root} maxWidth="lg">
       <Helmet>
-        <title>{request.name} - Drafto</title>
+        <title>{request.name} - Draffto</title>
       </Helmet>
       <Header
         title={

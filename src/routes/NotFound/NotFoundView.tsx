@@ -41,7 +41,7 @@ const NotFoundView: FC<NotFoundViewProps> = ({ title, description }) => {
   return (
     <div className={classes.root}>
       <Helmet>
-        <title>404 Not found - Drafto</title>
+        <title>404 Not found - Draffto</title>
       </Helmet>
       <Container maxWidth="lg">
         <Typography
