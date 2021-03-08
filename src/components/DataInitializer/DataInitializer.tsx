@@ -25,6 +25,11 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
           collection: "projects",
           where: [[`members.${auth.uid}`, "==", true]],
         },
+        {
+          collection: "projects",
+          docId: "hm9GA2J7sgF8bLKPF7fS",
+          storeAs: "exampleProject",
+        },
       ];
     } else {
       return [];

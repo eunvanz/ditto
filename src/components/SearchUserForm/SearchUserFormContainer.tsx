@@ -3,8 +3,8 @@ import SearchUserForm from "./SearchUserForm";
 import useSearchUserFormProps from "./useSearchUserFormProps";
 
 const SearchUserFormContainer = () => {
-  const props = useSearchUserFormProps();
-  return <SearchUserForm {...props} />;
+  const { project, ...props } = useSearchUserFormProps();
+  return project ? <SearchUserForm project={project} {...props} /> : null;
 };
 
 export default SearchUserFormContainer;

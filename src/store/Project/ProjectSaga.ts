@@ -1615,6 +1615,13 @@ export function* addMembersFlow() {
     } finally {
       yield* put(ProgressActions.finishProgress(type));
       yield* put(UiActions.hideLoading(type));
+      yield* put(UiActions.hideSearchUserFormModal());
+      yield* put(
+        UiActions.showNotification({
+          type: "success",
+          message: "New member has been added.",
+        })
+      );
     }
   }
 }
@@ -1648,6 +1655,12 @@ export function* deleteMemberFlow() {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
       } finally {
         yield* put(UiActions.hideLoading(type));
+        yield* put(
+          UiActions.showNotification({
+            type: "success",
+            message: "The member has been deleted.",
+          })
+        );
       }
     }
   }

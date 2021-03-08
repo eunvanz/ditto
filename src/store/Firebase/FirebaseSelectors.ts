@@ -22,12 +22,21 @@ import AuthSelectors from "../Auth/AuthSelector";
 const selectMyProjects = (state: RootState) =>
   state.firestore.ordered.projects as ProjectDoc[];
 
+const selectExampleProject = createSelector(
+  (state: RootState) => state.firestore.ordered.exampleProject,
+  (projects) => (projects[0] as ProjectDoc) || undefined
+);
+
 const selectOrderedMyProjects = createSelector(
   selectMyProjects,
   AuthSelectors.selectAuth,
-  (projects: ProjectDoc[], auth) => {
+  selectExampleProject,
+  (projects: ProjectDoc[], auth, exampleProject) => {
     return auth
-      ? orderBy(projects, [`settingsByMember.${auth.uid}.seq`], ["asc"])
+      ? [
+          ...(exampleProject.members[auth.uid] ? [] : [exampleProject]),
+          ...orderBy(projects, [`settingsByMember.${auth.uid}.seq`], ["asc"]),
+        ]
       : [];
   }
 );
@@ -203,6 +212,7 @@ const FirebaseSelectors = {
   selectUserProfile,
   createProjectMembersSelector,
   selectSearchUserResult,
+  selectExampleProject,
 };
 
 export default FirebaseSelectors;

@@ -56,6 +56,7 @@ const useSearchUserFormProps = () => {
     onSubmit,
     isSubmitting,
     role,
+    project,
   };
 };
 

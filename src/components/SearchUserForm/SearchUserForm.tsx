@@ -5,6 +5,7 @@ import React, {
   FC,
   ReactNode,
   useRef,
+  useMemo,
 } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -16,7 +17,7 @@ import {
   Button,
 } from "@material-ui/core";
 import { getTextFieldErrorProps } from "../../helpers/projectHelpers";
-import { UserProfileDoc, MemberRole } from "../../types";
+import { UserProfileDoc, MemberRole, ProjectDoc } from "../../types";
 import { Theme } from "../../theme";
 import { Add, Close } from "@material-ui/icons";
 
@@ -70,6 +71,7 @@ export interface SearchUserFormProps {
   onSubmit: (members: UserProfileDoc[], role: MemberRole) => void;
   isSubmitting: boolean;
   role: MemberRole;
+  project: ProjectDoc;
 }
 
 const SearchUserForm = ({
@@ -78,6 +80,7 @@ const SearchUserForm = ({
   onSubmit,
   isSubmitting,
   role,
+  project,
 }: SearchUserFormProps) => {
   const classes = useStyles();
 
@@ -111,6 +114,14 @@ const SearchUserForm = ({
     );
   }, []);
 
+  const filteredResultItem = useMemo(() => {
+    return resultItems?.filter(
+      (item) =>
+        !selectedMembers.map((item) => item.uid).includes(item.uid) &&
+        !project.members[item.uid]
+    );
+  }, [project.members, resultItems, selectedMembers]);
+
   return (
     <form>
       <Box>
@@ -134,8 +145,8 @@ const SearchUserForm = ({
         <Typography variant="h5" color="textPrimary">
           Search result
         </Typography>
-        {Boolean(resultItems?.length) ? (
-          resultItems
+        {Boolean(filteredResultItem?.length) ? (
+          filteredResultItem
             ?.filter(
               (item) =>
                 !selectedMembers.map((item) => item.uid).includes(item.uid)
