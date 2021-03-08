@@ -81,6 +81,7 @@ export function* refreshProfileFlow() {
       const timestamp = yield* call(getTimestamp);
       const auth = yield* select(AuthSelectors.selectAuth);
       yield* call(firebase.updateProfile, {
+        uid: auth.uid,
         name: auth.displayName,
         email: auth.email,
         photoUrl: auth.photoURL,

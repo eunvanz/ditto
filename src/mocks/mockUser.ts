@@ -1,5 +1,5 @@
 import { User, UserProfileDoc } from "../types";
-import { FirebaseReducer, UserProfile } from "react-redux-firebase";
+import { FirebaseReducer } from "react-redux-firebase";
 
 const auth: FirebaseReducer.AuthState = {
   uid: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",

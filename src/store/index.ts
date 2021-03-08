@@ -24,7 +24,7 @@ export const rootReducer = combineReducers({
 });
 
 export type RootState = {
-  firebase: FirebaseReducer.Reducer<UserProfile>;
+  firebase: FirebaseReducer.Reducer<UserProfile, any>;
 } & Omit<ReturnType<typeof rootReducer>, "firebase">;
 
 export const initialRootState: RootState = {

@@ -45,6 +45,7 @@ export enum DATA_TYPE {
 }
 
 export interface UserProfile {
+  uid: string;
   name: string;
   photoUrl?: string;
   email: string;

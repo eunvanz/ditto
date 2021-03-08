@@ -15,6 +15,7 @@ import {
   ResponseBodyDoc,
   ResponseHeaderDoc,
   ResponseStatusDoc,
+  UserProfileDoc,
 } from "../../types";
 import AuthSelectors from "../Auth/AuthSelector";
 
@@ -174,6 +175,9 @@ const selectUserProfile = createSelector(
   (profile) => profile
 );
 
+const createProjectMembersSelector = (projectId: string) =>
+  createOrderedSelector<UserProfileDoc[]>(`projectMembers/${projectId}`);
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -193,6 +197,7 @@ const FirebaseSelectors = {
   createResponseBodiesSelector,
   createResponseHeadersSelector,
   selectUserProfile,
+  createProjectMembersSelector,
 };
 
 export default FirebaseSelectors;
