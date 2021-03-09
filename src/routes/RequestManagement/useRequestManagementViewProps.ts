@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
+import UiSelectors from "../../store/Ui/UiSelectors";
 import { UiActions } from "../../store/Ui/UiSlice";
 
 const useRequestManagementViewProps = () => {
@@ -69,7 +70,9 @@ const useRequestManagementViewProps = () => {
     }
   }, [dispatch, project]);
 
-  return { request, key: request?.id, isNotExist };
+  const screenMode = useSelector(UiSelectors.selectScreenMode);
+
+  return { request, key: request?.id, isNotExist, screenMode };
 };
 
 export default useRequestManagementViewProps;

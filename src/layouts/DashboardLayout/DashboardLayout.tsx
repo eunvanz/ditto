@@ -6,10 +6,12 @@ import { Theme } from "../../theme";
 import NavBar from "./NavBar";
 import TopBar from "./TopBar";
 import { Section } from "./NavBar/NavBar";
+import { SCREEN_MODE } from "../../store/Ui/UiSlice";
 
 export interface DashboardLayoutProps {
   children?: ReactNode;
   sections: Section[];
+  screenMode: SCREEN_MODE;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -42,7 +44,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const DashboardLayout: FC<DashboardLayoutProps> = ({ sections, children }) => {
+const DashboardLayout: FC<DashboardLayoutProps> = ({
+  sections,
+  children,
+  // screenMode,
+}) => {
   const classes = useStyles();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
 
@@ -54,7 +60,10 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ sections, children }) => {
         isOpenMobile={isMobileNavOpen}
         sections={sections}
       />
-      <div className={classes.wrapper}>
+      <div
+        className={classes.wrapper}
+        // style={{ paddingLeft: screenMode === SCREEN_MODE.WIDE ? 0 : undefined }}
+      >
         <div className={classes.contentContainer}>
           <div className={classes.content}>{children}</div>
         </div>

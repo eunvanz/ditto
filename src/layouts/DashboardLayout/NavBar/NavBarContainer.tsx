@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import NavBar, { Section } from "./NavBar";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { UiActions } from "../../../store/Ui/UiSlice";
+import UiSelectors from "../../../store/Ui/UiSelectors";
 
 export interface NavBarContainerProps {
   onMobileClose: () => void;
@@ -16,7 +17,15 @@ const NavBarContainer: React.FC<NavBarContainerProps> = (props) => {
     dispatch(UiActions.showProjectFormModal());
   }, [dispatch]);
 
-  return <NavBar onClickAddNewProject={showProjectFormModal} {...props} />;
+  const screenMode = useSelector(UiSelectors.selectScreenMode);
+
+  return (
+    <NavBar
+      onClickAddNewProject={showProjectFormModal}
+      screenMode={screenMode}
+      {...props}
+    />
+  );
 };
 
 export default NavBarContainer;

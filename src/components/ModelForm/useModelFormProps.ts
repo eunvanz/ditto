@@ -9,6 +9,7 @@ import { ModelNameFormValues } from "./ModelNameForm";
 import useProjectByParam from "../../hooks/useProjectByParam";
 import useLoading from "../../hooks/useLoading";
 import useProjectRole from "../../hooks/useProjectRole";
+import UiSelectors from "../../store/Ui/UiSelectors";
 
 const useModelFormProps: (defaultModelId?: string) => any = (
   defaultModelId
@@ -70,6 +71,8 @@ const useModelFormProps: (defaultModelId?: string) => any = (
 
   const role = useProjectRole(project);
 
+  const screenMode = useSelector(UiSelectors.selectScreenMode);
+
   return {
     model,
     modelFields: modelFields || [],
@@ -77,6 +80,7 @@ const useModelFormProps: (defaultModelId?: string) => any = (
     projectModels: projectModels || [],
     editingModelFieldId,
     role,
+    screenMode,
   };
 };
 

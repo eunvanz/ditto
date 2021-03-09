@@ -56,6 +56,8 @@ const selectSearchUserFormModal = createSelector(
   (searchUserFormModal) => searchUserFormModal
 );
 
+const selectScreenMode = (state: RootState) => state.ui.screenMode;
+
 const UiSelectors = {
   selectTheme,
   selectProjectFormModal,
@@ -68,6 +70,7 @@ const UiSelectors = {
   selectRequestFormModal,
   selectQuickUrlFormModal,
   selectSearchUserFormModal,
+  selectScreenMode,
 };
 
 export default UiSelectors;

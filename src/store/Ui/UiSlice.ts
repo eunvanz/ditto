@@ -34,6 +34,7 @@ export type UiState = {
   requestFormModal: RequestFormModalState;
   quickUrlFormModal: QuickUrlFormModalState;
   searchUserFormModal: SearchUserFormModalState;
+  screenMode: SCREEN_MODE;
 };
 
 export interface SearchUserFormModalState {
@@ -76,6 +77,11 @@ export interface QuickModelNameFormModalState {
 export interface ProjectFormModalState {
   isVisible: boolean;
   project?: ProjectDoc;
+}
+
+export enum SCREEN_MODE {
+  WIDE = "WIDE",
+  DEFAULT = "DEFAULT",
 }
 
 export const initialUiState: UiState = {
@@ -124,6 +130,7 @@ export const initialUiState: UiState = {
     isVisible: false,
     role: "guest",
   },
+  screenMode: SCREEN_MODE.DEFAULT,
 };
 
 const UiSlice = createSlice({
@@ -276,6 +283,13 @@ const UiSlice = createSlice({
     },
     hideSearchUserFormModal: (state, _action: PayloadAction<void>) => {
       state.searchUserFormModal.isVisible = false;
+    },
+    toggleScreenMode: (state, _action: PayloadAction<void>) => {
+      if (state.screenMode === SCREEN_MODE.DEFAULT) {
+        state.screenMode = SCREEN_MODE.WIDE;
+      } else {
+        state.screenMode = SCREEN_MODE.DEFAULT;
+      }
     },
   },
 });

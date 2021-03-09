@@ -9,6 +9,7 @@ import {
 import ROUTE from "../../paths";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
+import UiSelectors from "../../store/Ui/UiSelectors";
 import { UiActions } from "../../store/Ui/UiSlice";
 import { GroupDoc, ProjectDoc, RequestDoc } from "../../types";
 import { SectionItem } from "./NavBar/NavBar";
@@ -181,7 +182,9 @@ const useDashboardLayoutProps = () => {
     location.pathname,
   ]);
 
-  return { sections };
+  const screenMode = useSelector(UiSelectors.selectScreenMode);
+
+  return { sections, screenMode };
 };
 
 export default useDashboardLayoutProps;
