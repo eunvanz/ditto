@@ -7,7 +7,12 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { EditOutlined, ExpandLess, ExpandMore, Add } from "@material-ui/icons";
+import {
+  EditOutlined,
+  ArrowDropDown,
+  ArrowRight,
+  Add,
+} from "@material-ui/icons";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   checkHasAuthorization,
@@ -326,12 +331,12 @@ const Wrapper: React.FC<WrapperProps> = ({
             >
               {!isDetailVisible && (
                 <>
-                  <ExpandMore fontSize="small" /> {model?.name}
+                  <ArrowRight fontSize="small" /> {model?.name}
                 </>
               )}
               {isDetailVisible && (
                 <>
-                  <ExpandLess fontSize="small" /> {model?.name}
+                  <ArrowDropDown fontSize="small" /> {model?.name}
                   {hasManagerAuthorization && (
                     <Button
                       className={classes.addSubButton}
