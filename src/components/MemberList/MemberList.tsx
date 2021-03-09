@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { MoreHoriz, Add } from "@material-ui/icons";
 import React, { useRef, useState, useMemo } from "react";
+import { checkHasAuthorization } from "../../helpers/projectHelpers";
 import { Theme } from "../../theme";
 import { UserProfileDoc, MemberRole } from "../../types";
 
@@ -114,18 +115,20 @@ const MemberList: React.FC<MemberListProps> = ({
           onClickDelete={onClickDelete}
         />
       ))}
-      <Box p={2} pt={0}>
-        <Button
-          className={classes.addButton}
-          variant="outlined"
-          color="secondary"
-          fullWidth
-          size="large"
-          onClick={() => onClickAdd(role)}
-        >
-          <Add /> ADD NEW MEMBERS
-        </Button>
-      </Box>
+      {checkHasAuthorization(role, memberRole) && (
+        <Box p={2} pt={0}>
+          <Button
+            className={classes.addButton}
+            variant="outlined"
+            color="secondary"
+            fullWidth
+            size="large"
+            onClick={() => onClickAdd(role)}
+          >
+            <Add /> ADD NEW MEMBERS
+          </Button>
+        </Box>
+      )}
     </Card>
   );
 };
