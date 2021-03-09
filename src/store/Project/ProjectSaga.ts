@@ -1572,7 +1572,7 @@ export function* deleteResponseHeaderFlow() {
         yield* put(
           UiActions.showNotification({
             type: "success",
-            message: "The body has been deleted.",
+            message: "The header has been deleted.",
           })
         );
       } catch (error) {
