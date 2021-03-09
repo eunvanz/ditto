@@ -34,7 +34,11 @@ const selectOrderedMyProjects = createSelector(
   (projects: ProjectDoc[], auth, exampleProject) => {
     return auth
       ? [
-          ...(exampleProject?.members[auth.uid] ? [] : [exampleProject]),
+          ...(exampleProject?.members[auth.uid]
+            ? []
+            : exampleProject
+            ? [exampleProject]
+            : []),
           ...orderBy(projects, [`settingsByMember.${auth.uid}.seq`], ["asc"]),
         ]
       : [];
