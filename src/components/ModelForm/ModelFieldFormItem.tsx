@@ -355,7 +355,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   );
 
   const enumValues = useMemo(() => {
-    return currentEnumeration?.items.join(" ,");
+    return currentEnumeration?.items.join(", ");
   }, [currentEnumeration]);
 
   const hasManagerAuthorization = useMemo(() => {
