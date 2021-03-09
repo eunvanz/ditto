@@ -24,7 +24,7 @@ const selectMyProjects = (state: RootState) =>
 
 const selectExampleProject = createSelector(
   (state: RootState) => state.firestore.ordered.exampleProject,
-  (projects) => (projects?.[0] as ProjectDoc) || undefined
+  (project) => (project?.[0] as ProjectDoc) || undefined
 );
 
 const selectOrderedMyProjects = createSelector(
@@ -46,14 +46,11 @@ const selectOrderedMyProjects = createSelector(
 );
 
 const createProjectSelectorByProjectId = (projectId: string) =>
-  createSelector(
-    (state: RootState) => state.firestore.ordered.projects,
-    (projects: ProjectDoc[]) => {
-      return projects
-        ? projects.find((project) => project.id === projectId)
-        : undefined;
-    }
-  );
+  createSelector(selectOrderedMyProjects, (projects: ProjectDoc[]) => {
+    return projects
+      ? projects.find((project) => project.id === projectId)
+      : undefined;
+  });
 
 function createOrderedSelector<T>(key: string) {
   return createSelector(

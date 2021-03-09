@@ -27,7 +27,7 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
         },
         {
           collection: "projects",
-          docId: "hm9GA2J7sgF8bLKPF7fS",
+          doc: "hm9GA2J7sgF8bLKPF7fS",
           storeAs: "exampleProject",
         },
       ];
