@@ -37,6 +37,7 @@ const useQuickUrlFormModalProps = () => {
 
   useFirestoreConnect({
     collection: `projects/${project.id}/urls`,
+    orderBy: ["createdAt", "asc"],
   });
 
   const existingUrls = useSelector(
