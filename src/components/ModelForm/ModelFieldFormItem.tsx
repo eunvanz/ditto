@@ -65,6 +65,7 @@ const useStyles = makeStyles(() => ({
   enumerationButton: {
     fontSize: "0.875rem",
     fontWeight: "normal",
+    textTransform: "unset",
   },
 }));
 
@@ -354,7 +355,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   );
 
   const enumValues = useMemo(() => {
-    return currentEnumeration?.items.join(" | ");
+    return currentEnumeration?.items.join(" ,");
   }, [currentEnumeration]);
 
   const hasManagerAuthorization = useMemo(() => {
