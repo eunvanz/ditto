@@ -55,6 +55,7 @@ export interface UserProfile {
 }
 
 export interface UserProfileDoc {
+  id: string;
   uid: string;
   name: string;
   photoUrl?: string;

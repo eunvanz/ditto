@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export interface MemberListProps {
   title: "Owners" | "Managers" | "Guests";
   members: UserProfileDoc[];
-  hasAuthorization: boolean;
+  role: MemberRole;
   onClickMoveTo: (member: UserProfileDoc, memberRole: MemberRole) => void;
   onClickDelete: (member: UserProfileDoc, memberRole: MemberRole) => void;
   onClickAdd: (memberRole: MemberRole) => void;
@@ -59,7 +59,7 @@ export interface MemberListProps {
 const MemberList: React.FC<MemberListProps> = ({
   title,
   members,
-  hasAuthorization,
+  role,
   onClickMoveTo,
   onClickDelete,
   onClickAdd,
@@ -67,7 +67,18 @@ const MemberList: React.FC<MemberListProps> = ({
 }) => {
   const classes = useStyles();
 
-  const role = useMemo(() => {
+  const hasAuthorization = useMemo(() => {
+    if (title === "Owners") {
+      return role === "owner";
+    } else if (title === "Managers") {
+      return ["owner", "manager"].includes(role);
+    } else if (title === "Guests") {
+      return ["owner", "manager"].includes(role);
+    }
+    return false;
+  }, [role, title]);
+
+  const memberRole = useMemo(() => {
     switch (title) {
       case "Owners":
         return "owner";
@@ -97,7 +108,8 @@ const MemberList: React.FC<MemberListProps> = ({
           key={member.uid}
           member={member}
           hasAuthorization={userProfile.uid !== member.uid && hasAuthorization}
-          memberRole={role}
+          role={role}
+          memberRole={memberRole}
           onClickMoveTo={onClickMoveTo}
           onClickDelete={onClickDelete}
         />
@@ -122,12 +134,14 @@ export interface MemberItemProps
   extends Pick<MemberListProps, "onClickMoveTo" | "onClickDelete"> {
   member: UserProfileDoc;
   hasAuthorization: boolean;
-  memberRole: MemberRole;
+  memberRole: MemberRole; // 이 그룹의 롤
+  role: MemberRole; // 사용자의 롤
 }
 
 export const MemberItem: React.FC<MemberItemProps> = ({
   member,
   hasAuthorization,
+  role,
   memberRole,
   onClickMoveTo,
   onClickDelete,
@@ -143,11 +157,17 @@ export const MemberItem: React.FC<MemberItemProps> = ({
       case "owner":
         return ["manager", "guest"];
       case "manager":
+        if (role === "manager") {
+          return ["guest"];
+        }
         return ["owner", "guest"];
       case "guest":
+        if (role === "manager") {
+          return ["manager"];
+        }
         return ["owner", "manager"];
     }
-  }, [memberRole]);
+  }, [memberRole, role]);
 
   return (
     <>

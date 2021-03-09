@@ -32,7 +32,7 @@ import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 
 const useStyles = makeStyles((theme: Theme) => ({
   fieldNameCell: {
-    width: "15%",
+    width: "17%",
   },
   typeCell: {
     width: 100,
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: 50,
   },
   formatCell: {
-    width: "15%",
+    width: "17%",
   },
   requiredCell: {
     width: 50,

@@ -6,8 +6,8 @@ import mockUser from "../../mocks/mockUser";
 
 const defaultProps: Partial<MemberListProps> = {
   members: mockUser.userProfiles,
-  hasAuthorization: true,
   title: "Owners",
+  userProfile: mockUser.userProfiles[0],
 };
 
 export default {
@@ -21,5 +21,17 @@ export default {
 
 const Template: Story<MemberListProps> = (args) => <MemberList {...args} />;
 
-export const 권한있음 = Template.bind({});
-권한있음.args = {};
+export const 오너_롤 = Template.bind({});
+오너_롤.args = {
+  role: "owner",
+};
+
+export const 매니저_롤 = Template.bind({});
+매니저_롤.args = {
+  role: "manager",
+};
+
+export const 게스트_롤 = Template.bind({});
+게스트_롤.args = {
+  role: "guest",
+};
