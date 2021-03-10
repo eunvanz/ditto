@@ -52,6 +52,7 @@ export interface UserProfile {
   isRegistered: boolean;
   registeredAt: firebase.firestore.FieldValue;
   updatedAt: firebase.firestore.FieldValue;
+  projects: Record<string, boolean>;
 }
 
 export interface UserProfileDoc {
