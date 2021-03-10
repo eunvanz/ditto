@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { useFirestoreConnect } from "react-redux-firebase";
 import { useSelector } from "react-redux";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
-import AuthSelectors from "../../../store/Auth/AuthSelector";
 import useLoading from "../../../hooks/useLoading";
+import useProjectRole from "../../../hooks/useProjectRole";
 
 const useMembersTabProps = () => {
   const { project, projectId } = useProjectByParam();
@@ -31,17 +31,13 @@ const useMembersTabProps = () => {
     FirebaseSelectors.createProjectMembersSelector(projectId)
   );
 
-  const auth = useSelector(AuthSelectors.selectAuth);
-
-  const hasAuthorization = useMemo(() => {
-    return !!project?.owners[auth.uid];
-  }, [auth.uid, project]);
-
   useLoading(allMembers, "loadingMembers");
+
+  const role = useProjectRole(project);
 
   return {
     allMembers,
-    hasAuthorization,
+    role,
   };
 };
 

@@ -4,7 +4,7 @@ import useMemberListProps from "./useMemberListProps";
 import { UserProfileDoc } from "../../types";
 
 export interface MemberListContainerProps
-  extends Pick<MemberListProps, "title" | "hasAuthorization"> {
+  extends Pick<MemberListProps, "title" | "role"> {
   allMembers: UserProfileDoc[];
 }
 

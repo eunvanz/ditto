@@ -4,10 +4,15 @@ import RequestManagementView from "./RequestManagementView";
 import useRequestManagementViewProps from "./useRequestManagementViewProps";
 
 const RequestManagementViewContainer = () => {
-  const { request, key, isNotExist } = useRequestManagementViewProps();
+  const {
+    request,
+    key,
+    isNotExist,
+    ...restProps
+  } = useRequestManagementViewProps();
 
   return request ? (
-    <RequestManagementView request={request} key={key} />
+    <RequestManagementView request={request} key={key} {...restProps} />
   ) : isNotExist ? (
     <NotFoundView
       title="The operation you are looking for isn't here"

@@ -17,6 +17,7 @@ import ModelList from "./ModelList";
 import EnumForm from "./EnumForm";
 import MembersTab from "./MembersTab";
 import { checkHasAuthorization } from "../../helpers/projectHelpers";
+import { SCREEN_MODE } from "../../store/Ui/UiSlice";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -30,11 +31,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 export interface ProjectManagementViewProps {
   project: ProjectDoc;
   role: MemberRole;
+  screenMode: SCREEN_MODE;
 }
 
 const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
   project,
   role,
+  screenMode,
 }) => {
   const classes = useStyles();
 
@@ -59,7 +62,10 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
   }, [role]);
 
   return (
-    <Container className={classes.root} maxWidth="lg">
+    <Container
+      className={classes.root}
+      maxWidth={screenMode === SCREEN_MODE.WIDE ? "xl" : "lg"}
+    >
       <Helmet>
         <title>{project.title} - Diitto</title>
       </Helmet>

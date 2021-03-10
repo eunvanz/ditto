@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { MoreHoriz, Add } from "@material-ui/icons";
 import React, { useRef, useState, useMemo } from "react";
+import { checkHasAuthorization } from "../../helpers/projectHelpers";
 import { Theme } from "../../theme";
 import { UserProfileDoc, MemberRole } from "../../types";
 
@@ -49,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export interface MemberListProps {
   title: "Owners" | "Managers" | "Guests";
   members: UserProfileDoc[];
-  hasAuthorization: boolean;
+  role: MemberRole;
   onClickMoveTo: (member: UserProfileDoc, memberRole: MemberRole) => void;
   onClickDelete: (member: UserProfileDoc, memberRole: MemberRole) => void;
   onClickAdd: (memberRole: MemberRole) => void;
@@ -59,7 +60,7 @@ export interface MemberListProps {
 const MemberList: React.FC<MemberListProps> = ({
   title,
   members,
-  hasAuthorization,
+  role,
   onClickMoveTo,
   onClickDelete,
   onClickAdd,
@@ -67,7 +68,18 @@ const MemberList: React.FC<MemberListProps> = ({
 }) => {
   const classes = useStyles();
 
-  const role = useMemo(() => {
+  const hasAuthorization = useMemo(() => {
+    if (title === "Owners") {
+      return role === "owner";
+    } else if (title === "Managers") {
+      return ["owner", "manager"].includes(role);
+    } else if (title === "Guests") {
+      return ["owner", "manager"].includes(role);
+    }
+    return false;
+  }, [role, title]);
+
+  const memberRole = useMemo(() => {
     switch (title) {
       case "Owners":
         return "owner";
@@ -97,23 +109,26 @@ const MemberList: React.FC<MemberListProps> = ({
           key={member.uid}
           member={member}
           hasAuthorization={userProfile.uid !== member.uid && hasAuthorization}
-          memberRole={role}
+          role={role}
+          memberRole={memberRole}
           onClickMoveTo={onClickMoveTo}
           onClickDelete={onClickDelete}
         />
       ))}
-      <Box p={2} pt={0}>
-        <Button
-          className={classes.addButton}
-          variant="outlined"
-          color="secondary"
-          fullWidth
-          size="large"
-          onClick={() => onClickAdd(role)}
-        >
-          <Add /> ADD NEW MEMBERS
-        </Button>
-      </Box>
+      {checkHasAuthorization(role, memberRole) && (
+        <Box p={2} pt={0}>
+          <Button
+            className={classes.addButton}
+            variant="outlined"
+            color="secondary"
+            fullWidth
+            size="large"
+            onClick={() => onClickAdd(role)}
+          >
+            <Add /> ADD NEW MEMBERS
+          </Button>
+        </Box>
+      )}
     </Card>
   );
 };
@@ -122,12 +137,14 @@ export interface MemberItemProps
   extends Pick<MemberListProps, "onClickMoveTo" | "onClickDelete"> {
   member: UserProfileDoc;
   hasAuthorization: boolean;
-  memberRole: MemberRole;
+  memberRole: MemberRole; // 이 그룹의 롤
+  role: MemberRole; // 사용자의 롤
 }
 
 export const MemberItem: React.FC<MemberItemProps> = ({
   member,
   hasAuthorization,
+  role,
   memberRole,
   onClickMoveTo,
   onClickDelete,
@@ -143,11 +160,17 @@ export const MemberItem: React.FC<MemberItemProps> = ({
       case "owner":
         return ["manager", "guest"];
       case "manager":
+        if (role === "manager") {
+          return ["guest"];
+        }
         return ["owner", "guest"];
       case "guest":
+        if (role === "manager") {
+          return ["manager"];
+        }
         return ["owner", "manager"];
     }
-  }, [memberRole]);
+  }, [memberRole, role]);
 
   return (
     <>

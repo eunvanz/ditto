@@ -13,6 +13,7 @@ import ModelNameForm, { ModelNameFormValues } from "./ModelNameForm";
 import CloseIcon from "@material-ui/icons/Close";
 import useModalKeyControl from "../../hooks/useModalKeyControl";
 import ModelTable from "../ModelTable";
+import { SCREEN_MODE } from "../../store/Ui/UiSlice";
 
 const useStyles = makeStyles((theme) => ({
   fieldNameCell: {
@@ -78,6 +79,7 @@ export interface ModelFormProps {
   editingModelFieldId?: string;
   isVisible?: boolean;
   role: MemberRole;
+  screenMode: SCREEN_MODE;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -90,6 +92,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   editingModelFieldId,
   isVisible,
   role,
+  screenMode,
 }) => {
   const classes = useStyles();
 
@@ -199,11 +202,22 @@ export interface ModelFormModalProps extends ModelFormProps {
 export const ModelFormModal: React.FC<ModelFormModalProps> = ({
   isVisible,
   onClose,
+  screenMode,
   ...restProps
 }) => {
   return (
-    <Dialog open={isVisible} fullWidth maxWidth="lg" scroll="body">
-      <ModelForm {...restProps} onClose={onClose} isVisible={isVisible} />
+    <Dialog
+      open={isVisible}
+      fullWidth
+      maxWidth={screenMode === SCREEN_MODE.WIDE ? "xl" : "lg"}
+      scroll="body"
+    >
+      <ModelForm
+        {...restProps}
+        screenMode={screenMode}
+        onClose={onClose}
+        isVisible={isVisible}
+      />
     </Dialog>
   );
 };

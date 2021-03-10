@@ -11,12 +11,14 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import NavItem, { NavItemProps } from "./NavItem";
+import { SCREEN_MODE } from "../../../store/Ui/UiSlice";
 
 export interface NavBarProps {
   onMobileClose: () => void;
   isOpenMobile: boolean;
   sections: Section[];
   onClickAddNewProject: () => void;
+  screenMode: SCREEN_MODE;
 }
 
 export interface SectionItem
@@ -105,6 +107,7 @@ const NavBar: FC<NavBarProps> = ({
   isOpenMobile,
   sections,
   onClickAddNewProject,
+  screenMode,
 }) => {
   const classes = useStyles();
   const location = useLocation();
@@ -148,7 +151,10 @@ const NavBar: FC<NavBarProps> = ({
 
   return (
     <>
-      <Hidden lgUp>
+      <Hidden
+        lgUp={screenMode !== SCREEN_MODE.WIDE}
+        xlUp={screenMode === SCREEN_MODE.WIDE}
+      >
         <Drawer
           anchor="left"
           classes={{ paper: classes.mobileDrawer }}
@@ -159,7 +165,10 @@ const NavBar: FC<NavBarProps> = ({
           {content}
         </Drawer>
       </Hidden>
-      <Hidden mdDown>
+      <Hidden
+        mdDown={screenMode !== SCREEN_MODE.WIDE}
+        lgDown={screenMode === SCREEN_MODE.WIDE}
+      >
         <Drawer
           anchor="left"
           classes={{ paper: classes.desktopDrawer }}

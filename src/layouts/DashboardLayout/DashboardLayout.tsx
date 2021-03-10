@@ -2,14 +2,17 @@ import React, { useState } from "react";
 import { FC, ReactNode } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core";
+import clsx from "clsx";
 import { Theme } from "../../theme";
 import NavBar from "./NavBar";
 import TopBar from "./TopBar";
 import { Section } from "./NavBar/NavBar";
+import { SCREEN_MODE } from "../../store/Ui/UiSlice";
 
 export interface DashboardLayoutProps {
   children?: ReactNode;
   sections: Section[];
+  screenMode: SCREEN_MODE;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -28,6 +31,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     [theme.breakpoints.up("lg")]: {
       paddingLeft: 320,
     },
+    "&.wide": {
+      [theme.breakpoints.down("lg")]: {
+        paddingLeft: 0,
+      },
+    },
   },
   contentContainer: {
     display: "flex",
@@ -42,7 +50,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const DashboardLayout: FC<DashboardLayoutProps> = ({ sections, children }) => {
+const DashboardLayout: FC<DashboardLayoutProps> = ({
+  sections,
+  children,
+  screenMode,
+}) => {
   const classes = useStyles();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
 
@@ -54,7 +66,12 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ sections, children }) => {
         isOpenMobile={isMobileNavOpen}
         sections={sections}
       />
-      <div className={classes.wrapper}>
+      <div
+        className={clsx(
+          classes.wrapper,
+          screenMode === SCREEN_MODE.WIDE ? "wide" : undefined
+        )}
+      >
         <div className={classes.contentContainer}>
           <div className={classes.content}>{children}</div>
         </div>
