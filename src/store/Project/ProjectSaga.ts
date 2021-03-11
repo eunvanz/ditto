@@ -92,6 +92,7 @@ export function* submitProjectFormFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.submitProjectForm);
     const auth = yield* select(AuthSelectors.selectAuth);
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
 
     const isLogOn = yield* call(requireSignIn);
     if (!isLogOn) {
@@ -116,7 +117,7 @@ export function* submitProjectFormFlow() {
           ...payload.data,
         });
       } else {
-        yield* call(Firework.addProject, {
+        const projectRef = yield* call(Firework.addProject, {
           ...payload.data,
           members: {
             [auth.uid]: true,
@@ -135,6 +136,12 @@ export function* submitProjectFormFlow() {
               updatedAt: timestamp,
               seq: lastProjectSeq + 1,
             },
+          },
+        });
+        yield* call(Firework.updateUserProfile, userProfile.uid, {
+          projects: {
+            ...userProfile.projects,
+            [projectRef.id]: true,
           },
         });
       }
@@ -173,10 +180,17 @@ export function* deleteProjectFlow() {
       isConfirmed: take(UiActions.confirmCriticalConfirmModal),
       isCanceled: take(UiActions.hideCriticalConfirmModal),
     });
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     if (isConfirmed) {
       try {
         yield* put(UiActions.showLoading("deleteProject"));
         yield* call(Firework.deleteProject, project.id);
+        yield* call(Firework.updateUserProfile, userProfile.uid, {
+          projects: {
+            ...userProfile.projects,
+            [project.id]: false,
+          },
+        });
         yield* put(
           UiActions.showNotification({
             message: "The project has been deleted.",

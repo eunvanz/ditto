@@ -52,16 +52,12 @@ export interface UserProfile {
   isRegistered: boolean;
   registeredAt: firebase.firestore.FieldValue;
   updatedAt: firebase.firestore.FieldValue;
-  projects: Record<string, boolean>;
+  projects?: Record<string, boolean>;
 }
 
-export interface UserProfileDoc {
-  id: string;
-  uid: string;
-  name: string;
-  photoUrl?: string;
-  email: string;
-  isRegistered: boolean;
+export interface UserProfileDoc
+  extends Omit<UserProfile, "registeredAt" | "updatedAt"> {
+  id?: string;
   registeredAt: DocTimestamp;
   updatedAt: DocTimestamp;
 }

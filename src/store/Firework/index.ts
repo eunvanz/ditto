@@ -405,6 +405,10 @@ async function runTaskForEachDocs(
   });
 }
 
+function* updateUserProfile(id: string, data: Partial<UserProfile>) {
+  return yield* call(updateDocument, "users", id, data);
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -458,6 +462,7 @@ export const realFirework = {
   runBatch,
   runTaskForEachDocs,
   addUserProfile,
+  updateUserProfile,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";
