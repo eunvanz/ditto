@@ -84,8 +84,7 @@ const ProvidedAlert = (props: AlertProps) => {
 
 Alert.message = ({ title, message }: { title: string; message: string }) => {
   return new Promise((resolve) => {
-    const container = document.createElement("div");
-    document.body.appendChild(container);
+    const fragment = new DocumentFragment();
 
     const AlertContainer = () => {
       const [isAlertVisible, setIsAlertVisible] = useState(false);
@@ -94,7 +93,7 @@ Alert.message = ({ title, message }: { title: string; message: string }) => {
         setIsAlertVisible(false);
         setTimeout(() => {
           try {
-            document.body.removeChild(container);
+            document.body.removeChild(fragment);
           } catch (error) {
             // FIXME: 두번 연속 실행되는 시점부터 오류가 남 (원인 불명)
           }
@@ -118,7 +117,7 @@ Alert.message = ({ title, message }: { title: string; message: string }) => {
       );
     };
 
-    ReactDOM.render(<AlertContainer />, container);
+    ReactDOM.render(<AlertContainer />, fragment);
   });
 };
 

@@ -123,7 +123,7 @@ const MemberList: React.FC<MemberListProps> = ({
             color="secondary"
             fullWidth
             size="large"
-            onClick={() => onClickAdd(role)}
+            onClick={() => onClickAdd(memberRole)}
           >
             <Add /> ADD NEW MEMBERS
           </Button>

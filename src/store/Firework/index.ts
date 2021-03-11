@@ -45,6 +45,14 @@ function getMyProjectsRef(uid: string) {
   return db.collection("projects").where(`members.${uid}`, "==", true);
 }
 
+function getProjectRef(id: string) {
+  return db.collection("projects").doc(id);
+}
+
+function getUserRef(uid: string) {
+  return db.collection("users").doc(uid);
+}
+
 function* addUserProfile(data: UserProfile) {
   return yield* call(addDocument, "users", data);
 }
@@ -463,6 +471,8 @@ export const realFirework = {
   runTaskForEachDocs,
   addUserProfile,
   updateUserProfile,
+  getUserRef,
+  getProjectRef,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

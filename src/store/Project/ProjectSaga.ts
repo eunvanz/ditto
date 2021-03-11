@@ -184,13 +184,22 @@ export function* deleteProjectFlow() {
     if (isConfirmed) {
       try {
         yield* put(UiActions.showLoading("deleteProject"));
-        yield* call(Firework.deleteProject, project.id);
-        yield* call(Firework.updateUserProfile, userProfile.uid, {
-          projects: {
-            ...userProfile.projects,
-            [project.id]: false,
+        const projectRef = yield* call(Firework.getProjectRef, project.id);
+        const userRef = yield* call(Firework.getUserRef, userProfile.uid);
+        const batchItems: RunBatchItem[] = [
+          {
+            operation: "delete",
+            ref: projectRef,
           },
-        });
+          {
+            operation: "update",
+            ref: userRef,
+            data: {
+              [`projects.${project.id}`]: false,
+            },
+          },
+        ];
+        yield* call(Firework.runBatch, batchItems);
         yield* put(
           UiActions.showNotification({
             message: "The project has been deleted.",
@@ -1608,25 +1617,32 @@ export function* addMembersFlow() {
     const { type, payload } = yield* take(ProjectActions.addMembers);
     yield* put(ProgressActions.startProgress(type));
     yield* put(UiActions.showLoading(type));
+    const { role, members } = payload;
     try {
-      const { role, members } = payload;
       const project = yield* select(ProjectSelectors.selectCurrentProject);
       assertNotEmpty(project);
-      const newMembers: Record<string, boolean> = {};
       const key = getProjectKeyByRole(role);
+      const batchItems: RunBatchItem[] = [];
+      const projectUpdateData: Record<string, boolean> = {};
+      const projectRef = yield* call(Firework.getProjectRef, project.id);
       members.forEach((member) => {
-        newMembers[member.uid] = true;
+        projectUpdateData[`members.${member.uid}`] = true;
+        projectUpdateData[`${key}.${member.uid}`] = true;
+        const userRef = Firework.getUserRef(member.uid);
+        batchItems.push({
+          operation: "update",
+          ref: userRef,
+          data: {
+            [`projects.${project.id}`]: true,
+          },
+        });
       });
-      yield* call(Firework.updateProject, project.id, {
-        members: {
-          ...project.members,
-          ...newMembers,
-        },
-        [key]: {
-          ...project[key],
-          ...newMembers,
-        },
+      batchItems.push({
+        operation: "update",
+        ref: projectRef,
+        data: projectUpdateData,
       });
+      yield* call(Firework.runBatch, batchItems);
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
@@ -1636,7 +1652,10 @@ export function* addMembersFlow() {
       yield* put(
         UiActions.showNotification({
           type: "success",
-          message: "New member has been added.",
+          message:
+            members.length > 1
+              ? "New members have been added."
+              : "New member has been added.",
         })
       );
     }
@@ -1657,17 +1676,26 @@ export function* deleteMemberFlow() {
         const project = yield* select(ProjectSelectors.selectCurrentProject);
         assertNotEmpty(project);
         const key = getProjectKeyByRole(role);
-        const newMembers = { [member.uid]: false };
-        yield* call(Firework.updateProject, project.id, {
-          members: {
-            ...project.members,
-            ...newMembers,
+        const projectRef = yield* call(Firework.getProjectRef, project.id);
+        const userRef = yield* call(Firework.getUserRef, member.uid);
+        const batchItems: RunBatchItem[] = [
+          {
+            operation: "update",
+            ref: projectRef,
+            data: {
+              [`members.${member.uid}`]: false,
+              [`${key}.${member.uid}`]: false,
+            },
           },
-          [key]: {
-            ...project[key],
-            ...newMembers,
+          {
+            operation: "update",
+            ref: userRef,
+            data: {
+              [`projects.${project.id}`]: false,
+            },
           },
-        });
+        ];
+        yield* call(Firework.runBatch, batchItems);
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
       } finally {

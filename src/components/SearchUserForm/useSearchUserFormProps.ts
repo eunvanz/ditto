@@ -24,7 +24,10 @@ const useSearchUserFormProps = () => {
       return [
         {
           collection: `users`,
-          where: [["email", ">=", searchValue]],
+          where: [
+            ["email", ">=", searchValue],
+            ["email", "<=", `${searchValue}~`],
+          ],
           storeAs: "searchUserResult",
         },
       ];
