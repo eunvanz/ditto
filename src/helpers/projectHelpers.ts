@@ -82,6 +82,8 @@ export const checkHasAuthorization = (
     return role === "owner";
   } else if (targetRole === "manager") {
     return role === "owner" || role === "manager";
+  } else if (targetRole === "guest") {
+    return role === "owner" || role === "manager";
   } else {
     return false;
   }
