@@ -9,7 +9,8 @@ import {
 } from "@material-ui/core";
 import ReactDOM from "react-dom";
 import GlobalThemeProvider from "../GlobalThemeProvider";
-import StoreProvider from "../StoreProvider";
+import { Provider } from "react-redux";
+import store from "../../store";
 
 export interface AlertProps {
   isVisible: boolean;
@@ -74,11 +75,11 @@ const Alert = ({
 
 const ProvidedAlert = (props: AlertProps) => {
   return (
-    <StoreProvider>
+    <Provider store={store}>
       <GlobalThemeProvider>
         <Alert {...props} />
       </GlobalThemeProvider>
-    </StoreProvider>
+    </Provider>
   );
 };
 
