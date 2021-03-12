@@ -8,15 +8,9 @@ const useNotificationsProps = () => {
 
   useFirestoreConnect([
     {
-      collection: "notifications",
-      where: [
-        [`members.${userProfile.uid}`, "==", true],
-        [`settingsByMember.${userProfile.uid}.isChecked`, "!=", true],
-      ],
-      orderBy: [
-        [`settingsByMember.${userProfile.uid}.isChecked`, "asc"],
-        ["createdAt", "asc"],
-      ],
+      collection: `users/${userProfile.uid}/notifications`,
+      where: [["isRead", "==", false]],
+      orderBy: [["createdAt", "desc"]],
     },
   ]);
 

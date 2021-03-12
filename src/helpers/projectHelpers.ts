@@ -118,3 +118,8 @@ export const removeKeyFromRecord = (
   filteredKeys.forEach((item) => (result[item] = record[item]));
   return result;
 };
+
+export const getTrueKeys = (record: Record<string, boolean>) => {
+  const keys = Object.keys(record);
+  return keys.filter((key) => record[key]);
+};

@@ -4,14 +4,17 @@ import { useSelector } from "react-redux";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 import useLoading from "../../../hooks/useLoading";
 import useProjectRole from "../../../hooks/useProjectRole";
+import { assertNotEmpty } from "../../../helpers/commonHelpers";
+import { getTrueKeys } from "../../../helpers/projectHelpers";
 
 const useMembersTabProps = () => {
   const { project, projectId } = useProjectByParam();
+  assertNotEmpty(project);
 
   useFirestoreConnect([
     {
       collection: "users",
-      where: [[`projects.${projectId}`, "==", true]],
+      where: [["uid", "in", getTrueKeys(project.members)]],
       orderBy: ["name", "asc"],
       storeAs: `projectMembers/${projectId}`,
     },
