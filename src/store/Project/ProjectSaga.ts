@@ -114,7 +114,7 @@ export function* submitProjectFormFlow() {
     ]);
     const timestamp = yield* call(getTimestamp);
     const lastProjectSeq =
-      projects[projects.length - 1]?.settingsByMember[auth.uid].seq || 0;
+      projects[projects.length - 1]?.settingsByMember[auth.uid]?.seq || 0;
     try {
       if (isModification) {
         assertNotEmpty(project);
