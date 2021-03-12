@@ -4,6 +4,7 @@ import {
   IconButton,
   List,
   ListItem,
+  ListItemSecondaryAction,
   ListItemText,
   makeStyles,
   Popover,
@@ -11,20 +12,31 @@ import {
   Tooltip,
   Typography,
 } from "@material-ui/core";
-import React, { useCallback, useRef, useState } from "react";
-import { Notifications as NotificationsIcon } from "@material-ui/icons";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import {
+  Check,
+  Link as LinkIcon,
+  Notifications as NotificationsIcon,
+} from "@material-ui/icons";
+import { formatDistance } from "date-fns";
 import { NotificationDoc } from "../../../../types";
 import NewBadge from "../../../../components/NewBadge";
 import { Theme } from "../../../../theme";
+import { convertTimestampToDate } from "../../../../helpers/projectHelpers";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   popover: {
     width: 320,
   },
-  icon: {
-    backgroundColor: theme.palette.secondary.main,
-    color: theme.palette.secondary.contrastText,
+  link: {
+    color: theme.palette.text.hint,
+    "& :hover": {
+      color: theme.palette.text.primary,
+    },
+  },
+  time: {
+    color: theme.palette.text.disabled,
   },
 }));
 
@@ -51,6 +63,10 @@ const Notifications: React.FC<NotificationsProps> = ({
 
   const closeList = useCallback(() => {
     setIsOpen(false);
+  }, []);
+
+  const now = useMemo(() => {
+    return new Date();
   }, []);
 
   return (
@@ -91,27 +107,56 @@ const Notifications: React.FC<NotificationsProps> = ({
               {notifications.map((notification) => {
                 return (
                   <ListItem
-                    component={notification.link ? Link : "a"}
                     divider
                     key={notification.id}
-                    to={notification.link}
                     onClick={() => onMarkAsRead(notification.id)}
                   >
                     <ListItemText
-                      primary={notification.content}
+                      primary={<>{notification.title}</>}
                       primaryTypographyProps={{
                         variant: "subtitle2",
                         color: "textPrimary",
                       }}
-                      secondary={notification.createdAt}
+                      secondary={
+                        <>
+                          {notification.content}
+                          {notification.link && (
+                            <Link
+                              to={notification.link!}
+                              onClick={closeList}
+                              className={classes.link}
+                            >
+                              <LinkIcon />
+                            </Link>
+                          )}
+                          <Typography
+                            variant="caption"
+                            component="div"
+                            className={classes.time}
+                          >
+                            {formatDistance(
+                              convertTimestampToDate(notification.createdAt),
+                              now
+                            )}
+                          </Typography>
+                        </>
+                      }
                     />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        edge="end"
+                        onClick={() => onMarkAsRead(notification.id)}
+                      >
+                        <Check />
+                      </IconButton>
+                    </ListItemSecondaryAction>
                   </ListItem>
                 );
               })}
             </List>
             <Box p={1} display="flex" justifyContent="center">
               <Button size="small" onClick={onClickMarkAllAsRead}>
-                Mark all as read
+                Mark all as checked
               </Button>
             </Box>
           </>

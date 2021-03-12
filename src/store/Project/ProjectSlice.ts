@@ -191,6 +191,7 @@ const ProjectSlice = createSlice({
       _,
       _action: PayloadAction<{ members: UserProfileDoc[]; role: MemberRole }>
     ) => {},
+    markNotificationsAsRead: (_, _action: PayloadAction<string[]>) => {},
   },
 });
 

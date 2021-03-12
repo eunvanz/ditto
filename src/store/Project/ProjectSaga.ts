@@ -1803,6 +1803,28 @@ export function* changeMemberRoleFlow() {
   }
 }
 
+export function* markNotificationsAsReadFlow() {
+  while (true) {
+    const { payload } = yield* take(ProjectActions.markNotificationsAsRead);
+    try {
+      const updatedRecordProps = yield* call(getUpdatedRecordProps);
+      const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
+      yield* all(
+        payload.map((item) => {
+          const notification: Partial<NotificationItem> = {
+            isRead: true,
+            userId: userProfile.uid,
+            ...updatedRecordProps,
+          };
+          return call(Firework.updateNotification, item, notification);
+        })
+      );
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -1835,5 +1857,6 @@ export function* watchProjectActions() {
     fork(addMembersFlow),
     fork(deleteMemberFlow),
     fork(changeMemberRoleFlow),
+    fork(markNotificationsAsReadFlow),
   ]);
 }

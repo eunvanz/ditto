@@ -1,9 +1,11 @@
+import firebase from "firebase";
 import { FieldError } from "react-hook-form";
 import {
   REQUEST_METHOD,
   MemberRole,
   ProjectDoc,
   UserProfileDoc,
+  DocTimestamp,
 } from "../types";
 
 export const patterns = {
@@ -122,4 +124,11 @@ export const removeKeyFromRecord = (
 export const getTrueKeys = (record: Record<string, boolean>) => {
   const keys = Object.keys(record);
   return keys.filter((key) => record[key]);
+};
+
+export const convertTimestampToDate = (timestamp: DocTimestamp) => {
+  return new firebase.firestore.Timestamp(
+    timestamp.seconds,
+    timestamp.nanoseconds
+  ).toDate();
 };
