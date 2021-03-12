@@ -14,19 +14,21 @@ import {
   Switch,
 } from "@material-ui/core";
 import { Menu as MenuIcon } from "react-feather";
-import { THEMES } from "../../../types";
+import { NotificationDoc, THEMES, UserProfileDoc } from "../../../types";
 import { Theme } from "../../../theme";
 import Account from "./Account";
-import { Fullscreen, FullscreenExit } from "@material-ui/icons";
 import { SCREEN_MODE } from "../../../store/Ui/UiSlice";
+import Screen from "./Screen";
+import Notifications from "./Notifications";
 
 export interface TopBarProps {
   className?: string;
   onMobileNavOpen?: () => void;
   onToggleDarkMode: () => void;
   isDarkMode: boolean;
-  onToggleScreenMode: () => void;
   screenMode: SCREEN_MODE;
+  userProfile?: UserProfileDoc;
+  notifications?: NotificationDoc[];
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -63,8 +65,8 @@ const TopBar: FC<TopBarProps> = ({
   onMobileNavOpen,
   onToggleDarkMode,
   isDarkMode,
-  onToggleScreenMode,
   screenMode,
+  userProfile,
   ...rest
 }) => {
   const classes = useStyles();
@@ -97,18 +99,15 @@ const TopBar: FC<TopBarProps> = ({
           onChange={onToggleDarkMode}
           color="secondary"
         />
-        <Box ml={2}>
-          <IconButton color="inherit" onClick={onToggleScreenMode}>
-            <SvgIcon fontSize="small">
-              {screenMode === SCREEN_MODE.WIDE ? (
-                <FullscreenExit />
-              ) : (
-                <Fullscreen />
-              )}
-            </SvgIcon>
-          </IconButton>
+        <Box ml={1}>
+          <Screen />
         </Box>
-        <Box ml={2}>
+        {!userProfile?.isEmpty && (
+          <Box ml={1}>
+            <Notifications />
+          </Box>
+        )}
+        <Box ml={1}>
           <Account />
         </Box>
       </Toolbar>

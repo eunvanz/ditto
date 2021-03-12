@@ -5,6 +5,7 @@ import { RootState } from "../../../store";
 import { THEMES } from "../../../types";
 import { UiActions } from "../../../store/Ui/UiSlice";
 import UiSelectors from "../../../store/Ui/UiSelectors";
+import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 
 export interface TopBarContainerProps {
   onMobileNavOpen: () => void;
@@ -25,17 +26,15 @@ const TopBarContainer: React.FC<TopBarContainerProps> = ({
     dispatch(UiActions.receiveTheme(isDarkMode ? THEMES.LIGHT : THEMES.DARK));
   }, [dispatch, isDarkMode]);
 
-  const toggleScreenMode = useCallback(() => {
-    dispatch(UiActions.toggleScreenMode());
-  }, [dispatch]);
+  const userProfile = useSelector(FirebaseSelectors.selectUserProfile);
 
   return (
     <TopBar
       onToggleDarkMode={toggleDarkMode}
       isDarkMode={isDarkMode}
       onMobileNavOpen={onMobileNavOpen}
-      onToggleScreenMode={toggleScreenMode}
       screenMode={screenMode}
+      userProfile={userProfile}
     />
   );
 };

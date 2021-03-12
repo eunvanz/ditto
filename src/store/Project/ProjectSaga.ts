@@ -45,6 +45,7 @@ import {
   REQUEST_PARAM_LOCATION,
   ResponseHeaderItem,
   ResponseHeaderDoc,
+  NotificationItem,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -56,7 +57,10 @@ import FirebaseSelectors from "../Firebase/FirebaseSelectors";
 import UiSelectors from "../Ui/UiSelectors";
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
-import { getProjectKeyByRole } from "../../helpers/projectHelpers";
+import {
+  getProjectKeyByRole,
+  removeKeyFromRecord,
+} from "../../helpers/projectHelpers";
 
 function* getProperDoc<T extends Recordable>(
   values: any & { target?: Doc<T, BaseSettings> }
@@ -113,9 +117,21 @@ export function* submitProjectFormFlow() {
       projects[projects.length - 1]?.settingsByMember[auth.uid].seq || 0;
     try {
       if (isModification) {
+        assertNotEmpty(project);
         yield* call(Firework.updateProject, (project as ProjectDoc).id, {
           ...payload.data,
+          updatedAt: timestamp,
+          updatedBy: auth.uid,
+          [`settingsByMember.${auth.uid}.updatedAt`]: timestamp,
         });
+        const recordableDocProps = yield* call(getRecordableDocProps);
+        const notification: NotificationItem = {
+          content: `${project.title} has been modified by ${auth.displayName}`,
+          link: `/projects/${project.id}`,
+          members: removeKeyFromRecord(project.members, auth.uid),
+          ...recordableDocProps,
+        };
+        yield* call(Firework.addNotification, notification);
       } else {
         const projectRef = yield* call(Firework.addProject, {
           ...payload.data,
@@ -200,6 +216,13 @@ export function* deleteProjectFlow() {
           },
         ];
         yield* call(Firework.runBatch, batchItems);
+        const recordableProps = yield* call(getRecordableDocProps);
+        const notification: NotificationItem = {
+          content: `${project.title} has been deleted by ${userProfile.name}`,
+          members: removeKeyFromRecord(project.members, userProfile.uid),
+          ...recordableProps,
+        };
+        yield* call(Firework.addNotification, notification);
         yield* put(
           UiActions.showNotification({
             message: "The project has been deleted.",
@@ -1643,6 +1666,19 @@ export function* addMembersFlow() {
         data: projectUpdateData,
       });
       yield* call(Firework.runBatch, batchItems);
+      const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
+      const recordableDocProps = yield* call(getRecordableDocProps);
+      const membersValue: Record<string, boolean> = {};
+      members.forEach((item) => {
+        membersValue[item.uid] = true;
+      });
+      const notification: NotificationItem = {
+        content: `You've been added as a ${role} of ${project.title} project by ${userProfile.name}.`,
+        link: `/projects/${project.id}`,
+        members: membersValue,
+        ...recordableDocProps,
+      };
+      yield* call(Firework.addNotification, notification);
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
@@ -1696,6 +1732,14 @@ export function* deleteMemberFlow() {
           },
         ];
         yield* call(Firework.runBatch, batchItems);
+        const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
+        const recordableDocProps = yield* call(getRecordableDocProps);
+        const notification: NotificationItem = {
+          content: `You've been removed from ${project.title} project's member by ${userProfile.name}`,
+          members: { [member.uid]: true },
+          ...recordableDocProps,
+        };
+        yield* call(Firework.addNotification, notification);
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
       } finally {

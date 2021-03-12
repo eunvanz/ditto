@@ -30,12 +30,6 @@ export interface DataRecord extends Recordable {
   isRequired: boolean;
 }
 
-export interface DataObject extends Recordable {
-  dataObjectId: string;
-  title?: string; // 없을경우 anonymous
-  dataRecord: DataRecord[];
-}
-
 export enum DATA_TYPE {
   STRING = "STRING",
   NUMBER = "NUMBER",
@@ -60,6 +54,8 @@ export interface UserProfileDoc
   id?: string;
   registeredAt: DocTimestamp;
   updatedAt: DocTimestamp;
+  isLoaded?: boolean;
+  isEmpty?: boolean;
 }
 
 export interface User {
@@ -340,3 +336,16 @@ export interface ModalBase {
 }
 
 export type MemberRole = "owner" | "manager" | "guest";
+
+export interface NotificationSettings extends BaseSettings {
+  isChecked?: boolean;
+}
+
+export interface NotificationItem extends Recordable {
+  content: string;
+  link?: string;
+  members: Record<string, boolean>;
+  settingsByMember: Record<string, NotificationSettings>;
+}
+
+export type NotificationDoc = Doc<NotificationItem, NotificationSettings>;

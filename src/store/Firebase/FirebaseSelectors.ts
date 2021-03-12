@@ -6,6 +6,7 @@ import {
   GroupDoc,
   ModelDoc,
   ModelFieldDoc,
+  NotificationDoc,
   ProjectDoc,
   ProjectUrlDoc,
   RequestBodyDoc,
@@ -192,6 +193,10 @@ const selectSearchUserResult = createOrderedSelector<UserProfileDoc[]>(
   "searchUserResult"
 );
 
+const selectNotifications = createOrderedSelector<NotificationDoc[]>(
+  "notifications"
+);
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -214,6 +219,7 @@ const FirebaseSelectors = {
   createProjectMembersSelector,
   selectSearchUserResult,
   selectExampleProject,
+  selectNotifications,
 };
 
 export default FirebaseSelectors;

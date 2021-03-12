@@ -107,3 +107,14 @@ export const getProjectRole = ({
     return "guest";
   }
 };
+
+export const removeKeyFromRecord = (
+  record: Record<string, any>,
+  key: string
+) => {
+  const keys = Object.keys(record);
+  const filteredKeys = keys.filter((item) => item !== key);
+  const result: Record<string, any> = {};
+  filteredKeys.forEach((item) => (result[item] = record[item]));
+  return result;
+};

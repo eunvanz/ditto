@@ -26,6 +26,7 @@ import {
   ResponseHeaderItem,
   ResponseHeaderDoc,
   UserProfile,
+  NotificationItem,
 } from "../../types";
 import { call } from "typed-redux-saga";
 
@@ -417,6 +418,14 @@ function* updateUserProfile(id: string, data: Partial<UserProfile>) {
   return yield* call(updateDocument, "users", id, data);
 }
 
+function* addNotification(data: NotificationItem) {
+  return yield* call(addDocument, "notifications", data);
+}
+
+function* updateNotification(id: string, data: Partial<NotificationItem>) {
+  return yield* call(updateDocument, "notifications", id, data);
+}
+
 export const realFirework = {
   addDocument,
   addProject,
@@ -473,6 +482,8 @@ export const realFirework = {
   updateUserProfile,
   getUserRef,
   getProjectRef,
+  addNotification,
+  updateNotification,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";
