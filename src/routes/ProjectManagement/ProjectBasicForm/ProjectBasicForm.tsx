@@ -35,6 +35,7 @@ export interface ProjectBasicFormProps {
   isSubmitting: boolean;
   onDelete: () => void;
   role: MemberRole;
+  onLeave: () => void;
 }
 
 const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
@@ -43,6 +44,7 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
   isSubmitting,
   onDelete,
   role,
+  onLeave,
 }) => {
   const classes = useStyles();
 
@@ -119,7 +121,7 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
           <>
             <Divider />
             <Box p={2} display="flex" justifyContent="flex-end">
-              {checkHasAuthorization(role, "owner") && (
+              {checkHasAuthorization(role, "owner") ? (
                 <Button
                   className={classes.deleteButton}
                   disabled={isSubmitting}
@@ -127,6 +129,15 @@ const ProjectBasicForm: React.FC<ProjectBasicFormProps> = ({
                   variant="contained"
                 >
                   Delete project
+                </Button>
+              ) : (
+                <Button
+                  className={classes.deleteButton}
+                  disabled={isSubmitting}
+                  onClick={onLeave}
+                  variant="contained"
+                >
+                  Leave project
                 </Button>
               )}
               <Button

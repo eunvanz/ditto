@@ -1719,16 +1719,20 @@ export function* addMembersFlow() {
 export function* deleteMemberFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.deleteMember);
+    const project = yield* select(ProjectSelectors.selectCurrentProject);
+    assertNotEmpty(project);
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     const { member, role } = payload;
+    const isMySelf = userProfile.uid === member.uid;
     const isConfirmed = yield* call(Alert.confirm, {
-      title: "Delete user",
-      message: `Are you sure to delete user ${member.name}?`,
+      title: isMySelf ? "Leave project" : "Delete user",
+      message: isMySelf
+        ? `Are you sure to leave project ${project.title}?`
+        : `Are you sure to delete user ${member.name}?`,
     });
     if (isConfirmed) {
       try {
         yield* put(UiActions.showLoading(type));
-        const project = yield* select(ProjectSelectors.selectCurrentProject);
-        assertNotEmpty(project);
         const key = getProjectKeyByRole(role);
         const projectRef = yield* call(Firework.getProjectRef, project.id);
         const userRef = yield* call(Firework.getUserRef, member.uid);
@@ -1750,16 +1754,33 @@ export function* deleteMemberFlow() {
           },
         ];
         yield* call(Firework.runBatch, batchItems);
-        const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
         const recordableDocProps = yield* call(getRecordableDocProps);
-        const notification: NotificationItem = {
-          title: project.title,
-          content: `You've been removed from project's member by ${userProfile.name}`,
-          isRead: false,
-          userId: member.uid,
-          ...recordableDocProps,
-        };
-        yield* call(Firework.addNotification, notification);
+        if (isMySelf) {
+          const projectMembers = getTrueKeys(project.members);
+          yield* all(
+            projectMembers
+              .filter((item) => item !== userProfile.uid)
+              .map((userId) => {
+                const notification: NotificationItem = {
+                  title: project.title,
+                  content: `${userProfile.name} has left this project.`,
+                  isRead: false,
+                  userId,
+                  ...recordableDocProps,
+                };
+                return call(Firework.addNotification, notification);
+              })
+          );
+        } else {
+          const notification: NotificationItem = {
+            title: project.title,
+            content: `You've been removed from project's member by ${userProfile.name}.`,
+            isRead: false,
+            userId: member.uid,
+            ...recordableDocProps,
+          };
+          yield* call(Firework.addNotification, notification);
+        }
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
       } finally {

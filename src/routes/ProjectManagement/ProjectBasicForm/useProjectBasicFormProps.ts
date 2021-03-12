@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { assertNotEmpty } from "../../../helpers/commonHelpers";
 import useProjectByParam from "../../../hooks/useProjectByParam";
 import useProjectRole from "../../../hooks/useProjectRole";
+import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../../store/Progress/ProgressSelectors";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
 import {
@@ -37,12 +38,24 @@ const useProjectBasicFormProps: () => ProjectBasicFormProps = () => {
 
   const role = useProjectRole(project);
 
+  const userProfile = useSelector(FirebaseSelectors.selectUserProfile);
+
+  const onLeave = useCallback(() => {
+    dispatch(
+      ProjectActions.deleteMember({
+        member: userProfile,
+        role,
+      })
+    );
+  }, [dispatch, role, userProfile]);
+
   return {
     project,
     isSubmitting,
     onSubmit,
     onDelete,
     role,
+    onLeave,
   };
 };
 
