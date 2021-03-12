@@ -419,11 +419,16 @@ function* updateUserProfile(id: string, data: Partial<UserProfile>) {
 }
 
 function* addNotification(data: NotificationItem) {
-  return yield* call(addDocument, "notifications", data);
+  return yield* call(addDocument, `users/${data.userId}/notifications`, data);
 }
 
 function* updateNotification(id: string, data: Partial<NotificationItem>) {
-  return yield* call(updateDocument, "notifications", id, data);
+  return yield* call(
+    updateDocument,
+    `users/${data.userId}/notifications`,
+    id,
+    data
+  );
 }
 
 export const realFirework = {

@@ -337,15 +337,17 @@ export interface ModalBase {
 
 export type MemberRole = "owner" | "manager" | "guest";
 
-export interface NotificationSettings extends BaseSettings {
-  isChecked?: boolean;
-}
-
 export interface NotificationItem extends Recordable {
+  title: string;
+  userId: string;
   content: string;
   link?: string;
-  members: Record<string, boolean>;
-  settingsByMember: Record<string, NotificationSettings>;
+  isRead: boolean;
 }
 
-export type NotificationDoc = Doc<NotificationItem, NotificationSettings>;
+export interface NotificationDoc
+  extends Omit<NotificationItem, "createdAt" | "updatedAt"> {
+  id: string;
+  createdAt: DocTimestamp;
+  updatedAt: DocTimestamp;
+}
