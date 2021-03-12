@@ -129,16 +129,18 @@ const Notifications: React.FC<NotificationsProps> = ({
                               <LinkIcon />
                             </Link>
                           )}
-                          <Typography
-                            variant="caption"
-                            component="div"
-                            className={classes.time}
-                          >
-                            {formatDistance(
-                              convertTimestampToDate(notification.createdAt),
-                              now
-                            )}
-                          </Typography>
+                          {notification.createdAt && (
+                            <Typography
+                              variant="caption"
+                              component="div"
+                              className={classes.time}
+                            >
+                              {formatDistance(
+                                convertTimestampToDate(notification.createdAt),
+                                now
+                              )}
+                            </Typography>
+                          )}
                         </>
                       }
                     />
