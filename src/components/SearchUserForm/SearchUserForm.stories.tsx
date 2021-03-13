@@ -3,11 +3,14 @@ import { Story, Meta } from "@storybook/react/types-6-0";
 
 import SearchUserForm, { SearchUserFormProps } from "./SearchUserForm";
 import mockUser from "../../mocks/mockUser";
+import mockProject from "../../mocks/mockProject";
 
 type PartialProps = Partial<SearchUserFormProps>;
 
 const defaultProps: PartialProps = {
   resultItems: mockUser.userProfiles,
+  role: "owner",
+  project: mockProject.project,
 };
 
 export default {
