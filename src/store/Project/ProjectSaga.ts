@@ -765,7 +765,6 @@ export function* commonModelFieldFormFlow<
               ...newModelField,
               format: {
                 value: createdModelId,
-                ...updatedRecordProps,
               },
             });
           }
@@ -798,7 +797,6 @@ export function* commonModelFieldFormFlow<
               ...newModelField,
               enum: {
                 value: createdEnumId,
-                ...updatedRecordProps,
               },
             });
           }
@@ -823,31 +821,24 @@ export function* commonModelFieldFormFlow<
           projectId: currentProject.id,
           fieldName: {
             value: payload.fieldName,
-            ...recordableDocProps,
           },
           isRequired: {
             value: payload.isRequired,
-            ...recordableDocProps,
           },
           isArray: {
             value: payload.isArray,
-            ...recordableDocProps,
           },
           fieldType: {
             value: payload.fieldType,
-            ...recordableDocProps,
           },
           format: {
             value: payload.format,
-            ...recordableDocProps,
           },
           enum: {
             value: payload.enum,
-            ...recordableDocProps,
           },
           description: {
             value: payload.description,
-            ...recordableDocProps,
           },
           ...recordableDocProps,
         };
@@ -883,7 +874,6 @@ export function* commonModelFieldFormFlow<
               ...newModelField,
               format: {
                 value: createdModelId!,
-                ...recordableDocProps,
               },
             });
           }
@@ -916,7 +906,6 @@ export function* commonModelFieldFormFlow<
               ...newModelField,
               enum: {
                 value: createdEnumId!,
-                ...recordableDocProps,
               },
             });
             if (hasToBlurFormAlways) {
