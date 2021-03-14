@@ -109,7 +109,8 @@ const Notifications: React.FC<NotificationsProps> = ({
                   <ListItem
                     divider
                     key={notification.id}
-                    onClick={() => onMarkAsRead(notification.id)}
+                    component={notification.link ? Link : "div"}
+                    to={notification.link}
                   >
                     <ListItemText
                       primary={<>{notification.title}</>}
@@ -120,15 +121,6 @@ const Notifications: React.FC<NotificationsProps> = ({
                       secondary={
                         <>
                           {notification.content}
-                          {notification.link && (
-                            <Link
-                              to={notification.link!}
-                              onClick={closeList}
-                              className={classes.link}
-                            >
-                              <LinkIcon />
-                            </Link>
-                          )}
                           {notification.createdAt && (
                             <Typography
                               variant="caption"

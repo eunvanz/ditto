@@ -1821,7 +1821,7 @@ export function* addMembersFlow() {
         members.map((member) => {
           const notification: NotificationItem = {
             title: project.title,
-            content: `You've been added as a ${role} of project by ${userProfile.name}.`,
+            content: `You've been added as a ${role} of the project by ${userProfile.name}.`,
             link: `/projects/${project.id}?tab=members`,
             userId: member.uid,
             isRead: false,

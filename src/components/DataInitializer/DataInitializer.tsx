@@ -78,7 +78,7 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
     if (appInfo && cmp(appInfo.version, APP_VERSION) > 0) {
       dispatch(
         UiActions.showConfirmSnackbar({
-          message: "New version is available!",
+          message: `New version ${appInfo.version} is available!`,
           confirmText: "Reload",
           confirmAction: UiActions.reloadApp(),
         })
