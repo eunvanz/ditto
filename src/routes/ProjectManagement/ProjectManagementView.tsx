@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useEffect } from "react";
 import {
   Container,
   Box,
@@ -45,9 +45,11 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
 
   const location = useLocation();
 
-  const [activeTab, setActiveTab] = useState(
-    qs.parse(location.search).tab || "basic"
-  );
+  const tabQuery = useMemo(() => {
+    return qs.parse(location.search).tab;
+  }, [location.search]);
+
+  const [activeTab, setActiveTab] = useState(tabQuery || "basic");
 
   const tabs = useMemo(() => {
     return [
@@ -66,6 +68,12 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
   const hasManagerAuthorization = useMemo(() => {
     return checkHasAuthorization(role, "manager");
   }, [role]);
+
+  useEffect(() => {
+    if (tabQuery) {
+      setActiveTab(tabQuery);
+    }
+  }, [tabQuery]);
 
   return (
     <Container

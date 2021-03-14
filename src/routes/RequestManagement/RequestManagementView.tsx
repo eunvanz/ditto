@@ -8,7 +8,7 @@ import {
   Tab,
   Tabs,
 } from "@material-ui/core";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import qs from "query-string";
 import Header from "../../components/Header";
@@ -46,9 +46,11 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
 
   const location = useLocation();
 
-  const [activeTab, setActiveTab] = useState(
-    qs.parse(location.search).tab || "request"
-  );
+  const tabQuery = useMemo(() => {
+    return qs.parse(location.search).tab;
+  }, [location.search]);
+
+  const [activeTab, setActiveTab] = useState(tabQuery || "request");
 
   const tabs = useMemo(() => {
     return [
@@ -61,6 +63,12 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
   const handleOnTabChange = useCallback((_, value: string) => {
     setActiveTab(value);
   }, []);
+
+  useEffect(() => {
+    if (tabQuery) {
+      setActiveTab(tabQuery);
+    }
+  }, [tabQuery]);
 
   return (
     <Container
