@@ -13,11 +13,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import {
-  Check,
-  Link as LinkIcon,
-  Notifications as NotificationsIcon,
-} from "@material-ui/icons";
+import { Check, Notifications as NotificationsIcon } from "@material-ui/icons";
 import { formatDistance } from "date-fns";
 import { NotificationDoc } from "../../../../types";
 import NewBadge from "../../../../components/NewBadge";
