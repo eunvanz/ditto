@@ -351,3 +351,7 @@ export interface NotificationDoc
   createdAt: DocTimestamp;
   updatedAt: DocTimestamp;
 }
+
+export interface AppInfo {
+  version: string;
+}

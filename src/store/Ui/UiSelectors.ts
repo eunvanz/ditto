@@ -60,6 +60,8 @@ const selectLoadingTasks = (state: RootState) => state.ui.loadingTasks;
 
 const selectScreenMode = (state: RootState) => state.ui.screenMode;
 
+const selectConfirmSnackbar = (state: RootState) => state.ui.confirmSnackbar;
+
 const UiSelectors = {
   selectTheme,
   selectProjectFormModal,
@@ -74,6 +76,7 @@ const UiSelectors = {
   selectSearchUserFormModal,
   selectLoadingTasks,
   selectScreenMode,
+  selectConfirmSnackbar,
 };
 
 export default UiSelectors;

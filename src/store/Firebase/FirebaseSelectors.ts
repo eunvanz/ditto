@@ -2,6 +2,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import orderBy from "lodash/orderBy";
 import { RootState } from "..";
 import {
+  AppInfo,
   EnumerationDoc,
   GroupDoc,
   ModelDoc,
@@ -197,6 +198,9 @@ const selectNotifications = createOrderedSelector<NotificationDoc[]>(
   "notifications"
 );
 
+const selectAppInfo = (state: RootState) =>
+  state.firestore.data.app?.info as AppInfo | undefined;
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -220,6 +224,7 @@ const FirebaseSelectors = {
   selectSearchUserResult,
   selectExampleProject,
   selectNotifications,
+  selectAppInfo,
 };
 
 export default FirebaseSelectors;

@@ -35,7 +35,15 @@ export type UiState = {
   quickUrlFormModal: QuickUrlFormModalState;
   searchUserFormModal: SearchUserFormModalState;
   screenMode: SCREEN_MODE;
+  confirmSnackbar: ConfirmSnackbarState;
 };
+
+export interface ConfirmSnackbarState {
+  isVisible: boolean;
+  message: string;
+  confirmAction?: PayloadAction<any>;
+  confirmText: string;
+}
 
 export interface SearchUserFormModalState {
   isVisible: boolean;
@@ -131,6 +139,11 @@ export const initialUiState: UiState = {
     role: "guest",
   },
   screenMode: SCREEN_MODE.DEFAULT,
+  confirmSnackbar: {
+    isVisible: false,
+    message: "",
+    confirmText: "",
+  },
 };
 
 const UiSlice = createSlice({
@@ -291,6 +304,16 @@ const UiSlice = createSlice({
         state.screenMode = SCREEN_MODE.DEFAULT;
       }
     },
+    showConfirmSnackbar: (
+      state,
+      action: PayloadAction<Omit<ConfirmSnackbarState, "isVisible">>
+    ) => {
+      state.confirmSnackbar = { isVisible: true, ...action.payload };
+    },
+    hideConfirmSnackbar: (state, _action: PayloadAction<void>) => {
+      state.confirmSnackbar.isVisible = false;
+    },
+    reloadApp: (_, _action: PayloadAction<void>) => {},
   },
 });
 

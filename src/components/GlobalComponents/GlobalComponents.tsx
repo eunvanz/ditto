@@ -8,6 +8,7 @@ import QuickModelNameFormModal from "../QuickModelNameFormModal";
 import QuickEnumFormModal from "../QuickEnumFormModal";
 import CriticalConfirmModal from "../CriticalConfirmModal";
 import RequestFormModal from "../RequestFormModal";
+import ConfirmSnackbar from "../ConfirmSnackbar";
 
 const GlobalComponents: React.FC = () => {
   return (
@@ -21,6 +22,7 @@ const GlobalComponents: React.FC = () => {
       <GroupFormModal />
       <CriticalConfirmModal />
       <RequestFormModal />
+      <ConfirmSnackbar />
     </>
   );
 };
