@@ -619,11 +619,7 @@ export function* getUpdatedRecordProps() {
   return {
     updatedAt: timestamp,
     updatedBy: auth.uid,
-    settingsByMember: {
-      [auth.uid]: {
-        updatedAt: timestamp,
-      },
-    },
+    [`settingsByMember.${auth.uid}.updatedAt`]: timestamp,
   };
 }
 
