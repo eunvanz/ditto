@@ -58,6 +58,13 @@ const ConfirmSnackbar: React.FC<ConfirmSnackbarProps> = ({
       action={
         <>
           <Button size="small" onClick={onConfirm}>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: confirmText
+                  .replace("{", '<b class="MuiTypography-colorPrimary">')
+                  .replace("}", "</b>"),
+              }}
+            />
             {confirmText}
           </Button>
           <IconButton
