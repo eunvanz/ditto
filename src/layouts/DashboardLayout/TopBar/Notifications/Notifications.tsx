@@ -107,6 +107,7 @@ const Notifications: React.FC<NotificationsProps> = ({
                     key={notification.id}
                     component={notification.link ? Link : "div"}
                     to={notification.link}
+                    onClick={closeList}
                   >
                     <ListItemText
                       primary={<>{notification.title}</>}
