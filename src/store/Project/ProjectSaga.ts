@@ -46,6 +46,7 @@ import {
   NotificationItem,
   UserProfileDoc,
   RequestDoc,
+  ModelFieldDoc,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -623,6 +624,53 @@ export function* getUpdatedRecordProps() {
   };
 }
 
+// 실제 업데이트 된 필드에만 updatedAt 갱신
+export function* getUpdatedModelField({
+  payload,
+  target,
+  timestamp,
+}: {
+  payload: ModelFieldFormValues;
+  target: ModelFieldDoc;
+  timestamp: firebase.firestore.FieldValue;
+}) {
+  const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
+  const getKeyProps = (
+    key:
+      | "fieldName"
+      | "isRequired"
+      | "isArray"
+      | "fieldType"
+      | "format"
+      | "enum"
+      | "description"
+  ) => {
+    return {
+      createdAt: target[key].createdAt,
+      createdBy: target[key].createdBy,
+      value: payload[key],
+      updatedAt:
+        target[key].value === payload[key] ? target[key].updatedAt : timestamp,
+      updatedBy: userProfile.uid,
+      settingsByMember: {
+        ...target[key].settingsByMember,
+        [userProfile.uid]: {
+          updatedAt: timestamp,
+        },
+      },
+    };
+  };
+  return {
+    fieldName: getKeyProps("fieldName"),
+    isRequired: getKeyProps("isRequired"),
+    isArray: getKeyProps("isArray"),
+    fieldType: getKeyProps("fieldType"),
+    format: getKeyProps("format"),
+    enum: getKeyProps("enum"),
+    description: getKeyProps("description"),
+  };
+}
+
 export interface CommonModelFieldFormFlowParams<
   T extends CommonModelFieldItem,
   FormValues extends ModelFieldFormValues
@@ -712,27 +760,11 @@ export function* commonModelFieldFormFlow<
         const newModelField: Modifiable<CustomModelFieldItem> = {
           ...buildNewModelField(payload),
           projectId: currentProject.id,
-          fieldName: {
-            value: payload.fieldName,
-          },
-          isRequired: {
-            value: payload.isRequired,
-          },
-          isArray: {
-            value: payload.isArray,
-          },
-          fieldType: {
-            value: payload.fieldType,
-          },
-          format: {
-            value: payload.format,
-          },
-          enum: {
-            value: payload.enum,
-          },
-          description: {
-            value: payload.description,
-          },
+          ...getUpdatedModelField({
+            payload,
+            target,
+            timestamp: updatedRecordProps.updatedAt,
+          }),
           ...updatedRecordProps,
         };
 
@@ -821,24 +853,31 @@ export function* commonModelFieldFormFlow<
           projectId: currentProject.id,
           fieldName: {
             value: payload.fieldName,
+            ...recordableDocProps,
           },
           isRequired: {
             value: payload.isRequired,
+            ...recordableDocProps,
           },
           isArray: {
             value: payload.isArray,
+            ...recordableDocProps,
           },
           fieldType: {
             value: payload.fieldType,
+            ...recordableDocProps,
           },
           format: {
             value: payload.format,
+            ...recordableDocProps,
           },
           enum: {
             value: payload.enum,
+            ...recordableDocProps,
           },
           description: {
             value: payload.description,
+            ...recordableDocProps,
           },
           ...recordableDocProps,
         };
