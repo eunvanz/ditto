@@ -117,6 +117,16 @@ const Notifications: React.FC<NotificationsProps> = ({
                       }}
                       secondary={
                         <>
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: notification.content
+                                .replace(
+                                  "{",
+                                  '<b class="MuiTypography-colorPrimary">'
+                                )
+                                .replace("}", "</b>"),
+                            }}
+                          />
                           {notification.content}
                           {notification.createdAt && (
                             <Typography
