@@ -46,7 +46,6 @@ import {
   NotificationItem,
   UserProfileDoc,
   RequestDoc,
-  ModelFieldDoc,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -627,13 +626,13 @@ export function* getUpdatedRecordProps() {
 // 실제 업데이트 된 필드에만 updatedAt 갱신
 export function* getUpdatedModelField({
   payload,
-  target,
   timestamp,
 }: {
   payload: ModelFieldFormValues;
-  target: ModelFieldDoc;
   timestamp: firebase.firestore.FieldValue;
 }) {
+  const { target } = payload;
+  assertNotEmpty(target);
   const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
   const getKeyProps = (
     key:
@@ -645,17 +644,17 @@ export function* getUpdatedModelField({
       | "enum"
       | "description"
   ) => {
+    const isKeyUpdated = target[key].value !== payload[key];
     return {
       createdAt: target[key].createdAt,
       createdBy: target[key].createdBy,
       value: payload[key],
-      updatedAt:
-        target[key].value === payload[key] ? target[key].updatedAt : timestamp,
-      updatedBy: userProfile.uid,
+      updatedAt: isKeyUpdated ? timestamp : target[key].updatedAt,
+      updatedBy: isKeyUpdated ? userProfile.uid : target[key].updatedBy,
       settingsByMember: {
         ...target[key].settingsByMember,
         [userProfile.uid]: {
-          updatedAt: timestamp,
+          updatedAt: isKeyUpdated ? timestamp : target[key].updatedAt,
         },
       },
     };
@@ -756,15 +755,15 @@ export function* commonModelFieldFormFlow<
     try {
       if (!!target) {
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
+        const updatedModelField = yield* call(getUpdatedModelField, {
+          payload,
+          timestamp: updatedRecordProps.updatedAt,
+        });
         // @ts-ignore
         const newModelField: Modifiable<CustomModelFieldItem> = {
           ...buildNewModelField(payload),
           projectId: currentProject.id,
-          ...getUpdatedModelField({
-            payload,
-            target,
-            timestamp: updatedRecordProps.updatedAt,
-          }),
+          ...updatedModelField,
           ...updatedRecordProps,
         };
 
