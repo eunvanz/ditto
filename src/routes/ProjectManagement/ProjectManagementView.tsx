@@ -18,6 +18,8 @@ import EnumForm from "./EnumForm";
 import MembersTab from "./MembersTab";
 import { checkHasAuthorization } from "../../helpers/projectHelpers";
 import { SCREEN_MODE } from "../../store/Ui/UiSlice";
+import { useLocation } from "react-router-dom";
+import qs from "query-string";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -41,7 +43,11 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
 }) => {
   const classes = useStyles();
 
-  const [activeTab, setActiveTab] = useState("basic");
+  const location = useLocation();
+
+  const [activeTab, setActiveTab] = useState(
+    qs.parse(location.search).tab || "basic"
+  );
 
   const tabs = useMemo(() => {
     return [
