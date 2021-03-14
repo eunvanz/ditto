@@ -714,31 +714,24 @@ export function* commonModelFieldFormFlow<
           projectId: currentProject.id,
           fieldName: {
             value: payload.fieldName,
-            ...updatedRecordProps,
           },
           isRequired: {
             value: payload.isRequired,
-            ...updatedRecordProps,
           },
           isArray: {
             value: payload.isArray,
-            ...updatedRecordProps,
           },
           fieldType: {
             value: payload.fieldType,
-            ...updatedRecordProps,
           },
           format: {
             value: payload.format,
-            ...updatedRecordProps,
           },
           enum: {
             value: payload.enum,
-            ...updatedRecordProps,
           },
           description: {
             value: payload.description,
-            ...updatedRecordProps,
           },
           ...updatedRecordProps,
         };
