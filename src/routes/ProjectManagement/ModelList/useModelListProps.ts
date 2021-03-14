@@ -1,6 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
+import { useLocation } from "react-router-dom";
+import qs from "query-string";
 import { ModelFormContainerProps } from "../../../components/ModelForm/ModelFormContainer";
 import { assertNotEmpty } from "../../../helpers/commonHelpers";
 import useLoading from "../../../hooks/useLoading";
@@ -13,6 +15,12 @@ import { ModelListProps } from "./ModelList";
 
 const useModelListProps: () => ModelListProps &
   ModelFormContainerProps = () => {
+  const location = useLocation();
+
+  const modelIdQuery = useMemo(() => {
+    return qs.parse(location.search).model;
+  }, [location.search]);
+
   const dispatch = useDispatch();
 
   const project = useSelector(ProjectSelectors.selectCurrentProject);
@@ -61,6 +69,15 @@ const useModelListProps: () => ModelListProps &
   const model = useSelector(ProjectSelectors.selectCurrentModel);
 
   const role = useProjectRole(project);
+
+  useEffect(() => {
+    if (modelIdQuery) {
+      const model = models?.find((item) => item.id === modelIdQuery);
+      if (model) {
+        onClickName(model);
+      }
+    }
+  }, [modelIdQuery, models, onClickName]);
 
   return {
     models,
