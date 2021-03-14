@@ -6,6 +6,7 @@ import {
   ProjectDoc,
   UserProfileDoc,
   DocTimestamp,
+  REQUEST_PARAM_LOCATION,
 } from "../types";
 
 export const patterns = {
@@ -131,4 +132,19 @@ export const convertTimestampToDate = (timestamp: DocTimestamp) => {
     timestamp.seconds,
     timestamp.nanoseconds
   ).toDate();
+};
+
+export const getRequestParamLocationName = (
+  location: REQUEST_PARAM_LOCATION
+) => {
+  switch (location) {
+    case REQUEST_PARAM_LOCATION.COOKIE:
+      return "cookie";
+    case REQUEST_PARAM_LOCATION.HEADER:
+      return "header";
+    case REQUEST_PARAM_LOCATION.PATH:
+      return "path param";
+    case REQUEST_PARAM_LOCATION.QUERY:
+      return "query param";
+  }
 };

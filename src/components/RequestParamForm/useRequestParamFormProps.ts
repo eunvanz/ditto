@@ -6,7 +6,11 @@ import useRequestByParam from "../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
-import { ModelFieldDoc, REQUEST_PARAM_LOCATION } from "../../types";
+import {
+  ModelFieldDoc,
+  RequestParamDoc,
+  REQUEST_PARAM_LOCATION,
+} from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import { RequestParamFormProps } from "./RequestParamForm";
 
@@ -45,7 +49,9 @@ const useRequestParamFormProps: (
 
   const onDeleteRequestParam = useCallback(
     (requestParam: ModelFieldDoc) => {
-      dispatch(ProjectActions.deleteRequestParam(requestParam));
+      dispatch(
+        ProjectActions.deleteRequestParam(requestParam as RequestParamDoc)
+      );
     },
     [dispatch]
   );

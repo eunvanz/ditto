@@ -33,9 +33,7 @@ import {
   RequestItem,
   BASE_URL,
   RequestParamItem,
-  RequestParamDoc,
   RequestBodyItem,
-  RequestBodyDoc,
   ResponseStatusItem,
   ResponseBodyItem,
   Modifiable,
@@ -46,6 +44,7 @@ import {
   ResponseHeaderItem,
   ResponseHeaderDoc,
   NotificationItem,
+  UserProfileDoc,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -57,7 +56,11 @@ import FirebaseSelectors from "../Firebase/FirebaseSelectors";
 import UiSelectors from "../Ui/UiSelectors";
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
-import { getProjectKeyByRole, getTrueKeys } from "../../helpers/projectHelpers";
+import {
+  getProjectKeyByRole,
+  getRequestParamLocationName,
+  getTrueKeys,
+} from "../../helpers/projectHelpers";
 
 function* getProperDoc<T extends Recordable>(
   values: any & { target?: Doc<T, BaseSettings> }
@@ -632,6 +635,11 @@ export interface CommonModelFieldFormFlowParams<
   addModelField: (modelFieldItem: T) => void;
   updateModelField: (id: string, modelFieldItem: Modifiable<T>) => void;
   hasToBlurFormAlways?: boolean;
+  sendNotifications?: (params: {
+    payload: FormValues;
+    userProfile: UserProfileDoc;
+    project: ProjectDoc;
+  }) => void;
 }
 
 export type CommonModelFieldFormFlow<
@@ -651,11 +659,13 @@ export function* commonModelFieldFormFlow<
   addModelField,
   updateModelField,
   hasToBlurFormAlways,
+  sendNotifications,
 }: CommonModelFieldFormFlowParams<CustomModelFieldItem, FormValues>) {
   while (true) {
     const { type, payload } = yield* take(actionToTrigger);
     const submitModelFieldFormActionType = `${type}-${payload.target?.id}`;
     yield* put(ProgressActions.startProgress(submitModelFieldFormActionType));
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
 
     const editingModelField = yield* select(
       ProjectSelectors.selectEditingModelField
@@ -923,6 +933,13 @@ export function* commonModelFieldFormFlow<
           yield* call(addModelField, newModelField);
         }
       }
+      if (sendNotifications) {
+        yield* call(sendNotifications, {
+          payload,
+          userProfile,
+          project: currentProject,
+        });
+      }
     } catch (error) {
       yield* put(
         ErrorActions.catchError({
@@ -1102,13 +1119,22 @@ export function* submitGroupFormFlow() {
 
     const { target } = payload;
     const newGroup = yield* call(getProperDoc, payload);
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
 
     try {
       yield* put(UiActions.showLoading("submitGroupForm"));
       if (!!target) {
         yield* call(Firework.updateGroup, target.id, newGroup);
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `Group name has been changed from ${target.name} to ${payload.name} by ${userProfile.name}.`
+        );
       } else {
         yield* call(Firework.addGroup, newGroup as GroupItem);
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `New group ${payload.name} has been created by ${userProfile.name}.`
+        );
       }
       yield* put(
         UiActions.showNotification({
@@ -1131,6 +1157,8 @@ export function* submitGroupFormFlow() {
 export function* deleteGroupFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.deleteGroup);
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
+
     yield* put(
       UiActions.showCriticalConfirmModal({
         title: "Delete group",
@@ -1169,6 +1197,10 @@ export function* deleteGroupFlow() {
             type: "success",
           })
         );
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `The group ${payload.name} has been deleted by ${userProfile.name}.`
+        );
         yield* put(UiActions.hideGroupFormModal());
         yield* put(UiActions.hideCriticalConfirmModal());
       } catch (error) {
@@ -1187,6 +1219,7 @@ export function* submitRequestFormFlow() {
     yield* put(ProgressActions.startProgress(type));
     yield* put(UiActions.showLoading("submitRequestForm"));
 
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     const { groupId, projectId } = yield* select(
       UiSelectors.selectRequestFormModal
     );
@@ -1214,6 +1247,11 @@ export function* submitRequestFormFlow() {
         ...recordableDocProps,
       };
       yield* call(Firework.addResponseStatus, newResponseStatus);
+      yield* call(
+        sendNotificationsToProjectMembers,
+        `New operation ${payload.name} has been added by ${userProfile.name}`,
+        `/projects/${projectId}/requests/${newRequestRef.id}`
+      );
       yield* put(
         UiActions.showNotification({
           message: "New operation has been created.",
@@ -1237,6 +1275,7 @@ export function* submitRequestFormFlow() {
 export function* submitRequestUrlFormFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.submitRequestUrlForm);
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     yield* put(ProgressActions.startProgress(type));
 
     const project = yield* call(selectAndCheckProject);
@@ -1275,6 +1314,13 @@ export function* submitRequestUrlFormFlow() {
         UiActions.showDelayedLoading({ taskName: "submitRequestUrlForm" })
       );
       yield* call(Firework.updateRequest, target!.id, newRequest);
+      yield* call(
+        sendNotificationsToProjectMembers,
+        `The operation ${target!.name}'s url info has been modified by ${
+          userProfile.name
+        }`,
+        `/projects/${project.id}/requests/${target!.id}`
+      );
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
@@ -1302,6 +1348,18 @@ export function* submitRequestParamFormFlow() {
     addModelField: Firework.addRequestParam,
     updateModelField: Firework.updateRequestParam,
     hasToBlurFormAlways: true,
+    sendNotifications: ({ payload, userProfile, project }) => {
+      sendNotificationsToProjectMembers(
+        payload.target
+          ? `The ${getRequestParamLocationName(payload.location)} '${
+              payload.fieldName
+            }' has been modified by ${userProfile.name}.`
+          : `New ${getRequestParamLocationName(payload.location)} '${
+              payload.fieldName
+            }' has been added by ${userProfile.name}.`,
+        `/projects/${project.id}/requests/${payload.requestId}?tab=request`
+      );
+    },
   });
 }
 
@@ -1314,14 +1372,19 @@ export function* deleteRequestParamFlow() {
       title: "Delete parameter",
       message: `Are you sure to delete key ${requestParam.fieldName.value}?`,
     });
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     if (isConfirmed) {
       try {
         yield* put(
           UiActions.showDelayedLoading({ taskName: "deleteRequestParam" })
         );
+        yield* call(Firework.deleteRequestParam, requestParam);
         yield* call(
-          Firework.deleteRequestParam,
-          requestParam as RequestParamDoc
+          sendNotificationsToProjectMembers,
+          `The ${getRequestParamLocationName(requestParam.location)} '${
+            requestParam.fieldName
+          }' has been deleted by ${userProfile.name}'.`,
+          `/projects/${requestParam.projectId}/requests/${requestParam.requestId}?tab=request`
         );
         yield* put(
           UiActions.showNotification({
@@ -1359,6 +1422,14 @@ export function* submitRequestBodyFormFlow() {
     addModelField: Firework.addRequestBody,
     updateModelField: Firework.updateRequestBody,
     hasToBlurFormAlways: true,
+    sendNotifications: ({ payload, project, userProfile }) => {
+      sendNotificationsToProjectMembers(
+        payload.target
+          ? `The request body media-type '${payload.fieldName}' has been modified by ${userProfile.name}.`
+          : `New request body media-type '${payload.fieldName}' has been added by ${userProfile.name}.`,
+        `/projects/${project.id}/requests/${payload.requestId}?tab=request`
+      );
+    },
   });
 }
 
@@ -1371,12 +1442,18 @@ export function* deleteRequestBodyFlow() {
       title: "Delete body",
       message: `Are you sure to delete media-type ${requestBody.fieldName.value}?`,
     });
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     if (isConfirmed) {
       try {
         yield* put(
           UiActions.showDelayedLoading({ taskName: "deleteRequestBody" })
         );
-        yield* call(Firework.deleteRequestBody, requestBody as RequestBodyDoc);
+        yield* call(Firework.deleteRequestBody, requestBody);
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `The request body media-type '${requestBody.fieldName}' has been deleted by ${userProfile.name}'.`,
+          `/projects/${requestBody.projectId}/requests/${requestBody.requestId}?tab=request`
+        );
         yield* put(
           UiActions.showNotification({
             type: "success",
@@ -1403,6 +1480,7 @@ export function* submitRequestSettingFormFlow() {
       ProjectActions.submitRequestSettingForm
     );
     yield* put(ProgressActions.startProgress(type));
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     try {
       const target = payload.target;
       assertNotEmpty(target);
@@ -1417,6 +1495,11 @@ export function* submitRequestSettingFormFlow() {
         UiActions.showDelayedLoading({ taskName: "submitRequestSettingForm" })
       );
       yield* call(Firework.updateRequest, target.id, newRequest);
+      yield* call(
+        sendNotificationsToProjectMembers,
+        `The operation ${target.name} settings have been modified by ${userProfile.name}`,
+        `/projects/${target.projectId}/requests/${target.id}?tab=settings`
+      );
       yield* put(
         UiActions.showNotification({
           type: "success",
@@ -1439,10 +1522,15 @@ export function* deleteRequestFlow() {
       title: "Delete operation",
       message: "Are you sure to delete this operation?",
     });
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     if (isConfirmed) {
       try {
         yield* put(UiActions.showDelayedLoading({ taskName: "deleteRequest" }));
         yield* call(Firework.deleteRequest, payload);
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `The operation '${payload.name}' has been deleted by ${userProfile.name}`
+        );
         yield* put(
           UiActions.showNotification({
             type: "success",
@@ -1467,6 +1555,7 @@ export function* submitResponseStatusFlow() {
     );
     const target = payload.target;
     delete payload.target;
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     try {
       if (!target) {
         const recordableDocProps = yield* call(getRecordableDocProps);
@@ -1475,6 +1564,11 @@ export function* submitResponseStatusFlow() {
           ...recordableDocProps,
         };
         yield* call(Firework.addResponseStatus, newResponseStatus);
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `New response status has been added by ${userProfile.name}`,
+          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`
+        );
         yield* put(
           UiActions.showNotification({
             type: "success",
@@ -1491,6 +1585,11 @@ export function* submitResponseStatusFlow() {
           Firework.updateResponseStatus,
           target.id,
           newResponseStatus
+        );
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `The response status ${payload.statusCode} has been modified by ${userProfile.name}`,
+          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`
         );
         yield* put(
           UiActions.showNotification({
@@ -1515,12 +1614,18 @@ export function* deleteResponseStatusFlow() {
       title: "Delete status code",
       message: "Are you sure to delete this status code?",
     });
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     if (isConfirmed) {
       try {
         yield* put(
           UiActions.showDelayedLoading({ taskName: "deleteResponseStatus" })
         );
         yield* call(Firework.deleteResponseStatus, payload);
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `The status code ${payload.statusCode} has been deleted by ${userProfile.name}`,
+          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`
+        );
         yield* put(
           UiActions.showNotification({
             type: "success",
@@ -1556,6 +1661,14 @@ export function* submitResponseBodyFlow() {
     addModelField: Firework.addResponseBody,
     updateModelField: Firework.updateResponseBody,
     hasToBlurFormAlways: true,
+    sendNotifications: ({ payload, project, userProfile }) => {
+      sendNotificationsToProjectMembers(
+        payload.target
+          ? `The response body media-type '${payload.fieldName}' has been modified by ${userProfile.name}.`
+          : `New response body media-type '${payload.fieldName}' has been added by ${userProfile.name}.`,
+        `/projects/${project.id}/requests/${payload.requestId}?tab=response`
+      );
+    },
   });
 }
 
@@ -1566,12 +1679,18 @@ export function* deleteResponseBodyFlow() {
       title: "Delete body",
       message: `Are you sure to delete media-type ${payload.fieldName.value}?`,
     });
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     if (isConfirmed) {
       try {
         yield* put(
           UiActions.showDelayedLoading({ taskName: "deleteResponseBody" })
         );
         yield* call(Firework.deleteResponseBody, payload as ResponseBodyDoc);
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `The response body media-type '${payload.fieldName}' has been deleted by ${userProfile.name}'.`,
+          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`
+        );
         yield* put(
           UiActions.showNotification({
             type: "success",
@@ -1612,6 +1731,14 @@ export function* submitResponseHeaderFlow() {
     addModelField: Firework.addResponseHeader,
     updateModelField: Firework.updateResponseHeader,
     hasToBlurFormAlways: true,
+    sendNotifications: ({ payload, project, userProfile }) => {
+      sendNotificationsToProjectMembers(
+        payload.target
+          ? `The response header '${payload.fieldName}' has been modified by ${userProfile.name}.`
+          : `New response header '${payload.fieldName}' has been added by ${userProfile.name}.`,
+        `/projects/${project.id}/requests/${payload.requestId}?tab=response`
+      );
+    },
   });
 }
 
@@ -1622,6 +1749,7 @@ export function* deleteResponseHeaderFlow() {
       title: "Delete header",
       message: `Are you sure to delete key ${payload.fieldName.value}?`,
     });
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     if (isConfirmed) {
       try {
         yield* put(
@@ -1630,6 +1758,11 @@ export function* deleteResponseHeaderFlow() {
         yield* call(
           Firework.deleteResponseHeader,
           payload as ResponseHeaderDoc
+        );
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `The response header '${payload.fieldName}' has been deleted by ${userProfile.name}'.`,
+          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`
         );
         yield* put(
           UiActions.showNotification({
@@ -1689,7 +1822,7 @@ export function* addMembersFlow() {
           const notification: NotificationItem = {
             title: project.title,
             content: `You've been added as a ${role} of project by ${userProfile.name}.`,
-            link: `/projects/${project.id}`,
+            link: `/projects/${project.id}?tab=members`,
             userId: member.uid,
             isRead: false,
             ...recordableDocProps,
@@ -1794,6 +1927,31 @@ export function* deleteMemberFlow() {
       }
     }
   }
+}
+
+export function* sendNotificationsToProjectMembers(
+  content: string,
+  link?: string
+) {
+  const project = yield* select(ProjectSelectors.selectCurrentProject);
+  assertNotEmpty(project);
+  const recordableDocProps = yield* call(getRecordableDocProps);
+  const projectMembers = getTrueKeys(project.members);
+  yield* all(
+    projectMembers.map((userId) => {
+      const notification: NotificationItem = {
+        title: project.title,
+        content,
+        userId,
+        isRead: false,
+        ...recordableDocProps,
+      };
+      if (link) {
+        notification.link = link;
+      }
+      return call(Firework.addNotification, notification);
+    })
+  );
 }
 
 export function* changeMemberRoleFlow() {

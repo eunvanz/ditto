@@ -7,7 +7,7 @@ import useRequestByParam from "../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
-import { ModelFieldDoc } from "../../types";
+import { ModelFieldDoc, RequestBodyDoc } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 
 const useRequestBodyForm = () => {
@@ -34,7 +34,7 @@ const useRequestBodyForm = () => {
 
   const onDelete = useCallback(
     (requestBody: ModelFieldDoc) => {
-      dispatch(ProjectActions.deleteRequestBody(requestBody));
+      dispatch(ProjectActions.deleteRequestBody(requestBody as RequestBodyDoc));
     },
     [dispatch]
   );

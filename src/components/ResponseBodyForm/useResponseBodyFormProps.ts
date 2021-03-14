@@ -3,7 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
-import { ModelFieldDoc, ResponseStatusDoc } from "../../types";
+import {
+  ModelFieldDoc,
+  ResponseBodyDoc,
+  ResponseHeaderDoc,
+  ResponseStatusDoc,
+} from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import useProjectRole from "../../hooks/useProjectRole";
@@ -72,7 +77,9 @@ const useResponseBodyFormProps = ({
 
   const onDeleteResponseBody = useCallback(
     (responseBody: ModelFieldDoc) => {
-      dispatch(ProjectActions.deleteResponseBody(responseBody));
+      dispatch(
+        ProjectActions.deleteResponseBody(responseBody as ResponseBodyDoc)
+      );
     },
     [dispatch]
   );
@@ -108,7 +115,9 @@ const useResponseBodyFormProps = ({
 
   const onDeleteResponseHeader = useCallback(
     (responseHeader: ModelFieldDoc) => {
-      dispatch(ProjectActions.deleteResponseHeader(responseHeader));
+      dispatch(
+        ProjectActions.deleteResponseHeader(responseHeader as ResponseHeaderDoc)
+      );
     },
     [dispatch]
   );
