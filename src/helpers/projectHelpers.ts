@@ -1,4 +1,4 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
 import { FieldError } from "react-hook-form";
 import {
   REQUEST_METHOD,
