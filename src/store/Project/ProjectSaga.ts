@@ -445,6 +445,7 @@ export function* submitModelNameFormFlow() {
     delete payload.target;
     delete payload.hasToSetResult;
     try {
+      let newModelId = "";
       if (!!target) {
         // 수정인 경우
         yield* put(
@@ -475,7 +476,7 @@ export function* submitModelNameFormFlow() {
         };
         // model document 생성
         const newModelRef = yield* call(Firework.addModel, newModel);
-        const newModelId = newModelRef.id;
+        newModelId = newModelRef.id;
         yield* putResolve(ProjectActions.receiveCreatedModelId(newModelId));
 
         if (hasToSetResult) {
@@ -1003,7 +1004,6 @@ export function* proceedQuickModelNameFormFlow() {
       continue;
     } else {
       yield* putResolve(ProjectActions.submitModelNameForm(submit!.payload));
-      // yield* put(UiActions.showDelayedLoading(500));
       yield* put(UiActions.hideQuickModelNameFormModal());
     }
   }

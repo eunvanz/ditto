@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflow: "hidden",
     paddingTop: 64,
     [theme.breakpoints.up("lg")]: {
-      paddingLeft: 320,
+      paddingLeft: 300,
     },
     "&.wide": {
       [theme.breakpoints.down("lg")]: {
