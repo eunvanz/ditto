@@ -156,7 +156,7 @@ const notifications: NotificationDoc[] = [
   {
     id: "mockId",
     title: "Pet Store",
-    content: "You've been added as a manager of project by Benjamin.",
+    content: "You've been added as a {manager} of project by {Benjamin}.",
     userId: "mockId",
     link: "/test",
     isRead: false,
@@ -175,7 +175,7 @@ const notifications: NotificationDoc[] = [
     id: "mockId",
     title: "Pet Store",
     content:
-      "The operation 'Add a new pet to the store' has been deleted by Benjamin.",
+      "The operation {Add a new pet to the store} has been deleted by {Benjamin}.",
     userId: "mockId",
     isRead: false,
     updatedAt: {
@@ -192,25 +192,7 @@ const notifications: NotificationDoc[] = [
   {
     id: "mockId",
     title: "Pet Store",
-    content: "You've been added as manager of project by Benjamin.",
-    userId: "mockId",
-    link: "/test",
-    isRead: false,
-    updatedAt: {
-      seconds: 1601177065,
-      nanoseconds: 409000000,
-    },
-    createdAt: {
-      seconds: 1601176525,
-      nanoseconds: 902000000,
-    },
-    createdBy: "mockId",
-    updatedBy: "mockId",
-  },
-  {
-    id: "mockId",
-    title: "Pet Store",
-    content: "You've been added as manager of project by Benjamin.",
+    content: "You've been added as {manager} of project by {Benjamin}.",
     userId: "mockId",
     link: "/test",
     isRead: false,
@@ -228,7 +210,25 @@ const notifications: NotificationDoc[] = [
   {
     id: "mockId",
     title: "Pet Store",
-    content: "You've been added as manager of project by Benjamin.",
+    content: "You've been added as {manager} of project by {Benjamin}.",
+    userId: "mockId",
+    link: "/test",
+    isRead: false,
+    updatedAt: {
+      seconds: 1601177065,
+      nanoseconds: 409000000,
+    },
+    createdAt: {
+      seconds: 1601176525,
+      nanoseconds: 902000000,
+    },
+    createdBy: "mockId",
+    updatedBy: "mockId",
+  },
+  {
+    id: "mockId",
+    title: "Pet Store",
+    content: "You've been added as {manager} of project by {Benjamin}.",
     userId: "mockId",
     link: "/test",
     isRead: false,

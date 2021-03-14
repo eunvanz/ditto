@@ -386,7 +386,7 @@ export function* deleteModelFieldFlow() {
     );
     const isConfirmed = yield* call(Alert.confirm, {
       title: "Delete field",
-      message: `Are you sure to delete field '${modelField.fieldName.value}'?`,
+      message: `Are you sure to delete field {${modelField.fieldName.value}}?`,
     });
     if (isConfirmed) {
       try {
@@ -549,7 +549,7 @@ export function* deleteModelFlow() {
     const { payload } = yield* take(ProjectActions.deleteModel);
     const isConfirmed = yield* call(Alert.confirm, {
       title: "Delete model",
-      message: `Are you sure to delete model '${payload.name}'?`,
+      message: `Are you sure to delete model {${payload.name}}?`,
     });
     if (isConfirmed) {
       try {
@@ -1079,7 +1079,7 @@ export function* deleteEnumerationFlow() {
     const { payload } = yield* take(ProjectActions.deleteEnumeration);
     const isConfirmed = yield* call(Alert.confirm, {
       title: "Delete enumeration",
-      message: `Are you sure to delete enumeration '${payload.name}'?`,
+      message: `Are you sure to delete enumeration {${payload.name}}?`,
     });
     if (isConfirmed) {
       try {
@@ -1094,7 +1094,7 @@ export function* deleteEnumerationFlow() {
         if (referringModels.length > 0) {
           yield* put(UiActions.hideLoading("deleteEnumeration"));
           yield* call(Alert.message, {
-            title: "삭제 불가",
+            title: "Deletion failure",
             message: `${referringModels
               .map((model) => model.name)
               .join(
@@ -1388,7 +1388,7 @@ export function* deleteRequestParamFlow() {
     );
     const isConfirmed = yield* call(Alert.confirm, {
       title: "Delete parameter",
-      message: `Are you sure to delete key '${requestParam.fieldName.value}'?`,
+      message: `Are you sure to delete key {${requestParam.fieldName.value}}?`,
     });
     if (isConfirmed) {
       const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
@@ -1475,7 +1475,7 @@ export function* deleteRequestBodyFlow() {
     );
     const isConfirmed = yield* call(Alert.confirm, {
       title: "Delete body",
-      message: `Are you sure to delete media-type '${requestBody.fieldName.value}'?`,
+      message: `Are you sure to delete media-type {${requestBody.fieldName.value}}?`,
     });
     if (isConfirmed) {
       const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
@@ -1749,7 +1749,7 @@ export function* deleteResponseBodyFlow() {
     const { payload } = yield* take(ProjectActions.deleteResponseBody);
     const isConfirmed = yield* call(Alert.confirm, {
       title: "Delete body",
-      message: `Are you sure to delete media-type '${payload.fieldName.value}'?`,
+      message: `Are you sure to delete media-type {${payload.fieldName.value}}?`,
     });
     if (isConfirmed) {
       const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
@@ -1834,7 +1834,7 @@ export function* deleteResponseHeaderFlow() {
     const { payload } = yield* take(ProjectActions.deleteResponseHeader);
     const isConfirmed = yield* call(Alert.confirm, {
       title: "Delete header",
-      message: `Are you sure to delete key '${payload.fieldName.value}'?`,
+      message: `Are you sure to delete key {${payload.fieldName.value}}?`,
     });
     if (isConfirmed) {
       const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
@@ -1955,8 +1955,8 @@ export function* deleteMemberFlow() {
     const isConfirmed = yield* call(Alert.confirm, {
       title: isMySelf ? "Leave project" : "Delete user",
       message: isMySelf
-        ? `Are you sure to leave project '${project.title}'?`
-        : `Are you sure to delete user '${member.name}'?`,
+        ? `Are you sure to leave project {${project.title}}?`
+        : `Are you sure to delete user {${member.name}}?`,
     });
     if (isConfirmed) {
       try {

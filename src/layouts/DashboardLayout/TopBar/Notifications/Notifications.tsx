@@ -121,13 +121,12 @@ const Notifications: React.FC<NotificationsProps> = ({
                             dangerouslySetInnerHTML={{
                               __html: notification.content
                                 .replace(
-                                  "{",
-                                  '<b class="MuiTypography-colorPrimary">'
+                                  /\{/g,
+                                  '<span class="MuiTypography-colorPrimary">'
                                 )
-                                .replace("}", "</b>"),
+                                .replace(/\}/g, "</span>"),
                             }}
                           />
-                          {notification.content}
                           {notification.createdAt && (
                             <Typography
                               variant="caption"
