@@ -446,6 +446,7 @@ export function* submitModelNameFormFlow() {
     delete payload.target;
     delete payload.hasToSetResult;
     try {
+      const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
       let newModelId = "";
       if (!!target) {
         // 수정인 경우
@@ -459,6 +460,13 @@ export function* submitModelNameFormFlow() {
           ...updatedRecordProps,
         };
         yield* call(Firework.updateModel, target.id, newModel);
+
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `The model {${newModel.name}} has been modified by {${userProfile.name}}.`,
+          `/projects/${newModel.projectId}?tab=model&model=${target.id}`
+        );
+
         yield* put(
           UiActions.showNotification({
             type: "success",
@@ -489,6 +497,12 @@ export function* submitModelNameFormFlow() {
           );
           yield* putResolve(ProjectActions.receiveCurrentModel(currentModel!));
         }
+
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `New model {${newModel.name}} has been created by {${userProfile.name}}.`,
+          `/projects/${newModel.projectId}?tab=model&model=${newModelId}`
+        );
 
         yield* put(
           UiActions.showNotification({
@@ -574,6 +588,13 @@ export function* deleteModelFlow() {
           continue;
         } else {
           yield* call(Firework.deleteModel, payload);
+          const userProfile = yield* select(
+            FirebaseSelectors.selectUserProfile
+          );
+          yield* call(
+            sendNotificationsToProjectMembers,
+            `The model {${payload.name}} has been deleted by {${userProfile.uid}}.`
+          );
           yield* put(
             UiActions.showNotification({
               type: "success",
