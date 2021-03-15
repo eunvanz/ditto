@@ -7,6 +7,7 @@ import {
   select,
   race,
   putResolve,
+  takeEvery,
 } from "typed-redux-saga";
 import { ProjectActions } from "./ProjectSlice";
 import { ProgressActions } from "../Progress/ProgressSlice";
@@ -655,6 +656,7 @@ export function* getUpdatedModelField({
         ...target[key].settingsByMember,
         [userProfile.uid]: {
           updatedAt: isKeyUpdated ? timestamp : target[key].updatedAt,
+          value: payload[key],
         },
       },
     };
@@ -846,6 +848,7 @@ export function* commonModelFieldFormFlow<
           hasToBlurForm = false;
         }
         const recordableDocProps = yield* call(getRecordableDocProps);
+        const auth = yield* select(AuthSelectors.selectAuth);
         // @ts-ignore
         const newModelField: CustomModelFieldItem = {
           ...buildNewModelField(payload),
@@ -853,30 +856,72 @@ export function* commonModelFieldFormFlow<
           fieldName: {
             value: payload.fieldName,
             ...recordableDocProps,
+            settingsByMember: {
+              [auth.uid]: {
+                updatedAt: recordableDocProps.updatedAt,
+                value: payload.fieldName,
+              },
+            },
           },
           isRequired: {
             value: payload.isRequired,
             ...recordableDocProps,
+            settingsByMember: {
+              [auth.uid]: {
+                updatedAt: recordableDocProps.updatedAt,
+                value: payload.isRequired,
+              },
+            },
           },
           isArray: {
             value: payload.isArray,
             ...recordableDocProps,
+            settingsByMember: {
+              [auth.uid]: {
+                updatedAt: recordableDocProps.updatedAt,
+                value: payload.isArray,
+              },
+            },
           },
           fieldType: {
             value: payload.fieldType,
             ...recordableDocProps,
+            settingsByMember: {
+              [auth.uid]: {
+                updatedAt: recordableDocProps.updatedAt,
+                value: payload.fieldType,
+              },
+            },
           },
           format: {
             value: payload.format,
             ...recordableDocProps,
+            settingsByMember: {
+              [auth.uid]: {
+                updatedAt: recordableDocProps.updatedAt,
+                value: payload.format,
+              },
+            },
           },
           enum: {
             value: payload.enum,
             ...recordableDocProps,
+            settingsByMember: {
+              [auth.uid]: {
+                updatedAt: recordableDocProps.updatedAt,
+                value: payload.enum,
+              },
+            },
           },
           description: {
             value: payload.description,
             ...recordableDocProps,
+            settingsByMember: {
+              [auth.uid]: {
+                updatedAt: recordableDocProps.updatedAt,
+                value: payload.description,
+              },
+            },
           },
           ...recordableDocProps,
         };
@@ -2118,6 +2163,131 @@ export function* markNotificationsAsReadFlow() {
   }
 }
 
+export function* handleRefreshModelField(
+  action: ReturnType<typeof ProjectActions.refreshModelField>
+) {
+  const { payload } = action;
+  const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
+  const timestamp = yield* call(getTimestamp);
+  const modelFields = yield* select(
+    FirebaseSelectors.createModelFieldsSelector(
+      payload.projectId,
+      payload.modelId
+    )
+  );
+  const requestParams = yield* select(
+    FirebaseSelectors.createRequestParamsSelector(
+      payload.projectId,
+      // @ts-ignore
+      payload.requestId
+    )
+  );
+  const requestBodies = yield* select(
+    FirebaseSelectors.createRequestBodiesSelector(
+      payload.projectId,
+      // @ts-ignore
+      payload.requestId
+    )
+  );
+  const responseBodies = yield* select(
+    FirebaseSelectors.createResponseBodiesSelector(
+      payload.projectId,
+      // @ts-ignore
+      payload.requestId,
+      // @ts-ignore
+      payload.responseStatusId
+    )
+  );
+  const responseHeaders = yield* select(
+    FirebaseSelectors.createResponseHeadersSelector(
+      payload.projectId,
+      // @ts-ignore
+      payload.requestId,
+      // @ts-ignore
+      payload.responseStatusId
+    )
+  );
+  const updatedModelField = (
+    modelFields ||
+    requestParams ||
+    requestBodies ||
+    responseBodies ||
+    responseHeaders
+  )?.find((item) => item.id === payload.id);
+
+  if (updatedModelField) {
+    const newModelField = {
+      [`settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
+      [`fieldName.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
+      [`fieldName.settingsByMember.${userProfile.uid}.value`]: updatedModelField
+        .fieldName.value,
+      [`isRequired.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
+      [`isRequired.settingsByMember.${userProfile.uid}.value`]: updatedModelField
+        .isRequired.value,
+      [`isArray.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
+      [`isArray.settingsByMember.${userProfile.uid}.value`]: updatedModelField
+        .isArray.value,
+      [`fieldType.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
+      [`fieldType.settingsByMember.${userProfile.uid}.value`]: updatedModelField
+        .fieldType.value,
+      [`format.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
+      [`format.settingsByMember.${userProfile.uid}.value`]: updatedModelField
+        .format.value,
+      [`enum.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
+      [`enum.settingsByMember.${userProfile.uid}.value`]: updatedModelField.enum
+        .value,
+      [`description.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
+      [`description.settingsByMember.${userProfile.uid}.value`]: updatedModelField
+        .description.value,
+    };
+    console.log("===== newModelField", newModelField);
+    if (modelFields) {
+      yield* call(
+        // @ts-ignore
+        Firework.updateModelField,
+        updatedModelField.id,
+        newModelField
+      );
+    } else if (requestParams) {
+      // @ts-ignore
+      yield* call(Firework.updateRequestParam, updatedModelField.id, {
+        ...newModelField,
+        projectId: payload.projectId,
+        // @ts-ignore
+        requestId: payload.requestId,
+      });
+    } else if (requestBodies) {
+      // @ts-ignore
+      yield* call(Firework.updateRequestBody, updatedModelField.id, {
+        ...newModelField,
+        projectId: payload.projectId,
+        // @ts-ignore
+        requestId: payload.requestId,
+      });
+    } else if (responseBodies) {
+      // @ts-ignore
+      yield* call(Firework.updateRequestParam, updatedModelField.id, {
+        ...newModelField,
+        projectId: payload.projectId,
+        // @ts-ignore
+        requestId: payload.requestId,
+        // @ts-ignore
+        responseStatusId: payload.responseStatusId,
+      });
+    } else if (responseHeaders) {
+      // @ts-ignore
+      yield* call(Firework.updateResponseHeader, updatedModelField.id, {
+        ...newModelField,
+        projectId: payload.projectId,
+        // @ts-ignore
+        requestId: payload.requestId,
+        // @ts-ignore
+        responseStatusId: payload.responseStatusId,
+      });
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -2151,5 +2321,6 @@ export function* watchProjectActions() {
     fork(deleteMemberFlow),
     fork(changeMemberRoleFlow),
     fork(markNotificationsAsReadFlow),
+    takeEvery(ProjectActions.refreshModelField, handleRefreshModelField),
   ]);
 }

@@ -111,6 +111,10 @@ export type ProjectDoc = Doc<ProjectItem, ProjectSettings>;
 
 export interface ProjectUrlSettings extends BaseSettings {}
 
+export interface ModelCellSettings extends BaseSettings {
+  value: string | boolean;
+}
+
 export interface ProjectUrlItem extends Recordable {
   projectId: string;
   label: string;
@@ -178,7 +182,7 @@ export const formats: { [k in FIELD_TYPE]: (string | undefined)[] } = {
 
 export interface ModelCell<T> extends Recordable {
   value: T;
-  settingsByMember: Record<string, BaseSettings>;
+  settingsByMember: Record<string, ModelCellSettings>;
 }
 
 export interface ModelFieldItem extends Recordable {
@@ -226,7 +230,7 @@ export interface ModelItem extends Recordable {
   settingsByMember: Record<string, BaseSettings>;
 }
 
-export type ModelCellDoc<T> = Doc<ModelCell<T>, BaseSettings>;
+export type ModelCellDoc<T> = Doc<ModelCell<T>, ModelCellSettings>;
 
 export type ModelFieldDoc = Omit<
   Doc<ModelFieldItem, BaseSettings>,

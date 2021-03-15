@@ -148,3 +148,20 @@ export const getRequestParamLocationName = (
       return "query param";
   }
 };
+
+export const checkIsNewerTimestamp = (
+  target: DocTimestamp,
+  compare: DocTimestamp
+) => {
+  if (target.seconds < compare.seconds) {
+    return false;
+  } else if (target.seconds === compare.seconds) {
+    if (target.nanoseconds < compare.nanoseconds) {
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    return true;
+  }
+};

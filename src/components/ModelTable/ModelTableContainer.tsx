@@ -12,6 +12,8 @@ export type ModelTableContainerProps = Omit<
   | "onSubmitModelField"
   | "onDeleteModelField"
   | "checkIsSubmittingModelField"
+  | "userProfile"
+  | "onRefreshModelField"
 >;
 
 const ModelTableContainer = ({

@@ -71,6 +71,8 @@ const useRequestParamFormProps: (
 
   const role = useProjectRole(project);
 
+  const userProfile = useSelector(FirebaseSelectors.selectUserProfile);
+
   return {
     location,
     requestParams,
@@ -78,6 +80,7 @@ const useRequestParamFormProps: (
     onDeleteRequestParam,
     checkIsSubmittingRequestParam,
     role,
+    userProfile,
   };
 };
 
