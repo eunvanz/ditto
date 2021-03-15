@@ -2270,7 +2270,11 @@ export function* handleRefreshModelField(
         // @ts-ignore
         Firework.updateModelField,
         latestModelField.id,
-        newModelField
+        {
+          ...newModelField,
+          projectId: payload.projectId,
+          modelId: payload.modelId,
+        }
       );
     } else if (modelFieldType === "requestParam") {
       // @ts-ignore
