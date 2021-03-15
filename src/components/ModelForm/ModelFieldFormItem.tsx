@@ -44,6 +44,8 @@ import {
 import isEqual from "lodash/isEqual";
 import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
 import { EXAMPLE_PROJECT_ID } from "../../constants";
+import { EditOutlined } from "@material-ui/icons";
+import { Theme } from "../../theme";
 
 export type ModelFieldColumns =
   | "fieldName"
@@ -54,7 +56,7 @@ export type ModelFieldColumns =
   | "enum"
   | "description";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   autocomplete: {
     "& .MuiAutocomplete-inputRoot": {
       paddingBottom: 0,
@@ -71,6 +73,11 @@ const useStyles = makeStyles(() => ({
   },
   updated: {
     backgroundColor: "rgba(255,0,0,0.1)",
+  },
+  subButton: {
+    marginLeft: 2,
+    color: theme.palette.text.secondary,
+    padding: 0,
   },
 }));
 
@@ -108,6 +115,7 @@ export interface ModelFieldFormItemProps {
   role: MemberRole;
   userProfile: UserProfileDoc;
   onRefreshModelField: (modelField: ModelFieldDoc) => void;
+  onShowQuickEnumFormModal: (enumeration: EnumerationDoc) => void;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -128,6 +136,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   role,
   userProfile,
   onRefreshModelField,
+  onShowQuickEnumFormModal,
 }) => {
   const classes = useStyles();
 
@@ -691,6 +700,20 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             >
               <Button className={classes.enumerationButton}>
                 {enumDefaultValue}
+                <Button
+                  size="small"
+                  className={classes.subButton}
+                  onClick={
+                    currentEnumeration
+                      ? (e) => {
+                          e.stopPropagation();
+                          onShowQuickEnumFormModal(currentEnumeration);
+                        }
+                      : undefined
+                  }
+                >
+                  <EditOutlined fontSize="small" />
+                </Button>
               </Button>
             </Tooltip>
           )}

@@ -32,3 +32,9 @@ export const 필드타입_INTEGER = Template.bind({});
 필드타입_INTEGER.args = {
   fieldType: FIELD_TYPE.INTEGER,
 };
+
+export const 기본값있음 = Template.bind({});
+기본값있음.args = {
+  fieldType: FIELD_TYPE.STRING,
+  enumeration: mockProject.enumerations[0],
+};

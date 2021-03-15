@@ -5,12 +5,14 @@ import { patterns } from "../../helpers/projectHelpers";
 import { EnumFormValues } from "../../routes/ProjectManagement/EnumForm/EnumForm";
 import { EnumerationDoc, FIELD_TYPE } from "../../types";
 import uniq from "lodash/uniq";
+import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
 
 export interface QuickEnumFormProps {
   onSubmit: (values: EnumFormValues) => void;
   isSubmitting: boolean;
   fieldType: FIELD_TYPE.INTEGER | FIELD_TYPE.STRING;
   existingEnumerations?: EnumerationDoc[];
+  enumeration?: EnumerationDoc;
 }
 
 const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
@@ -18,7 +20,18 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
   isSubmitting,
   existingEnumerations,
   fieldType,
+  enumeration,
 }) => {
+  const defaultValues: EnumFormValues = useMemo(
+    () => ({
+      name: enumeration?.name || "",
+      items: enumeration?.items.join(",") || "",
+      fieldType,
+      description: enumeration?.description || "",
+    }),
+    [enumeration, fieldType]
+  );
+
   const {
     register,
     handleSubmit,
@@ -27,9 +40,13 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
     setValue,
     trigger,
     getValues,
+    reset,
   } = useForm<EnumFormValues>({
     mode: "onChange",
+    defaultValues,
   });
+
+  useSyncDefaultValues(reset, defaultValues);
 
   const isSubmittable = useMemo(() => {
     return !isSubmitting && formState.isValid;
@@ -149,7 +166,7 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
           type="submit"
           variant="contained"
         >
-          Create new enumeration
+          {enumeration ? "Apply modification" : "Create new enumeration"}
         </Button>
       </Box>
     </form>

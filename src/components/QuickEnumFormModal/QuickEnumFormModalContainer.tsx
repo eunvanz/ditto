@@ -8,7 +8,9 @@ import QuickEnumFormModal from "./QuickEnumFormModal";
 const QuickEnumFormModalContainer = () => {
   const dispatch = useDispatch();
 
-  const { isVisible } = useSelector(UiSelectors.selectQuickEnumFormModal);
+  const { isVisible, enumeration } = useSelector(
+    UiSelectors.selectQuickEnumFormModal
+  );
 
   const closeEnumFormModal = useCallback(() => {
     dispatch(UiActions.hideQuickEnumFormModal());
@@ -21,7 +23,11 @@ const QuickEnumFormModalContainer = () => {
   });
 
   return (
-    <QuickEnumFormModal isVisible={isVisible} onClose={closeEnumFormModal} />
+    <QuickEnumFormModal
+      isVisible={isVisible}
+      enumeration={enumeration}
+      onClose={closeEnumFormModal}
+    />
   );
 };
 

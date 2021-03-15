@@ -9,7 +9,7 @@ import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { UiActions } from "../../store/Ui/UiSlice";
-import { ModelDoc, ModelFieldDoc } from "../../types";
+import { EnumerationDoc, ModelDoc, ModelFieldDoc } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 
 export interface UseModelTablePropsParams {
@@ -128,6 +128,13 @@ const useModelTableProps = ({
     [dispatch]
   );
 
+  const onShowQuickEnumFormModal = useCallback(
+    (enumeration: EnumerationDoc) => {
+      dispatch(UiActions.showQuickEnumFormModal(enumeration));
+    },
+    [dispatch]
+  );
+
   return {
     model,
     modelFields,
@@ -142,6 +149,7 @@ const useModelTableProps = ({
     role,
     userProfile,
     onRefreshModelField,
+    onShowQuickEnumFormModal,
   };
 };
 

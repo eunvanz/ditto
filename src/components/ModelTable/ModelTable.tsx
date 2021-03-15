@@ -88,10 +88,13 @@ export type ModelTableProps = {
   checkIsNewFormDisabled?: () => boolean;
   role: MemberRole;
   userProfile: UserProfileDoc;
-  onRefreshModelField: (modelField: ModelFieldDoc) => void;
 } & Pick<
   ModelFieldFormItemProps,
-  "customFieldName" | "disabledColumns" | "customFieldNameInput"
+  | "customFieldName"
+  | "disabledColumns"
+  | "customFieldNameInput"
+  | "onShowQuickEnumFormModal"
+  | "onRefreshModelField"
 >;
 
 const ModelTable: React.FC<ModelTableProps> = ({
@@ -117,6 +120,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
   role,
   userProfile,
   onRefreshModelField,
+  onShowQuickEnumFormModal,
 }) => {
   const classes = useStyles();
 
@@ -211,6 +215,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
           role={role}
           userProfile={userProfile}
           onRefreshModelField={onRefreshModelField}
+          onShowQuickEnumFormModal={onShowQuickEnumFormModal}
         />
       ))}
       {hasManagerAuthorization && (
@@ -242,6 +247,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
               role={role}
               userProfile={userProfile}
               onRefreshModelField={onRefreshModelField}
+              onShowQuickEnumFormModal={onShowQuickEnumFormModal}
             />
           ) : (
             <TableRow>

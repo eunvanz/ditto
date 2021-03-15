@@ -7,6 +7,7 @@ import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
+import UiSelectors from "../../store/Ui/UiSelectors";
 import { FIELD_TYPE } from "../../types";
 import QuickEnumForm from "./QuickEnumForm";
 
@@ -15,6 +16,8 @@ const QuickEnumFormContainer = () => {
 
   const project = useSelector(ProjectSelectors.selectCurrentProject);
   assertNotEmpty(project);
+
+  const { enumeration } = useSelector(UiSelectors.selectQuickEnumFormModal);
 
   const existingEnumerations = useSelector(
     FirebaseSelectors.createProjectEnumerationsSelector(project.id)
@@ -30,19 +33,31 @@ const QuickEnumFormContainer = () => {
 
   const submitForm = useCallback(
     (values: EnumFormValues) => {
-      dispatch(ProjectActions.submitQuickEnumForm(values));
+      if (enumeration) {
+        dispatch(
+          ProjectActions.submitEnumForm({ ...values, target: enumeration })
+        );
+      } else {
+        dispatch(ProjectActions.submitQuickEnumForm(values));
+      }
     },
-    [dispatch]
+    [dispatch, enumeration]
   );
 
   useLoading(existingEnumerations, `loadingExistingEnumerations-${project.id}`);
 
   return (
     <QuickEnumForm
-      existingEnumerations={existingEnumerations}
-      fieldType={fieldType as FIELD_TYPE.STRING | FIELD_TYPE.INTEGER}
+      existingEnumerations={existingEnumerations?.filter(
+        (item) => item.id !== enumeration?.id
+      )}
+      fieldType={
+        (enumeration?.fieldType as FIELD_TYPE.STRING | FIELD_TYPE.INTEGER) ||
+        (fieldType as FIELD_TYPE.STRING | FIELD_TYPE.INTEGER)
+      }
       isSubmitting={isSubmitting}
       onSubmit={submitForm}
+      enumeration={enumeration}
     />
   );
 };

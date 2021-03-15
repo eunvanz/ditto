@@ -7,6 +7,7 @@ import {
   GroupDoc,
   RequestDoc,
   MemberRole,
+  EnumerationDoc,
 } from "../../types";
 
 export interface Notification {
@@ -75,6 +76,7 @@ export interface GroupFormModalState {
 
 export interface QuickEnumFormModalState {
   isVisible: boolean;
+  enumeration?: EnumerationDoc;
 }
 
 export interface QuickModelNameFormModalState {
@@ -222,11 +224,16 @@ const UiSlice = createSlice({
     clearQuickModelNameFormModal: (state, _action: PayloadAction<void>) => {
       state.quickModelNameFormModal.model = undefined;
     },
-    showQuickEnumFormModal: (state, _action: PayloadAction<void>) => {
+    showQuickEnumFormModal: (
+      state,
+      action: PayloadAction<EnumerationDoc | undefined>
+    ) => {
       state.quickEnumFormModal.isVisible = true;
+      state.quickEnumFormModal.enumeration = action.payload;
     },
     hideQuickEnumFormModal: (state, _action: PayloadAction<void>) => {
       state.quickEnumFormModal.isVisible = false;
+      state.quickEnumFormModal.enumeration = undefined;
     },
     receiveGroupFormModal: (
       state,

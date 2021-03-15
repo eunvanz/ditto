@@ -796,9 +796,8 @@ export function* commonModelFieldFormFlow<
             yield* put(ProjectActions.receiveEditingModelField(undefined));
             yield* call(updateModelField, target.id, {
               ...newModelField,
-              format: {
-                value: createdModelId,
-              },
+              "format.value": createdModelId,
+              [`format.settingsByMember.${userProfile.uid}.value`]: createdModelId,
             });
           }
         } else if (isNewEnum) {
@@ -828,9 +827,8 @@ export function* commonModelFieldFormFlow<
             yield* put(UiActions.hideQuickEnumFormModal());
             yield* call(updateModelField, target.id, {
               ...newModelField,
-              enum: {
-                value: createdEnumId,
-              },
+              "enum.value": createdEnumId,
+              [`enum.settingsByMember.${userProfile.uid}.value`]: createdEnumId,
             });
           }
         } else {
@@ -956,7 +954,14 @@ export function* commonModelFieldFormFlow<
             yield* call(addModelField, {
               ...newModelField,
               format: {
-                value: createdModelId!,
+                ...newModelField.format,
+                value: createdModelId,
+                settingsByMember: {
+                  [auth.uid]: {
+                    ...newModelField.format.settingsByMember[auth.uid],
+                    value: createdModelId,
+                  },
+                },
               },
             });
           }
@@ -988,7 +993,14 @@ export function* commonModelFieldFormFlow<
             yield* call(addModelField, {
               ...newModelField,
               enum: {
-                value: createdEnumId!,
+                ...newModelField.enum,
+                value: createdEnumId,
+                settingsByMember: {
+                  [auth.uid]: {
+                    ...newModelField.enum.settingsByMember[auth.uid],
+                    value: createdEnumId,
+                  },
+                },
               },
             });
             if (hasToBlurFormAlways) {
@@ -1140,6 +1152,7 @@ export function* submitEnumFormFlow() {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
       yield* put(UiActions.hideLoading("submitEnumForm"));
+      yield* put(UiActions.hideQuickEnumFormModal());
       yield* put(ProgressActions.finishProgress(type));
       yield* put(ProjectActions.notifySubmissionQuickEnumFormComplete());
     }

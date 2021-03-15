@@ -14,6 +14,7 @@ export type ModelTableContainerProps = Omit<
   | "checkIsSubmittingModelField"
   | "userProfile"
   | "onRefreshModelField"
+  | "onShowQuickEnumFormModal"
 >;
 
 const ModelTableContainer = ({
