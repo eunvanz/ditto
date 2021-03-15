@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Button,
   IconButton,
@@ -16,14 +17,13 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Check, Notifications as NotificationsIcon } from "@material-ui/icons";
 import { formatDistance } from "date-fns";
 import { NotificationDoc } from "../../../../types";
-import NewBadge from "../../../../components/NewBadge";
 import { Theme } from "../../../../theme";
 import { convertTimestampToDate } from "../../../../helpers/projectHelpers";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   popover: {
-    width: 320,
+    width: 360,
   },
   link: {
     color: theme.palette.text.hint,
@@ -33,6 +33,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   time: {
     color: theme.palette.text.disabled,
+  },
+  newBadge: {
+    "& .MuiBadge-badge": {
+      height: 16,
+      padding: "0 4px",
+      fontSize: "0.7rem",
+      minWidth: 16,
+    },
   },
 }));
 
@@ -69,11 +77,15 @@ const Notifications: React.FC<NotificationsProps> = ({
     <>
       <Tooltip title="Notifications">
         <IconButton color="inherit" ref={ref} onClick={openList}>
-          <NewBadge isVisible={notifications.length > 0}>
+          <Badge
+            className={classes.newBadge}
+            badgeContent={notifications.length}
+            color="error"
+          >
             <SvgIcon>
               <NotificationsIcon />
             </SvgIcon>
-          </NewBadge>
+          </Badge>
         </IconButton>
       </Tooltip>
       <Popover
@@ -117,7 +129,9 @@ const Notifications: React.FC<NotificationsProps> = ({
                       }}
                       secondary={
                         <>
-                          <div
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
                             dangerouslySetInnerHTML={{
                               __html: notification.content
                                 .replace(
