@@ -119,6 +119,15 @@ const useModelTableProps = ({
 
   const role = useProjectRole(project);
 
+  const userProfile = useSelector(FirebaseSelectors.selectUserProfile);
+
+  const onRefreshModelField = useCallback(
+    (modelField: ModelFieldDoc) => {
+      dispatch(ProjectActions.refreshModelField(modelField));
+    },
+    [dispatch]
+  );
+
   return {
     model,
     modelFields,
@@ -131,6 +140,8 @@ const useModelTableProps = ({
     onSubmitModelField,
     checkIsSubmittingModelField,
     role,
+    userProfile,
+    onRefreshModelField,
   };
 };
 

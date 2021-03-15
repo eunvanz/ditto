@@ -1,4 +1,4 @@
-import { User, UserProfileDoc } from "../types";
+import { NotificationDoc, User, UserProfileDoc } from "../types";
 import { FirebaseReducer } from "react-redux-firebase";
 
 const auth: FirebaseReducer.AuthState = {
@@ -42,6 +42,26 @@ const auth: FirebaseReducer.AuthState = {
 
 const user: User = {
   auth,
+};
+
+const profile = {
+  id: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+  registeredAt: {
+    seconds: 1615295982,
+    nanoseconds: 49000000,
+  },
+  name: "이웅희",
+  email: "eunvanz@gmail.com",
+  isRegistered: true,
+  updatedAt: {
+    seconds: 1615295982,
+    nanoseconds: 49000000,
+  },
+  photoUrl:
+    "https://lh4.googleusercontent.com/-_ae-P8Td7mk/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuck-2LHkf6uoEPzJgtBFLsO3PyX8Xg/photo.jpg",
+  uid: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",
+  isLoaded: true,
+  isEmpty: false,
 };
 
 const userProfiles: UserProfileDoc[] = [
@@ -132,10 +152,105 @@ const userProfiles: UserProfileDoc[] = [
   },
 ];
 
+const notifications: NotificationDoc[] = [
+  {
+    id: "mockId",
+    title: "Pet Store",
+    content: "You've been added as a {manager} of project by {Benjamin}.",
+    userId: "mockId",
+    link: "/test",
+    isRead: false,
+    updatedAt: {
+      seconds: 1601177065,
+      nanoseconds: 409000000,
+    },
+    createdAt: {
+      seconds: 1601176525,
+      nanoseconds: 902000000,
+    },
+    createdBy: "mockId",
+    updatedBy: "mockId",
+  },
+  {
+    id: "mockId",
+    title: "Pet Store",
+    content:
+      "The operation {Add a new pet to the store} has been deleted by {Benjamin}.",
+    userId: "mockId",
+    isRead: false,
+    updatedAt: {
+      seconds: 1601177065,
+      nanoseconds: 409000000,
+    },
+    createdAt: {
+      seconds: 1601176525,
+      nanoseconds: 902000000,
+    },
+    createdBy: "mockId",
+    updatedBy: "mockId",
+  },
+  {
+    id: "mockId",
+    title: "Pet Store",
+    content: "You've been added as {manager} of project by {Benjamin}.",
+    userId: "mockId",
+    link: "/test",
+    isRead: false,
+    updatedAt: {
+      seconds: 1601177065,
+      nanoseconds: 409000000,
+    },
+    createdAt: {
+      seconds: 1601176525,
+      nanoseconds: 902000000,
+    },
+    createdBy: "mockId",
+    updatedBy: "mockId",
+  },
+  {
+    id: "mockId",
+    title: "Pet Store",
+    content: "You've been added as {manager} of project by {Benjamin}.",
+    userId: "mockId",
+    link: "/test",
+    isRead: false,
+    updatedAt: {
+      seconds: 1601177065,
+      nanoseconds: 409000000,
+    },
+    createdAt: {
+      seconds: 1601176525,
+      nanoseconds: 902000000,
+    },
+    createdBy: "mockId",
+    updatedBy: "mockId",
+  },
+  {
+    id: "mockId",
+    title: "Pet Store",
+    content: "You've been added as {manager} of project by {Benjamin}.",
+    userId: "mockId",
+    link: "/test",
+    isRead: false,
+    updatedAt: {
+      seconds: 1601177065,
+      nanoseconds: 409000000,
+    },
+    createdAt: {
+      seconds: 1601176525,
+      nanoseconds: 902000000,
+    },
+    createdBy: "mockId",
+    updatedBy: "mockId",
+  },
+];
+
 const mockUser = {
   user,
   auth,
   userProfiles,
+  notifications,
+  profile,
 };
 
 export default mockUser;

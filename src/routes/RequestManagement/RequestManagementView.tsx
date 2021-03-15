@@ -8,8 +8,9 @@ import {
   Tab,
   Tabs,
 } from "@material-ui/core";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
+import qs from "query-string";
 import Header from "../../components/Header";
 import { SCREEN_MODE } from "../../store/Ui/UiSlice";
 import { Theme } from "../../theme";
@@ -18,6 +19,7 @@ import RequestTab from "./RequestTab";
 import RequestUrlForm from "./RequestUrlForm";
 import ResponseTab from "./ResponseTab";
 import SettingsTab from "./SettingsTab";
+import { useLocation } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -42,7 +44,13 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
 }) => {
   const classes = useStyles();
 
-  const [activeTab, setActiveTab] = useState("request");
+  const location = useLocation();
+
+  const tabQuery = useMemo(() => {
+    return qs.parse(location.search).tab;
+  }, [location.search]);
+
+  const [activeTab, setActiveTab] = useState(tabQuery || "request");
 
   const tabs = useMemo(() => {
     return [
@@ -55,6 +63,12 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
   const handleOnTabChange = useCallback((_, value: string) => {
     setActiveTab(value);
   }, []);
+
+  useEffect(() => {
+    if (tabQuery) {
+      setActiveTab(tabQuery);
+    }
+  }, [tabQuery]);
 
   return (
     <Container

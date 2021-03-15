@@ -13,6 +13,10 @@ import {
   ResponseStatusDoc,
   UserProfileDoc,
   MemberRole,
+  RequestParamDoc,
+  RequestBodyDoc,
+  ResponseHeaderDoc,
+  ResponseBodyDoc,
 } from "../../types";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
@@ -135,12 +139,12 @@ const ProjectSlice = createSlice({
         }
       >
     ) => {},
-    deleteRequestParam: (_, _action: PayloadAction<ModelFieldDoc>) => {},
+    deleteRequestParam: (_, _action: PayloadAction<RequestParamDoc>) => {},
     submitRequestBodyForm: (
       _,
       _action: PayloadAction<ModelFieldFormValues & { requestId: string }>
     ) => {},
-    deleteRequestBody: (_, _action: PayloadAction<ModelFieldDoc>) => {},
+    deleteRequestBody: (_, _action: PayloadAction<RequestBodyDoc>) => {},
     submitRequestSettingForm: (
       _,
       _action: PayloadAction<RequestSettingFormValues>
@@ -163,7 +167,7 @@ const ProjectSlice = createSlice({
         }
       >
     ) => {},
-    deleteResponseBody: (_, _action: PayloadAction<ModelFieldDoc>) => {},
+    deleteResponseBody: (_, _action: PayloadAction<ResponseBodyDoc>) => {},
     submitResponseHeaderForm: (
       _,
       _action: PayloadAction<
@@ -174,7 +178,7 @@ const ProjectSlice = createSlice({
         }
       >
     ) => {},
-    deleteResponseHeader: (_, _action: PayloadAction<ModelFieldDoc>) => {},
+    deleteResponseHeader: (_, _action: PayloadAction<ResponseHeaderDoc>) => {},
     changeMemberRole: (
       _,
       _action: PayloadAction<{
@@ -191,6 +195,8 @@ const ProjectSlice = createSlice({
       _,
       _action: PayloadAction<{ members: UserProfileDoc[]; role: MemberRole }>
     ) => {},
+    markNotificationsAsRead: (_, _action: PayloadAction<string[]>) => {},
+    refreshModelField: (_, _action: PayloadAction<ModelFieldDoc>) => {},
   },
 });
 

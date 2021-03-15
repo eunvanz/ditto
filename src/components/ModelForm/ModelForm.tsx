@@ -92,7 +92,6 @@ const ModelForm: React.FC<ModelFormProps> = ({
   editingModelFieldId,
   isVisible,
   role,
-  screenMode,
 }) => {
   const classes = useStyles();
 

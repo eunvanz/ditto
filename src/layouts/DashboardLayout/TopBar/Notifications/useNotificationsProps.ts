@@ -1,7 +1,8 @@
 import { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import FirebaseSelectors from "../../../../store/Firebase/FirebaseSelectors";
+import { ProjectActions } from "../../../../store/Project/ProjectSlice";
 
 const useNotificationsProps = () => {
   const userProfile = useSelector(FirebaseSelectors.selectUserProfile);
@@ -11,18 +12,30 @@ const useNotificationsProps = () => {
       collection: `users/${userProfile.uid}/notifications`,
       where: [["isRead", "==", false]],
       orderBy: [["createdAt", "desc"]],
+      storeAs: "notifications",
     },
   ]);
 
   const notifications = useSelector(FirebaseSelectors.selectNotifications);
 
-  const onClickMarkAllAsRead = useCallback(() => {
-    // TODO
-  }, []);
+  const dispatch = useDispatch();
 
-  const onMarkAsRead = useCallback((id: string) => {
-    // TODO
-  }, []);
+  const onClickMarkAllAsRead = useCallback(() => {
+    if (notifications) {
+      dispatch(
+        ProjectActions.markNotificationsAsRead(
+          notifications.map((notification) => notification.id)
+        )
+      );
+    }
+  }, [dispatch, notifications]);
+
+  const onMarkAsRead = useCallback(
+    (id: string) => {
+      dispatch(ProjectActions.markNotificationsAsRead([id]));
+    },
+    [dispatch]
+  );
 
   return {
     notifications: notifications || [],

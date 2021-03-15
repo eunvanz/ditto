@@ -8,6 +8,7 @@ import NavBar from "./NavBar";
 import TopBar from "./TopBar";
 import { Section } from "./NavBar/NavBar";
 import { SCREEN_MODE } from "../../store/Ui/UiSlice";
+import Footer from "./Footer";
 
 export interface DashboardLayoutProps {
   children?: ReactNode;
@@ -29,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflow: "hidden",
     paddingTop: 64,
     [theme.breakpoints.up("lg")]: {
-      paddingLeft: 320,
+      paddingLeft: 300,
     },
     "&.wide": {
       [theme.breakpoints.down("lg")]: {
@@ -47,6 +48,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: "100%",
     minHeight: "calc(100vh - 64px)",
     overflow: "auto",
+  },
+  children: {
+    minHeight: "calc(100% - 113px)",
   },
 }));
 
@@ -73,7 +77,10 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({
         )}
       >
         <div className={classes.contentContainer}>
-          <div className={classes.content}>{children}</div>
+          <div className={classes.content}>
+            <div className={classes.children}>{children}</div>
+            <Footer />
+          </div>
         </div>
       </div>
     </div>

@@ -34,6 +34,7 @@ import {
   EnumerationDoc,
   ENUMERATION,
   MemberRole,
+  UserProfileDoc,
 } from "../../types";
 import {
   checkHasAuthorization,
@@ -66,6 +67,9 @@ const useStyles = makeStyles(() => ({
     fontSize: "0.875rem",
     fontWeight: "normal",
     textTransform: "unset",
+  },
+  updated: {
+    backgroundColor: "rgba(255,0,0,0.1)",
   },
 }));
 
@@ -101,6 +105,8 @@ export interface ModelFieldFormItemProps {
     setIsDisabledEnterSubmit: any;
   }) => JSX.Element;
   role: MemberRole;
+  userProfile: UserProfileDoc;
+  onRefreshModelField: (modelField: ModelFieldDoc) => void;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -119,6 +125,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   customFieldName,
   customFieldNameInput,
   role,
+  userProfile,
+  onRefreshModelField,
 }) => {
   const classes = useStyles();
 
@@ -362,6 +370,36 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     return checkHasAuthorization(role, "manager");
   }, [role]);
 
+  const checkIsUpdatedFieldKey = useCallback(
+    (
+      key:
+        | "fieldName"
+        | "isRequired"
+        | "isArray"
+        | "fieldType"
+        | "format"
+        | "enum"
+        | "description"
+    ) => {
+      if (modelField) {
+        return (
+          modelField[key].value !==
+          modelField[key].settingsByMember?.[userProfile.uid]?.value
+        );
+      } else {
+        return false;
+      }
+    },
+    [modelField, userProfile.uid]
+  );
+
+  useEffect(() => {
+    return () => {
+      modelField && onRefreshModelField(modelField);
+    };
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <>
       <TableRow>
@@ -370,6 +408,9 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
           style={{
             paddingLeft: indentionPadding,
           }}
+          className={
+            checkIsUpdatedFieldKey("fieldName") ? classes.updated : undefined
+          }
         >
           {isFormVisible ? (
             <Controller
@@ -434,6 +475,9 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         <TableCell
           align="center"
           onClick={createCellClickHandler("isRequired")}
+          className={
+            checkIsUpdatedFieldKey("isRequired") ? classes.updated : undefined
+          }
         >
           {isFormVisible ? (
             <Controller
@@ -459,7 +503,13 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             ""
           )}
         </TableCell>
-        <TableCell align="center" onClick={createCellClickHandler("isArray")}>
+        <TableCell
+          align="center"
+          onClick={createCellClickHandler("isArray")}
+          className={
+            checkIsUpdatedFieldKey("isArray") ? classes.updated : undefined
+          }
+        >
           {isFormVisible ? (
             <Controller
               control={control}
@@ -484,7 +534,12 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             ""
           )}
         </TableCell>
-        <TableCell onClick={createCellClickHandler("fieldType")}>
+        <TableCell
+          onClick={createCellClickHandler("fieldType")}
+          className={
+            checkIsUpdatedFieldKey("fieldType") ? classes.updated : undefined
+          }
+        >
           {isFormVisible ? (
             <Controller
               control={control}
@@ -526,7 +581,12 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             modelField?.fieldType.value
           )}
         </TableCell>
-        <TableCell onClick={createCellClickHandler("format")}>
+        <TableCell
+          onClick={createCellClickHandler("format")}
+          className={
+            checkIsUpdatedFieldKey("format") ? classes.updated : undefined
+          }
+        >
           {isFormVisible ? (
             <Controller
               control={control}
@@ -574,7 +634,12 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             modelField?.format.value
           )}
         </TableCell>
-        <TableCell onClick={createCellClickHandler("enum")}>
+        <TableCell
+          onClick={createCellClickHandler("enum")}
+          className={
+            checkIsUpdatedFieldKey("enum") ? classes.updated : undefined
+          }
+        >
           {isFormVisible ? (
             <Controller
               control={control}
@@ -627,7 +692,12 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             </Tooltip>
           )}
         </TableCell>
-        <TableCell onClick={createCellClickHandler("description")}>
+        <TableCell
+          onClick={createCellClickHandler("description")}
+          className={
+            checkIsUpdatedFieldKey("description") ? classes.updated : undefined
+          }
+        >
           {isFormVisible ? (
             <Controller
               control={control}

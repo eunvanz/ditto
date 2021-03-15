@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import { FC } from "react";
-import { Link as RouterLink } from "react-router-dom";
 import {
   Avatar,
   Box,
@@ -86,9 +85,6 @@ const Account: FC<AccountProps> = ({ user, onLogout, onClickLogin }) => {
         anchorEl={ref.current}
         open={isOpen}
       >
-        <MenuItem component={RouterLink} to="/app/account">
-          Settings
-        </MenuItem>
         <MenuItem
           onClick={() => {
             setOpen(false);

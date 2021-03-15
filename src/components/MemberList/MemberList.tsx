@@ -29,13 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   avatar: {
-    height: 32,
-    width: 32,
     marginRight: theme.spacing(1),
-  },
-  memberName: {
-    padding: 5,
-    fontSize: "1rem",
   },
   outerBox: {
     justifyContent: "space-between",
@@ -182,13 +176,14 @@ export const MemberItem: React.FC<MemberItemProps> = ({
             src={member.photoUrl || ""}
             className={classes.avatar}
           />
-          <Typography
-            variant="h6"
-            color="inherit"
-            className={classes.memberName}
-          >
-            {member.name}
-          </Typography>
+          <div>
+            <Typography variant="h6" color="inherit">
+              {member.name}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {member.email}
+            </Typography>
+          </div>
         </Box>
         {hasAuthorization && (
           <>

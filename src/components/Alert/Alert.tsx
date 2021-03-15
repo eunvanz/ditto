@@ -55,7 +55,15 @@ const Alert = ({
     <Dialog fullWidth maxWidth="xs" open={isVisible} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>{message}</DialogContentText>
+        <DialogContentText>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: message
+                .replace(/{/g, '<b class="MuiTypography-colorPrimary">')
+                .replace(/}/g, "</b>"),
+            }}
+          />
+        </DialogContentText>
       </DialogContent>
       <DialogActions>
         {cancelText && (

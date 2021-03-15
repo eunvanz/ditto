@@ -24,6 +24,7 @@ import {
   MemberRole,
   ModelDoc,
   ModelFieldDoc,
+  UserProfileDoc,
 } from "../../types";
 import ModelFieldFormItem, {
   ModelFieldFormItemProps,
@@ -86,6 +87,8 @@ export type ModelTableProps = {
   onShowNewForm?: () => void;
   checkIsNewFormDisabled?: () => boolean;
   role: MemberRole;
+  userProfile: UserProfileDoc;
+  onRefreshModelField: (modelField: ModelFieldDoc) => void;
 } & Pick<
   ModelFieldFormItemProps,
   "customFieldName" | "disabledColumns" | "customFieldNameInput"
@@ -112,6 +115,8 @@ const ModelTable: React.FC<ModelTableProps> = ({
   disabledColumns,
   customFieldNameInput,
   role,
+  userProfile,
+  onRefreshModelField,
 }) => {
   const classes = useStyles();
 
@@ -204,6 +209,8 @@ const ModelTable: React.FC<ModelTableProps> = ({
           customFieldName={customFieldName}
           customFieldNameInput={customFieldNameInput}
           role={role}
+          userProfile={userProfile}
+          onRefreshModelField={onRefreshModelField}
         />
       ))}
       {hasManagerAuthorization && (
@@ -233,6 +240,8 @@ const ModelTable: React.FC<ModelTableProps> = ({
               customFieldName={customFieldName}
               customFieldNameInput={customFieldNameInput}
               role={role}
+              userProfile={userProfile}
+              onRefreshModelField={onRefreshModelField}
             />
           ) : (
             <TableRow>

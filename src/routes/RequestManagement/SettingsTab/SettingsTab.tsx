@@ -228,7 +228,7 @@ const SettingTab: React.FC<SettingsTabProps> = ({
           <>
             <Divider />
             <Box p={2} display="flex" justifyContent="flex-end">
-              {checkHasAuthorization(role, "owner") && (
+              {checkHasAuthorization(role, "manager") && (
                 <Button
                   className={classes.deleteButton}
                   disabled={isSubmitting}

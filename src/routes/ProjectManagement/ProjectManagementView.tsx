@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useEffect } from "react";
 import {
   Container,
   Box,
@@ -18,6 +18,8 @@ import EnumForm from "./EnumForm";
 import MembersTab from "./MembersTab";
 import { checkHasAuthorization } from "../../helpers/projectHelpers";
 import { SCREEN_MODE } from "../../store/Ui/UiSlice";
+import { useLocation } from "react-router-dom";
+import qs from "query-string";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -41,7 +43,13 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
 }) => {
   const classes = useStyles();
 
-  const [activeTab, setActiveTab] = useState("basic");
+  const location = useLocation();
+
+  const tabQuery = useMemo(() => {
+    return qs.parse(location.search).tab;
+  }, [location.search]);
+
+  const [activeTab, setActiveTab] = useState(tabQuery || "basic");
 
   const tabs = useMemo(() => {
     return [
@@ -60,6 +68,12 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
   const hasManagerAuthorization = useMemo(() => {
     return checkHasAuthorization(role, "manager");
   }, [role]);
+
+  useEffect(() => {
+    if (tabQuery) {
+      setActiveTab(tabQuery);
+    }
+  }, [tabQuery]);
 
   return (
     <Container

@@ -33,8 +33,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   avatar: {
-    height: 32,
-    width: 32,
     marginRight: theme.spacing(1),
   },
   memberName: {
@@ -219,13 +217,14 @@ export const MemberItem: FC<MemberItemProps> = ({
             src={member.photoUrl || ""}
             className={classes.avatar}
           />
-          <Typography
-            variant="h6"
-            color="inherit"
-            className={classes.memberName}
-          >
-            {member.name} <span className={classes.email}>{member.email}</span>
-          </Typography>
+          <div>
+            <Typography variant="h6" color="inherit">
+              {member.name}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {member.email}
+            </Typography>
+          </div>
         </Box>
         <Button className={classes.moreButton} onClick={() => onClick(member)}>
           {buttonIcon}

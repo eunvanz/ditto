@@ -94,6 +94,10 @@ export function* handleHideQuickModelNameFormModal(
   yield* put(UiActions.clearQuickModelNameFormModal());
 }
 
+export function* handleReloadApp() {
+  yield* call(window.location.reload.bind(window.location), true);
+}
+
 export function* watchUiActions() {
   yield* all([
     takeEvery(UiActions.showNotification, handleShowNotification),
@@ -108,5 +112,6 @@ export function* watchUiActions() {
       UiActions.hideQuickModelNameFormModal,
       handleHideQuickModelNameFormModal
     ),
+    takeEvery(UiActions.reloadApp, handleReloadApp),
   ]);
 }

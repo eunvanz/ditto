@@ -1,9 +1,12 @@
+import firebase from "firebase/app";
 import { FieldError } from "react-hook-form";
 import {
   REQUEST_METHOD,
   MemberRole,
   ProjectDoc,
   UserProfileDoc,
+  DocTimestamp,
+  REQUEST_PARAM_LOCATION,
 } from "../types";
 
 export const patterns = {
@@ -122,4 +125,43 @@ export const removeKeyFromRecord = (
 export const getTrueKeys = (record: Record<string, boolean>) => {
   const keys = Object.keys(record);
   return keys.filter((key) => record[key]);
+};
+
+export const convertTimestampToDate = (timestamp: DocTimestamp) => {
+  return new firebase.firestore.Timestamp(
+    timestamp.seconds,
+    timestamp.nanoseconds
+  ).toDate();
+};
+
+export const getRequestParamLocationName = (
+  location: REQUEST_PARAM_LOCATION
+) => {
+  switch (location) {
+    case REQUEST_PARAM_LOCATION.COOKIE:
+      return "cookie";
+    case REQUEST_PARAM_LOCATION.HEADER:
+      return "header";
+    case REQUEST_PARAM_LOCATION.PATH:
+      return "path param";
+    case REQUEST_PARAM_LOCATION.QUERY:
+      return "query param";
+  }
+};
+
+export const checkIsNewerTimestamp = (
+  target: DocTimestamp,
+  compare: DocTimestamp
+) => {
+  if (target.seconds < compare.seconds) {
+    return false;
+  } else if (target.seconds === compare.seconds) {
+    if (target.nanoseconds < compare.nanoseconds) {
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    return true;
+  }
 };
