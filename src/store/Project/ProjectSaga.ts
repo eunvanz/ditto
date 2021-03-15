@@ -2207,65 +2207,90 @@ export function* handleRefreshModelField(
       payload.responseStatusId
     )
   );
-  const updatedModelField = (
-    modelFields ||
-    requestParams ||
-    requestBodies ||
-    responseBodies ||
-    responseHeaders
-  )?.find((item) => item.id === payload.id);
+  let modelFieldType;
+  const latestModelField =
+    modelFields?.find((item) => {
+      if (item.id === payload.id) {
+        modelFieldType = "modelField";
+        return true;
+      }
+    }) ||
+    requestParams?.find((item) => {
+      if (item.id === payload.id) {
+        modelFieldType = "requestParam";
+        return true;
+      }
+    }) ||
+    requestBodies?.find((item) => {
+      if (item.id === payload.id) {
+        modelFieldType = "requestBody";
+        return true;
+      }
+    }) ||
+    responseBodies?.find((item) => {
+      if (item.id === payload.id) {
+        modelFieldType = "responseBody";
+        return true;
+      }
+    }) ||
+    responseHeaders?.find((item) => {
+      if (item.id === payload.id) {
+        modelFieldType = "responseHeader";
+        return true;
+      }
+    });
 
-  if (updatedModelField) {
+  if (latestModelField) {
     const newModelField = {
       [`settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
       [`fieldName.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`fieldName.settingsByMember.${userProfile.uid}.value`]: updatedModelField
+      [`fieldName.settingsByMember.${userProfile.uid}.value`]: latestModelField
         .fieldName.value,
       [`isRequired.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`isRequired.settingsByMember.${userProfile.uid}.value`]: updatedModelField
+      [`isRequired.settingsByMember.${userProfile.uid}.value`]: latestModelField
         .isRequired.value,
       [`isArray.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`isArray.settingsByMember.${userProfile.uid}.value`]: updatedModelField
+      [`isArray.settingsByMember.${userProfile.uid}.value`]: latestModelField
         .isArray.value,
       [`fieldType.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`fieldType.settingsByMember.${userProfile.uid}.value`]: updatedModelField
+      [`fieldType.settingsByMember.${userProfile.uid}.value`]: latestModelField
         .fieldType.value,
       [`format.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`format.settingsByMember.${userProfile.uid}.value`]: updatedModelField
+      [`format.settingsByMember.${userProfile.uid}.value`]: latestModelField
         .format.value,
       [`enum.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`enum.settingsByMember.${userProfile.uid}.value`]: updatedModelField.enum
+      [`enum.settingsByMember.${userProfile.uid}.value`]: latestModelField.enum
         .value,
       [`description.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`description.settingsByMember.${userProfile.uid}.value`]: updatedModelField
+      [`description.settingsByMember.${userProfile.uid}.value`]: latestModelField
         .description.value,
     };
-    if (modelFields) {
+    if (modelFieldType === "modelField") {
       yield* call(
         // @ts-ignore
         Firework.updateModelField,
-        updatedModelField.id,
+        latestModelField.id,
         newModelField
       );
-    } else if (requestParams) {
+    } else if (modelFieldType === "requestParam") {
       // @ts-ignore
-      yield* call(Firework.updateRequestParam, updatedModelField.id, {
+      yield* call(Firework.updateRequestParam, latestModelField.id, {
         ...newModelField,
         projectId: payload.projectId,
         // @ts-ignore
         requestId: payload.requestId,
       });
-    } else if (requestBodies) {
+    } else if (modelFieldType === "requestBody") {
       // @ts-ignore
-      yield* call(Firework.updateRequestBody, updatedModelField.id, {
+      yield* call(Firework.updateRequestBody, latestModelField.id, {
         ...newModelField,
         projectId: payload.projectId,
         // @ts-ignore
         requestId: payload.requestId,
       });
-    } else if (responseBodies) {
+    } else if (modelFieldType === "responseBody") {
       // @ts-ignore
-      yield* call(Firework.updateResponseBody, updatedModelField.id, {
+      yield* call(Firework.updateResponseBody, latestModelField.id, {
         ...newModelField,
         projectId: payload.projectId,
         // @ts-ignore
@@ -2273,9 +2298,9 @@ export function* handleRefreshModelField(
         // @ts-ignore
         responseStatusId: payload.responseStatusId,
       });
-    } else if (responseHeaders) {
+    } else if (modelFieldType === "responseHeader") {
       // @ts-ignore
-      yield* call(Firework.updateResponseHeader, updatedModelField.id, {
+      yield* call(Firework.updateResponseHeader, latestModelField.id, {
         ...newModelField,
         projectId: payload.projectId,
         // @ts-ignore
