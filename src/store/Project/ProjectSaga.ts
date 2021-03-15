@@ -2240,7 +2240,6 @@ export function* handleRefreshModelField(
       [`description.settingsByMember.${userProfile.uid}.value`]: updatedModelField
         .description.value,
     };
-    console.log("===== newModelField", newModelField);
     if (modelFields) {
       yield* call(
         // @ts-ignore
@@ -2266,7 +2265,7 @@ export function* handleRefreshModelField(
       });
     } else if (responseBodies) {
       // @ts-ignore
-      yield* call(Firework.updateRequestParam, updatedModelField.id, {
+      yield* call(Firework.updateResponseBody, updatedModelField.id, {
         ...newModelField,
         projectId: payload.projectId,
         // @ts-ignore
