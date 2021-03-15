@@ -395,6 +395,12 @@ export function* deleteModelFieldFlow() {
           UiActions.showDelayedLoading({ taskName: "deleteModelField" })
         );
         yield* call(Firework.deleteModelField, modelField);
+        const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `The model field {${modelField.fieldName}} has been deleted by {${userProfile.name}}.`,
+          `./projects/${modelField.projectId}?tab=models&model=${modelField.modelId}`
+        );
         yield* put(
           UiActions.showNotification({
             type: "success",
@@ -1081,6 +1087,15 @@ export function* submitModelFieldFormFlow() {
     buildNewModelField: (payload) => ({ modelId: payload.modelId! }),
     addModelField: Firework.addModelField,
     updateModelField: Firework.updateModelField,
+    sendNotifications: function* ({ payload, userProfile, project }) {
+      if (payload.target) {
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `The model field {${payload.fieldName}} has been modified by {${userProfile.name}}.`,
+          `/projects/${project.id}?tab=models&model=${payload.modelId}`
+        );
+      }
+    },
   });
 }
 

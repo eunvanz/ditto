@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export interface MainViewProps {}
 
-const MainView: React.FC<MainViewProps> = ({}) => {
+const MainView: React.FC<MainViewProps> = () => {
   const classes = useStyles();
 
   return (
