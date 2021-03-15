@@ -1084,6 +1084,7 @@ export function* submitEnumFormFlow() {
 
     try {
       yield* put(ProgressActions.startProgress(type));
+      const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
       const items =
         payload.fieldType === FIELD_TYPE.INTEGER
           ? payload.items.split(",").map((item) => Number(item))
@@ -1100,6 +1101,11 @@ export function* submitEnumFormFlow() {
           ...updatedRecordProps,
         };
         yield* call(Firework.updateEnumeration, target.id, newEnumeration);
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `The enumeration {${payload.name}} has been modified by {${userProfile.name}}.`,
+          `/projects/${currentProject.id}?tab=enums`
+        );
       } else {
         yield* put(
           UiActions.showDelayedLoading({ taskName: "submitEnumForm" })
@@ -1114,6 +1120,11 @@ export function* submitEnumFormFlow() {
         const createdEnumerationRef = yield* call(
           Firework.addEnumeration,
           newEnumeration
+        );
+        yield* call(
+          sendNotificationsToProjectMembers,
+          `The enumeration {${payload.name}} has been created by {${userProfile.name}}.`,
+          `/projects/${currentProject.id}?tab=enums`
         );
         yield* putResolve(
           ProjectActions.receiveCreatedEnumId(createdEnumerationRef.id)
@@ -1144,6 +1155,11 @@ export function* deleteEnumerationFlow() {
     });
     if (isConfirmed) {
       try {
+        const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
+        const currentProject = yield* select(
+          ProjectSelectors.selectCurrentProject
+        );
+        assertNotEmpty(currentProject);
         yield* put(
           UiActions.showDelayedLoading({ taskName: "deleteEnumeration" })
         );
@@ -1165,6 +1181,11 @@ export function* deleteEnumerationFlow() {
           continue;
         } else {
           yield* call(Firework.deleteEnumeration, payload);
+          yield* call(
+            sendNotificationsToProjectMembers,
+            `The enumeration {${payload.name}} has been deleted by {${userProfile.name}}.`,
+            `/projects/${currentProject.id}?tab=enums`
+          );
           yield* put(
             UiActions.showNotification({
               type: "success",
