@@ -10,7 +10,7 @@ import {
 } from "react-redux-firebase";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { AuthActions } from "../../store/Auth/AuthSlice";
-import { APP_VERSION } from "../../constants";
+import { APP_VERSION, EXAMPLE_PROJECT_ID } from "../../constants";
 
 /**
  * 필수적인 데이터들을 로딩후에 하위 컴포넌트들을 렌더링
@@ -38,7 +38,7 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
       });
       query.push({
         collection: "projects",
-        doc: "hm9GA2J7sgF8bLKPF7fS",
+        doc: EXAMPLE_PROJECT_ID,
         storeAs: "exampleProject",
       });
     }

@@ -43,6 +43,7 @@ import {
 } from "../../helpers/projectHelpers";
 import isEqual from "lodash/isEqual";
 import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
+import { EXAMPLE_PROJECT_ID } from "../../constants";
 
 export type ModelFieldColumns =
   | "fieldName"
@@ -381,7 +382,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         | "enum"
         | "description"
     ) => {
-      if (modelField) {
+      if (modelField && modelField.projectId !== EXAMPLE_PROJECT_ID) {
         return (
           modelField[key].value !==
           modelField[key].settingsByMember?.[userProfile.uid]?.value
@@ -395,7 +396,9 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
 
   useEffect(() => {
     return () => {
-      modelField && onRefreshModelField(modelField);
+      modelField &&
+        modelField.projectId !== EXAMPLE_PROJECT_ID &&
+        onRefreshModelField(modelField);
     };
     // eslint-disable-next-line
   }, []);
