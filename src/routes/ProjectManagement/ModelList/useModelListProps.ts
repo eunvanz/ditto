@@ -4,17 +4,21 @@ import { useFirestoreConnect } from "react-redux-firebase";
 import { useLocation } from "react-router-dom";
 import qs from "query-string";
 import { ModelFormContainerProps } from "../../../components/ModelForm/ModelFormContainer";
-import { assertNotEmpty } from "../../../helpers/commonHelpers";
 import useLoading from "../../../hooks/useLoading";
 import useProjectRole from "../../../hooks/useProjectRole";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 import ProjectSelectors from "../../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
-import { ModelDoc } from "../../../types";
+import { ModelDoc, ProjectDoc } from "../../../types";
 import { ModelListProps } from "./ModelList";
 
-const useModelListProps: () => ModelListProps &
-  ModelFormContainerProps = () => {
+export interface UseModelListPropsParams {
+  project: ProjectDoc;
+}
+
+const useModelListProps: (
+  params: UseModelListPropsParams
+) => ModelListProps & ModelFormContainerProps = ({ project }) => {
   const location = useLocation();
 
   const modelIdQuery = useMemo(() => {
@@ -22,9 +26,6 @@ const useModelListProps: () => ModelListProps &
   }, [location.search]);
 
   const dispatch = useDispatch();
-
-  const project = useSelector(ProjectSelectors.selectCurrentProject);
-  assertNotEmpty(project);
 
   useFirestoreConnect({
     collection: `projects/${project.id}/models`,

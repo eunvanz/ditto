@@ -105,9 +105,9 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
       <Box mt={3}>
         {activeTab === "basic" && <ProjectBasicForm />}
         {activeTab === "urls" && <ProjectUrlForm />}
-        {activeTab === "members" && <MembersTab />}
-        {activeTab === "models" && <ModelList />}
-        {activeTab === "enums" && <EnumForm />}
+        {activeTab === "members" && project && <MembersTab />}
+        {activeTab === "models" && project && <ModelList project={project} />}
+        {activeTab === "enums" && project && <EnumForm project={project} />}
       </Box>
     </Container>
   );

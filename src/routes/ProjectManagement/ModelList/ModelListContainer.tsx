@@ -2,8 +2,13 @@ import React from "react";
 import ModelList from "./ModelList";
 import ModelForm from "../../../components/ModelForm";
 import useModelListProps from "./useModelListProps";
+import { ProjectDoc } from "../../../types";
 
-const ModelListContainer = () => {
+export interface ModelListContainerProps {
+  project: ProjectDoc;
+}
+
+const ModelListContainer = ({ project }: ModelListContainerProps) => {
   const {
     models,
     onDelete,
@@ -13,7 +18,7 @@ const ModelListContainer = () => {
     onClose,
     defaultModelId,
     role,
-  } = useModelListProps();
+  } = useModelListProps({ project });
 
   return (
     <>

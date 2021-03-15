@@ -1,19 +1,18 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
-import { assertNotEmpty } from "../../../helpers/commonHelpers";
 import useLoading from "../../../hooks/useLoading";
 import useProjectRole from "../../../hooks/useProjectRole";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
-import ProjectSelectors from "../../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
-import { EnumerationDoc } from "../../../types";
+import { EnumerationDoc, ProjectDoc } from "../../../types";
 import { EnumFormValues } from "./EnumForm";
 
-const useEnumFormProps = () => {
-  const project = useSelector(ProjectSelectors.selectCurrentProject);
-  assertNotEmpty(project);
+export interface UseEnumFormPropsParams {
+  project: ProjectDoc;
+}
 
+const useEnumFormProps = ({ project }: UseEnumFormPropsParams) => {
   useFirestoreConnect({
     collection: `projects/${project.id}/enumerations`,
     orderBy: ["createdAt", "asc"],
