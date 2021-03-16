@@ -1,12 +1,12 @@
 import {
   Box,
   Card,
-  Chip,
   Container,
   Divider,
   makeStyles,
   Tab,
   Tabs,
+  Typography,
 } from "@material-ui/core";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
@@ -30,6 +30,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   operationIdChip: {
     marginLeft: theme.spacing(2),
+  },
+  operation: {
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -88,12 +91,14 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
           <>
             {request.name}
             {request.operationId && (
-              <Chip
-                size="small"
-                label={request.operationId}
-                color="primary"
-                className={classes.operationIdChip}
-              />
+              <Typography
+                variant="subtitle2"
+                component="span"
+                color="textSecondary"
+                className={classes.operation}
+              >
+                - {request.operationId}
+              </Typography>
             )}
           </>
         }
