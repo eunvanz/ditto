@@ -18,7 +18,7 @@ import EnumForm from "./EnumForm";
 import MembersTab from "./MembersTab";
 import { checkHasAuthorization } from "../../helpers/projectHelpers";
 import { SCREEN_MODE } from "../../store/Ui/UiSlice";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import qs from "query-string";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -45,6 +45,8 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
 
   const location = useLocation();
 
+  const history = useHistory();
+
   const tabQuery = useMemo(() => {
     return qs.parse(location.search).tab;
   }, [location.search]);
@@ -61,9 +63,12 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
     ];
   }, []);
 
-  const handleOnTabChange = useCallback((_, value: string) => {
-    setActiveTab(value);
-  }, []);
+  const handleOnTabChange = useCallback(
+    (_, value: string) => {
+      history.replace(`?tab=${value}`);
+    },
+    [history]
+  );
 
   const hasManagerAuthorization = useMemo(() => {
     return checkHasAuthorization(role, "manager");

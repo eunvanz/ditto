@@ -19,7 +19,7 @@ import RequestTab from "./RequestTab";
 import RequestUrlForm from "./RequestUrlForm";
 import ResponseTab from "./ResponseTab";
 import SettingsTab from "./SettingsTab";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -46,6 +46,8 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
 
   const location = useLocation();
 
+  const history = useHistory();
+
   const tabQuery = useMemo(() => {
     return qs.parse(location.search).tab;
   }, [location.search]);
@@ -60,9 +62,12 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
     ];
   }, []);
 
-  const handleOnTabChange = useCallback((_, value: string) => {
-    setActiveTab(value);
-  }, []);
+  const handleOnTabChange = useCallback(
+    (_, value: string) => {
+      history.replace(`?tab=${value}`);
+    },
+    [history]
+  );
 
   useEffect(() => {
     if (tabQuery) {
