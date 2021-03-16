@@ -1,4 +1,5 @@
 import { FirebaseReducer } from "react-redux-firebase";
+import { SCREEN_MODE } from "./store/Ui/UiSlice";
 
 export enum THEMES {
   LIGHT = "LIGHT",
@@ -47,6 +48,8 @@ export interface UserProfile {
   registeredAt: firebase.firestore.FieldValue;
   updatedAt: firebase.firestore.FieldValue;
   projects?: Record<string, boolean>;
+  theme?: THEMES;
+  screenMode?: SCREEN_MODE;
 }
 
 export interface UserProfileDoc

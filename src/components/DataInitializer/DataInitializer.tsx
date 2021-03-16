@@ -21,6 +21,7 @@ export interface DataInitializerProps {
 
 const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
   const auth = useSelector(AuthSelectors.selectAuth);
+  const userProfile = useSelector(FirebaseSelectors.selectUserProfile);
 
   const [isDataInitialized, setIsDataInitialized] = useState(false);
 
@@ -59,9 +60,19 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
         dispatch(UiActions.hideLoading("loadingProjects"));
       } else {
         dispatch(AuthActions.refreshProfile());
+        userProfile.theme &&
+          dispatch(UiActions.receiveTheme(userProfile.theme));
+        userProfile.screenMode &&
+          dispatch(UiActions.receiveScreenMode(userProfile.screenMode));
       }
     }
-  }, [auth.isEmpty, auth.isLoaded, dispatch]);
+  }, [
+    auth.isEmpty,
+    auth.isLoaded,
+    dispatch,
+    userProfile.screenMode,
+    userProfile.theme,
+  ]);
 
   useEffect(() => {
     if (isLoaded(projects)) {

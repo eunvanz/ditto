@@ -303,6 +303,9 @@ const UiSlice = createSlice({
     hideSearchUserFormModal: (state, _action: PayloadAction<void>) => {
       state.searchUserFormModal.isVisible = false;
     },
+    receiveScreenMode: (state, action: PayloadAction<SCREEN_MODE>) => {
+      state.screenMode = action.payload;
+    },
     toggleScreenMode: (state, _action: PayloadAction<void>) => {
       if (state.screenMode === SCREEN_MODE.DEFAULT) {
         state.screenMode = SCREEN_MODE.WIDE;

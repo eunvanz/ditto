@@ -11,6 +11,9 @@ import {
 import { UiActions } from "./UiSlice";
 import shortid from "shortid";
 import AuthSelectors from "../Auth/AuthSelector";
+import FirebaseSelectors from "../Firebase/FirebaseSelectors";
+import Firework from "../Firework";
+import UiSelectors from "./UiSelectors";
 
 export function* handleShowNotification(
   action: ReturnType<typeof UiActions.showNotification>
@@ -98,6 +101,28 @@ export function* handleReloadApp() {
   yield* call(window.location.reload.bind(window.location), true);
 }
 
+export function* handleToggleDarkMode(
+  action: ReturnType<typeof UiActions.receiveTheme>
+) {
+  const { payload } = action;
+  const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
+  if (userProfile.theme !== payload) {
+    yield* call(Firework.updateUserProfile, userProfile.uid, {
+      theme: payload,
+    });
+  }
+}
+
+export function* handleToggleScreenMode(
+  _: ReturnType<typeof UiActions.toggleScreenMode>
+) {
+  const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
+  const screenMode = yield* select(UiSelectors.selectScreenMode);
+  if (userProfile.screenMode !== screenMode) {
+    yield* call(Firework.updateUserProfile, userProfile.uid, { screenMode });
+  }
+}
+
 export function* watchUiActions() {
   yield* all([
     takeEvery(UiActions.showNotification, handleShowNotification),
@@ -113,5 +138,7 @@ export function* watchUiActions() {
       handleHideQuickModelNameFormModal
     ),
     takeEvery(UiActions.reloadApp, handleReloadApp),
+    takeEvery(UiActions.receiveTheme, handleToggleDarkMode),
+    takeEvery(UiActions.toggleScreenMode, handleToggleScreenMode),
   ]);
 }
