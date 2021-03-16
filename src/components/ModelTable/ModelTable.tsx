@@ -16,6 +16,8 @@ import {
 import React, { useCallback, useMemo, useState } from "react";
 import {
   checkHasAuthorization,
+  checkHasUpdatedFields,
+  commonStyles,
   getButtonIndentionPaddingByDepth,
 } from "../../helpers/projectHelpers";
 import { Theme } from "../../theme";
@@ -61,6 +63,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: 10,
     color: theme.palette.text.secondary,
   },
+  updatedFieldCell: commonStyles.updatedFieldCell,
 }));
 
 export type ModelTableProps = {
@@ -175,6 +178,8 @@ const ModelTable: React.FC<ModelTableProps> = ({
       customFieldName={customFieldName}
       disabledColumns={disabledColumns}
       role={role}
+      modelFields={modelFields}
+      userProfile={userProfile}
     >
       {modelFields.map((modelField) => (
         <ModelFieldFormItem
@@ -280,6 +285,8 @@ type WrapperProps = Pick<
   | "customFieldName"
   | "disabledColumns"
   | "role"
+  | "modelFields"
+  | "userProfile"
 > & {
   existingModelNames: string[];
   children: React.ReactNode;
@@ -292,6 +299,8 @@ const Wrapper: React.FC<WrapperProps> = ({
   onClickQuickEditModelName,
   customFieldName,
   role,
+  modelFields,
+  userProfile,
 }) => {
   const classes = useStyles();
 
@@ -304,6 +313,10 @@ const Wrapper: React.FC<WrapperProps> = ({
   const hasManagerAuthorization = useMemo(() => {
     return checkHasAuthorization(role, "manager");
   }, [role]);
+
+  const hasUpdatedFields = useMemo(() => {
+    return !!modelFields && checkHasUpdatedFields(modelFields, userProfile.uid);
+  }, [modelFields, userProfile.uid]);
 
   if (!depth) {
     return (
@@ -337,6 +350,7 @@ const Wrapper: React.FC<WrapperProps> = ({
           <TableCell
             colSpan={8}
             style={{ paddingLeft: indentionPadding, paddingRight: 4 }}
+            className={hasUpdatedFields ? classes.updatedFieldCell : undefined}
           >
             <Button
               className={classes.addButton}

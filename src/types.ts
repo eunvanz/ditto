@@ -359,3 +359,12 @@ export interface NotificationDoc
 export interface AppInfo {
   version: string;
 }
+
+export type ModelFieldKey =
+  | "fieldName"
+  | "isRequired"
+  | "isArray"
+  | "fieldType"
+  | "format"
+  | "enum"
+  | "description";

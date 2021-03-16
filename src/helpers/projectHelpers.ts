@@ -7,6 +7,8 @@ import {
   UserProfileDoc,
   DocTimestamp,
   REQUEST_PARAM_LOCATION,
+  ModelFieldDoc,
+  ModelFieldKey,
 } from "../types";
 
 export const patterns = {
@@ -164,4 +166,39 @@ export const checkIsNewerTimestamp = (
   } else {
     return true;
   }
+};
+
+export const MODEL_FIELD_KEYS: ModelFieldKey[] = [
+  "fieldName",
+  "isRequired",
+  "isArray",
+  "fieldType",
+  "format",
+  "enum",
+  "description",
+];
+
+export const checkHasUpdatedFieldKey = (
+  modelField: ModelFieldDoc,
+  uid: string
+) => {
+  return MODEL_FIELD_KEYS.some(
+    (key) =>
+      modelField[key].value !== modelField[key].settingsByMember?.[uid]?.value
+  );
+};
+
+export const checkHasUpdatedFields = (
+  modelFields: ModelFieldDoc[],
+  uid: string
+) => {
+  return modelFields.some((modelField) =>
+    checkHasUpdatedFieldKey(modelField, uid)
+  );
+};
+
+export const commonStyles = {
+  updatedFieldCell: {
+    backgroundColor: "rgba(255,0,0,0.1)",
+  },
 };

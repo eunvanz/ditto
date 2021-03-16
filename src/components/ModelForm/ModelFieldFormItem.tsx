@@ -35,9 +35,11 @@ import {
   ENUMERATION,
   MemberRole,
   UserProfileDoc,
+  ModelFieldKey,
 } from "../../types";
 import {
   checkHasAuthorization,
+  commonStyles,
   getIndentionPaddingByDepth,
   patterns,
 } from "../../helpers/projectHelpers";
@@ -71,9 +73,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontWeight: "normal",
     textTransform: "unset",
   },
-  updated: {
-    backgroundColor: "rgba(255,0,0,0.1)",
-  },
+  updated: commonStyles.updatedFieldCell,
   subButton: {
     marginLeft: 2,
     color: theme.palette.text.secondary,
@@ -381,16 +381,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [role]);
 
   const checkIsUpdatedFieldKey = useCallback(
-    (
-      key:
-        | "fieldName"
-        | "isRequired"
-        | "isArray"
-        | "fieldType"
-        | "format"
-        | "enum"
-        | "description"
-    ) => {
+    (key: ModelFieldKey) => {
       if (modelField && modelField.projectId !== EXAMPLE_PROJECT_ID) {
         return (
           modelField[key].value !==
