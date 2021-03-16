@@ -233,7 +233,6 @@ const UiSlice = createSlice({
     },
     hideQuickEnumFormModal: (state, _action: PayloadAction<void>) => {
       state.quickEnumFormModal.isVisible = false;
-      state.quickEnumFormModal.enumeration = undefined;
     },
     receiveGroupFormModal: (
       state,
