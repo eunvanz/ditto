@@ -700,20 +700,22 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             >
               <Button className={classes.enumerationButton}>
                 {enumDefaultValue}
-                <Button
-                  size="small"
-                  className={classes.subButton}
-                  onClick={
-                    currentEnumeration
-                      ? (e) => {
-                          e.stopPropagation();
-                          onShowQuickEnumFormModal(currentEnumeration);
-                        }
-                      : undefined
-                  }
-                >
-                  <EditOutlined fontSize="small" />
-                </Button>
+                {hasManagerAuthorization && (
+                  <Button
+                    size="small"
+                    className={classes.subButton}
+                    onClick={
+                      currentEnumeration
+                        ? (e) => {
+                            e.stopPropagation();
+                            onShowQuickEnumFormModal(currentEnumeration);
+                          }
+                        : undefined
+                    }
+                  >
+                    <EditOutlined fontSize="small" />
+                  </Button>
+                )}
               </Button>
             </Tooltip>
           )}
