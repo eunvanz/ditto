@@ -1,12 +1,10 @@
 import { Box, Button, TextField } from "@material-ui/core";
 import React, { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { patterns } from "../../helpers/projectHelpers";
 import { EnumFormValues } from "../../routes/ProjectManagement/EnumForm/EnumForm";
 import { EnumerationDoc, FIELD_TYPE } from "../../types";
-import uniq from "lodash/uniq";
 import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
-import { regExps } from "../../helpers/commonHelpers";
+import { registerOptions } from "../../helpers/formHelpers";
 
 export interface QuickEnumFormProps {
   onSubmit: (values: EnumFormValues) => void;
@@ -71,20 +69,9 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
           autoFocus
           label="Enumeration name"
           name="name"
-          inputRef={register({
-            required: "Enumeration name is required.",
-            maxLength: {
-              value: 40,
-              message: "Enumeration name is too long.",
-            },
-            validate: (data: string) => {
-              const isDup = existingEnumerations.some(
-                (item) => item.name === data
-              );
-              return isDup ? "Enumeration name is duplicated." : true;
-            },
-            pattern: patterns.wordsWithNoSpace,
-          })}
+          inputRef={register(
+            registerOptions.enumerationForm.name(existingEnumerations)
+          )}
           variant="outlined"
           fullWidth
           required
@@ -101,38 +88,7 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
             setValue("items", value.replace(" ", ""));
             trigger();
           }}
-          inputRef={register({
-            required: "Values are required.",
-            maxLength: {
-              value: 500,
-              message: "Values are too long.",
-            },
-            validate: {
-              pattern: (value) => {
-                if (fieldType === FIELD_TYPE.STRING) {
-                  return (
-                    regExps.enumValues.string.test(value) ||
-                    "Try a mix of letters, numbers or special characters, separate values with comma."
-                  );
-                } else if (fieldType === FIELD_TYPE.INTEGER) {
-                  return (
-                    regExps.enumValues.integer.test(value) ||
-                    "Only numbers are allowed, separate values with comma."
-                  );
-                } else {
-                  return true;
-                }
-              },
-              exclusive: (value: string) => {
-                const splitValues = value.split(",");
-                let isExclusive =
-                  uniq(splitValues).length === splitValues.length;
-                return !isExclusive
-                  ? "Each values must not be the same."
-                  : true;
-              },
-            },
-          })}
+          inputRef={register(registerOptions.enumerationForm.items(fieldType))}
           variant="outlined"
           fullWidth
           required
@@ -145,12 +101,7 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
         <TextField
           name="description"
           label="Description"
-          inputRef={register({
-            maxLength: {
-              value: 80,
-              message: "Description is too long.",
-            },
-          })}
+          inputRef={register(registerOptions.enumerationForm.description)}
           variant="outlined"
           fullWidth
           error={!!errors.description}

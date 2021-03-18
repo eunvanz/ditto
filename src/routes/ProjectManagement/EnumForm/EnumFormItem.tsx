@@ -12,9 +12,7 @@ import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
 import { EnumerationDoc, FIELD_TYPE } from "../../../types";
 import { EnumFormValues } from "./EnumForm";
-import uniq from "lodash/uniq";
-import { patterns } from "../../../helpers/projectHelpers";
-import { regExps } from "../../../helpers/commonHelpers";
+import { registerOptions } from "../../../helpers/formHelpers";
 
 export interface EnumFormItemProps {
   formProps: UseFormMethods<EnumFormValues>;
@@ -83,20 +81,9 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
           size="small"
           autoFocus={autoFocusField === "name"}
           name="name"
-          inputRef={register({
-            required: "Name is required.",
-            maxLength: {
-              value: 40,
-              message: "Name is too long.",
-            },
-            validate: (data: string) => {
-              const isDup = existingEnumerations.some(
-                (enumeration) => enumeration.name === data
-              );
-              return isDup ? "Name is duplicated." : true;
-            },
-            pattern: patterns.wordsWithNoSpace,
-          })}
+          inputRef={register(
+            registerOptions.enumerationForm.name(existingEnumerations)
+          )}
           fullWidth
           required
           error={!!errors.name}
@@ -148,38 +135,9 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
             setValue("items", value.replace(" ", ""));
             trigger();
           }}
-          inputRef={register({
-            required: "Values are required.",
-            maxLength: {
-              value: 500,
-              message: "Values are too long.",
-            },
-            validate: {
-              pattern: (value) => {
-                if (watchedFieldType === FIELD_TYPE.STRING) {
-                  return (
-                    regExps.enumValues.string.test(value) ||
-                    "Try a mix of letters, numbers or special characters, separate values with comma."
-                  );
-                } else if (watchedFieldType === FIELD_TYPE.INTEGER) {
-                  return (
-                    regExps.enumValues.integer.test(value) ||
-                    "Only numbers are allowed, separate values with comma."
-                  );
-                } else {
-                  return true;
-                }
-              },
-              exclusive: (value: string) => {
-                const splitValues = value.split(",");
-                let isExclusive =
-                  uniq(splitValues).length === splitValues.length;
-                return !isExclusive
-                  ? "Each values must not be the same."
-                  : true;
-              },
-            },
-          })}
+          inputRef={register(
+            registerOptions.enumerationForm.items(watchedFieldType)
+          )}
           fullWidth
           required
           error={!!errors.items}
@@ -192,12 +150,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
           size="small"
           autoFocus={autoFocusField === "description"}
           name="description"
-          inputRef={register({
-            maxLength: {
-              value: 80,
-              message: "Description is too long.",
-            },
-          })}
+          inputRef={register(registerOptions.enumerationForm.description)}
           fullWidth
           required
           error={!!errors.description}
