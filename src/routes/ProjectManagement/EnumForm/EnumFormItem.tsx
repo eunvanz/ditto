@@ -14,6 +14,7 @@ import { EnumerationDoc, FIELD_TYPE } from "../../../types";
 import { EnumFormValues } from "./EnumForm";
 import uniq from "lodash/uniq";
 import { patterns } from "../../../helpers/projectHelpers";
+import { regExps } from "../../../helpers/commonHelpers";
 
 export interface EnumFormItemProps {
   formProps: UseFormMethods<EnumFormValues>;
@@ -157,12 +158,12 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
               pattern: (value) => {
                 if (watchedFieldType === FIELD_TYPE.STRING) {
                   return (
-                    /^[a-zA-Z0-9_가-힣]+(,[a-zA-Z0-9_가-힣]+)*$/i.test(value) ||
-                    "Try a mix of letters, numbers or underscore, separate values with comma."
+                    regExps.enumValues.string.test(value) ||
+                    "Try a mix of letters, numbers or special characters, separate values with comma."
                   );
                 } else if (watchedFieldType === FIELD_TYPE.INTEGER) {
                   return (
-                    /^[0-9]+(,[0-9]+)*$/i.test(value) ||
+                    regExps.enumValues.integer.test(value) ||
                     "Only numbers are allowed, separate values with comma."
                   );
                 } else {

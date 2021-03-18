@@ -833,7 +833,7 @@ export function* commonModelFieldFormFlow<
           );
           yield* put(UiActions.showQuickEnumFormModal());
           const { submit, cancel } = yield* race({
-            submit: take(ProjectActions.submitEnumForm),
+            submit: take(ProjectActions.submitQuickEnumForm),
             cancel: take(UiActions.hideQuickEnumFormModal),
           });
           if (cancel) {
@@ -866,6 +866,7 @@ export function* commonModelFieldFormFlow<
             })
           );
           yield* put(ProjectActions.receiveEditingModelField(undefined));
+          hasToBlurForm = true;
           yield* call(updateModelField, target.id, newModelField);
         }
       } else {

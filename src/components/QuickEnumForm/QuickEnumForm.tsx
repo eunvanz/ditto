@@ -6,6 +6,7 @@ import { EnumFormValues } from "../../routes/ProjectManagement/EnumForm/EnumForm
 import { EnumerationDoc, FIELD_TYPE } from "../../types";
 import uniq from "lodash/uniq";
 import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
+import { regExps } from "../../helpers/commonHelpers";
 
 export interface QuickEnumFormProps {
   onSubmit: (values: EnumFormValues) => void;
@@ -110,12 +111,12 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
               pattern: (value) => {
                 if (fieldType === FIELD_TYPE.STRING) {
                   return (
-                    /^[a-zA-Z0-9_가-힣]+(,[a-zA_Z0-9_가-힣]+)*$/i.test(value) ||
-                    "Try a mix of letters, numbers or underscore, separate values with comma."
+                    regExps.enumValues.string.test(value) ||
+                    "Try a mix of letters, numbers or special characters, separate values with comma."
                   );
                 } else if (fieldType === FIELD_TYPE.INTEGER) {
                   return (
-                    /^[0-9]+(,[0-9]+)*$/i.test(value) ||
+                    regExps.enumValues.integer.test(value) ||
                     "Only numbers are allowed, separate values with comma."
                   );
                 } else {
