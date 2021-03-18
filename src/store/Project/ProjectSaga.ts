@@ -1278,7 +1278,7 @@ export function* submitGroupFormFlow() {
         yield* call(Firework.addGroup, newGroup as GroupItem);
         yield* call(
           sendNotificationsToProjectMembers,
-          `New group '${payload.name}' has been added by ${userProfile.name}.`
+          `New group {${payload.name}} has been added by {${userProfile.name}}.`
         );
       }
       yield* put(
