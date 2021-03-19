@@ -14,7 +14,11 @@ export function* catchErrorFlow() {
     console.error("an error has been caught in saga - ", error);
 
     const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
-    Sentry.setContext("User Profile", userProfile);
+    Sentry.setUser({
+      name: userProfile.name,
+      uid: userProfile.uid,
+      email: userProfile.email,
+    });
     Sentry.captureException(error);
     if (
       ![ROUTE.NETWORK_ERROR, ROUTE.ERROR].includes(window.location.pathname)

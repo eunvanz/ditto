@@ -201,6 +201,22 @@ const selectNotifications = createOrderedSelector<NotificationDoc[]>(
 const selectAppInfo = (state: RootState) =>
   state.firestore.data.app?.info as AppInfo | undefined;
 
+const selectPermissionErrors = createSelector(
+  (state: RootState) => state.firestore.errors,
+  (errors) => {
+    const errorKeys = Object.keys(errors.byQuery);
+    const result: string[] = [];
+    if (errorKeys) {
+      errorKeys.forEach(
+        (errorKey) =>
+          errors.byQuery[errorKey].code === "permission-denied" &&
+          result.push(errorKey)
+      );
+    }
+    return result;
+  }
+);
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -225,6 +241,7 @@ const FirebaseSelectors = {
   selectExampleProject,
   selectNotifications,
   selectAppInfo,
+  selectPermissionErrors,
 };
 
 export default FirebaseSelectors;

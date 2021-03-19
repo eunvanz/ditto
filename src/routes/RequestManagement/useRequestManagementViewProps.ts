@@ -9,7 +9,7 @@ import UiSelectors from "../../store/Ui/UiSelectors";
 import { UiActions } from "../../store/Ui/UiSlice";
 
 const useRequestManagementViewProps = () => {
-  useAuth({ isUserRequired: true });
+  const { auth } = useAuth({ isUserRequired: true });
 
   const dispatch = useDispatch();
 
@@ -55,6 +55,9 @@ const useRequestManagementViewProps = () => {
       if (!request) {
         setIsNotExist(true);
       }
+    } else if (auth.isEmpty) {
+      dispatch(UiActions.hideLoading(`loadingRequests-${projectId}`));
+      dispatch(UiActions.showSignInModal());
     } else {
       dispatch(
         UiActions.showDelayedLoading({
@@ -62,7 +65,7 @@ const useRequestManagementViewProps = () => {
         })
       );
     }
-  }, [dispatch, projectId, request, requests]);
+  }, [auth.isEmpty, dispatch, projectId, request, requests]);
 
   useEffect(() => {
     if (project) {
