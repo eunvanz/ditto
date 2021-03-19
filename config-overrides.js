@@ -11,6 +11,7 @@ module.exports = function override(config, env) {
           authToken: process.env.REACT_APP_SENTRY_AUTH_TOKEN,
           org: "diitto",
           project: "diitto",
+          release: process.env.REACT_APP_RELEASE,
           include: path.resolve(__dirname, "./build/static"),
         }),
       ],
