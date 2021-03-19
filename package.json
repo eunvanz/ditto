@@ -50,8 +50,8 @@
     "typescript": "^3.7.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
     "deploy": "npm run build && firebase deploy",
     "test": "REACT_APP_MOCK_TIMEOUT=0 REACT_APP_MOCK=true react-scripts test",
     "dev": "npm run start",
@@ -77,6 +77,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
+    "@sentry/webpack-plugin": "^1.14.2",
     "@storybook/addon-actions": "^6.0.21",
     "@storybook/addon-essentials": "^6.0.21",
     "@storybook/addon-links": "^6.0.21",
@@ -84,6 +85,7 @@
     "@storybook/preset-create-react-app": "^3.1.4",
     "@storybook/react": "^6.0.21",
     "babel-loader": "^8.1.0",
+    "react-app-rewired": "^2.1.8",
     "react-is": "^16.13.1",
     "redux-saga-test-plan": "^4.0.0-rc.3",
     "storybook-dark-mode": "^1.0.3",
