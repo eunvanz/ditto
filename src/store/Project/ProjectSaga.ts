@@ -470,7 +470,7 @@ export function* submitModelNameFormFlow() {
         yield* call(
           sendNotificationsToProjectMembers,
           `The model {${newModel.name}} has been modified by {${userProfile.name}}.`,
-          `/projects/${newModel.projectId}?tab=model&model=${target.id}`
+          `/projects/${newModel.projectId}?tab=models&model=${target.id}`
         );
 
         yield* put(
@@ -507,7 +507,7 @@ export function* submitModelNameFormFlow() {
         yield* call(
           sendNotificationsToProjectMembers,
           `New model {${newModel.name}} has been created by {${userProfile.name}}.`,
-          `/projects/${newModel.projectId}?tab=model&model=${newModelId}`
+          `/projects/${newModel.projectId}?tab=models&model=${newModelId}`
         );
 
         yield* put(
