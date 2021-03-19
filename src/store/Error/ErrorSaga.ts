@@ -1,8 +1,10 @@
-import { fork, take, all, call } from "typed-redux-saga";
+import { fork, take, all, call, select } from "typed-redux-saga";
 import ErrorSlice from "./ErrorSlice";
 import ROUTE from "../../paths";
 import Alert from "../../components/Alert";
 import history from "../../helpers/history";
+import Sentry from "../../helpers/sentry";
+import FirebaseSelectors from "../Firebase/FirebaseSelectors";
 
 export function* catchErrorFlow() {
   while (true) {
@@ -10,6 +12,10 @@ export function* catchErrorFlow() {
       payload: { error, isAlertOnly },
     } = yield* take(ErrorSlice.actions.catchError);
     console.error("an error has been caught in saga - ", error);
+
+    const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
+    Sentry.setContext("User Profile", userProfile);
+    Sentry.captureException(error);
     if (
       ![ROUTE.NETWORK_ERROR, ROUTE.ERROR].includes(window.location.pathname)
     ) {
