@@ -89,6 +89,8 @@ const ResponseStatusFormModal: React.FC<ResponseStatusFormModalProps> = ({
               validate: (data: string) => {
                 if (isNaN(Number(data))) {
                   return "Status code must be a number.";
+                } else if (Number(data) < 0) {
+                  return "Status code must be a positive number.";
                 } else if (existingStatusCodes.includes(Number(data))) {
                   return "Status code is duplicated.";
                 }
