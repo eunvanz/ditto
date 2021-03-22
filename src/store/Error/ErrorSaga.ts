@@ -15,8 +15,8 @@ export function* catchErrorFlow() {
 
     const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     Sentry.setUser({
-      name: userProfile.name,
-      uid: userProfile.uid,
+      username: userProfile.name,
+      id: userProfile.uid,
       email: userProfile.email,
     });
     Sentry.captureException(error);
