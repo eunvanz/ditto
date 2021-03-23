@@ -1,3 +1,4 @@
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   Badge,
   Box,
@@ -13,13 +14,12 @@ import {
   Tooltip,
   Typography,
 } from "@material-ui/core";
-import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Check, Notifications as NotificationsIcon } from "@material-ui/icons";
 import { formatDistance } from "date-fns";
-import { NotificationDoc } from "../../../../types";
-import { Theme } from "../../../../theme";
-import { convertTimestampToDate } from "../../../../helpers/projectHelpers";
 import { Link } from "react-router-dom";
+import { convertTimestampToDate } from "../../../../helpers/projectHelpers";
+import { Theme } from "../../../../theme";
+import { NotificationDoc } from "../../../../types";
 
 const useStyles = makeStyles((theme: Theme) => ({
   popover: {

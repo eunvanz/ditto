@@ -1,11 +1,10 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import TopBar, { TopBarProps } from "./TopBar";
 import { withRedux } from "../../../helpers/storybookHelpers";
 import mockUser from "../../../mocks/mockUser";
 import { initialRootState } from "../../../store";
 import { initialFirebaseState } from "../../../store/Firebase";
+import TopBar, { TopBarProps } from "./TopBar";
 
 export default {
   title: "components/TopBar",

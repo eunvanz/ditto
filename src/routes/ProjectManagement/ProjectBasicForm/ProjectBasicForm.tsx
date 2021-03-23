@@ -9,13 +9,13 @@ import {
   Button,
   makeStyles,
 } from "@material-ui/core";
-import { useForm } from "react-hook-form";
 import isEqual from "lodash/isEqual";
-import { MemberRole, ProjectDoc } from "../../../types";
-import { Theme } from "../../../theme";
-import { getDangerButtonStyle } from "../../../styles";
-import useSyncDefaultValues from "../../../hooks/useSyncDefaultValues";
+import { useForm } from "react-hook-form";
 import { checkHasAuthorization } from "../../../helpers/projectHelpers";
+import useSyncDefaultValues from "../../../hooks/useSyncDefaultValues";
+import { getDangerButtonStyle } from "../../../styles";
+import { Theme } from "../../../theme";
+import { MemberRole, ProjectDoc } from "../../../types";
 
 const useStyles = makeStyles((theme: Theme) => ({
   submitButton: {

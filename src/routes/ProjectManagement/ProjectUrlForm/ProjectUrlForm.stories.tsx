@@ -1,8 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import ProjectUrlForm, { ProjectUrlFormProps } from "./ProjectUrlForm";
 import mockProject from "../../../mocks/mockProject";
+import ProjectUrlForm, { ProjectUrlFormProps } from "./ProjectUrlForm";
 
 export default {
   title: "components/ProjectUrlForm",

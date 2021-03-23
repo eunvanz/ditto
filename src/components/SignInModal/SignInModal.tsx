@@ -1,6 +1,6 @@
 import React from "react";
-import SignInForm from "../SignInForm";
 import Modal from "../Modal";
+import SignInForm from "../SignInForm";
 
 export interface SignInModalProps {
   isVisible: boolean;

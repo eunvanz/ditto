@@ -1,8 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import ModelTable, { ModelTableProps } from "./ModelTable";
 import mockProject from "../../mocks/mockProject";
+import ModelTable, { ModelTableProps } from "./ModelTable";
 
 const defaultProps: Partial<ModelTableProps> = {
   modelFields: mockProject.modelFields,

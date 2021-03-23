@@ -1,8 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import MemberList, { MemberListProps } from "./MemberList";
 import mockUser from "../../mocks/mockUser";
+import MemberList, { MemberListProps } from "./MemberList";
 
 const defaultProps: Partial<MemberListProps> = {
   members: mockUser.userProfiles,

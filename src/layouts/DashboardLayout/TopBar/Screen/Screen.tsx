@@ -1,6 +1,6 @@
+import React from "react";
 import { IconButton, SvgIcon, Tooltip } from "@material-ui/core";
 import { Fullscreen, FullscreenExit } from "@material-ui/icons";
-import React from "react";
 import { SCREEN_MODE } from "../../../../store/Ui/UiSlice";
 
 export interface ScreenProps {

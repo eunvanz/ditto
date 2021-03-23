@@ -1,7 +1,7 @@
 import React from "react";
+import NotFoundView from "../NotFound";
 import ProjectManagementView from "./ProjectManagementView";
 import useProjectManagementViewProps from "./useProjectManagementViewProps";
-import NotFoundView from "../NotFound";
 
 const ProjectManagementContainer = () => {
   const { project, ...restProps } = useProjectManagementViewProps();

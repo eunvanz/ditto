@@ -1,10 +1,9 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
+import mockProject from "../../mocks/mockProject";
 import ProjectManagementView, {
   ProjectManagementViewProps,
 } from "./ProjectManagementView";
-import mockProject from "../../mocks/mockProject";
 
 export default {
   title: "views/ProjectManagementView",

@@ -1,8 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import EnumForm, { EnumFormProps } from "./EnumForm";
 import mockProject from "../../../mocks/mockProject";
+import EnumForm, { EnumFormProps } from "./EnumForm";
 
 const defaultProps: Partial<EnumFormProps> = {
   enumerations: mockProject.enumerations,

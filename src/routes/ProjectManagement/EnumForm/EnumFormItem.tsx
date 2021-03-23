@@ -1,12 +1,12 @@
-import { Box, IconButton, SvgIcon, TableCell, TextField } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useCallback, useEffect } from "react";
-import { Controller, UseFormMethods } from "react-hook-form";
+import { Box, IconButton, SvgIcon, TableCell, TextField } from "@material-ui/core";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Controller, UseFormMethods } from "react-hook-form";
+import { registerOptions } from "../../../helpers/formHelpers";
 import { EnumerationDoc, FIELD_TYPE } from "../../../types";
 import { EnumFormValues } from "./EnumForm";
-import { registerOptions } from "../../../helpers/formHelpers";
 
 export interface EnumFormItemProps {
   formProps: UseFormMethods<EnumFormValues>;

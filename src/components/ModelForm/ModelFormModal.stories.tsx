@@ -1,8 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import { ModelFormModal, ModelFormModalProps } from "./ModelForm";
 import mockProject from "../../mocks/mockProject";
+import { ModelFormModal, ModelFormModalProps } from "./ModelForm";
 
 export default {
   title: "components/ModelFormModal",

@@ -1,11 +1,10 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import RequestBodyForm, { RequestBodyFormProps } from "./RequestBodyForm";
 import { withRedux } from "../../helpers/storybookHelpers";
-import { initialRootState } from "../../store";
 import mockProject from "../../mocks/mockProject";
+import { initialRootState } from "../../store";
 import { initialProjectState } from "../../store/Project/ProjectSlice";
+import RequestBodyForm, { RequestBodyFormProps } from "./RequestBodyForm";
 
 const defaultProps: Partial<RequestBodyFormProps> = {
   requestBodies: [],

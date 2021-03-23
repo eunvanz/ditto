@@ -7,7 +7,6 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import { useForm } from "react-hook-form";
 import {
   Box,
   TextField,
@@ -16,10 +15,11 @@ import {
   Typography,
   Button,
 } from "@material-ui/core";
-import { getTextFieldErrorProps } from "../../helpers/projectHelpers";
-import { UserProfileDoc, MemberRole, ProjectDoc } from "../../types";
-import { Theme } from "../../theme";
 import { Add, Close } from "@material-ui/icons";
+import { useForm } from "react-hook-form";
+import { getTextFieldErrorProps } from "../../helpers/projectHelpers";
+import { Theme } from "../../theme";
+import { UserProfileDoc, MemberRole, ProjectDoc } from "../../types";
 
 const useStyles = makeStyles((theme: Theme) => ({
   countChip: {

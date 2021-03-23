@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
-import NavBar, { Section } from "./NavBar";
 import { useDispatch, useSelector } from "react-redux";
-import { UiActions } from "../../../store/Ui/UiSlice";
 import UiSelectors from "../../../store/Ui/UiSelectors";
+import { UiActions } from "../../../store/Ui/UiSlice";
+import NavBar, { Section } from "./NavBar";
 
 export interface NavBarContainerProps {
   onMobileClose: () => void;

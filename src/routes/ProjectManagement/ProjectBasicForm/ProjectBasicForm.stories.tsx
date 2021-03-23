@@ -1,8 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import ProjectBasicForm, { ProjectBasicFormProps } from "./ProjectBasicForm";
 import mockProject from "../../../mocks/mockProject";
+import ProjectBasicForm, { ProjectBasicFormProps } from "./ProjectBasicForm";
 
 export default {
   title: "components/ProjectBasicForm",

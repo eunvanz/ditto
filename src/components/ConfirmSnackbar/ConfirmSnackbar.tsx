@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Button,
   createStyles,
@@ -7,7 +8,6 @@ import {
   Theme,
 } from "@material-ui/core";
 import Close from "@material-ui/icons/Close";
-import React from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

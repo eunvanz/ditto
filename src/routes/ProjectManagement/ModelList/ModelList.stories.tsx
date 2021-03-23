@@ -1,8 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import ModelList, { ModelListProps } from "./ModelList";
 import mockProject from "../../../mocks/mockProject";
+import ModelList, { ModelListProps } from "./ModelList";
 
 export default {
   title: "components/ModelList",

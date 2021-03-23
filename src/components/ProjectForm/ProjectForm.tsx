@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { useForm } from "react-hook-form";
 import { TextField, Box, Button } from "@material-ui/core";
 import isEqual from "lodash/isEqual";
+import { useForm } from "react-hook-form";
 import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
 
 export interface ProjectFormProps {

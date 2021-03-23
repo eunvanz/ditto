@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Box,
   Card,
@@ -8,9 +9,9 @@ import {
   Tabs,
   Typography,
 } from "@material-ui/core";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Helmet } from "react-helmet";
 import qs from "query-string";
+import { Helmet } from "react-helmet";
+import { useHistory, useLocation } from "react-router-dom";
 import Header from "../../components/Header";
 import { SCREEN_MODE } from "../../store/Ui/UiSlice";
 import { Theme } from "../../theme";
@@ -19,7 +20,6 @@ import RequestTab from "./RequestTab";
 import RequestUrlForm from "./RequestUrlForm";
 import ResponseTab from "./ResponseTab";
 import SettingsTab from "./SettingsTab";
-import { useHistory, useLocation } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {

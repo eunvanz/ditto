@@ -1,9 +1,8 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import SearchUserForm, { SearchUserFormProps } from "./SearchUserForm";
-import mockUser from "../../mocks/mockUser";
 import mockProject from "../../mocks/mockProject";
+import mockUser from "../../mocks/mockUser";
+import SearchUserForm, { SearchUserFormProps } from "./SearchUserForm";
 
 type PartialProps = Partial<SearchUserFormProps>;
 

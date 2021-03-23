@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { MemberRole, ModelDoc } from "../../../types";
 import {
   Card,
   CardHeader,
@@ -15,10 +14,11 @@ import {
   IconButton,
   SvgIcon,
 } from "@material-ui/core";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import AddIcon from "@material-ui/icons/Add";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import PerfectScrollbar from "react-perfect-scrollbar";
 import { checkHasAuthorization } from "../../../helpers/projectHelpers";
+import { MemberRole, ModelDoc } from "../../../types";
 
 const useStyles = makeStyles(() => ({
   nameCell: {

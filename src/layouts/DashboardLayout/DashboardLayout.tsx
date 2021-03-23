@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { FC, ReactNode } from "react";
-import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
-import { Theme } from "../../theme";
-import NavBar from "./NavBar";
-import TopBar from "./TopBar";
-import { Section } from "./NavBar/NavBar";
+import PropTypes from "prop-types";
 import { SCREEN_MODE } from "../../store/Ui/UiSlice";
+import { Theme } from "../../theme";
 import Footer from "./Footer";
+import NavBar from "./NavBar";
+import { Section } from "./NavBar/NavBar";
+import TopBar from "./TopBar";
 
 export interface DashboardLayoutProps {
   children?: ReactNode;

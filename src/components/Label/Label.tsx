@@ -1,8 +1,8 @@
 import React from "react";
 import { FC, ReactNode } from "react";
-import PropTypes from "prop-types";
-import clsx from "clsx";
 import { fade, makeStyles } from "@material-ui/core";
+import clsx from "clsx";
+import PropTypes from "prop-types";
 import { Theme } from "../../theme";
 
 interface LabelProps {

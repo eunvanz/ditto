@@ -1,6 +1,6 @@
 import React from "react";
-import googleImage from "../../imgs/google.svg";
 import { Button, makeStyles, Theme } from "@material-ui/core";
+import googleImage from "../../imgs/google.svg";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {},

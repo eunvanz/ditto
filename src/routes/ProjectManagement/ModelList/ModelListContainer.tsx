@@ -1,8 +1,8 @@
 import React from "react";
-import ModelList from "./ModelList";
 import ModelForm from "../../../components/ModelForm";
-import useModelListProps from "./useModelListProps";
 import { ProjectDoc } from "../../../types";
+import ModelList from "./ModelList";
+import useModelListProps from "./useModelListProps";
 
 export interface ModelListContainerProps {
   project: ProjectDoc;

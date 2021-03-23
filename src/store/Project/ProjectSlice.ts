@@ -1,5 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { GroupFormValues } from "../../components/GroupFormModal/GroupFormModal";
+import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
+import { ModelNameFormValues } from "../../components/ModelForm/ModelNameForm";
 import { ProjectFormValues } from "../../components/ProjectForm/ProjectForm";
+import { RequestFormValues } from "../../components/RequestFormModal/RequestFormModal";
+import { ResponseStatusFormValues } from "../../components/ResponseStatusFormModal/ResponseStatusFormModal";
+import { EnumFormValues } from "../../routes/ProjectManagement/EnumForm/EnumForm";
+import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
+import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
+import { RequestUrlFormValues } from "../../routes/RequestManagement/RequestUrlForm/RequestUrlForm";
+import { RequestSettingFormValues } from "../../routes/RequestManagement/SettingsTab/SettingsTab";
 import {
   ProjectDoc,
   ProjectUrlDoc,
@@ -18,16 +28,6 @@ import {
   ResponseHeaderDoc,
   ResponseBodyDoc,
 } from "../../types";
-import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
-import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
-import { ModelNameFormValues } from "../../components/ModelForm/ModelNameForm";
-import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
-import { EnumFormValues } from "../../routes/ProjectManagement/EnumForm/EnumForm";
-import { GroupFormValues } from "../../components/GroupFormModal/GroupFormModal";
-import { RequestFormValues } from "../../components/RequestFormModal/RequestFormModal";
-import { RequestUrlFormValues } from "../../routes/RequestManagement/RequestUrlForm/RequestUrlForm";
-import { RequestSettingFormValues } from "../../routes/RequestManagement/SettingsTab/SettingsTab";
-import { ResponseStatusFormValues } from "../../components/ResponseStatusFormModal/ResponseStatusFormModal";
 
 export type ProjectState = {
   editingModelField?: {

@@ -1,5 +1,5 @@
-import { RootState } from "..";
 import { createSelector } from "@reduxjs/toolkit";
+import { RootState } from "..";
 
 const selectCurrentProject = createSelector(
   (state: RootState) => state.project.currentProject,

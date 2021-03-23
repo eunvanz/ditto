@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
-import isEqual from "lodash/isEqual";
 import { Box, Button, makeStyles, TextField, Theme } from "@material-ui/core";
-import Modal from "../Modal";
-import { GroupDoc, MemberRole } from "../../types";
-import { getDangerButtonStyle } from "../../styles";
-import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
+import isEqual from "lodash/isEqual";
+import { useForm } from "react-hook-form";
 import { checkHasAuthorization } from "../../helpers/projectHelpers";
+import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
+import { getDangerButtonStyle } from "../../styles";
+import { GroupDoc, MemberRole } from "../../types";
+import Modal from "../Modal";
 
 const useStyles = makeStyles((theme: Theme) => ({
   deleteButton: getDangerButtonStyle(theme),

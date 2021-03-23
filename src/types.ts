@@ -355,3 +355,120 @@ export type ModelFieldKey =
   | "format"
   | "enum"
   | "description";
+
+export interface SchemaObject {
+  $ref?: string;
+  type?: FIELD_TYPE | "array";
+  format?: string;
+  enum?: string[] | number[];
+  required?: string[];
+  properties?: Record<string, SchemaObject>;
+}
+
+export interface ReferenceObject {
+  type: string;
+  allOf?: string;
+  oneOf?: string;
+  anyOf?: string;
+  not?: string;
+  items?: string;
+  properties?: string;
+  description?: string;
+  format: FORMAT;
+  default?: any;
+}
+
+export interface ParameterObject {
+  name: string;
+  in: string;
+  description?: string;
+  required: boolean;
+  deprecated: boolean;
+  schema: SchemaObject;
+}
+
+export type HeaderObject = Omit<ParameterObject, "in">;
+
+export interface ResponseObject {
+  description?: string;
+  headers?: Record<string, HeaderObject | ReferenceObject>;
+  content?: Record<string, MediaTypeObject>;
+}
+
+export interface MediaTypeObject {
+  schema: SchemaObject | ReferenceObject;
+}
+
+export interface RequestBodyObject {
+  description?: string;
+  content?: Record<string, MediaTypeObject>;
+  required: boolean;
+}
+
+export type ResponsesObject = Record<string, ResponseObject>;
+
+export interface OperationObject {
+  tags?: string[];
+  summary?: string;
+  description?: string;
+  operationId?: string;
+  parameters?: ParameterObject[] | ReferenceObject[];
+  requestBody?: RequestBodyObject | ReferenceObject;
+  responses: ResponsesObject;
+  deprecated: boolean;
+}
+
+export type OasPaths = Record<
+  string,
+  {
+    get?: OperationObject;
+    put?: OperationObject;
+    post?: OperationObject;
+    delete?: OperationObject;
+    patch?: OperationObject;
+  }
+>;
+
+export interface Oas {
+  openapi: string;
+  info: {
+    title: string;
+    description: string;
+    termsOfService?: string;
+    contact?: {
+      name: string;
+      url: string;
+      email: string;
+    };
+    license?: {
+      name: string;
+      url: string;
+    };
+    version: string;
+  };
+  servers?: {
+    url: string;
+    description?: string;
+    variables?: Record<
+      string,
+      {
+        enum?: string[];
+        default: string;
+        description: string;
+      }
+    >;
+  }[];
+  paths: OasPaths;
+  components?: {
+    schemas: Record<string, SchemaObject | ReferenceObject>;
+  };
+  security?: {}[];
+  tags?: {
+    name: string;
+    description?: string;
+  }[];
+  externalDocs?: {
+    description?: string;
+    url: string;
+  };
+}

@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { Box, Button, TextField } from "@material-ui/core";
-import { useForm } from "react-hook-form";
 import isEqual from "lodash/isEqual";
+import { useForm } from "react-hook-form";
 import { patterns } from "../../helpers/projectHelpers";
-import { ModelNameFormValues } from "../ModelForm/ModelNameForm";
 import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
+import { ModelNameFormValues } from "../ModelForm/ModelNameForm";
 
 export interface QuickModelNameFormProps {
   onSubmit: (values: ModelNameFormValues) => void;

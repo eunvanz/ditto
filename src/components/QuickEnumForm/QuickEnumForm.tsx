@@ -1,10 +1,10 @@
-import { Box, Button, TextField } from "@material-ui/core";
 import React, { useCallback, useMemo } from "react";
+import { Box, Button, TextField } from "@material-ui/core";
 import { useForm } from "react-hook-form";
+import { registerOptions } from "../../helpers/formHelpers";
+import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
 import { EnumFormValues } from "../../routes/ProjectManagement/EnumForm/EnumForm";
 import { EnumerationDoc, FIELD_TYPE } from "../../types";
-import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
-import { registerOptions } from "../../helpers/formHelpers";
 
 export interface QuickEnumFormProps {
   onSubmit: (values: EnumFormValues) => void;

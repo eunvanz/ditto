@@ -1,9 +1,8 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import ModelForm, { ModelFormProps } from "./ModelForm";
 import mockProject from "../../mocks/mockProject";
 import StoreProvider from "../StoreProvider";
+import ModelForm, { ModelFormProps } from "./ModelForm";
 
 export default {
   title: "components/ModelForm",

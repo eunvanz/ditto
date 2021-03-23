@@ -1,7 +1,7 @@
 import React from "react";
-import ProjectForm from "../ProjectForm";
-import Modal from "../Modal";
 import { ModalBase } from "../../types";
+import Modal from "../Modal";
+import ProjectForm from "../ProjectForm";
 
 export interface ProjectFormModalProps extends ModalBase {
   isModification: boolean;

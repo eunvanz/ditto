@@ -1,7 +1,7 @@
 import React from "react";
-import StoreProvider from "../StoreProvider";
-import GlobalThemeProvider from "../GlobalThemeProvider";
 import { SnackbarProvider } from "notistack";
+import GlobalThemeProvider from "../GlobalThemeProvider";
+import StoreProvider from "../StoreProvider";
 
 export interface GlobalProviderProps {
   children: React.ReactNode;

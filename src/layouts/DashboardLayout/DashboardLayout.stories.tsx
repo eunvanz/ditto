@@ -1,8 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import DashboardLayout, { DashboardLayoutProps } from "./DashboardLayout";
 import { REQUEST_METHOD } from "../../types";
+import DashboardLayout, { DashboardLayoutProps } from "./DashboardLayout";
 
 export default {
   title: "layouts/DashboardLayout",

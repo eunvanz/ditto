@@ -1,10 +1,10 @@
 import { fork, take, all, call, select } from "typed-redux-saga";
-import ErrorSlice from "./ErrorSlice";
-import ROUTE from "../../paths";
 import Alert from "../../components/Alert";
 import history from "../../helpers/history";
 import Sentry from "../../helpers/sentry";
+import ROUTE from "../../paths";
 import FirebaseSelectors from "../Firebase/FirebaseSelectors";
+import ErrorSlice from "./ErrorSlice";
 
 export function* catchErrorFlow() {
   while (true) {

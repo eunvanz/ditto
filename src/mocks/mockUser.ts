@@ -1,5 +1,5 @@
-import { NotificationDoc, User, UserProfileDoc } from "../types";
 import { FirebaseReducer } from "react-redux-firebase";
+import { NotificationDoc, User, UserProfileDoc } from "../types";
 
 const auth: FirebaseReducer.AuthState = {
   uid: "aYMTrCiTE7avCY1yeNHVt9XHX4N2",

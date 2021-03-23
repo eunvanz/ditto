@@ -1,8 +1,5 @@
 import React from "react";
 import { FC } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import PropTypes from "prop-types";
-import clsx from "clsx";
 import {
   AppBar,
   Box,
@@ -13,13 +10,16 @@ import {
   SvgIcon,
   Switch,
 } from "@material-ui/core";
+import clsx from "clsx";
+import PropTypes from "prop-types";
 import { Menu as MenuIcon } from "react-feather";
-import { NotificationDoc, THEMES, UserProfileDoc } from "../../../types";
-import { Theme } from "../../../theme";
-import Account from "./Account";
+import { Link as RouterLink } from "react-router-dom";
 import { SCREEN_MODE } from "../../../store/Ui/UiSlice";
-import Screen from "./Screen";
+import { Theme } from "../../../theme";
+import { NotificationDoc, THEMES, UserProfileDoc } from "../../../types";
+import Account from "./Account";
 import Notifications from "./Notifications";
+import Screen from "./Screen";
 
 export interface TopBarProps {
   className?: string;

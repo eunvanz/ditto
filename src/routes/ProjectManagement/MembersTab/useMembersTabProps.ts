@@ -1,11 +1,11 @@
-import useProjectByParam from "../../../hooks/useProjectByParam";
-import { useFirestoreConnect } from "react-redux-firebase";
 import { useSelector } from "react-redux";
-import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
-import useLoading from "../../../hooks/useLoading";
-import useProjectRole from "../../../hooks/useProjectRole";
+import { useFirestoreConnect } from "react-redux-firebase";
 import { assertNotEmpty } from "../../../helpers/commonHelpers";
 import { getTrueKeys } from "../../../helpers/projectHelpers";
+import useLoading from "../../../hooks/useLoading";
+import useProjectByParam from "../../../hooks/useProjectByParam";
+import useProjectRole from "../../../hooks/useProjectRole";
+import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 
 const useMembersTabProps = () => {
   const { project, projectId } = useProjectByParam();

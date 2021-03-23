@@ -1,18 +1,18 @@
-import { ProjectActions } from "./ProjectSlice";
 import { expectSaga } from "redux-saga-test-plan";
 import * as matchers from "redux-saga-test-plan/matchers";
+import { initialRootState, rootReducer } from "..";
+import Alert from "../../components/Alert";
+import { getTimestamp } from "../../firebase";
+import mockUser from "../../mocks/mockUser";
+import { initialFirebaseState } from "../Firebase";
+import Firework from "../Firework";
+import { UiActions } from "../Ui/UiSlice";
 import {
   submitProjectFormFlow,
   watchProjectActions,
   listenToMyProjectsFlow,
 } from "./ProjectSaga";
-import { initialRootState, rootReducer } from "..";
-import { initialFirebaseState } from "../Firebase";
-import mockUser from "../../mocks/mockUser";
-import Firework from "../Firework";
-import { getTimestamp } from "../../firebase";
-import { UiActions } from "../Ui/UiSlice";
-import Alert from "../../components/Alert";
+import { ProjectActions } from "./ProjectSlice";
 
 describe("ProjectFormSaga", () => {
   describe("submitProjectFormFlow", () => {

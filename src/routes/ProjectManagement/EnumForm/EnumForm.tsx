@@ -14,13 +14,13 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import AddIcon from "@material-ui/icons/Add";
-import { EnumerationDoc, FIELD_TYPE, MemberRole } from "../../../types";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import { useForm } from "react-hook-form";
-import EnumFormItem from "./EnumFormItem";
+import PerfectScrollbar from "react-perfect-scrollbar";
 import { checkHasAuthorization } from "../../../helpers/projectHelpers";
+import { EnumerationDoc, FIELD_TYPE, MemberRole } from "../../../types";
+import EnumFormItem from "./EnumFormItem";
 
 const useStyles = makeStyles(() => ({
   nameCell: {

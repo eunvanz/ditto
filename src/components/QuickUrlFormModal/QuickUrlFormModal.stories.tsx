@@ -1,8 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import QuickUrlFormModal, { QuickUrlFormModalProps } from "./QuickUrlFormModal";
 import mockProject from "../../mocks/mockProject";
+import QuickUrlFormModal, { QuickUrlFormModalProps } from "./QuickUrlFormModal";
 
 const defaultProps: Partial<QuickUrlFormModalProps> = {
   existingUrls: mockProject.projectUrls,

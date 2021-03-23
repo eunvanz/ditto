@@ -1,10 +1,10 @@
 import React, { useCallback } from "react";
-import Account from "./Account";
-import useAuth from "../../../../hooks/useAuth";
 import { useDispatch } from "react-redux";
-import { UiActions } from "../../../../store/Ui/UiSlice";
-import { AuthActions } from "../../../../store/Auth/AuthSlice";
 import Alert from "../../../../components/Alert";
+import useAuth from "../../../../hooks/useAuth";
+import { AuthActions } from "../../../../store/Auth/AuthSlice";
+import { UiActions } from "../../../../store/Ui/UiSlice";
+import Account from "./Account";
 
 const AccountContainer = () => {
   const { user } = useAuth();

@@ -1,6 +1,6 @@
 import React, { FC } from "react";
-import clsx from "clsx";
 import { Typography, makeStyles, Box } from "@material-ui/core";
+import clsx from "clsx";
 
 interface HeaderProps {
   className?: string;

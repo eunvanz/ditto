@@ -1,8 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import NavBar, { NavBarProps } from "./NavBar";
 import { REQUEST_METHOD } from "../../../types";
+import NavBar, { NavBarProps } from "./NavBar";
 
 export default {
   title: "components/NavBar",

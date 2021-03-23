@@ -1,6 +1,6 @@
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UiSelectors from "../../store/Ui/UiSelectors";
-import { useCallback } from "react";
 import { UiActions } from "../../store/Ui/UiSlice";
 
 const useSearchUserFormModalProps = () => {

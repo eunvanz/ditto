@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
-import TopBar from "./TopBar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import { THEMES } from "../../../types";
-import { UiActions } from "../../../store/Ui/UiSlice";
-import UiSelectors from "../../../store/Ui/UiSelectors";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
+import UiSelectors from "../../../store/Ui/UiSelectors";
+import { UiActions } from "../../../store/Ui/UiSlice";
+import { THEMES } from "../../../types";
+import TopBar from "./TopBar";
 
 export interface TopBarContainerProps {
   onMobileNavOpen: () => void;

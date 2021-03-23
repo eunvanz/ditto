@@ -39,6 +39,7 @@
     "react-redux-firebase": "^3.7.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
+    "react-syntax-highlighter": "^15.4.3",
     "react-transition-group": "^4.4.1",
     "redux": "^4.0.5",
     "redux-firestore": "^0.14.0",
@@ -47,7 +48,8 @@
     "shortid": "^2.2.15",
     "styled-components": "^5.2.0",
     "typed-redux-saga": "^1.2.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.7.5",
+    "yaml": "^1.10.2"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -84,6 +86,7 @@
     "@storybook/node-logger": "^6.0.21",
     "@storybook/preset-create-react-app": "^3.1.4",
     "@storybook/react": "^6.0.21",
+    "@trivago/prettier-plugin-sort-imports": "^2.0.1",
     "babel-loader": "^8.1.0",
     "react-app-rewired": "^2.1.8",
     "react-is": "^16.13.1",

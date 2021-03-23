@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
-import SignInForm from "./SignInForm";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthActions } from "../../store/Auth/AuthSlice";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
+import SignInForm from "./SignInForm";
 
 const SignInFormContainer = () => {
   const dispatch = useDispatch();

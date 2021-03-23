@@ -1,8 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import Account, { AccountProps } from "./Account";
 import mockUser from "../../../../mocks/mockUser";
+import Account, { AccountProps } from "./Account";
 
 export default {
   title: "components/Account",

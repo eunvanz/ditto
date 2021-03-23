@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import { Link as RouterLink } from "react-router-dom";
 import {
   Box,
   Button,
@@ -10,6 +9,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Helmet } from "react-helmet";
+import { Link as RouterLink } from "react-router-dom";
 import { Theme } from "../../theme";
 import notFoundImage from "../../imgs/not_found.svg";
 

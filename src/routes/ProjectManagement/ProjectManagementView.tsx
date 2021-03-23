@@ -1,18 +1,19 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { Container, Box, Tabs, Tab, Divider, makeStyles } from "@material-ui/core";
+import qs from "query-string";
 import { Helmet } from "react-helmet";
+import { useHistory, useLocation } from "react-router-dom";
 import Header from "../../components/Header";
-import { MemberRole, ProjectDoc } from "../../types";
-import ProjectBasicForm from "./ProjectBasicForm";
-import { Theme } from "../../theme";
-import ProjectUrlForm from "./ProjectUrlForm";
-import ModelList from "./ModelList";
-import EnumForm from "./EnumForm";
-import MembersTab from "./MembersTab";
 import { checkHasAuthorization } from "../../helpers/projectHelpers";
 import { SCREEN_MODE } from "../../store/Ui/UiSlice";
-import { useHistory, useLocation } from "react-router-dom";
-import qs from "query-string";
+import { Theme } from "../../theme";
+import { MemberRole, ProjectDoc } from "../../types";
+import EnumForm from "./EnumForm";
+import MembersTab from "./MembersTab";
+import ModelList from "./ModelList";
+import OasTab from "./OasTab";
+import ProjectBasicForm from "./ProjectBasicForm";
+import ProjectUrlForm from "./ProjectUrlForm";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -53,6 +54,7 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
       { value: "members", label: "Members" },
       { value: "models", label: "Models" },
       { value: "enums", label: "Enumerations" },
+      { value: "oas", label: "Open API Spec" },
     ];
   }, []);
 
@@ -104,6 +106,7 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
         {activeTab === "members" && project && <MembersTab />}
         {activeTab === "models" && project && <ModelList project={project} />}
         {activeTab === "enums" && project && <EnumForm project={project} />}
+        {activeTab === "oas" && project && <OasTab />}
       </Box>
     </Container>
   );

@@ -1,9 +1,9 @@
 import React from "react";
 import { TableCell, TextField, Box } from "@material-ui/core";
 import { UseFormMethods } from "react-hook-form";
-import { ProjectUrlFormValues } from "./ProjectUrlForm";
 import { regExps } from "../../../helpers/commonHelpers";
 import { ProjectUrlDoc } from "../../../types";
+import { ProjectUrlFormValues } from "./ProjectUrlForm";
 
 export interface ProjectUrlFormItemProps {
   formProps: UseFormMethods<ProjectUrlFormValues>;

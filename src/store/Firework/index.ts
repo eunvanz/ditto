@@ -1,5 +1,5 @@
+import { call } from "typed-redux-saga";
 import { db } from "../../firebase";
-import mockFirework from "./mockFirework";
 import {
   ProjectItem,
   ProjectUrlItem,
@@ -28,7 +28,7 @@ import {
   UserProfile,
   NotificationItem,
 } from "../../types";
-import { call } from "typed-redux-saga";
+import mockFirework from "./mockFirework";
 
 function addDocument<T>(path: string, data: T) {
   return db.collection(path).add(data);

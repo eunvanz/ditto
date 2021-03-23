@@ -1,13 +1,13 @@
-import { MemberListContainerProps } from "./MemberListContainer";
-import { useDispatch, useSelector } from "react-redux";
-import useProjectByParam from "../../hooks/useProjectByParam";
 import { useMemo, useCallback } from "react";
-import { UserProfileDoc, MemberRole } from "../../types";
+import { useDispatch, useSelector } from "react-redux";
+import { getProjectKeyByRole } from "../../helpers/projectHelpers";
+import useLoading from "../../hooks/useLoading";
+import useProjectByParam from "../../hooks/useProjectByParam";
+import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { UiActions } from "../../store/Ui/UiSlice";
-import { getProjectKeyByRole } from "../../helpers/projectHelpers";
-import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
-import useLoading from "../../hooks/useLoading";
+import { UserProfileDoc, MemberRole } from "../../types";
+import { MemberListContainerProps } from "./MemberListContainer";
 
 const useMemberListProps = ({ title, allMembers, role }: MemberListContainerProps) => {
   const dispatch = useDispatch();

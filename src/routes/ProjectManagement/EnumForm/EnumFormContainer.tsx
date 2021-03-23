@@ -1,7 +1,7 @@
 import React from "react";
+import { ProjectDoc } from "../../../types";
 import EnumForm from "./EnumForm";
 import useEnumFormProps from "./useEnumFormProps";
-import { ProjectDoc } from "../../../types";
 
 export interface EnumFormContainerProps {
   project: ProjectDoc;

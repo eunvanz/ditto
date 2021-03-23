@@ -1,9 +1,8 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import QuickEnumForm, { QuickEnumFormProps } from "./QuickEnumForm";
-import { FIELD_TYPE } from "../../types";
 import mockProject from "../../mocks/mockProject";
+import { FIELD_TYPE } from "../../types";
+import QuickEnumForm, { QuickEnumFormProps } from "./QuickEnumForm";
 
 const defaultProps: Partial<QuickEnumFormProps> = {
   isSubmitting: false,

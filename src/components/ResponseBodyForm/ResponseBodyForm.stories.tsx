@@ -1,11 +1,10 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import ResponseBodyForm, { ResponseBodyFormProps } from "./ResponseBodyForm";
-import mockProject from "../../mocks/mockProject";
 import { withRedux } from "../../helpers/storybookHelpers";
+import mockProject from "../../mocks/mockProject";
 import { initialRootState } from "../../store";
 import { initialProjectState } from "../../store/Project/ProjectSlice";
+import ResponseBodyForm, { ResponseBodyFormProps } from "./ResponseBodyForm";
 
 const defaultProps: Partial<ResponseBodyFormProps> = {
   responseStatus: mockProject.responseStatus,

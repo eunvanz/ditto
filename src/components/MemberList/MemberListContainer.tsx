@@ -1,7 +1,7 @@
 import React from "react";
+import { UserProfileDoc } from "../../types";
 import MemberList, { MemberListProps } from "./MemberList";
 import useMemberListProps from "./useMemberListProps";
-import { UserProfileDoc } from "../../types";
 
 export interface MemberListContainerProps
   extends Pick<MemberListProps, "title" | "role"> {

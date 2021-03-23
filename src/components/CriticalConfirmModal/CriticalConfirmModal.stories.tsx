@@ -1,6 +1,5 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
 import CriticalConfirmModal, { CriticalConfirmModalProps } from "./CriticalConfirmModal";
 
 const defaultProps: Partial<CriticalConfirmModalProps> = {

@@ -1,5 +1,5 @@
-import { Box } from "@material-ui/core";
 import React from "react";
+import { Box } from "@material-ui/core";
 import RequestBodyForm from "../../../components/RequestBodyForm";
 import RequestParamForm from "../../../components/RequestParamForm";
 import { REQUEST_PARAM_LOCATION } from "../../../types";

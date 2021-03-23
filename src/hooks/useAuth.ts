@@ -1,9 +1,9 @@
-import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import ROUTE from "../paths";
-import { UiActions } from "../store/Ui/UiSlice";
+import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import ROUTE from "../paths";
 import AuthSelectors from "../store/Auth/AuthSelector";
+import { UiActions } from "../store/Ui/UiSlice";
 
 interface UseAuthOptions {
   isUserRequired?: boolean;

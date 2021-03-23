@@ -1,11 +1,10 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-
-import RequestParamForm, { RequestParamFormProps } from "./RequestParamForm";
 import { withRedux } from "../../helpers/storybookHelpers";
 import mockProject from "../../mocks/mockProject";
 import { initialRootState } from "../../store";
 import { REQUEST_PARAM_LOCATION } from "../../types";
+import RequestParamForm, { RequestParamFormProps } from "./RequestParamForm";
 
 const defaultProps: Partial<RequestParamFormProps> = {
   checkIsSubmittingRequestParam: () => false,

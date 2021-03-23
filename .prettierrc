@@ -13,6 +13,8 @@
   "importOrder": [
     "^react$",
     "^react-dom$",
+    "^[^.]*$",
+    "^\\.+$",
     "^[@\\w].*(?<!(?:.svg|.png|.scss))$",
     ".*(?<!(?:.svg|.png|.scss))$",
     "^[@\\w].*.scss$",

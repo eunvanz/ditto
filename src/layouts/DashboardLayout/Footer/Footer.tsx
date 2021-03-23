@@ -1,5 +1,5 @@
-import { Divider, makeStyles } from "@material-ui/core";
 import React from "react";
+import { Divider, makeStyles } from "@material-ui/core";
 import { APP_VERSION } from "../../../constants";
 import { Theme } from "../../../theme";
 

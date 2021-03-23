@@ -1,7 +1,7 @@
-import { EnumerationDoc, FIELD_TYPE } from "../types";
-import { patterns } from "./projectHelpers";
-import { regExps } from "./commonHelpers";
 import uniq from "lodash/uniq";
+import { EnumerationDoc, FIELD_TYPE } from "../types";
+import { regExps } from "./commonHelpers";
+import { patterns } from "./projectHelpers";
 
 export const registerOptions = {
   enumerationForm: {

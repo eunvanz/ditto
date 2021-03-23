@@ -1,11 +1,11 @@
 import React from "react";
-import "./App.css";
-import DashboardLayout from "./layouts/DashboardLayout";
 import { Switch, Router, Route } from "react-router-dom";
-import history from "./helpers/history";
+import "./App.css";
+import DataInitializer from "./components/DataInitializer/DataInitializer";
 import GlobalComponents from "./components/GlobalComponents";
 import GlobalProviders from "./components/GlobalProviders";
-import DataInitializer from "./components/DataInitializer/DataInitializer";
+import history from "./helpers/history";
+import DashboardLayout from "./layouts/DashboardLayout";
 import ROUTE from "./paths";
 import Routes from "./routes";
 

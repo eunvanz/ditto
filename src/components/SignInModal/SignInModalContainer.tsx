@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
-import SignInModal from "./SignInModal";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store";
 import UiSlice from "../../store/Ui/UiSlice";
+import SignInModal from "./SignInModal";
 
 const SignInModalContainer = () => {
   const isVisible = useSelector((state: RootState) => state.ui.signInModal.isVisible);

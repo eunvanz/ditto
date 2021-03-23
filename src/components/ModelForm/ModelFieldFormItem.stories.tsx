@@ -1,9 +1,8 @@
 import React from "react";
-import { Story, Meta } from "@storybook/react/types-6-0";
-
-import ModelFieldFormItem, { ModelFieldFormItemProps } from "./ModelFieldFormItem";
-import mockProject from "../../mocks/mockProject";
 import { Table, TableBody } from "@material-ui/core";
+import { Story, Meta } from "@storybook/react/types-6-0";
+import mockProject from "../../mocks/mockProject";
+import ModelFieldFormItem, { ModelFieldFormItemProps } from "./ModelFieldFormItem";
 
 const defaultProps: Partial<ModelFieldFormItemProps> = {
   modelFields: mockProject.modelFields,

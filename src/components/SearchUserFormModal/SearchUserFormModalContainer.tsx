@@ -1,5 +1,5 @@
-import SearchUserFormModal from "./SearchUserFormModal";
 import React from "react";
+import SearchUserFormModal from "./SearchUserFormModal";
 import useSearchUserFormModalProps from "./useSearchUserFormModalProps";
 
 const SearchUserFormModalContainer = () => {

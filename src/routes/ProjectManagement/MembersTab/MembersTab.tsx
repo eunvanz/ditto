@@ -1,8 +1,8 @@
 import React from "react";
-import { MemberRole, UserProfileDoc } from "../../../types";
+import { Grid } from "@material-ui/core";
 import MemberList from "../../../components/MemberList";
 import SearchUserFormModal from "../../../components/SearchUserFormModal";
-import { Grid } from "@material-ui/core";
+import { MemberRole, UserProfileDoc } from "../../../types";
 
 export interface MembersTabProps {
   allMembers: UserProfileDoc[];
