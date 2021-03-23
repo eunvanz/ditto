@@ -1,10 +1,11 @@
 import React from "react";
 import { Card, CardHeader, Divider } from "@material-ui/core";
-import SyntaxHighlighter from "react-syntax-highlighter";
 import { Oas, THEMES } from "../../../types";
 import YAML from "yaml";
-import dark from "react-syntax-highlighter/dist/esm/styles/hljs/atom-one-dark";
-import light from "react-syntax-highlighter/dist/esm/styles/hljs/vs";
+import Editor from "react-ace";
+import "ace-builds/src-noconflict/theme-monokai";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/mode-yaml";
 
 export interface OasTabProps {
   data?: Oas;
@@ -16,23 +17,13 @@ export const OasTab: React.FC<OasTabProps> = ({ data, theme }) => {
     <Card>
       <CardHeader title="Open API spec" />
       <Divider />
-      <SyntaxHighlighter
-        language="yaml"
-        showLineNumbers
-        wrapLongLines
-        style={theme === THEMES.DARK ? dark : light}
-      >
-        {/** null을 없애기 위해 JSON.stringify 후 parse */}
-        {YAML.stringify(JSON.parse(JSON.stringify(data)))}
-      </SyntaxHighlighter>
-      <SyntaxHighlighter
-        language="json"
-        showLineNumbers
-        wrapLongLines
-        style={theme === THEMES.DARK ? dark : light}
-      >
-        {JSON.stringify(data, null, 2)}
-      </SyntaxHighlighter>
+      <Editor
+        mode="yaml"
+        theme={theme === THEMES.LIGHT ? "github" : "monokai"}
+        value={YAML.stringify(JSON.parse(JSON.stringify(data)))}
+        width="100%"
+        height={`calc(100vh - 400px)`}
+      />
     </Card>
   );
 };

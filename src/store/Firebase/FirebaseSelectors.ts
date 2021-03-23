@@ -27,6 +27,7 @@ import {
   HeaderObject,
   FORMAT,
   SchemaObject,
+  REQUEST_METHOD,
 } from "../../types";
 import AuthSelectors from "../Auth/AuthSelector";
 
@@ -275,12 +276,18 @@ const createProjectOpenApiSpecSelector = (projectId: string) =>
       const getSchema = (modelField: ModelFieldDoc) => {
         const isObject = modelField.fieldType.value === FIELD_TYPE.OBJECT;
         const isArray = modelField.isArray.value;
-        const schema = isObject
+        const schema: SchemaObject = isObject
           ? {
               $ref: `#/components/schemas/${getModel(modelField.format.value)?.name}`,
             }
           : {
               type: isArray ? ("array" as const) : modelField.fieldType.value,
+              items: isArray
+                ? getSchema({
+                    ...modelField,
+                    isArray: { ...modelField.isArray, value: false },
+                  })
+                : undefined,
               format:
                 modelField.format.value === FORMAT.NONE
                   ? undefined
@@ -326,6 +333,7 @@ const createProjectOpenApiSpecSelector = (projectId: string) =>
                 description: url.label,
               }))
             : undefined,
+          tags: groups?.map((group) => ({ name: group.name })) || undefined,
           paths: requests?.length
             ? requests.reduce((map: OasPaths, request) => {
                 if (request.path && request.method) {
@@ -404,16 +412,22 @@ const createProjectOpenApiSpecSelector = (projectId: string) =>
                           };
                         })
                       : undefined,
-                    requestBody: {
-                      description: requestBodies?.[0]?.description.value,
-                      content: requestBodies?.length ? requestBodyContent : undefined,
-                      required: requestBodies?.[0]?.isRequired.value || false,
-                    },
+                    requestBody: [
+                      REQUEST_METHOD.PATCH,
+                      REQUEST_METHOD.POST,
+                      REQUEST_METHOD.PUT,
+                    ].includes(request.method)
+                      ? {
+                          description: requestBodies?.[0]?.description.value,
+                          content: requestBodies?.length ? requestBodyContent : undefined,
+                          required: requestBodies?.[0]?.isRequired.value || false,
+                        }
+                      : undefined,
                     responses,
                     deprecated: request.isDeprecated || false,
                   };
                   if (request.path) {
-                    map[request.path] = {
+                    map[`/${request.path}`] = {
                       [request.method.toLowerCase() as
                         | "get"
                         | "put"

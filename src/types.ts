@@ -363,6 +363,7 @@ export interface SchemaObject {
   enum?: string[] | number[];
   required?: string[];
   properties?: Record<string, SchemaObject>;
+  items?: SchemaObject;
 }
 
 export interface ReferenceObject {
