@@ -32,7 +32,7 @@ Object.keys(mockResponse).forEach((key) => {
     new Promise((resolve) => {
       return setTimeout(
         () => resolve(mockResponse[key as keyof typeof mockResponse].data),
-        Number(process.env.REACT_APP_MOCK_TIMEOUT)
+        Number(process.env.REACT_APP_MOCK_TIMEOUT),
       );
     });
 });

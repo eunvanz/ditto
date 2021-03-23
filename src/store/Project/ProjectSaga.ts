@@ -65,7 +65,7 @@ import {
 } from "../../helpers/projectHelpers";
 
 function* getProperDoc<T extends Recordable>(
-  values: any & { target?: Doc<T, BaseSettings> }
+  values: any & { target?: Doc<T, BaseSettings> },
 ) {
   const project = yield* select(ProjectSelectors.selectCurrentProject);
 
@@ -141,7 +141,7 @@ export function* submitProjectFormFlow() {
                 ...recordableDocProps,
               };
               return call(Firework.addNotification, notification);
-            })
+            }),
         );
       } else {
         const projectRef = yield* call(Firework.addProject, {
@@ -178,7 +178,7 @@ export function* submitProjectFormFlow() {
             message: isModification
               ? "Project settings have been modified."
               : "New project is created.",
-          })
+          }),
         ),
         put(UiActions.hideProjectFormModal()),
       ]);
@@ -201,7 +201,7 @@ export function* deleteProjectFlow() {
         title: "Delete project",
         message: `This will permanently delete the project, included operations and groups. Please type {${project.title}} to confirm.`,
         keyword: project.title,
-      })
+      }),
     );
     const { isConfirmed } = yield* race({
       isConfirmed: take(UiActions.confirmCriticalConfirmModal),
@@ -242,13 +242,13 @@ export function* deleteProjectFlow() {
                 ...recordableDocProps,
               };
               return call(Firework.addNotification, notification);
-            })
+            }),
         );
         yield* put(
           UiActions.showNotification({
             message: "The project has been deleted.",
             type: "success",
-          })
+          }),
         );
         yield* put(UiActions.hideCriticalConfirmModal());
       } catch (error) {
@@ -298,7 +298,7 @@ export function* submitProjectUrlFormFlow() {
           UiActions.showNotification({
             type: "success",
             message: "URL settings have been modified.",
-          })
+          }),
         );
       } else {
         const newProjectUrl = {
@@ -315,20 +315,17 @@ export function* submitProjectUrlFormFlow() {
           },
         };
         delete newProjectUrl.target;
-        const projectUrlRef = yield* call(
-          Firework.addProjectUrl,
-          newProjectUrl
-        );
+        const projectUrlRef = yield* call(Firework.addProjectUrl, newProjectUrl);
         yield* put(
           ProjectActions.notifySubmissionQuickUrlFormComplete({
             createdUrlId: projectUrlRef.id,
-          })
+          }),
         );
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "New base URL has been created.",
-          })
+          }),
         );
       }
     } catch (error) {
@@ -336,7 +333,7 @@ export function* submitProjectUrlFormFlow() {
         ErrorActions.catchError({
           error,
           isAlertOnly: true,
-        })
+        }),
       );
     }
   }
@@ -344,15 +341,11 @@ export function* submitProjectUrlFormFlow() {
 
 export function* deleteProjectUrlFlow() {
   while (true) {
-    const { payload: projectUrl } = yield* take(
-      ProjectActions.deleteProjectUrl
-    );
+    const { payload: projectUrl } = yield* take(ProjectActions.deleteProjectUrl);
     const requests = yield* select(
-      FirebaseSelectors.createProjectRequestsSelector(projectUrl.projectId)
+      FirebaseSelectors.createProjectRequestsSelector(projectUrl.projectId),
     );
-    const isUsedBySome = requests.some(
-      (item) => item.baseUrl === projectUrl.id
-    );
+    const isUsedBySome = requests.some((item) => item.baseUrl === projectUrl.id);
 
     if (isUsedBySome) {
       yield* call(Alert.message, {
@@ -362,15 +355,13 @@ export function* deleteProjectUrlFlow() {
       continue;
     }
     try {
-      yield* put(
-        UiActions.showDelayedLoading({ taskName: "deleteProjectUrl" })
-      );
+      yield* put(UiActions.showDelayedLoading({ taskName: "deleteProjectUrl" }));
       yield* call(Firework.deleteProjectUrl, projectUrl);
       yield* put(
         UiActions.showNotification({
           type: "success",
           message: "The base URL has been deleted.",
-        })
+        }),
       );
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
@@ -382,37 +373,33 @@ export function* deleteProjectUrlFlow() {
 
 export function* deleteModelFieldFlow() {
   while (true) {
-    const { payload: modelField } = yield* take(
-      ProjectActions.deleteModelField
-    );
+    const { payload: modelField } = yield* take(ProjectActions.deleteModelField);
     const isConfirmed = yield* call(Alert.confirm, {
       title: "Delete field",
       message: `Are you sure to delete field {${modelField.fieldName.value}}?`,
     });
     if (isConfirmed) {
       try {
-        yield* put(
-          UiActions.showDelayedLoading({ taskName: "deleteModelField" })
-        );
+        yield* put(UiActions.showDelayedLoading({ taskName: "deleteModelField" }));
         yield* call(Firework.deleteModelField, modelField);
         const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
         yield* call(
           sendNotificationsToProjectMembers,
           `The model field {${modelField.fieldName}} has been deleted by {${userProfile.name}}.`,
-          `./projects/${modelField.projectId}?tab=models&model=${modelField.modelId}`
+          `./projects/${modelField.projectId}?tab=models&model=${modelField.modelId}`,
         );
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "The field has been deleted.",
-          })
+          }),
         );
       } catch (error) {
         yield* put(
           ErrorActions.catchError({
             error,
             isAlertOnly: true,
-          })
+          }),
         );
       } finally {
         yield* put(UiActions.hideLoading("deleteModelField"));
@@ -456,9 +443,7 @@ export function* submitModelNameFormFlow() {
       let newModelId = "";
       if (!!target) {
         // 수정인 경우
-        yield* put(
-          UiActions.showDelayedLoading({ taskName: "submitModelName" })
-        );
+        yield* put(UiActions.showDelayedLoading({ taskName: "submitModelName" }));
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
         const newModel: Partial<ModelItem> = {
           projectId: currentProject.id,
@@ -470,14 +455,14 @@ export function* submitModelNameFormFlow() {
         yield* call(
           sendNotificationsToProjectMembers,
           `The model {${newModel.name}} has been modified by {${userProfile.name}}.`,
-          `/projects/${newModel.projectId}?tab=models&model=${target.id}`
+          `/projects/${newModel.projectId}?tab=models&model=${target.id}`,
         );
 
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "The model has been modified.",
-          })
+          }),
         );
       } else {
         // 생성인 경우
@@ -496,25 +481,23 @@ export function* submitModelNameFormFlow() {
 
         if (hasToSetResult) {
           const projectModels = yield* select(
-            FirebaseSelectors.createProjectModelsSelector(currentProject.id)
+            FirebaseSelectors.createProjectModelsSelector(currentProject.id),
           );
-          const currentModel = projectModels?.find(
-            (model) => model.id === newModelId
-          );
+          const currentModel = projectModels?.find((model) => model.id === newModelId);
           yield* putResolve(ProjectActions.receiveCurrentModel(currentModel!));
         }
 
         yield* call(
           sendNotificationsToProjectMembers,
           `New model {${newModel.name}} has been created by {${userProfile.name}}.`,
-          `/projects/${newModel.projectId}?tab=models&model=${newModelId}`
+          `/projects/${newModel.projectId}?tab=models&model=${newModelId}`,
         );
 
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "New model has been created.",
-          })
+          }),
         );
       }
     } catch (error) {
@@ -522,7 +505,7 @@ export function* submitModelNameFormFlow() {
         ErrorActions.catchError({
           error,
           isAlertOnly: true,
-        })
+        }),
       );
     } finally {
       yield* put(ProjectActions.notifySubmissionQuickModelNameFormComplete());
@@ -533,7 +516,7 @@ export function* submitModelNameFormFlow() {
 
 export async function getReferringModels(
   type: "model" | "enum",
-  referred: ModelDoc | EnumerationDoc
+  referred: ModelDoc | EnumerationDoc,
 ) {
   const projectModelsRef = Firework.getProjectModelsRef(referred.projectId);
   const projectModelsSnapshot = await projectModelsRef.get();
@@ -541,7 +524,7 @@ export async function getReferringModels(
   // 프로젝트의 모델을 가져옴
   let projectModels: ModelDoc[] = [];
   projectModelsSnapshot.forEach((doc) =>
-    projectModels.push({ id: doc.id, ...doc.data() } as ModelDoc)
+    projectModels.push({ id: doc.id, ...doc.data() } as ModelDoc),
   );
 
   // 프로젝트의 모델 중 삭제하려는 모델을 참조하고 있는 모델이 있는지 확인
@@ -556,12 +539,12 @@ export async function getReferringModels(
       .map(async (model) => {
         const modelFieldsSnapshot = await getReferringModelFieldsRef(
           model,
-          referred as any
+          referred as any,
         ).get();
         if (modelFieldsSnapshot.size > 0) {
           referringModels.push(model);
         }
-      })
+      }),
   );
   return referringModels;
 }
@@ -576,11 +559,7 @@ export function* deleteModelFlow() {
     if (isConfirmed) {
       try {
         yield* put(UiActions.showDelayedLoading({ taskName: "deleteModel" }));
-        const referringModels = yield* call(
-          getReferringModels,
-          "model",
-          payload
-        );
+        const referringModels = yield* call(getReferringModels, "model", payload);
         if (referringModels.length > 0) {
           yield* put(UiActions.hideLoading("deleteModel"));
           yield* call(Alert.message, {
@@ -588,24 +567,22 @@ export function* deleteModelFlow() {
             message: `${referringModels
               .map((model) => model.name)
               .join(
-                ", "
+                ", ",
               )} is(are) referring to the model. It's impossible to delete a model referred by another models.`,
           });
           continue;
         } else {
           yield* call(Firework.deleteModel, payload);
-          const userProfile = yield* select(
-            FirebaseSelectors.selectUserProfile
-          );
+          const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
           yield* call(
             sendNotificationsToProjectMembers,
-            `The model {${payload.name}} has been deleted by {${userProfile.uid}}.`
+            `The model {${payload.name}} has been deleted by {${userProfile.uid}}.`,
           );
           yield* put(
             UiActions.showNotification({
               type: "success",
               message: "The model has been deleted.",
-            })
+            }),
           );
         }
       } catch (error) {
@@ -613,7 +590,7 @@ export function* deleteModelFlow() {
           ErrorActions.catchError({
             error,
             isAlertOnly: true,
-          })
+          }),
         );
       } finally {
         yield* put(UiActions.hideLoading("deleteModel"));
@@ -624,7 +601,7 @@ export function* deleteModelFlow() {
 
 export function* selectAndCheckProject() {
   const currentProject = yield* select(
-    (state: RootState) => state.project.currentProject
+    (state: RootState) => state.project.currentProject,
   );
 
   // currentProject가 없을경우 오류
@@ -633,7 +610,7 @@ export function* selectAndCheckProject() {
       ErrorActions.catchError({
         error: new Error("There's no selected project."),
         isAlertOnly: true,
-      })
+      }),
     );
     yield* call(history.push, ROUTE.ROOT);
     return undefined;
@@ -670,7 +647,7 @@ export function* getUpdatedModelField({
       | "fieldType"
       | "format"
       | "enum"
-      | "description"
+      | "description",
   ) => {
     const isKeyUpdated = target[key].value !== payload[key];
     return {
@@ -720,9 +697,7 @@ export interface CommonModelFieldFormFlowParams<
 export type CommonModelFieldFormFlow<
   CustomModelFieldItem extends CommonModelFieldItem,
   FormValues extends ModelFieldFormValues
-> = (
-  args: CommonModelFieldFormFlowParams<CustomModelFieldItem, FormValues>
-) => Generator;
+> = (args: CommonModelFieldFormFlowParams<CustomModelFieldItem, FormValues>) => Generator;
 
 export function* commonModelFieldFormFlow<
   CustomModelFieldItem extends CommonModelFieldItem,
@@ -742,16 +717,14 @@ export function* commonModelFieldFormFlow<
     yield* put(ProgressActions.startProgress(submitModelFieldFormActionType));
     const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
 
-    const editingModelField = yield* select(
-      ProjectSelectors.selectEditingModelField
-    );
+    const editingModelField = yield* select(ProjectSelectors.selectEditingModelField);
 
     if (!!checkIsNotEmpty && !checkIsNotEmpty(payload)) {
       yield* put(
         ErrorActions.catchError({
           error: new Error("There's no required value."),
           isAlertOnly: true,
-        })
+        }),
       );
       continue;
     }
@@ -766,16 +739,15 @@ export function* commonModelFieldFormFlow<
       currentRequest = yield* select(
         FirebaseSelectors.createRequestSelectorByProjectIdAndRequestId(
           currentProject.id,
-          (payload as any).requestId
-        )
+          (payload as any).requestId,
+        ),
       );
     }
 
     const { target } = payload;
 
     const isNewModel =
-      payload.fieldType === FIELD_TYPE.OBJECT &&
-      payload.format === FORMAT.NEW_MODEL;
+      payload.fieldType === FIELD_TYPE.OBJECT && payload.format === FORMAT.NEW_MODEL;
 
     const isNewEnum = payload.enum === ENUMERATION.NEW;
 
@@ -807,17 +779,15 @@ export function* commonModelFieldFormFlow<
             continue;
           } else {
             yield* put(ProjectActions.submitModelNameForm(submit!.payload));
-            yield* take(
-              ProjectActions.notifySubmissionQuickModelNameFormComplete
-            );
+            yield* take(ProjectActions.notifySubmissionQuickModelNameFormComplete);
             const createdModelId = yield* select(
-              (state: RootState) => state.project.createdModelId
+              (state: RootState) => state.project.createdModelId,
             );
             yield* put(
               UiActions.showDelayedLoading({
                 taskName: "submitCommonModelField",
                 delay: 500,
-              })
+              }),
             );
             yield* put(UiActions.hideQuickModelNameFormModal());
             yield* put(ProjectActions.receiveEditingModelField(undefined));
@@ -828,9 +798,7 @@ export function* commonModelFieldFormFlow<
             });
           }
         } else if (isNewEnum) {
-          yield* putResolve(
-            ProjectActions.receiveFieldTypeToCreate(payload.fieldType)
-          );
+          yield* putResolve(ProjectActions.receiveFieldTypeToCreate(payload.fieldType));
           yield* put(UiActions.showQuickEnumFormModal());
           const { submit, cancel } = yield* race({
             submit: take(ProjectActions.submitQuickEnumForm),
@@ -843,13 +811,13 @@ export function* commonModelFieldFormFlow<
             yield* put(ProjectActions.submitEnumForm(submit!.payload));
             yield* take(ProjectActions.notifySubmissionQuickEnumFormComplete);
             const createdEnumId = yield* select(
-              (state: RootState) => state.project.createdEnumId
+              (state: RootState) => state.project.createdEnumId,
             );
             yield* put(
               UiActions.showDelayedLoading({
                 taskName: "submitCommonModelField",
                 delay: 500,
-              })
+              }),
             );
             yield* put(UiActions.hideQuickEnumFormModal());
             yield* call(updateModelField, target.id, {
@@ -863,7 +831,7 @@ export function* commonModelFieldFormFlow<
             UiActions.showDelayedLoading({
               taskName: "submitCommonModelField",
               delay: 500,
-            })
+            }),
           );
           yield* put(ProjectActions.receiveEditingModelField(undefined));
           hasToBlurForm = true;
@@ -963,17 +931,15 @@ export function* commonModelFieldFormFlow<
             continue;
           } else {
             yield* put(ProjectActions.submitModelNameForm(submit!.payload));
-            yield* take(
-              ProjectActions.notifySubmissionQuickModelNameFormComplete
-            );
+            yield* take(ProjectActions.notifySubmissionQuickModelNameFormComplete);
             const createdModelId = yield* select(
-              (state: RootState) => state.project.createdModelId
+              (state: RootState) => state.project.createdModelId,
             );
             yield* put(
               UiActions.showDelayedLoading({
                 taskName: "submitCommonModelField",
                 delay: 500,
-              })
+              }),
             );
             yield* put(UiActions.hideQuickModelNameFormModal());
             if (hasToBlurFormAlways) {
@@ -995,9 +961,7 @@ export function* commonModelFieldFormFlow<
           }
         } else if (isNewEnum) {
           hasToBlurForm = false;
-          yield* putResolve(
-            ProjectActions.receiveFieldTypeToCreate(payload.fieldType)
-          );
+          yield* putResolve(ProjectActions.receiveFieldTypeToCreate(payload.fieldType));
           yield* put(UiActions.showQuickEnumFormModal());
           const { submit, cancel } = yield* race({
             submit: take(ProjectActions.submitQuickEnumForm),
@@ -1009,13 +973,13 @@ export function* commonModelFieldFormFlow<
             yield* put(ProjectActions.submitEnumForm(submit!.payload));
             yield* take(ProjectActions.notifySubmissionQuickEnumFormComplete);
             const createdEnumId = yield* select(
-              (state: RootState) => state.project.createdEnumId
+              (state: RootState) => state.project.createdEnumId,
             );
             yield* put(
               UiActions.showDelayedLoading({
                 taskName: "submitCommonModelField",
                 delay: 500,
-              })
+              }),
             );
             yield* put(UiActions.hideQuickEnumFormModal());
             yield* call(addModelField, {
@@ -1040,7 +1004,7 @@ export function* commonModelFieldFormFlow<
             UiActions.showDelayedLoading({
               taskName: "submitCommonModelField",
               delay: 500,
-            })
+            }),
           );
           yield* put(ProjectActions.receiveEditingModelField(undefined));
           hasToBlurForm = Boolean(hasToBlurFormAlways);
@@ -1060,15 +1024,13 @@ export function* commonModelFieldFormFlow<
         ErrorActions.catchError({
           error,
           isAlertOnly: true,
-        })
+        }),
       );
     } finally {
       if (!hasToBlurForm) {
         yield* put(ProjectActions.receiveEditingModelField(editingModelField));
       }
-      yield* putResolve(
-        ProgressActions.finishProgress(submitModelFieldFormActionType)
-      );
+      yield* putResolve(ProgressActions.finishProgress(submitModelFieldFormActionType));
       yield* put(UiActions.hideLoading("submitCommonModelField"));
     }
   }
@@ -1076,10 +1038,7 @@ export function* commonModelFieldFormFlow<
 
 export function* submitModelFieldFormFlow() {
   yield* fork<
-    CommonModelFieldFormFlow<
-      ModelFieldItem,
-      ModelFieldFormValues & { modelId?: string }
-    >
+    CommonModelFieldFormFlow<ModelFieldItem, ModelFieldFormValues & { modelId?: string }>
   >(commonModelFieldFormFlow, {
     actionToTrigger: ProjectActions.submitModelFieldForm,
     checkIsNotEmpty: (payload) => {
@@ -1093,7 +1052,7 @@ export function* submitModelFieldFormFlow() {
         yield* call(
           sendNotificationsToProjectMembers,
           `The model field {${payload.fieldName}} has been modified by {${userProfile.name}}.`,
-          `/projects/${project.id}?tab=models&model=${payload.modelId}`
+          `/projects/${project.id}?tab=models&model=${payload.modelId}`,
         );
       }
     },
@@ -1103,7 +1062,7 @@ export function* submitModelFieldFormFlow() {
 export function* proceedQuickModelNameFormFlow() {
   while (true) {
     const { payload: originModel } = yield* take(
-      ProjectActions.proceedQuickModelNameForm
+      ProjectActions.proceedQuickModelNameForm,
     );
     yield* put(UiActions.showQuickModelNameFormModal(originModel));
     const { submit, cancel } = yield* race({
@@ -1139,9 +1098,7 @@ export function* submitEnumFormFlow() {
           ? payload.items.split(",").map((item) => Number(item))
           : payload.items.split(",");
       if (!!target) {
-        yield* put(
-          UiActions.showDelayedLoading({ taskName: "submitEnumForm" })
-        );
+        yield* put(UiActions.showDelayedLoading({ taskName: "submitEnumForm" }));
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
         const newEnumeration: Partial<EnumerationItem> = {
           projectId: currentProject.id,
@@ -1153,12 +1110,10 @@ export function* submitEnumFormFlow() {
         yield* call(
           sendNotificationsToProjectMembers,
           `The enumeration {${payload.name}} has been modified by {${userProfile.name}}.`,
-          `/projects/${currentProject.id}?tab=enums`
+          `/projects/${currentProject.id}?tab=enums`,
         );
       } else {
-        yield* put(
-          UiActions.showDelayedLoading({ taskName: "submitEnumForm" })
-        );
+        yield* put(UiActions.showDelayedLoading({ taskName: "submitEnumForm" }));
         const recordableDocProps = yield* call(getRecordableDocProps);
         const newEnumeration: EnumerationItem = {
           projectId: currentProject.id,
@@ -1168,21 +1123,19 @@ export function* submitEnumFormFlow() {
         };
         const createdEnumerationRef = yield* call(
           Firework.addEnumeration,
-          newEnumeration
+          newEnumeration,
         );
         yield* call(
           sendNotificationsToProjectMembers,
           `The enumeration {${payload.name}} has been created by {${userProfile.name}}.`,
-          `/projects/${currentProject.id}?tab=enums`
+          `/projects/${currentProject.id}?tab=enums`,
         );
-        yield* putResolve(
-          ProjectActions.receiveCreatedEnumId(createdEnumerationRef.id)
-        );
+        yield* putResolve(ProjectActions.receiveCreatedEnumId(createdEnumerationRef.id));
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "New enumeration has been created.",
-          })
+          }),
         );
       }
     } catch (error) {
@@ -1206,18 +1159,10 @@ export function* deleteEnumerationFlow() {
     if (isConfirmed) {
       try {
         const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
-        const currentProject = yield* select(
-          ProjectSelectors.selectCurrentProject
-        );
+        const currentProject = yield* select(ProjectSelectors.selectCurrentProject);
         assertNotEmpty(currentProject);
-        yield* put(
-          UiActions.showDelayedLoading({ taskName: "deleteEnumeration" })
-        );
-        const referringModels = yield* call(
-          getReferringModels,
-          "enum",
-          payload
-        );
+        yield* put(UiActions.showDelayedLoading({ taskName: "deleteEnumeration" }));
+        const referringModels = yield* call(getReferringModels, "enum", payload);
         if (referringModels.length > 0) {
           yield* put(UiActions.hideLoading("deleteEnumeration"));
           yield* call(Alert.message, {
@@ -1225,7 +1170,7 @@ export function* deleteEnumerationFlow() {
             message: `${referringModels
               .map((model) => model.name)
               .join(
-                ", "
+                ", ",
               )} is(are) referring to the model. It's impossible to delete a model referred by another models.`,
           });
           continue;
@@ -1234,13 +1179,13 @@ export function* deleteEnumerationFlow() {
           yield* call(
             sendNotificationsToProjectMembers,
             `The enumeration {${payload.name}} has been deleted by {${userProfile.name}}.`,
-            `/projects/${currentProject.id}?tab=enums`
+            `/projects/${currentProject.id}?tab=enums`,
           );
           yield* put(
             UiActions.showNotification({
               type: "success",
               message: "The enumeration has been deleted.",
-            })
+            }),
           );
         }
       } catch (error) {
@@ -1248,7 +1193,7 @@ export function* deleteEnumerationFlow() {
           ErrorActions.catchError({
             error,
             isAlertOnly: true,
-          })
+          }),
         );
       } finally {
         yield* put(UiActions.hideLoading("deleteEnumeration"));
@@ -1272,13 +1217,13 @@ export function* submitGroupFormFlow() {
         yield* call(Firework.updateGroup, target.id, newGroup);
         yield* call(
           sendNotificationsToProjectMembers,
-          `Group name has been changed from {${target.name}} to {${payload.name}} by {${userProfile.name}}.`
+          `Group name has been changed from {${target.name}} to {${payload.name}} by {${userProfile.name}}.`,
         );
       } else {
         yield* call(Firework.addGroup, newGroup as GroupItem);
         yield* call(
           sendNotificationsToProjectMembers,
-          `New group {${payload.name}} has been added by {${userProfile.name}}.`
+          `New group {${payload.name}} has been added by {${userProfile.name}}.`,
         );
       }
       yield* put(
@@ -1287,7 +1232,7 @@ export function* submitGroupFormFlow() {
           message: target
             ? "The group has been modified."
             : "New group has been created.",
-        })
+        }),
       );
       yield* put(UiActions.hideGroupFormModal());
     } catch (error) {
@@ -1309,7 +1254,7 @@ export function* deleteGroupFlow() {
         title: "Delete group",
         message: `This will permanently delete the group and included operations. Please type {${payload.name}} to confirm.`,
         keyword: payload.name,
-      })
+      }),
     );
     const { isConfirmed } = yield* race({
       isConfirmed: take(UiActions.confirmCriticalConfirmModal),
@@ -1319,32 +1264,26 @@ export function* deleteGroupFlow() {
       yield* put(UiActions.showLoading("deleteGroup"));
       try {
         yield* put(ProgressActions.startProgress(type));
-        const groupRef = yield* call(
-          Firework.getGroupRef,
-          payload.projectId,
-          payload.id
-        );
+        const groupRef = yield* call(Firework.getGroupRef, payload.projectId, payload.id);
         const requestGroupRef = yield* call(
           Firework.getGroupRequestsRef,
           payload.projectId,
-          payload.id
+          payload.id,
         );
-        const batchItems: RunBatchItem[] = [
-          { operation: "delete", ref: groupRef },
-        ];
+        const batchItems: RunBatchItem[] = [{ operation: "delete", ref: groupRef }];
         yield* call(Firework.runTaskForEachDocs, requestGroupRef, (doc) =>
-          batchItems.push({ operation: "delete", ref: doc.ref })
+          batchItems.push({ operation: "delete", ref: doc.ref }),
         );
         yield* call(Firework.runBatch, batchItems);
         yield* put(
           UiActions.showNotification({
             message: "The group has been deleted.",
             type: "success",
-          })
+          }),
         );
         yield* call(
           sendNotificationsToProjectMembers,
-          `The group {${payload.name}} has been deleted by {${userProfile.name}}.`
+          `The group {${payload.name}} has been deleted by {${userProfile.name}}.`,
         );
         yield* put(UiActions.hideGroupFormModal());
         yield* put(UiActions.hideCriticalConfirmModal());
@@ -1365,9 +1304,7 @@ export function* submitRequestFormFlow() {
     yield* put(UiActions.showLoading("submitRequestForm"));
 
     const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
-    const { groupId, projectId } = yield* select(
-      UiSelectors.selectRequestFormModal
-    );
+    const { groupId, projectId } = yield* select(UiSelectors.selectRequestFormModal);
     if (!projectId) {
       continue;
     }
@@ -1395,18 +1332,18 @@ export function* submitRequestFormFlow() {
       yield* call(
         sendNotificationsToProjectMembers,
         `New operation {${payload.name}} has been added by {${userProfile.name}}`,
-        `/projects/${projectId}/requests/${newRequestRef.id}`
+        `/projects/${projectId}/requests/${newRequestRef.id}`,
       );
       yield* put(
         UiActions.showNotification({
           message: "New operation has been created.",
           type: "success",
-        })
+        }),
       );
       yield* put(UiActions.hideRequestFormModal());
       yield* call(
         history.push,
-        `${ROUTE.PROJECTS}/${projectId}${ROUTE.REQUESTS}/${newRequestRef.id}`
+        `${ROUTE.PROJECTS}/${projectId}${ROUTE.REQUESTS}/${newRequestRef.id}`,
       );
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
@@ -1455,16 +1392,12 @@ export function* submitRequestUrlFormFlow() {
         }
       }
 
-      yield* put(
-        UiActions.showDelayedLoading({ taskName: "submitRequestUrlForm" })
-      );
+      yield* put(UiActions.showDelayedLoading({ taskName: "submitRequestUrlForm" }));
       yield* call(Firework.updateRequest, target!.id, newRequest);
       yield* call(
         sendNotificationsToProjectMembers,
-        `{${target!.name}}'s url info has been modified by {${
-          userProfile.name
-        }}`,
-        `/projects/${project.id}/requests/${target!.id}`
+        `{${target!.name}}'s url info has been modified by {${userProfile.name}}`,
+        `/projects/${project.id}/requests/${target!.id}`,
       );
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
@@ -1507,7 +1440,7 @@ export function* submitRequestParamFormFlow() {
             }} in the operation {${request!.name}} has been added by {${
               userProfile.name
             }}.`,
-        `/projects/${project.id}/requests/${payload.requestId}?tab=request`
+        `/projects/${project.id}/requests/${payload.requestId}?tab=request`,
       );
     },
   });
@@ -1515,9 +1448,7 @@ export function* submitRequestParamFormFlow() {
 
 export function* deleteRequestParamFlow() {
   while (true) {
-    const { payload: requestParam } = yield* take(
-      ProjectActions.deleteRequestParam
-    );
+    const { payload: requestParam } = yield* take(ProjectActions.deleteRequestParam);
     const isConfirmed = yield* call(Alert.confirm, {
       title: "Delete parameter",
       message: `Are you sure to delete key {${requestParam.fieldName.value}}?`,
@@ -1527,13 +1458,11 @@ export function* deleteRequestParamFlow() {
       const request = yield* select(
         FirebaseSelectors.createRequestSelectorByProjectIdAndRequestId(
           requestParam.projectId,
-          requestParam.requestId
-        )
+          requestParam.requestId,
+        ),
       );
       try {
-        yield* put(
-          UiActions.showDelayedLoading({ taskName: "deleteRequestParam" })
-        );
+        yield* put(UiActions.showDelayedLoading({ taskName: "deleteRequestParam" }));
         yield* call(Firework.deleteRequestParam, requestParam);
         yield* call(
           sendNotificationsToProjectMembers,
@@ -1542,20 +1471,20 @@ export function* deleteRequestParamFlow() {
           }} in the operation {${request!.name}} has been deleted by {${
             userProfile.name
           }}.`,
-          `/projects/${requestParam.projectId}/requests/${requestParam.requestId}?tab=request`
+          `/projects/${requestParam.projectId}/requests/${requestParam.requestId}?tab=request`,
         );
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "The parameter has been deleted.",
-          })
+          }),
         );
       } catch (error) {
         yield* put(
           ErrorActions.catchError({
             error,
             isAlertOnly: true,
-          })
+          }),
         );
       } finally {
         yield* put(UiActions.hideLoading("deleteRequestParam"));
@@ -1584,17 +1513,13 @@ export function* submitRequestBodyFormFlow() {
       yield* call(
         sendNotificationsToProjectMembers,
         payload.target
-          ? `The request body media-type {${
-              payload.fieldName
-            }} in the operation {${request!.name}} has been modified by {${
-              userProfile.name
-            }}.`
-          : `New request body media-type {${
-              payload.fieldName
-            }} in the operation {${request!.name}} has been added by {${
-              userProfile.name
-            }}.`,
-        `/projects/${project.id}/requests/${payload.requestId}?tab=request`
+          ? `The request body media-type {${payload.fieldName}} in the operation {${
+              request!.name
+            }} has been modified by {${userProfile.name}}.`
+          : `New request body media-type {${payload.fieldName}} in the operation {${
+              request!.name
+            }} has been added by {${userProfile.name}}.`,
+        `/projects/${project.id}/requests/${payload.requestId}?tab=request`,
       );
     },
   });
@@ -1602,9 +1527,7 @@ export function* submitRequestBodyFormFlow() {
 
 export function* deleteRequestBodyFlow() {
   while (true) {
-    const { payload: requestBody } = yield* take(
-      ProjectActions.deleteRequestBody
-    );
+    const { payload: requestBody } = yield* take(ProjectActions.deleteRequestBody);
     const isConfirmed = yield* call(Alert.confirm, {
       title: "Delete body",
       message: `Are you sure to delete media-type {${requestBody.fieldName.value}}?`,
@@ -1614,13 +1537,11 @@ export function* deleteRequestBodyFlow() {
       const request = yield* select(
         FirebaseSelectors.createRequestSelectorByProjectIdAndRequestId(
           requestBody.projectId,
-          requestBody.requestId
-        )
+          requestBody.requestId,
+        ),
       );
       try {
-        yield* put(
-          UiActions.showDelayedLoading({ taskName: "deleteRequestBody" })
-        );
+        yield* put(UiActions.showDelayedLoading({ taskName: "deleteRequestBody" }));
         yield* call(Firework.deleteRequestBody, requestBody);
         yield* call(
           sendNotificationsToProjectMembers,
@@ -1629,20 +1550,20 @@ export function* deleteRequestBodyFlow() {
           }} in the operation {${request!.name}} has been deleted by {${
             userProfile.name
           }}.`,
-          `/projects/${requestBody.projectId}/requests/${requestBody.requestId}?tab=request`
+          `/projects/${requestBody.projectId}/requests/${requestBody.requestId}?tab=request`,
         );
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "The body has been deleted.",
-          })
+          }),
         );
       } catch (error) {
         yield* put(
           ErrorActions.catchError({
             error,
             isAlertOnly: true,
-          })
+          }),
         );
       } finally {
         yield* put(UiActions.hideLoading("deleteRequestBody"));
@@ -1653,9 +1574,7 @@ export function* deleteRequestBodyFlow() {
 
 export function* submitRequestSettingFormFlow() {
   while (true) {
-    const { type, payload } = yield* take(
-      ProjectActions.submitRequestSettingForm
-    );
+    const { type, payload } = yield* take(ProjectActions.submitRequestSettingForm);
     yield* put(ProgressActions.startProgress(type));
     const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     try {
@@ -1668,20 +1587,18 @@ export function* submitRequestSettingFormFlow() {
         ...payload,
         ...updatedRecordProps,
       };
-      yield* put(
-        UiActions.showDelayedLoading({ taskName: "submitRequestSettingForm" })
-      );
+      yield* put(UiActions.showDelayedLoading({ taskName: "submitRequestSettingForm" }));
       yield* call(Firework.updateRequest, target.id, newRequest);
       yield* call(
         sendNotificationsToProjectMembers,
         `The operation {${target.name}} settings have been modified by {${userProfile.name}}`,
-        `/projects/${target.projectId}/requests/${target.id}?tab=settings`
+        `/projects/${target.projectId}/requests/${target.id}?tab=settings`,
       );
       yield* put(
         UiActions.showNotification({
           type: "success",
           message: "The operation has been modified.",
-        })
+        }),
       );
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
@@ -1706,13 +1623,13 @@ export function* deleteRequestFlow() {
         yield* call(Firework.deleteRequest, payload);
         yield* call(
           sendNotificationsToProjectMembers,
-          `The operation {${payload.name}} has been deleted by {${userProfile.name}}.`
+          `The operation {${payload.name}} has been deleted by {${userProfile.name}}.`,
         );
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "The operation has been deleted.",
-          })
+          }),
         );
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
@@ -1727,17 +1644,15 @@ export function* submitResponseStatusFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.submitResponseStatus);
     yield* put(ProgressActions.startProgress(type));
-    yield* put(
-      UiActions.showDelayedLoading({ taskName: "submitResponseStatus" })
-    );
+    yield* put(UiActions.showDelayedLoading({ taskName: "submitResponseStatus" }));
     const target = payload.target;
     delete payload.target;
     const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     const request = yield* select(
       FirebaseSelectors.createRequestSelectorByProjectIdAndRequestId(
         payload.projectId,
-        payload.requestId
-      )
+        payload.requestId,
+      ),
     );
     try {
       if (!target) {
@@ -1752,13 +1667,13 @@ export function* submitResponseStatusFlow() {
           `New response status code {${payload.statusCode}} in the operation {${
             request!.name
           }} has been added by {${userProfile.name}}.`,
-          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`
+          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`,
         );
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "New status code has been created.",
-          })
+          }),
         );
       } else {
         const updatedRecordProps = yield* call(getUpdatedRecordProps);
@@ -1766,23 +1681,19 @@ export function* submitResponseStatusFlow() {
           ...payload,
           ...updatedRecordProps,
         };
-        yield* call(
-          Firework.updateResponseStatus,
-          target.id,
-          newResponseStatus
-        );
+        yield* call(Firework.updateResponseStatus, target.id, newResponseStatus);
         yield* call(
           sendNotificationsToProjectMembers,
           `The response status code {${payload.statusCode}} in the operation {${
             request!.name
           }} has been modified by {${userProfile.name}}.`,
-          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`
+          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`,
         );
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "The status code has been modified.",
-          })
+          }),
         );
       }
     } catch (error) {
@@ -1806,26 +1717,24 @@ export function* deleteResponseStatusFlow() {
       const request = yield* select(
         FirebaseSelectors.createRequestSelectorByProjectIdAndRequestId(
           payload.projectId,
-          payload.requestId
-        )
+          payload.requestId,
+        ),
       );
       try {
-        yield* put(
-          UiActions.showDelayedLoading({ taskName: "deleteResponseStatus" })
-        );
+        yield* put(UiActions.showDelayedLoading({ taskName: "deleteResponseStatus" }));
         yield* call(Firework.deleteResponseStatus, payload);
         yield* call(
           sendNotificationsToProjectMembers,
           `The response status code {${payload.statusCode}} in the operation {${
             request!.name
           }} has been deleted by {${userProfile.name}}.`,
-          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`
+          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`,
         );
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "The status code has been deleted.",
-          })
+          }),
         );
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
@@ -1860,17 +1769,13 @@ export function* submitResponseBodyFlow() {
       yield* call(
         sendNotificationsToProjectMembers,
         payload.target
-          ? `The response body media-type {${
-              payload.fieldName
-            }} in the operation {${request!.name}} has been modified by {${
-              userProfile.name
-            }}.`
-          : `New response body media-type {${
-              payload.fieldName
-            }} in the operation {${request!.name}} has been added by {${
-              userProfile.name
-            }}.`,
-        `/projects/${project.id}/requests/${payload.requestId}?tab=response`
+          ? `The response body media-type {${payload.fieldName}} in the operation {${
+              request!.name
+            }} has been modified by {${userProfile.name}}.`
+          : `New response body media-type {${payload.fieldName}} in the operation {${
+              request!.name
+            }} has been added by {${userProfile.name}}.`,
+        `/projects/${project.id}/requests/${payload.requestId}?tab=response`,
       );
     },
   });
@@ -1888,35 +1793,31 @@ export function* deleteResponseBodyFlow() {
       const request = yield* select(
         FirebaseSelectors.createRequestSelectorByProjectIdAndRequestId(
           payload.projectId,
-          payload.requestId
-        )
+          payload.requestId,
+        ),
       );
       try {
-        yield* put(
-          UiActions.showDelayedLoading({ taskName: "deleteResponseBody" })
-        );
+        yield* put(UiActions.showDelayedLoading({ taskName: "deleteResponseBody" }));
         yield* call(Firework.deleteResponseBody, payload as ResponseBodyDoc);
         yield* call(
           sendNotificationsToProjectMembers,
-          `The response body media-type {${
-            payload.fieldName.value
-          }} in the operation {${request!.name}} has been deleted by {${
-            userProfile.name
-          }}.`,
-          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`
+          `The response body media-type {${payload.fieldName.value}} in the operation {${
+            request!.name
+          }} has been deleted by {${userProfile.name}}.`,
+          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`,
         );
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "The body has been deleted.",
-          })
+          }),
         );
       } catch (error) {
         yield* put(
           ErrorActions.catchError({
             error,
             isAlertOnly: true,
-          })
+          }),
         );
       } finally {
         yield* put(UiActions.hideLoading("deleteResponseBody"));
@@ -1955,7 +1856,7 @@ export function* submitResponseHeaderFlow() {
           : `New response header {${payload.fieldName}} in the operation {${
               request!.name
             }} has been added by {${userProfile.name}}.`,
-        `/projects/${project.id}/requests/${payload.requestId}?tab=response`
+        `/projects/${project.id}/requests/${payload.requestId}?tab=response`,
       );
     },
   });
@@ -1973,36 +1874,31 @@ export function* deleteResponseHeaderFlow() {
       const request = yield* select(
         FirebaseSelectors.createRequestSelectorByProjectIdAndRequestId(
           payload.projectId,
-          payload.requestId
-        )
+          payload.requestId,
+        ),
       );
       try {
-        yield* put(
-          UiActions.showDelayedLoading({ taskName: "deleteResponseHeader" })
-        );
-        yield* call(
-          Firework.deleteResponseHeader,
-          payload as ResponseHeaderDoc
-        );
+        yield* put(UiActions.showDelayedLoading({ taskName: "deleteResponseHeader" }));
+        yield* call(Firework.deleteResponseHeader, payload as ResponseHeaderDoc);
         yield* call(
           sendNotificationsToProjectMembers,
           `The response header {${payload.fieldName.value}} in the operation {${
             request!.name
           }} has been deleted by {${userProfile.name}}.`,
-          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`
+          `/projects/${payload.projectId}/requests/${payload.requestId}?tab=response`,
         );
         yield* put(
           UiActions.showNotification({
             type: "success",
             message: "The header has been deleted.",
-          })
+          }),
         );
       } catch (error) {
         yield* put(
           ErrorActions.catchError({
             error,
             isAlertOnly: true,
-          })
+          }),
         );
       } finally {
         yield* put(UiActions.hideLoading("deleteResponseHeader"));
@@ -2055,7 +1951,7 @@ export function* addMembersFlow() {
             ...recordableDocProps,
           };
           return call(Firework.addNotification, notification);
-        })
+        }),
       );
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
@@ -2070,7 +1966,7 @@ export function* addMembersFlow() {
             members.length > 1
               ? "New members have been added."
               : "New member has been added.",
-        })
+        }),
       );
     }
   }
@@ -2129,7 +2025,7 @@ export function* deleteMemberFlow() {
                   ...recordableDocProps,
                 };
                 return call(Firework.addNotification, notification);
-              })
+              }),
           );
         } else {
           const notification: NotificationItem = {
@@ -2149,17 +2045,14 @@ export function* deleteMemberFlow() {
           UiActions.showNotification({
             type: "success",
             message: "The member has been deleted.",
-          })
+          }),
         );
       }
     }
   }
 }
 
-export function* sendNotificationsToProjectMembers(
-  content: string,
-  link?: string
-) {
+export function* sendNotificationsToProjectMembers(content: string, link?: string) {
   const project = yield* select(ProjectSelectors.selectCurrentProject);
   assertNotEmpty(project);
   const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
@@ -2180,7 +2073,7 @@ export function* sendNotificationsToProjectMembers(
           notification.link = link;
         }
         return call(Firework.addNotification, notification);
-      })
+      }),
   );
 }
 
@@ -2226,7 +2119,7 @@ export function* markNotificationsAsReadFlow() {
             ...updatedRecordProps,
           };
           return call(Firework.updateNotification, item, notification);
-        })
+        }),
       );
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
@@ -2235,30 +2128,27 @@ export function* markNotificationsAsReadFlow() {
 }
 
 export function* handleRefreshModelField(
-  action: ReturnType<typeof ProjectActions.refreshModelField>
+  action: ReturnType<typeof ProjectActions.refreshModelField>,
 ) {
   const { payload } = action;
   const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
   const timestamp = yield* call(getTimestamp);
   const modelFields = yield* select(
-    FirebaseSelectors.createModelFieldsSelector(
-      payload.projectId,
-      payload.modelId
-    )
+    FirebaseSelectors.createModelFieldsSelector(payload.projectId, payload.modelId),
   );
   const requestParams = yield* select(
     FirebaseSelectors.createRequestParamsSelector(
       payload.projectId,
       // @ts-ignore
-      payload.requestId
-    )
+      payload.requestId,
+    ),
   );
   const requestBodies = yield* select(
     FirebaseSelectors.createRequestBodiesSelector(
       payload.projectId,
       // @ts-ignore
-      payload.requestId
-    )
+      payload.requestId,
+    ),
   );
   const responseBodies = yield* select(
     FirebaseSelectors.createResponseBodiesSelector(
@@ -2266,8 +2156,8 @@ export function* handleRefreshModelField(
       // @ts-ignore
       payload.requestId,
       // @ts-ignore
-      payload.responseStatusId
-    )
+      payload.responseStatusId,
+    ),
   );
   const responseHeaders = yield* select(
     FirebaseSelectors.createResponseHeadersSelector(
@@ -2275,8 +2165,8 @@ export function* handleRefreshModelField(
       // @ts-ignore
       payload.requestId,
       // @ts-ignore
-      payload.responseStatusId
-    )
+      payload.responseStatusId,
+    ),
   );
   let modelFieldType;
   const latestModelField =
@@ -2315,23 +2205,21 @@ export function* handleRefreshModelField(
     const newModelField = {
       [`settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
       [`fieldName.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`fieldName.settingsByMember.${userProfile.uid}.value`]: latestModelField
-        .fieldName.value,
+      [`fieldName.settingsByMember.${userProfile.uid}.value`]: latestModelField.fieldName
+        .value,
       [`isRequired.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
       [`isRequired.settingsByMember.${userProfile.uid}.value`]: latestModelField
         .isRequired.value,
       [`isArray.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`isArray.settingsByMember.${userProfile.uid}.value`]: latestModelField
-        .isArray.value,
-      [`fieldType.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`fieldType.settingsByMember.${userProfile.uid}.value`]: latestModelField
-        .fieldType.value,
-      [`format.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`format.settingsByMember.${userProfile.uid}.value`]: latestModelField
-        .format.value,
-      [`enum.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`enum.settingsByMember.${userProfile.uid}.value`]: latestModelField.enum
+      [`isArray.settingsByMember.${userProfile.uid}.value`]: latestModelField.isArray
         .value,
+      [`fieldType.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
+      [`fieldType.settingsByMember.${userProfile.uid}.value`]: latestModelField.fieldType
+        .value,
+      [`format.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
+      [`format.settingsByMember.${userProfile.uid}.value`]: latestModelField.format.value,
+      [`enum.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
+      [`enum.settingsByMember.${userProfile.uid}.value`]: latestModelField.enum.value,
       [`description.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
       [`description.settingsByMember.${userProfile.uid}.value`]: latestModelField
         .description.value,
@@ -2345,7 +2233,7 @@ export function* handleRefreshModelField(
           ...newModelField,
           projectId: payload.projectId,
           modelId: payload.modelId,
-        }
+        },
       );
     } else if (modelFieldType === "requestParam") {
       // @ts-ignore

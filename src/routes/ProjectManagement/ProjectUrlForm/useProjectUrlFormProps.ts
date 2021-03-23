@@ -23,19 +23,17 @@ const useProjectUrlFormProps = () => {
     (values: ProjectUrlFormValues) => {
       dispatch(ProjectActions.submitProjectUrlForm(values));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const onDelete = useCallback(
     (projectUrl: ProjectUrlDoc) => {
       dispatch(ProjectActions.deleteProjectUrl(projectUrl));
     },
-    [dispatch]
+    [dispatch],
   );
 
-  const projectUrls = useSelector(
-    FirebaseSelectors.createProjectUrlsSelector(projectId)
-  );
+  const projectUrls = useSelector(FirebaseSelectors.createProjectUrlsSelector(projectId));
 
   const role = useProjectRole(project);
 

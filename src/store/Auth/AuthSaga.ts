@@ -41,7 +41,7 @@ export function* signInWithGoogleFlow() {
         ErrorActions.catchError({
           error,
           isAlertOnly: true,
-        })
+        }),
       );
     } finally {
       yield* put(ProgressActions.finishProgress(type));
@@ -64,7 +64,7 @@ export function* signOutFlow() {
         ErrorActions.catchError({
           error,
           isAlertOnly: true,
-        })
+        }),
       );
     } finally {
       yield* put(UiActions.hideLoading("signOut"));
@@ -94,9 +94,5 @@ export function* refreshProfileFlow() {
 }
 
 export function* watchAuthActions() {
-  yield* all([
-    fork(signInWithGoogleFlow),
-    fork(signOutFlow),
-    fork(refreshProfileFlow),
-  ]);
+  yield* all([fork(signInWithGoogleFlow), fork(signOutFlow), fork(refreshProfileFlow)]);
 }

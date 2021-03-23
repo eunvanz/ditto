@@ -41,7 +41,7 @@ const Alert = ({
         onCancel?.();
       }
     },
-    [onCancel, onOk]
+    [onCancel, onOk],
   );
 
   useEffect(() => {

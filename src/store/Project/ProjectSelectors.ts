@@ -3,22 +3,22 @@ import { createSelector } from "@reduxjs/toolkit";
 
 const selectCurrentProject = createSelector(
   (state: RootState) => state.project.currentProject,
-  (project) => project
+  (project) => project,
 );
 
 const selectCurrentModel = createSelector(
   (state: RootState) => state.project.currentModel,
-  (model) => model
+  (model) => model,
 );
 
 const selectFieldTypeToCreate = createSelector(
   (state: RootState) => state.project.fieldTypeToCreate,
-  (fieldType) => fieldType
+  (fieldType) => fieldType,
 );
 
 const selectEditingModelField = createSelector(
   (state: RootState) => state.project.editingModelField,
-  (editingModelField) => editingModelField
+  (editingModelField) => editingModelField,
 );
 
 const ProjectSelectors = {

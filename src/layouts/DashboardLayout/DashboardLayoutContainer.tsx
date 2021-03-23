@@ -6,9 +6,7 @@ export interface DashboardLayoutContainerProps {
   children: React.ReactNode;
 }
 
-const DashboardLayoutContainer = ({
-  children,
-}: DashboardLayoutContainerProps) => {
+const DashboardLayoutContainer = ({ children }: DashboardLayoutContainerProps) => {
   const props = useDashboardLayoutProps();
 
   return <DashboardLayout {...props}>{children}</DashboardLayout>;

@@ -24,8 +24,8 @@ const useNotificationsProps = () => {
     if (notifications) {
       dispatch(
         ProjectActions.markNotificationsAsRead(
-          notifications.map((notification) => notification.id)
-        )
+          notifications.map((notification) => notification.id),
+        ),
       );
     }
   }, [dispatch, notifications]);
@@ -34,7 +34,7 @@ const useNotificationsProps = () => {
     (id: string) => {
       dispatch(ProjectActions.markNotificationsAsRead([id]));
     },
-    [dispatch]
+    [dispatch],
   );
 
   return {

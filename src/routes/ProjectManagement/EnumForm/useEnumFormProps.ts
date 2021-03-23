@@ -19,7 +19,7 @@ const useEnumFormProps = ({ project }: UseEnumFormPropsParams) => {
   });
 
   const enumerations = useSelector(
-    FirebaseSelectors.createProjectEnumerationsSelector(project.id)
+    FirebaseSelectors.createProjectEnumerationsSelector(project.id),
   );
 
   const dispatch = useDispatch();
@@ -28,14 +28,14 @@ const useEnumFormProps = ({ project }: UseEnumFormPropsParams) => {
     (values: EnumFormValues) => {
       dispatch(ProjectActions.submitEnumForm(values));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const onDelete = useCallback(
     (enumeration: EnumerationDoc) => {
       dispatch(ProjectActions.deleteEnumeration(enumeration));
     },
-    [dispatch]
+    [dispatch],
   );
 
   useLoading(enumerations, `loadingExistingEnumerations-${project.id}`);

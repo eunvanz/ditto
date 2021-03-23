@@ -203,10 +203,7 @@ export const MemberItem: React.FC<MemberItemProps> = ({
               open={isMoreOpen}
             >
               {menuItems.map((item) => (
-                <MenuItem
-                  key={item}
-                  onClick={() => onClickMoveTo(member, item)}
-                >
+                <MenuItem key={item} onClick={() => onClickMoveTo(member, item)}>
                   Move to {item}
                 </MenuItem>
               ))}

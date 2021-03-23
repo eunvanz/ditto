@@ -5,9 +5,7 @@ import { RootState } from "../../store";
 import UiSlice from "../../store/Ui/UiSlice";
 
 const SignInModalContainer = () => {
-  const isVisible = useSelector(
-    (state: RootState) => state.ui.signInModal.isVisible
-  );
+  const isVisible = useSelector((state: RootState) => state.ui.signInModal.isVisible);
 
   const dispatch = useDispatch();
 

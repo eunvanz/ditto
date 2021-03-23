@@ -18,11 +18,7 @@ const ModelFormContainer: React.FC<ModelFormContainerProps> = ({
   const props = useModelFormProps(defaultModelId);
 
   return onClose ? (
-    <ModelFormModal
-      isVisible={isVisible || false}
-      onClose={onClose}
-      {...props}
-    />
+    <ModelFormModal isVisible={isVisible || false} onClose={onClose} {...props} />
   ) : (
     <ModelForm depth={depth} {...props} />
   );

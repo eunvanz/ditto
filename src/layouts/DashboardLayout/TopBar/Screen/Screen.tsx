@@ -10,16 +10,10 @@ export interface ScreenProps {
 
 const Screen: React.FC<ScreenProps> = ({ screenMode, onToggleScreenMode }) => {
   return (
-    <Tooltip
-      title={screenMode === SCREEN_MODE.WIDE ? "Default screen" : "Wide screen"}
-    >
+    <Tooltip title={screenMode === SCREEN_MODE.WIDE ? "Default screen" : "Wide screen"}>
       <IconButton color="inherit" onClick={onToggleScreenMode}>
         <SvgIcon fontSize="small">
-          {screenMode === SCREEN_MODE.WIDE ? (
-            <FullscreenExit />
-          ) : (
-            <Fullscreen />
-          )}
+          {screenMode === SCREEN_MODE.WIDE ? <FullscreenExit /> : <Fullscreen />}
         </SvgIcon>
       </IconButton>
     </Tooltip>

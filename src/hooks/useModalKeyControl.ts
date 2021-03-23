@@ -9,17 +9,11 @@ export interface UseModalKeyControlParams {
   name: string;
 }
 
-const useModalKeyControl = ({
-  isVisible,
-  onClose,
-  name,
-}: UseModalKeyControlParams) => {
+const useModalKeyControl = ({ isVisible, onClose, name }: UseModalKeyControlParams) => {
   const dispatch = useDispatch();
 
   const modalLayers = useSelector(UiSelectors.selectModalLayers);
-  const isModalEscapeDisabled = useSelector(
-    UiSelectors.selectIsModalEscapeDisabled
-  );
+  const isModalEscapeDisabled = useSelector(UiSelectors.selectIsModalEscapeDisabled);
 
   const handleOnPressKey = useCallback(
     (e: KeyboardEvent) => {
@@ -30,7 +24,7 @@ const useModalKeyControl = ({
         }
       }
     },
-    [isModalEscapeDisabled, modalLayers, name, onClose]
+    [isModalEscapeDisabled, modalLayers, name, onClose],
   );
 
   useEffect(() => {

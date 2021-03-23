@@ -7,12 +7,7 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import {
-  EditOutlined,
-  ArrowDropDown,
-  ArrowRight,
-  Add,
-} from "@material-ui/icons";
+import { EditOutlined, ArrowDropDown, ArrowRight, Add } from "@material-ui/icons";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   checkHasAuthorization,
@@ -187,9 +182,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
           modelFields={modelFields}
           modelField={modelField}
           onSubmit={
-            depth
-              ? onSubmitModelField
-              : onSubmitModelFieldCustom || onSubmitModelField
+            depth ? onSubmitModelField : onSubmitModelFieldCustom || onSubmitModelField
           }
           onDelete={() =>
             depth
@@ -202,10 +195,9 @@ const ModelTable: React.FC<ModelTableProps> = ({
           isSubmitting={
             depth
               ? checkIsSubmittingModelField(modelField.id)
-              : (
-                  checkIsSubmittingModelFieldCustom ||
-                  checkIsSubmittingModelField
-                )(modelField.id)
+              : (checkIsSubmittingModelFieldCustom || checkIsSubmittingModelField)(
+                  modelField.id,
+                )
           }
           onClickCell={
             hasManagerAuthorization
@@ -241,10 +233,7 @@ const ModelTable: React.FC<ModelTableProps> = ({
               isSubmitting={
                 depth
                   ? checkIsSubmittingModelField()
-                  : (
-                      checkIsSubmittingModelFieldCustom ||
-                      checkIsSubmittingModelField
-                    )()
+                  : (checkIsSubmittingModelFieldCustom || checkIsSubmittingModelField)()
               }
               disabledColumns={disabledColumns}
               customFieldName={customFieldName}

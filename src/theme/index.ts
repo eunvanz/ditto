@@ -180,7 +180,7 @@ export const createTheme = (config: ThemeConfig = {}): Theme => {
   }
 
   let theme = createMuiTheme(
-    merge({}, baseOptions, themeOptions, { direction: config.direction })
+    merge({}, baseOptions, themeOptions, { direction: config.direction }),
   );
 
   if (config.responsiveFontSizes) {

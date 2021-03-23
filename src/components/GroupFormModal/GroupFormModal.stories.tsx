@@ -18,9 +18,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story<GroupFormModalProps> = (args) => (
-  <GroupFormModal {...args} />
-);
+const Template: Story<GroupFormModalProps> = (args) => <GroupFormModal {...args} />;
 
 export const 생성 = Template.bind({});
 생성.args = {};

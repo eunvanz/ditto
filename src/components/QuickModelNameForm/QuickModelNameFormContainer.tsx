@@ -16,22 +16,18 @@ const QuickModelNameFormContainer = () => {
   assertNotEmpty(project);
 
   const projectModels = useSelector(
-    FirebaseSelectors.createProjectModelsSelector(project.id)
+    FirebaseSelectors.createProjectModelsSelector(project.id),
   );
   const isSubmitting = useSelector(
-    ProgressSelectors.createInProgressSelector(
-      ProjectActions.submitModelNameForm.type
-    )
+    ProgressSelectors.createInProgressSelector(ProjectActions.submitModelNameForm.type),
   );
   const { model } = useSelector(UiSelectors.selectQuickModelNameFormModal);
 
   const submitModel = useCallback(
     (data: ModelNameFormValues) => {
-      dispatch(
-        ProjectActions.submitQuickModelNameForm({ ...data, target: model })
-      );
+      dispatch(ProjectActions.submitQuickModelNameForm({ ...data, target: model }));
     },
-    [dispatch, model]
+    [dispatch, model],
   );
 
   const existingModelNames = useMemo(() => {

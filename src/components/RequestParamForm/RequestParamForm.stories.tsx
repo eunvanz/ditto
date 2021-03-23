@@ -26,9 +26,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<RequestParamFormProps> = (args) => (
-  <RequestParamForm {...args} />
-);
+const Template: Story<RequestParamFormProps> = (args) => <RequestParamForm {...args} />;
 
 export const 헤더 = Template.bind({});
 헤더.args = {

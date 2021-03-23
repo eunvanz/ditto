@@ -1,9 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
 
-import ModelFieldFormItem, {
-  ModelFieldFormItemProps,
-} from "./ModelFieldFormItem";
+import ModelFieldFormItem, { ModelFieldFormItemProps } from "./ModelFieldFormItem";
 import mockProject from "../../mocks/mockProject";
 import { Table, TableBody } from "@material-ui/core";
 

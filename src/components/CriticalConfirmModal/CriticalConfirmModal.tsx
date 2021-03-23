@@ -38,11 +38,7 @@ const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
   });
 
   return (
-    <Dialog
-      open={isVisible}
-      onClose={onClose}
-      aria-labelledby="form-dialog-title"
-    >
+    <Dialog open={isVisible} onClose={onClose} aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">{title}</DialogTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
@@ -62,9 +58,7 @@ const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
             fullWidth
             inputRef={register({
               validate: (text: string) => {
-                return (
-                  text === keyword || `Please type "${keyword}" correctly.`
-                );
+                return text === keyword || `Please type "${keyword}" correctly.`;
               },
             })}
             placeholder={`${keyword}`}

@@ -107,16 +107,14 @@ const SearchUserForm = ({
   }, []);
 
   const removeMember = useCallback((member: UserProfileDoc) => {
-    setSelectedMembers((members) =>
-      members.filter((item) => item.uid !== member.uid)
-    );
+    setSelectedMembers((members) => members.filter((item) => item.uid !== member.uid));
   }, []);
 
   const filteredResultItem = useMemo(() => {
     return resultItems?.filter(
       (item) =>
         !selectedMembers.map((item) => item.uid).includes(item.uid) &&
-        !project.members[item.uid]
+        !project.members[item.uid],
     );
   }, [project.members, resultItems, selectedMembers]);
 
@@ -146,15 +144,10 @@ const SearchUserForm = ({
         {Boolean(filteredResultItem?.length) ? (
           filteredResultItem
             ?.filter(
-              (item) =>
-                !selectedMembers.map((item) => item.uid).includes(item.uid)
+              (item) => !selectedMembers.map((item) => item.uid).includes(item.uid),
             )
             .map((item) => (
-              <MemberItem
-                member={item}
-                onClick={selectMember}
-                buttonIcon={<Add />}
-              />
+              <MemberItem member={item} onClick={selectMember} buttonIcon={<Add />} />
             ))
         ) : (
           <div className={classes.emptyContainer}>No results</div>
@@ -167,11 +160,7 @@ const SearchUserForm = ({
         <div className={classes.resultContainer}>
           {selectedMembers.length > 0 ? (
             selectedMembers.map((item) => (
-              <MemberItem
-                member={item}
-                onClick={removeMember}
-                buttonIcon={<Close />}
-              />
+              <MemberItem member={item} onClick={removeMember} buttonIcon={<Close />} />
             ))
           ) : (
             <div className={classes.emptyContainer}>No one selected</div>
@@ -201,11 +190,7 @@ export interface MemberItemProps {
   buttonIcon: ReactNode;
 }
 
-export const MemberItem: FC<MemberItemProps> = ({
-  member,
-  onClick,
-  buttonIcon,
-}) => {
+export const MemberItem: FC<MemberItemProps> = ({ member, onClick, buttonIcon }) => {
   const classes = useStyles();
 
   return (

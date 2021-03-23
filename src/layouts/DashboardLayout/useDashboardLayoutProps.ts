@@ -2,10 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import { matchPath, useHistory, useLocation } from "react-router-dom";
-import {
-  checkHasAuthorization,
-  getProjectRole,
-} from "../../helpers/projectHelpers";
+import { checkHasAuthorization, getProjectRole } from "../../helpers/projectHelpers";
 import ROUTE from "../../paths";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
@@ -48,19 +45,19 @@ const useDashboardLayoutProps = () => {
       dispatch(ProjectActions.receiveCurrentProject(project));
       dispatch(UiActions.showGroupFormModal(group));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const groupedProjectGroups = useSelector(
     FirebaseSelectors.createGroupedProjectGroupsSelector(
-      projects.map((project) => project.id)
-    )
+      projects.map((project) => project.id),
+    ),
   );
 
   const groupedProjectRequests = useSelector(
     FirebaseSelectors.createGroupedProjectRequestsSelector(
-      projects.map((project) => project.id)
-    )
+      projects.map((project) => project.id),
+    ),
   );
 
   const showRequestFormModal = useCallback(
@@ -70,25 +67,22 @@ const useDashboardLayoutProps = () => {
           projectId: project.id,
           groupId: group?.id,
           requests: groupedProjectRequests[project.id] || [],
-        })
+        }),
       );
     },
-    [dispatch, groupedProjectRequests]
+    [dispatch, groupedProjectRequests],
   );
 
-  const getRequestSectionItem = useCallback(
-    (projectId: string, request: RequestDoc) => {
-      return {
-        title: request.name,
-        type: "request" as const,
-        hasNew: false,
-        href: `${ROUTE.PROJECTS}/${projectId}${ROUTE.REQUESTS}/${request.id}`,
-        requestMethod: request.method,
-        isDeprecated: request.isDeprecated,
-      };
-    },
-    []
-  );
+  const getRequestSectionItem = useCallback((projectId: string, request: RequestDoc) => {
+    return {
+      title: request.name,
+      type: "request" as const,
+      hasNew: false,
+      href: `${ROUTE.PROJECTS}/${projectId}${ROUTE.REQUESTS}/${request.id}`,
+      requestMethod: request.method,
+      isDeprecated: request.isDeprecated,
+    };
+  }, []);
 
   const getGroupSubItems = useCallback(
     (project: ProjectDoc, group: GroupDoc) => {
@@ -96,7 +90,7 @@ const useDashboardLayoutProps = () => {
         ?.filter((request) => request.groupId === group.id)
         .map((request) => getRequestSectionItem(project.id, request));
     },
-    [getRequestSectionItem, groupedProjectRequests]
+    [getRequestSectionItem, groupedProjectRequests],
   );
 
   const getProjectSubItems = useCallback(
@@ -114,7 +108,7 @@ const useDashboardLayoutProps = () => {
           onClickConfig: () => showGroupFormModal(project, group),
           onClickAddRequest: () => showRequestFormModal(project, group),
           isOpen: items?.some((item) =>
-            matchPath(location.pathname, { path: item.href, exact: false })
+            matchPath(location.pathname, { path: item.href, exact: false }),
           ),
           items,
           hasNoAuth,
@@ -136,7 +130,7 @@ const useDashboardLayoutProps = () => {
       showGroupFormModal,
       showRequestFormModal,
       userProfile,
-    ]
+    ],
   );
 
   const sections = useMemo(() => {
@@ -152,8 +146,7 @@ const useDashboardLayoutProps = () => {
               title: project.title,
               hasNew: false,
               childrenCount: 0,
-              onClickConfig: () =>
-                history.push(`${ROUTE.PROJECTS}/${project.id}`),
+              onClickConfig: () => history.push(`${ROUTE.PROJECTS}/${project.id}`),
               onClickAddRequest: () => showRequestFormModal(project),
               onClickAddGroup: () => showGroupFormModal(project),
               type: "project" as const,
@@ -165,7 +158,7 @@ const useDashboardLayoutProps = () => {
                   matchPath(location.pathname, {
                     path: item.href,
                     exact: false,
-                  })
+                  }),
               ),
             } || []
           );

@@ -28,7 +28,7 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
       fieldType,
       description: enumeration?.description || "",
     }),
-    [enumeration, fieldType]
+    [enumeration, fieldType],
   );
 
   const {
@@ -59,7 +59,7 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
         onSubmit({ ...getValues(), fieldType });
       })();
     },
-    [fieldType, getValues, handleSubmit, onSubmit, trigger]
+    [fieldType, getValues, handleSubmit, onSubmit, trigger],
   );
 
   return existingEnumerations ? (
@@ -69,9 +69,7 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
           autoFocus
           label="Enumeration name"
           name="name"
-          inputRef={register(
-            registerOptions.enumerationForm.name(existingEnumerations)
-          )}
+          inputRef={register(registerOptions.enumerationForm.name(existingEnumerations))}
           variant="outlined"
           fullWidth
           required

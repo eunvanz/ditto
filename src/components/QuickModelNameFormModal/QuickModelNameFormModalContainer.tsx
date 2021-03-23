@@ -9,9 +9,7 @@ import QuickModelNameFormModal from "./QuickModelNameFormModal";
 const QuickModelNameFormModalContainer = () => {
   const dispatch = useDispatch();
 
-  const { isVisible, model } = useSelector(
-    UiSelectors.selectQuickModelNameFormModal
-  );
+  const { isVisible, model } = useSelector(UiSelectors.selectQuickModelNameFormModal);
 
   const handleOnClose = useCallback(() => {
     dispatch(UiActions.hideQuickModelNameFormModal());

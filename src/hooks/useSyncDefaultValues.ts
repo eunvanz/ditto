@@ -5,10 +5,7 @@ import { useEffect } from "react";
  * @param defaultValues
  * @param reset
  */
-const useSyncDefaultValues = <T>(
-  reset: (values?: T) => void,
-  defaultValues?: T
-) => {
+const useSyncDefaultValues = <T>(reset: (values?: T) => void, defaultValues?: T) => {
   useEffect(() => {
     reset(defaultValues);
   }, [defaultValues, reset]);

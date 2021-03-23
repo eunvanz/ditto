@@ -3,7 +3,7 @@ import { RootState } from "..";
 import { ProjectActions } from "../Project/ProjectSlice";
 
 const createInProgressSelector = (actionTypes: string[] | string) => (
-  state: RootState
+  state: RootState,
 ) => {
   if (typeof actionTypes === "string") {
     return state.progress.includes(actionTypes);
@@ -15,41 +15,41 @@ const createInProgressSelector = (actionTypes: string[] | string) => (
 const selectSubmitModelFieldFormItemActions = createSelector(
   (state: RootState) =>
     state.progress.filter((item) =>
-      item.startsWith(ProjectActions.submitModelFieldForm.type)
+      item.startsWith(ProjectActions.submitModelFieldForm.type),
     ),
-  (submitModelFieldFormActions) => submitModelFieldFormActions
+  (submitModelFieldFormActions) => submitModelFieldFormActions,
 );
 
 const selectSubmitRequestParamFormActions = createSelector(
   (state: RootState) =>
     state.progress.filter((item) =>
-      item.startsWith(ProjectActions.submitRequestParamForm.type)
+      item.startsWith(ProjectActions.submitRequestParamForm.type),
     ),
-  (submitModelFieldFormActions) => submitModelFieldFormActions
+  (submitModelFieldFormActions) => submitModelFieldFormActions,
 );
 
 const selectSubmitRequestBodyFormActions = createSelector(
   (state: RootState) =>
     state.progress.filter((item) =>
-      item.startsWith(ProjectActions.submitRequestBodyForm.type)
+      item.startsWith(ProjectActions.submitRequestBodyForm.type),
     ),
-  (submitModelFieldFormActions) => submitModelFieldFormActions
+  (submitModelFieldFormActions) => submitModelFieldFormActions,
 );
 
 const selectSubmitResponseBodyFormActions = createSelector(
   (state: RootState) =>
     state.progress.filter((item) =>
-      item.startsWith(ProjectActions.submitResponseBodyForm.type)
+      item.startsWith(ProjectActions.submitResponseBodyForm.type),
     ),
-  (submitModelFieldFormActions) => submitModelFieldFormActions
+  (submitModelFieldFormActions) => submitModelFieldFormActions,
 );
 
 const selectSubmitResponseHeaderFormActions = createSelector(
   (state: RootState) =>
     state.progress.filter((item) =>
-      item.startsWith(ProjectActions.submitResponseHeaderForm.type)
+      item.startsWith(ProjectActions.submitResponseHeaderForm.type),
     ),
-  (submitModelFieldFormActions) => submitModelFieldFormActions
+  (submitModelFieldFormActions) => submitModelFieldFormActions,
 );
 
 const ProgressSelectors = {

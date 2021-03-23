@@ -19,13 +19,11 @@ const useRequestFormModalProps = () => {
     (values: RequestFormValues) => {
       dispatch(ProjectActions.submitRequestForm(values));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const isSubmitting = useSelector(
-    ProgressSelectors.createInProgressSelector(
-      ProjectActions.submitRequestForm.type
-    )
+    ProgressSelectors.createInProgressSelector(ProjectActions.submitRequestForm.type),
   );
 
   return {

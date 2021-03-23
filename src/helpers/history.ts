@@ -1,6 +1,6 @@
 import { createBrowserHistory } from "history";
 
-export const BASE_NAME = ""
+export const BASE_NAME = "";
 
 const history = createBrowserHistory({ basename: BASE_NAME });
 

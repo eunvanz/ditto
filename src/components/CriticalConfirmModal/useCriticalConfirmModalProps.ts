@@ -6,9 +6,7 @@ import { UiActions } from "../../store/Ui/UiSlice";
 const useCriticalConfirmModalProps = () => {
   const dispatch = useDispatch();
 
-  const criticalConfirmModal = useSelector(
-    UiSelectors.selectCriticalConfirmModal
-  );
+  const criticalConfirmModal = useSelector(UiSelectors.selectCriticalConfirmModal);
 
   const onClose = useCallback(() => {
     dispatch(UiActions.hideCriticalConfirmModal());

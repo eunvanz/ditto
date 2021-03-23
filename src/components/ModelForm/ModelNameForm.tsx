@@ -66,10 +66,10 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
         onSubmit({
           ...(getValues() as ModelNameFormValues),
           target: model,
-        })
+        }),
       )();
     },
-    [getValues, handleSubmit, hasManagerAuthorization, model, onSubmit]
+    [getValues, handleSubmit, hasManagerAuthorization, model, onSubmit],
   );
 
   const handleOnBlur = useCallback(() => {
@@ -101,9 +101,7 @@ const ModelNameForm: React.FC<ModelNameFormProps> = ({
                     message: "Name is too long.",
                   },
                   validate: (data: string) => {
-                    const isDup = existingModelNames.some(
-                      (item) => item === data
-                    );
+                    const isDup = existingModelNames.some((item) => item === data);
                     return isDup ? "Name is duplicated." : true;
                   },
                   pattern: patterns.wordsWithNoSpace,

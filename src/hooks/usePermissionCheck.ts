@@ -5,9 +5,7 @@ import { UiActions } from "../store/Ui/UiSlice";
 import AuthSelectors from "../store/Auth/AuthSelector";
 
 const usePermissionCheck = () => {
-  const permissionErrors = useSelector(
-    FirebaseSelectors.selectPermissionErrors
-  );
+  const permissionErrors = useSelector(FirebaseSelectors.selectPermissionErrors);
 
   const auth = useSelector(AuthSelectors.selectAuth);
 

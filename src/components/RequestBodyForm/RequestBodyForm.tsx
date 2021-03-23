@@ -17,10 +17,7 @@ import { Theme } from "../../theme";
 import { MemberRole, ModelFieldDoc, RequestBodyDoc } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import ModelTable from "../ModelTable";
-import {
-  getTextFieldErrorProps,
-  mediaTypes,
-} from "../../helpers/projectHelpers";
+import { getTextFieldErrorProps, mediaTypes } from "../../helpers/projectHelpers";
 
 const useStyles = makeStyles((theme: Theme) => ({
   header: {
@@ -84,9 +81,7 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
 }: RequestBodyFormProps) => {
   const classes = useStyles();
 
-  const [isOpen, setIsOpen] = useState<boolean>(
-    requestBodies?.length ? true : false
-  );
+  const [isOpen, setIsOpen] = useState<boolean>(requestBodies?.length ? true : false);
 
   const toggleOpen = useCallback(() => {
     setIsOpen((isOpen) => !isOpen);
@@ -111,10 +106,7 @@ const RequestBodyForm: React.FC<RequestBodyFormProps> = ({
             </SvgIcon>
             Body
             {requestBodies?.length ? (
-              <Chip
-                className={classes.countChip}
-                label={requestBodies.length}
-              />
+              <Chip className={classes.countChip} label={requestBodies.length} />
             ) : (
               ""
             )}

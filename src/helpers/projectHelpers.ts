@@ -14,8 +14,7 @@ import {
 export const patterns = {
   wordsWithNoSpace: {
     value: /^[\w-/]+\S$/,
-    message:
-      "Try a mix of letters or numbers more than 2 characters with no spaces.",
+    message: "Try a mix of letters or numbers more than 2 characters with no spaces.",
   },
 };
 
@@ -79,10 +78,7 @@ export const getProjectKeyByRole = (role: MemberRole) => {
   }
 };
 
-export const checkHasAuthorization = (
-  role: MemberRole,
-  targetRole: MemberRole
-) => {
+export const checkHasAuthorization = (role: MemberRole, targetRole: MemberRole) => {
   if (targetRole === "owner") {
     return role === "owner";
   } else if (targetRole === "manager") {
@@ -113,10 +109,7 @@ export const getProjectRole = ({
   }
 };
 
-export const removeKeyFromRecord = (
-  record: Record<string, any>,
-  key: string
-) => {
+export const removeKeyFromRecord = (record: Record<string, any>, key: string) => {
   const keys = Object.keys(record);
   const filteredKeys = keys.filter((item) => item !== key);
   const result: Record<string, any> = {};
@@ -132,13 +125,11 @@ export const getTrueKeys = (record: Record<string, boolean>) => {
 export const convertTimestampToDate = (timestamp: DocTimestamp) => {
   return new firebase.firestore.Timestamp(
     timestamp.seconds,
-    timestamp.nanoseconds
+    timestamp.nanoseconds,
   ).toDate();
 };
 
-export const getRequestParamLocationName = (
-  location: REQUEST_PARAM_LOCATION
-) => {
+export const getRequestParamLocationName = (location: REQUEST_PARAM_LOCATION) => {
   switch (location) {
     case REQUEST_PARAM_LOCATION.COOKIE:
       return "cookie";
@@ -151,10 +142,7 @@ export const getRequestParamLocationName = (
   }
 };
 
-export const checkIsNewerTimestamp = (
-  target: DocTimestamp,
-  compare: DocTimestamp
-) => {
+export const checkIsNewerTimestamp = (target: DocTimestamp, compare: DocTimestamp) => {
   if (target.seconds < compare.seconds) {
     return false;
   } else if (target.seconds === compare.seconds) {
@@ -178,23 +166,14 @@ export const MODEL_FIELD_KEYS: ModelFieldKey[] = [
   "description",
 ];
 
-export const checkHasUpdatedFieldKey = (
-  modelField: ModelFieldDoc,
-  uid: string
-) => {
+export const checkHasUpdatedFieldKey = (modelField: ModelFieldDoc, uid: string) => {
   return MODEL_FIELD_KEYS.some(
-    (key) =>
-      modelField[key].value !== modelField[key].settingsByMember?.[uid]?.value
+    (key) => modelField[key].value !== modelField[key].settingsByMember?.[uid]?.value,
   );
 };
 
-export const checkHasUpdatedFields = (
-  modelFields: ModelFieldDoc[],
-  uid: string
-) => {
-  return modelFields.some((modelField) =>
-    checkHasUpdatedFieldKey(modelField, uid)
-  );
+export const checkHasUpdatedFields = (modelFields: ModelFieldDoc[], uid: string) => {
+  return modelFields.some((modelField) => checkHasUpdatedFieldKey(modelField, uid));
 };
 
 export const commonStyles = {

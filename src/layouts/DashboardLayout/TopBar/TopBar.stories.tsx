@@ -30,9 +30,7 @@ export default {
 
 const defaultProps: Partial<TopBarProps> = {};
 
-const Template: Story<TopBarProps> = (args) => (
-  <TopBar {...defaultProps} {...args} />
-);
+const Template: Story<TopBarProps> = (args) => <TopBar {...defaultProps} {...args} />;
 
 export const 기본 = Template.bind({});
 기본.args = {};

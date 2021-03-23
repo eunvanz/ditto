@@ -27,23 +27,23 @@ const useSettingsTabProps = () => {
   ]);
 
   const projectGroups = useSelector(
-    FirebaseSelectors.createProjectGroupsSelector(projectId)
+    FirebaseSelectors.createProjectGroupsSelector(projectId),
   );
   const requests = useSelector(
-    FirebaseSelectors.createProjectRequestsSelector(projectId)
+    FirebaseSelectors.createProjectRequestsSelector(projectId),
   );
 
   const onSubmit = useCallback(
     (values: RequestSettingFormValues) => {
       dispatch(ProjectActions.submitRequestSettingForm(values));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const isSubmitting = useSelector(
     ProgressSelectors.createInProgressSelector(
-      ProjectActions.submitRequestSettingForm.type
-    )
+      ProjectActions.submitRequestSettingForm.type,
+    ),
   );
 
   const onDelete = useCallback(() => {

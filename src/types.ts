@@ -52,8 +52,7 @@ export interface UserProfile {
   screenMode?: SCREEN_MODE;
 }
 
-export interface UserProfileDoc
-  extends Omit<UserProfile, "registeredAt" | "updatedAt"> {
+export interface UserProfileDoc extends Omit<UserProfile, "registeredAt" | "updatedAt"> {
   id?: string;
   registeredAt: DocTimestamp;
   updatedAt: DocTimestamp;
@@ -140,7 +139,7 @@ export enum FIELD_TYPE {
 
 export const fieldTypes = Object.keys(FIELD_TYPE).map(
   // @ts-ignore
-  (key) => FIELD_TYPE[key as keyof FIELD_TYPE]
+  (key) => FIELD_TYPE[key as keyof FIELD_TYPE],
 );
 
 export enum FORMAT {
@@ -203,13 +202,7 @@ export interface ModelFieldItem extends Recordable {
 
 export type Modifiable<T extends CommonModelFieldItem> = Omit<
   Partial<T>,
-  | "fieldName"
-  | "isRequired"
-  | "isArray"
-  | "fieldType"
-  | "format"
-  | "enum"
-  | "description"
+  "fieldName" | "isRequired" | "isArray" | "fieldType" | "format" | "enum" | "description"
 > & {
   fieldName: Partial<ModelCell<string>>;
   isRequired: Partial<ModelCell<boolean>>;
@@ -237,13 +230,7 @@ export type ModelCellDoc<T> = Doc<ModelCell<T>, ModelCellSettings>;
 
 export type ModelFieldDoc = Omit<
   Doc<ModelFieldItem, BaseSettings>,
-  | "fieldName"
-  | "isRequired"
-  | "fieldType"
-  | "format"
-  | "enum"
-  | "description"
-  | "isArray"
+  "fieldName" | "isRequired" | "fieldType" | "format" | "enum" | "description" | "isArray"
 > & {
   fieldName: ModelCellDoc<string>;
   isRequired: ModelCellDoc<boolean>;
@@ -324,18 +311,15 @@ export interface ResponseHeaderItem extends CommonModelFieldItem {
 
 export type RequestDoc = Doc<RequestItem, BaseSettings>;
 
-export type RequestParamDoc = Doc<RequestParamItem, BaseSettings> &
-  ModelFieldDoc;
+export type RequestParamDoc = Doc<RequestParamItem, BaseSettings> & ModelFieldDoc;
 
 export type RequestBodyDoc = Doc<RequestBodyItem, BaseSettings> & ModelFieldDoc;
 
 export type ResponseStatusDoc = Doc<ResponseStatusItem, BaseSettings>;
 
-export type ResponseBodyDoc = Doc<ResponseBodyItem, BaseSettings> &
-  ModelFieldDoc;
+export type ResponseBodyDoc = Doc<ResponseBodyItem, BaseSettings> & ModelFieldDoc;
 
-export type ResponseHeaderDoc = Doc<ResponseHeaderItem, BaseSettings> &
-  ModelFieldDoc;
+export type ResponseHeaderDoc = Doc<ResponseHeaderItem, BaseSettings> & ModelFieldDoc;
 
 export interface ModalBase {
   isVisible: boolean;

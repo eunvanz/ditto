@@ -7,9 +7,7 @@ export interface RequestParamFormContainerProps {
   location: REQUEST_PARAM_LOCATION;
 }
 
-const RequestParamFormContainer = ({
-  location,
-}: RequestParamFormContainerProps) => {
+const RequestParamFormContainer = ({ location }: RequestParamFormContainerProps) => {
   const props = useRequestParamFormProps({ location });
   return <RequestParamForm {...props} />;
 };

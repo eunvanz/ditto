@@ -9,11 +9,7 @@ import { getProjectKeyByRole } from "../../helpers/projectHelpers";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import useLoading from "../../hooks/useLoading";
 
-const useMemberListProps = ({
-  title,
-  allMembers,
-  role,
-}: MemberListContainerProps) => {
+const useMemberListProps = ({ title, allMembers, role }: MemberListContainerProps) => {
   const dispatch = useDispatch();
 
   const { project } = useProjectByParam();
@@ -36,31 +32,29 @@ const useMemberListProps = ({
       return [];
     }
     return allMembers.filter(
-      (member) => project[getProjectKeyByRole(listRole)][member.uid]
+      (member) => project[getProjectKeyByRole(listRole)][member.uid],
     );
   }, [allMembers, project, listRole]);
 
   const onClickMoveTo = useCallback(
     (member: UserProfileDoc, newRole: MemberRole) => {
-      dispatch(
-        ProjectActions.changeMemberRole({ member, newRole, oldRole: listRole })
-      );
+      dispatch(ProjectActions.changeMemberRole({ member, newRole, oldRole: listRole }));
     },
-    [dispatch, listRole]
+    [dispatch, listRole],
   );
 
   const onClickDelete = useCallback(
     (member: UserProfileDoc, listRole: MemberRole) => {
       dispatch(ProjectActions.deleteMember({ member, role: listRole }));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const onClickAdd = useCallback(
     (listRole: MemberRole) => {
       dispatch(UiActions.showSearchUserFormModal(listRole));
     },
-    [dispatch]
+    [dispatch],
   );
 
   useLoading(userProfile, "loadingUserProfile");

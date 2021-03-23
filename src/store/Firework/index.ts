@@ -79,26 +79,15 @@ function* addProjectUrl(data: ProjectUrlItem) {
 }
 
 function getProjectUrlRef(projectId: string) {
-  return db
-    .collection(`projects/${projectId}/urls`)
-    .orderBy("createdAt", "asc");
+  return db.collection(`projects/${projectId}/urls`).orderBy("createdAt", "asc");
 }
 
 function* deleteProjectUrl(projectUrl: ProjectUrlDoc) {
-  yield* call(
-    deleteDocument,
-    `projects/${projectUrl.projectId}/urls/`,
-    projectUrl.id
-  );
+  yield* call(deleteDocument, `projects/${projectUrl.projectId}/urls/`, projectUrl.id);
 }
 
 function* updateProjectUrl(id: string, projectUrl: Partial<ProjectUrlItem>) {
-  yield* call(
-    updateDocument,
-    `projects/${projectUrl.projectId}/urls`,
-    id,
-    projectUrl
-  );
+  yield* call(updateDocument, `projects/${projectUrl.projectId}/urls`, id, projectUrl);
 }
 
 function* updateModel(id: string, model: Partial<ModelItem>) {
@@ -110,7 +99,7 @@ function* updateModelField(id: string, modelField: Modifiable<ModelFieldItem>) {
     updateDocument,
     `projects/${modelField.projectId}/models/${modelField.modelId}/modelFields`,
     id,
-    modelField
+    modelField,
   );
 }
 
@@ -122,17 +111,11 @@ function* addModelField(data: ModelFieldItem) {
   return yield* call(
     addDocument,
     `projects/${data.projectId}/models/${data.modelId}/modelFields`,
-    data
+    data,
   );
 }
 
-function getModelRef({
-  projectId,
-  modelId,
-}: {
-  projectId: string;
-  modelId: string;
-}) {
+function getModelRef({ projectId, modelId }: { projectId: string; modelId: string }) {
   return db.doc(`projects/${projectId}/models/${modelId}`);
 }
 
@@ -145,9 +128,7 @@ function* deleteModel(model: ModelDoc) {
 }
 
 function getModelFieldsRef(model: ModelDoc) {
-  return db.collection(
-    `projects/${model.projectId}/models/${model.id}/modelFields`
-  );
+  return db.collection(`projects/${model.projectId}/models/${model.id}/modelFields`);
 }
 
 function getGroupRef(projectId: string, groupId: string) {
@@ -158,47 +139,38 @@ function* deleteModelField(modelField: ModelFieldDoc) {
   yield* call(
     deleteDocument,
     `projects/${modelField.projectId}/models/${modelField.modelId}/modelFields/`,
-    modelField.id
+    modelField.id,
   );
 }
 
 function getModelFieldsReferringModelRef(
   referringModel: ModelDoc,
-  referredModel: ModelDoc
+  referredModel: ModelDoc,
 ) {
   return db
     .collection(
-      `projects/${referringModel.projectId}/models/${referringModel.id}/modelFields`
+      `projects/${referringModel.projectId}/models/${referringModel.id}/modelFields`,
     )
     .where("format.value", "==", referredModel.id);
 }
 
 function getModelFieldsReferringEnumerationRef(
   referringModel: ModelDoc,
-  referredEnumeration: EnumerationDoc
+  referredEnumeration: EnumerationDoc,
 ) {
   return db
     .collection(
-      `projects/${referringModel.projectId}/models/${referringModel.id}/modelFields`
+      `projects/${referringModel.projectId}/models/${referringModel.id}/modelFields`,
     )
     .where("enum.value", "==", referredEnumeration.id);
 }
 
 function* addEnumeration(data: EnumerationItem) {
-  return yield* call(
-    addDocument,
-    `projects/${data.projectId}/enumerations`,
-    data
-  );
+  return yield* call(addDocument, `projects/${data.projectId}/enumerations`, data);
 }
 
 function* updateEnumeration(id: string, data: Partial<EnumerationItem>) {
-  yield* call(
-    updateDocument,
-    `projects/${data.projectId}/enumerations`,
-    id,
-    data
-  );
+  yield* call(updateDocument, `projects/${data.projectId}/enumerations`, id, data);
 }
 
 function getProjectEnumerationsRef(projectId: string) {
@@ -209,7 +181,7 @@ function* deleteEnumeration(enumeration: EnumerationDoc) {
   yield* call(
     deleteDocument,
     `projects/${enumeration.projectId}/enumerations`,
-    enumeration.id
+    enumeration.id,
   );
 }
 
@@ -230,25 +202,18 @@ function* addRequest(data: RequestItem) {
 }
 
 function* updateRequest(id: string, data: Partial<RequestItem>) {
-  return yield* call(
-    updateDocument,
-    `projects/${data.projectId}/requests`,
-    id,
-    data
-  );
+  return yield* call(updateDocument, `projects/${data.projectId}/requests`, id, data);
 }
 
 function getGroupRequestsRef(projectId: string, groupId: string) {
-  return db
-    .collection(`projects/${projectId}/requests`)
-    .where("groupId", "==", groupId);
+  return db.collection(`projects/${projectId}/requests`).where("groupId", "==", groupId);
 }
 
 function* addRequestParam(data: RequestParamItem) {
   return yield* call(
     addDocument,
     `projects/${data.projectId}/requests/${data.requestId}/params`,
-    data
+    data,
   );
 }
 
@@ -257,7 +222,7 @@ function* updateRequestParam(id: string, data: Modifiable<RequestParamItem>) {
     updateDocument,
     `projects/${data.projectId}/requests/${data.requestId}/params`,
     id,
-    data
+    data,
   );
 }
 
@@ -265,7 +230,7 @@ function* deleteRequestParam(data: RequestParamDoc) {
   yield* call(
     deleteDocument,
     `projects/${data.projectId}/requests/${data.requestId}/params`,
-    data.id
+    data.id,
   );
 }
 
@@ -273,7 +238,7 @@ function* addRequestBody(data: RequestBodyItem) {
   return yield* call(
     addDocument,
     `projects/${data.projectId}/requests/${data.requestId}/bodies`,
-    data
+    data,
   );
 }
 
@@ -282,7 +247,7 @@ function* updateRequestBody(id: string, data: Modifiable<RequestBodyItem>) {
     updateDocument,
     `projects/${data.projectId}/requests/${data.requestId}/bodies`,
     id,
-    data
+    data,
   );
 }
 
@@ -290,7 +255,7 @@ function* deleteRequestBody(data: RequestBodyDoc) {
   yield* call(
     deleteDocument,
     `projects/${data.projectId}/requests/${data.requestId}/bodies`,
-    data.id
+    data.id,
   );
 }
 
@@ -302,7 +267,7 @@ function* addResponseStatus(data: ResponseStatusItem) {
   return yield* call(
     addDocument,
     `projects/${data.projectId}/requests/${data.requestId}/responseStatuses`,
-    data
+    data,
   );
 }
 
@@ -311,7 +276,7 @@ function* updateResponseStatus(id: string, data: Partial<ResponseStatusItem>) {
     updateDocument,
     `projects/${data.projectId}/requests/${data.requestId}/responseStatuses`,
     id,
-    data
+    data,
   );
 }
 
@@ -319,7 +284,7 @@ function* deleteResponseStatus(data: ResponseStatusDoc) {
   yield* call(
     deleteDocument,
     `projects/${data.projectId}/requests/${data.requestId}/responseStatuses`,
-    data.id
+    data.id,
   );
 }
 
@@ -327,7 +292,7 @@ function* addResponseBody(data: ResponseBodyItem) {
   return yield* call(
     addDocument,
     `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/bodies`,
-    data
+    data,
   );
 }
 
@@ -336,7 +301,7 @@ function* updateResponseBody(id: string, data: Modifiable<ResponseBodyItem>) {
     updateDocument,
     `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/bodies`,
     id,
-    data
+    data,
   );
 }
 
@@ -344,7 +309,7 @@ function* deleteResponseBody(data: ResponseBodyDoc) {
   yield* call(
     deleteDocument,
     `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/bodies`,
-    data.id
+    data.id,
   );
 }
 
@@ -352,19 +317,16 @@ function* addResponseHeader(data: ResponseHeaderItem) {
   return yield* call(
     addDocument,
     `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/headers`,
-    data
+    data,
   );
 }
 
-function* updateResponseHeader(
-  id: string,
-  data: Modifiable<ResponseHeaderItem>
-) {
+function* updateResponseHeader(id: string, data: Modifiable<ResponseHeaderItem>) {
   return yield* call(
     updateDocument,
     `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/headers`,
     id,
-    data
+    data,
   );
 }
 
@@ -372,7 +334,7 @@ function* deleteResponseHeader(data: ResponseHeaderDoc) {
   yield* call(
     deleteDocument,
     `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/headers`,
-    data.id
+    data.id,
   );
 }
 
@@ -399,8 +361,8 @@ async function runBatch(operations: RunBatchItem[]) {
 async function runTaskForEachDocs(
   collectionRef: firebase.firestore.Query<firebase.firestore.DocumentData>,
   task: (
-    doc: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
-  ) => void
+    doc: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>,
+  ) => void,
 ) {
   return new Promise((resolve) => {
     collectionRef.onSnapshot((snapshot) => {
@@ -423,12 +385,7 @@ function* addNotification(data: NotificationItem) {
 }
 
 function* updateNotification(id: string, data: Partial<NotificationItem>) {
-  return yield* call(
-    updateDocument,
-    `users/${data.userId}/notifications`,
-    id,
-    data
-  );
+  return yield* call(updateDocument, `users/${data.userId}/notifications`, id, data);
 }
 
 export const realFirework = {

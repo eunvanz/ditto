@@ -1,10 +1,4 @@
-import React, {
-  useMemo,
-  useEffect,
-  useCallback,
-  useState,
-  useRef,
-} from "react";
+import React, { useMemo, useEffect, useCallback, useState, useRef } from "react";
 import {
   TableCell,
   TextField,
@@ -144,24 +138,23 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     (fieldType: string, format: string) => {
       if (fieldType === FIELD_TYPE.OBJECT) {
         return (
-          projectModels.find((model) => model.id === format)?.name ||
-          FORMAT.NEW_MODEL
+          projectModels.find((model) => model.id === format)?.name || FORMAT.NEW_MODEL
         );
       } else {
         return format;
       }
     },
-    [projectModels]
+    [projectModels],
   );
 
   const getEnumValue = useCallback(
     (enumId: string) => {
       return (
-        projectEnumerations.find((enumeration) => enumeration.id === enumId)
-          ?.name || ENUMERATION.NONE
+        projectEnumerations.find((enumeration) => enumeration.id === enumId)?.name ||
+        ENUMERATION.NONE
       );
     },
-    [projectEnumerations]
+    [projectEnumerations],
   );
 
   const defaultValues: ModelFieldFormValues = useMemo(() => {
@@ -178,9 +171,9 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     };
   }, [getEnumValue, getFormatValue, modelField]);
 
-  const [autoFocusField, setAutoFocusField] = useState<
-    keyof ModelFieldFormValues
-  >("fieldName");
+  const [autoFocusField, setAutoFocusField] = useState<keyof ModelFieldFormValues>(
+    "fieldName",
+  );
 
   const formProps = useForm<ModelFieldFormValues>({
     mode: "onChange",
@@ -241,9 +234,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
             FORMAT.NEW_MODEL
           : data.format;
       const enumValue =
-        projectEnumerations.find(
-          (enumeration) => enumeration.name === data.enum
-        )?.id || data.enum;
+        projectEnumerations.find((enumeration) => enumeration.name === data.enum)?.id ||
+        data.enum;
       onSubmit({ ...data, format, enum: enumValue, target: modelField });
     })();
   }, [
@@ -283,19 +275,17 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       onClickCell?.();
       setAutoFocusField(focusField);
     },
-    [onClickCell]
+    [onClickCell],
   );
 
   const createCellClickHandler = useCallback(
     (focusField) => {
       return !isFormVisible ? () => showForm(focusField) : undefined;
     },
-    [isFormVisible, showForm]
+    [isFormVisible, showForm],
   );
 
-  const [isDisabledEnterSubmit, setIsDisabledEnterSubmit] = useState<boolean>(
-    false
-  );
+  const [isDisabledEnterSubmit, setIsDisabledEnterSubmit] = useState<boolean>(false);
 
   const handleOnPressKey = useCallback(
     (e: KeyboardEvent) => {
@@ -305,7 +295,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         !isSubmitting && handleOnCancel();
       }
     },
-    [handleOnCancel, handleOnSubmit, isDisabledEnterSubmit, isSubmitting]
+    [handleOnCancel, handleOnSubmit, isDisabledEnterSubmit, isSubmitting],
   );
 
   useEffect(() => {
@@ -334,8 +324,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
       return FORMAT.NEW_MODEL;
     } else if (modelField?.format) {
       return (
-        projectModels.find((item) => item.id === modelField.format.value)
-          ?.name || FORMAT.NEW_MODEL
+        projectModels.find((item) => item.id === modelField.format.value)?.name ||
+        FORMAT.NEW_MODEL
       );
     } else {
       return FORMAT.NEW_MODEL;
@@ -356,9 +346,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, [projectEnumerations, watchedFieldType]);
 
   const currentEnumeration = useMemo(() => {
-    return projectEnumerations.find(
-      (item) => item.id === modelField?.enum.value
-    );
+    return projectEnumerations.find((item) => item.id === modelField?.enum.value);
   }, [modelField, projectEnumerations]);
 
   const enumDefaultValue = useMemo(() => {
@@ -369,7 +357,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     (name: ModelFieldColumns) => {
       return disabledColumns?.includes(name);
     },
-    [disabledColumns]
+    [disabledColumns],
   );
 
   const enumValues = useMemo(() => {
@@ -391,7 +379,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         return false;
       }
     },
-    [modelField, userProfile.uid]
+    [modelField, userProfile.uid],
   );
 
   useEffect(() => {
@@ -411,9 +399,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
           style={{
             paddingLeft: indentionPadding,
           }}
-          className={
-            checkIsUpdatedFieldKey("fieldName") ? classes.updated : undefined
-          }
+          className={checkIsUpdatedFieldKey("fieldName") ? classes.updated : undefined}
         >
           {isFormVisible ? (
             <Controller
@@ -430,8 +416,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                   const isDup = modelFields
                     .filter(
                       // 현재 수정중인 필드는 제외
-                      (item) =>
-                        item.fieldName.value !== defaultValues?.fieldName
+                      (item) => item.fieldName.value !== defaultValues?.fieldName,
                     )
                     .some((modelField) => modelField.fieldName.value === data);
                   return isDup
@@ -478,9 +463,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         <TableCell
           align="center"
           onClick={createCellClickHandler("isRequired")}
-          className={
-            checkIsUpdatedFieldKey("isRequired") ? classes.updated : undefined
-          }
+          className={checkIsUpdatedFieldKey("isRequired") ? classes.updated : undefined}
         >
           {isFormVisible ? (
             <Controller
@@ -509,9 +492,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         <TableCell
           align="center"
           onClick={createCellClickHandler("isArray")}
-          className={
-            checkIsUpdatedFieldKey("isArray") ? classes.updated : undefined
-          }
+          className={checkIsUpdatedFieldKey("isArray") ? classes.updated : undefined}
         >
           {isFormVisible ? (
             <Controller
@@ -522,8 +503,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 <Checkbox
                   {...props}
                   autoFocus={
-                    !checkIsColumnDisabled("isArray") &&
-                    autoFocusField === "isArray"
+                    !checkIsColumnDisabled("isArray") && autoFocusField === "isArray"
                   }
                   disabled={checkIsColumnDisabled("isArray")}
                   checked={props.value}
@@ -539,9 +519,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         </TableCell>
         <TableCell
           onClick={createCellClickHandler("fieldType")}
-          className={
-            checkIsUpdatedFieldKey("fieldType") ? classes.updated : undefined
-          }
+          className={checkIsUpdatedFieldKey("fieldType") ? classes.updated : undefined}
         >
           {isFormVisible ? (
             <Controller
@@ -586,9 +564,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         </TableCell>
         <TableCell
           onClick={createCellClickHandler("format")}
-          className={
-            checkIsUpdatedFieldKey("format") ? classes.updated : undefined
-          }
+          className={checkIsUpdatedFieldKey("format") ? classes.updated : undefined}
         >
           {isFormVisible ? (
             <Controller
@@ -639,9 +615,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         </TableCell>
         <TableCell
           onClick={createCellClickHandler("enum")}
-          className={
-            checkIsUpdatedFieldKey("enum") ? classes.updated : undefined
-          }
+          className={checkIsUpdatedFieldKey("enum") ? classes.updated : undefined}
         >
           {isFormVisible ? (
             <Controller
@@ -663,8 +637,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                       <TextField
                         {...params}
                         autoFocus={
-                          !checkIsColumnDisabled("enum") &&
-                          autoFocusField === "enum"
+                          !checkIsColumnDisabled("enum") && autoFocusField === "enum"
                         }
                         disabled={checkIsColumnDisabled("enum")}
                         placeholder="Enumerations"
@@ -682,9 +655,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
           ) : (
             <Tooltip
               title={
-                <span className={classes.enumerationTooltip}>
-                  {enumValues || ""}
-                </span>
+                <span className={classes.enumerationTooltip}>{enumValues || ""}</span>
               }
               placement="top"
               arrow
@@ -713,9 +684,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
         </TableCell>
         <TableCell
           onClick={createCellClickHandler("description")}
-          className={
-            checkIsUpdatedFieldKey("description") ? classes.updated : undefined
-          }
+          className={checkIsUpdatedFieldKey("description") ? classes.updated : undefined}
         >
           {isFormVisible ? (
             <Controller
@@ -792,11 +761,7 @@ interface SubModelFormProps {
   depth?: number;
 }
 
-const SubModelForm: React.FC<SubModelFormProps> = ({
-  fieldType,
-  subModelId,
-  depth,
-}) => {
+const SubModelForm: React.FC<SubModelFormProps> = ({ fieldType, subModelId, depth }) => {
   switch (fieldType) {
     case FIELD_TYPE.OBJECT:
       return <ModelForm depth={(depth || 1) + 1} defaultModelId={subModelId} />;

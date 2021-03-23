@@ -136,7 +136,7 @@ const Notifications: React.FC<NotificationsProps> = ({
                               __html: notification.content
                                 .replace(
                                   /\{/g,
-                                  '<span class="MuiTypography-colorPrimary">'
+                                  '<span class="MuiTypography-colorPrimary">',
                                 )
                                 .replace(/\}/g, "</span>"),
                             }}
@@ -149,7 +149,7 @@ const Notifications: React.FC<NotificationsProps> = ({
                             >
                               {formatDistance(
                                 convertTimestampToDate(notification.createdAt),
-                                now
+                                now,
                               )}
                             </Typography>
                           )}

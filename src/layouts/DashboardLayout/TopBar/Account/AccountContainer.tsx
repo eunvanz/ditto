@@ -25,9 +25,7 @@ const AccountContainer = () => {
     dispatch(UiActions.showSignInModal());
   }, [dispatch]);
 
-  return (
-    <Account user={user} onLogout={logout} onClickLogin={showSignInModal} />
-  );
+  return <Account user={user} onLogout={logout} onClickLogin={showSignInModal} />;
 };
 
 export default AccountContainer;

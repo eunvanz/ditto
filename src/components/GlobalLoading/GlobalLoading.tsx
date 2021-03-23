@@ -1,12 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import {
-  Backdrop,
-  CircularProgress,
-  makeStyles,
-  Theme,
-} from "@material-ui/core";
+import { Backdrop, CircularProgress, makeStyles, Theme } from "@material-ui/core";
 
 const useStyles = makeStyles((_: Theme) => ({
   backdrop: {

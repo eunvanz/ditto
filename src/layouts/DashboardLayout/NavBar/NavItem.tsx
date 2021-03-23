@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { FC, ReactNode } from "react";
 import { NavLink as RouterLink } from "react-router-dom";
 import clsx from "clsx";
@@ -215,7 +209,7 @@ const NavItem: FC<NavItemProps> = ({
       onClickAddRequest?.();
       setIsNewItemMenuOpen(false);
     },
-    [onClickAddRequest]
+    [onClickAddRequest],
   );
 
   const handleOnClickAddGroup = useCallback(
@@ -224,7 +218,7 @@ const NavItem: FC<NavItemProps> = ({
       onClickAddGroup?.();
       setIsNewItemMenuOpen(false);
     },
-    [onClickAddGroup]
+    [onClickAddGroup],
   );
 
   const addNewItemButtonRef = useRef<HTMLDivElement>(null);
@@ -267,11 +261,7 @@ const NavItem: FC<NavItemProps> = ({
                 <NavItem
                   type="add"
                   depth={depth + 1}
-                  title={
-                    depth === 0
-                      ? "ADD NEW GROUP OR OPERATION"
-                      : "ADD NEW OPERATION"
-                  }
+                  title={depth === 0 ? "ADD NEW GROUP OR OPERATION" : "ADD NEW OPERATION"}
                   onClick={handleOnClickNewItem}
                 />
               </RootRef>
@@ -280,9 +270,7 @@ const NavItem: FC<NavItemProps> = ({
                   className={classes.configMenu}
                   keepMounted
                   open={isNewItemMenuOpen}
-                  onClose={(
-                    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-                  ) => {
+                  onClose={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
                     e.stopPropagation();
                     setIsNewItemMenuOpen(false);
                   }}
@@ -294,9 +282,7 @@ const NavItem: FC<NavItemProps> = ({
                   getContentAnchorEl={null}
                 >
                   <MenuItem onClick={handleOnClickAddGroup}>Group</MenuItem>
-                  <MenuItem onClick={handleOnClickAddRequest}>
-                    Operation
-                  </MenuItem>
+                  <MenuItem onClick={handleOnClickAddRequest}>Operation</MenuItem>
                 </Menu>
               )}
             </>
@@ -320,9 +306,7 @@ const NavItem: FC<NavItemProps> = ({
           style={style}
           to={href!}
         >
-          {!!requestMethod && (
-            <RequestMethodBadge requestMethod={requestMethod} />
-          )}
+          {!!requestMethod && <RequestMethodBadge requestMethod={requestMethod} />}
           <NewBadge isVisible={hasNew} className={classes.newBadge}>
             <span className={classes.title}>
               {isDeprecated ? <del>{title}</del> : title}

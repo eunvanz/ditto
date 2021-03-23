@@ -1,13 +1,4 @@
-import {
-  all,
-  takeEvery,
-  put,
-  delay,
-  select,
-  race,
-  take,
-  call,
-} from "typed-redux-saga";
+import { all, takeEvery, put, delay, select, race, take, call } from "typed-redux-saga";
 import { UiActions } from "./UiSlice";
 import shortid from "shortid";
 import AuthSelectors from "../Auth/AuthSelector";
@@ -16,7 +7,7 @@ import Firework from "../Firework";
 import UiSelectors from "./UiSelectors";
 
 export function* handleShowNotification(
-  action: ReturnType<typeof UiActions.showNotification>
+  action: ReturnType<typeof UiActions.showNotification>,
 ) {
   const { message, type = "success" } = action.payload;
   yield* put(
@@ -27,12 +18,12 @@ export function* handleShowNotification(
         variant: type,
         autoHideDuration: 3000,
       },
-    })
+    }),
   );
 }
 
 export function* handleHideProjectFormModal(
-  _: ReturnType<typeof UiActions.hideProjectFormModal>
+  _: ReturnType<typeof UiActions.hideProjectFormModal>,
 ) {
   // 모달이 완전히 닫힌 후에 project를 undefined로 세팅
   yield* delay(100);
@@ -40,7 +31,7 @@ export function* handleHideProjectFormModal(
 }
 
 export function* handleShowProjectFormModal(
-  action: ReturnType<typeof UiActions.hideProjectFormModal>
+  action: ReturnType<typeof UiActions.hideProjectFormModal>,
 ) {
   const auth = yield* select(AuthSelectors.selectAuth);
   if (auth.isEmpty) {
@@ -51,7 +42,7 @@ export function* handleShowProjectFormModal(
       UiActions.receiveProjectFormModal({
         isVisible: true,
         project: payload,
-      })
+      }),
     );
   }
 }
@@ -60,7 +51,7 @@ export function* handleShowProjectFormModal(
  * 지연시간 이상일 때에만 로딩 표시 (기본 200ms)
  */
 export function* handleShowDelayedLoading(
-  action: ReturnType<typeof UiActions.showDelayedLoading>
+  action: ReturnType<typeof UiActions.showDelayedLoading>,
 ) {
   const { isDelayed } = yield* race({
     isDelayed: call(delay, action.payload.delay || 200),
@@ -72,7 +63,7 @@ export function* handleShowDelayedLoading(
 }
 
 export function* handleShowQuickModelNameFormModal(
-  action: ReturnType<typeof UiActions.showQuickModelNameFormModal>
+  action: ReturnType<typeof UiActions.showQuickModelNameFormModal>,
 ) {
   // FIXME: 추후 공통 미들웨어로 작성
   const auth = yield* select(AuthSelectors.selectAuth);
@@ -84,13 +75,13 @@ export function* handleShowQuickModelNameFormModal(
       UiActions.receiveQuickModelNameFormModal({
         isVisible: true,
         model: payload,
-      })
+      }),
     );
   }
 }
 
 export function* handleHideQuickModelNameFormModal(
-  _: ReturnType<typeof UiActions.hideQuickModelNameFormModal>
+  _: ReturnType<typeof UiActions.hideQuickModelNameFormModal>,
 ) {
   // 모달이 완전히 닫힌 후에 project를 undefined로 세팅
   yield* delay(100);
@@ -101,9 +92,7 @@ export function* handleReloadApp() {
   yield* call(window.location.reload.bind(window.location), true);
 }
 
-export function* handleToggleDarkMode(
-  action: ReturnType<typeof UiActions.receiveTheme>
-) {
+export function* handleToggleDarkMode(action: ReturnType<typeof UiActions.receiveTheme>) {
   const { payload } = action;
   const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
   if (userProfile.theme !== payload) {
@@ -114,7 +103,7 @@ export function* handleToggleDarkMode(
 }
 
 export function* handleToggleScreenMode(
-  _: ReturnType<typeof UiActions.toggleScreenMode>
+  _: ReturnType<typeof UiActions.toggleScreenMode>,
 ) {
   const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
   const screenMode = yield* select(UiSelectors.selectScreenMode);
@@ -129,14 +118,8 @@ export function* watchUiActions() {
     takeEvery(UiActions.hideProjectFormModal, handleHideProjectFormModal),
     takeEvery(UiActions.showProjectFormModal, handleShowProjectFormModal),
     takeEvery(UiActions.showDelayedLoading, handleShowDelayedLoading),
-    takeEvery(
-      UiActions.showQuickModelNameFormModal,
-      handleShowQuickModelNameFormModal
-    ),
-    takeEvery(
-      UiActions.hideQuickModelNameFormModal,
-      handleHideQuickModelNameFormModal
-    ),
+    takeEvery(UiActions.showQuickModelNameFormModal, handleShowQuickModelNameFormModal),
+    takeEvery(UiActions.hideQuickModelNameFormModal, handleHideQuickModelNameFormModal),
     takeEvery(UiActions.reloadApp, handleReloadApp),
     takeEvery(UiActions.receiveTheme, handleToggleDarkMode),
     takeEvery(UiActions.toggleScreenMode, handleToggleScreenMode),

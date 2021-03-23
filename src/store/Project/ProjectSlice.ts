@@ -63,7 +63,7 @@ const ProjectSlice = createSlice({
             modelFieldId?: string;
           }
         | undefined
-      >
+      >,
     ) => {
       state.editingModelField = action.payload;
     },
@@ -82,53 +82,35 @@ const ProjectSlice = createSlice({
     clearCurrentModel: (state, _action: PayloadAction<void>) => {
       state.currentModel = undefined;
     },
-    submitProjectForm: (
-      _,
-      _action: PayloadAction<SubmitProjectFormPayload>
-    ) => {},
+    submitProjectForm: (_, _action: PayloadAction<SubmitProjectFormPayload>) => {},
     deleteProject: (_, _action: PayloadAction<ProjectDoc>) => {},
-    submitProjectUrlForm: (
-      _,
-      _action: PayloadAction<ProjectUrlFormValues>
-    ) => {},
+    submitProjectUrlForm: (_, _action: PayloadAction<ProjectUrlFormValues>) => {},
     deleteProjectUrl: (_, _action: PayloadAction<ProjectUrlDoc>) => {},
     submitModelNameForm: (
       _,
-      _action: PayloadAction<ModelNameFormValues & { hasToSetResult?: boolean }>
+      _action: PayloadAction<ModelNameFormValues & { hasToSetResult?: boolean }>,
     ) => {},
     submitModelFieldForm: (
       _,
-      _action: PayloadAction<ModelFieldFormValues & { modelId?: string }>
+      _action: PayloadAction<ModelFieldFormValues & { modelId?: string }>,
     ) => {},
     deleteModel: (_, _action: PayloadAction<ModelDoc>) => {},
     deleteModelField: (_, _action: PayloadAction<ModelFieldDoc>) => {},
-    submitQuickModelNameForm: (
-      _,
-      _action: PayloadAction<ModelNameFormValues>
-    ) => {},
+    submitQuickModelNameForm: (_, _action: PayloadAction<ModelNameFormValues>) => {},
     cancelQuickModelNameForm: (_, _action: PayloadAction<void>) => {},
     proceedQuickModelNameForm: (_, _action: PayloadAction<ModelDoc>) => {},
-    notifySubmissionQuickModelNameFormComplete: (
-      _,
-      _action: PayloadAction<void>
-    ) => {},
+    notifySubmissionQuickModelNameFormComplete: (_, _action: PayloadAction<void>) => {},
     submitEnumForm: (_, _action: PayloadAction<EnumFormValues>) => {},
     deleteEnumeration: (_, _action: PayloadAction<EnumerationDoc>) => {},
     submitQuickEnumForm: (_, _action: PayloadAction<EnumFormValues>) => {},
-    notifySubmissionQuickEnumFormComplete: (
-      _,
-      _action: PayloadAction<void>
-    ) => {},
+    notifySubmissionQuickEnumFormComplete: (_, _action: PayloadAction<void>) => {},
     submitGroupForm: (_, _action: PayloadAction<GroupFormValues>) => {},
     deleteGroup: (_, _action: PayloadAction<GroupDoc>) => {},
     submitRequestForm: (_, _action: PayloadAction<RequestFormValues>) => {},
-    submitRequestUrlForm: (
-      _,
-      _action: PayloadAction<RequestUrlFormValues>
-    ) => {},
+    submitRequestUrlForm: (_, _action: PayloadAction<RequestUrlFormValues>) => {},
     notifySubmissionQuickUrlFormComplete: (
       _,
-      _action: PayloadAction<{ createdUrlId: string }>
+      _action: PayloadAction<{ createdUrlId: string }>,
     ) => {},
     submitRequestParamForm: (
       _,
@@ -137,24 +119,21 @@ const ProjectSlice = createSlice({
           requestId: string;
           location: REQUEST_PARAM_LOCATION;
         }
-      >
+      >,
     ) => {},
     deleteRequestParam: (_, _action: PayloadAction<RequestParamDoc>) => {},
     submitRequestBodyForm: (
       _,
-      _action: PayloadAction<ModelFieldFormValues & { requestId: string }>
+      _action: PayloadAction<ModelFieldFormValues & { requestId: string }>,
     ) => {},
     deleteRequestBody: (_, _action: PayloadAction<RequestBodyDoc>) => {},
-    submitRequestSettingForm: (
-      _,
-      _action: PayloadAction<RequestSettingFormValues>
-    ) => {},
+    submitRequestSettingForm: (_, _action: PayloadAction<RequestSettingFormValues>) => {},
     deleteRequest: (_, _action: PayloadAction<RequestDoc>) => {},
     submitResponseStatus: (
       _,
       _action: PayloadAction<
         ResponseStatusFormValues & { projectId: string; requestId: string }
-      >
+      >,
     ) => {},
     deleteResponseStatus: (_, _action: PayloadAction<ResponseStatusDoc>) => {},
     submitResponseBodyForm: (
@@ -165,7 +144,7 @@ const ProjectSlice = createSlice({
           projectId: string;
           responseStatusId: string;
         }
-      >
+      >,
     ) => {},
     deleteResponseBody: (_, _action: PayloadAction<ResponseBodyDoc>) => {},
     submitResponseHeaderForm: (
@@ -176,7 +155,7 @@ const ProjectSlice = createSlice({
           projectId: string;
           responseStatusId: string;
         }
-      >
+      >,
     ) => {},
     deleteResponseHeader: (_, _action: PayloadAction<ResponseHeaderDoc>) => {},
     changeMemberRole: (
@@ -185,15 +164,15 @@ const ProjectSlice = createSlice({
         member: UserProfileDoc;
         oldRole: MemberRole;
         newRole: MemberRole;
-      }>
+      }>,
     ) => {},
     deleteMember: (
       _,
-      _action: PayloadAction<{ member: UserProfileDoc; role: MemberRole }>
+      _action: PayloadAction<{ member: UserProfileDoc; role: MemberRole }>,
     ) => {},
     addMembers: (
       _,
-      _action: PayloadAction<{ members: UserProfileDoc[]; role: MemberRole }>
+      _action: PayloadAction<{ members: UserProfileDoc[]; role: MemberRole }>,
     ) => {},
     markNotificationsAsRead: (_, _action: PayloadAction<string[]>) => {},
     refreshModelField: (_, _action: PayloadAction<ModelFieldDoc>) => {},

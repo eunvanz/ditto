@@ -3,14 +3,7 @@ import RequestUrlForm from "./RequestUrlForm";
 import useRequestUrlFormProps from "./useRequestUrlFormProps";
 
 const RequestUrlFormContainer = () => {
-  const {
-    request,
-    baseUrls,
-    onSubmit,
-    key,
-    requests,
-    role,
-  } = useRequestUrlFormProps();
+  const { request, baseUrls, onSubmit, key, requests, role } = useRequestUrlFormProps();
 
   return !!request && !!baseUrls ? (
     <RequestUrlForm

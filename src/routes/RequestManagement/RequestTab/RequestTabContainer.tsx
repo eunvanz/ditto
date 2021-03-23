@@ -11,7 +11,7 @@ const RequestTabContainer = () => {
   const { requestId } = useRequestByParam();
 
   const requestParams = useSelector(
-    FirebaseSelectors.createRequestParamsSelector(projectId, requestId)
+    FirebaseSelectors.createRequestParamsSelector(projectId, requestId),
   );
 
   useLoading(requestParams, `loadingRequestParams-${requestId}`);

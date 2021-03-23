@@ -29,18 +29,18 @@ const useRequestUrlFormProps = () => {
   useFirestoreConnect(firestoreQuery as any);
 
   const baseUrls = useSelector(
-    FirebaseSelectors.createProjectUrlsSelector(project?.id || "")
+    FirebaseSelectors.createProjectUrlsSelector(project?.id || ""),
   );
 
   const requests = useSelector(
-    FirebaseSelectors.createProjectRequestsSelector(projectId)
+    FirebaseSelectors.createProjectRequestsSelector(projectId),
   );
 
   const onSubmit = useCallback(
     (values: RequestUrlFormValues) => {
       dispatch(ProjectActions.submitRequestUrlForm(values));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const { isVisible } = useSelector(UiSelectors.selectQuickUrlFormModal);

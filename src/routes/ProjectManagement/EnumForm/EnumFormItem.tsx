@@ -1,10 +1,4 @@
-import {
-  Box,
-  IconButton,
-  SvgIcon,
-  TableCell,
-  TextField,
-} from "@material-ui/core";
+import { Box, IconButton, SvgIcon, TableCell, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useCallback, useEffect } from "react";
 import { Controller, UseFormMethods } from "react-hook-form";
@@ -64,7 +58,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
         handleOnCancel();
       }
     },
-    [handleOnCancel, handleOnSubmit]
+    [handleOnCancel, handleOnSubmit],
   );
 
   useEffect(() => {
@@ -81,9 +75,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
           size="small"
           autoFocus={autoFocusField === "name"}
           name="name"
-          inputRef={register(
-            registerOptions.enumerationForm.name(existingEnumerations)
-          )}
+          inputRef={register(registerOptions.enumerationForm.name(existingEnumerations))}
           fullWidth
           required
           error={!!errors.name}
@@ -135,9 +127,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
             setValue("items", value.replace(" ", ""));
             trigger();
           }}
-          inputRef={register(
-            registerOptions.enumerationForm.items(watchedFieldType)
-          )}
+          inputRef={register(registerOptions.enumerationForm.items(watchedFieldType))}
           fullWidth
           required
           error={!!errors.items}

@@ -14,9 +14,7 @@ const defaultProps: Partial<AccountProps> = {
   user: mockUser.user,
 };
 
-const Template: Story<AccountProps> = (args) => (
-  <Account {...defaultProps} {...args} />
-);
+const Template: Story<AccountProps> = (args) => <Account {...defaultProps} {...args} />;
 
 export const 로그온 = Template.bind({});
 로그온.args = {};

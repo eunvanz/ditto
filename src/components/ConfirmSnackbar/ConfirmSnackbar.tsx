@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
     },
-  })
+  }),
 );
 
 export interface ConfirmSnackbarProps {

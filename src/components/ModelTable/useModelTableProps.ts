@@ -17,10 +17,7 @@ export interface UseModelTablePropsParams {
   modelFields?: ModelFieldDoc[];
 }
 
-const useModelTableProps = ({
-  model,
-  modelFields,
-}: UseModelTablePropsParams) => {
+const useModelTableProps = ({ model, modelFields }: UseModelTablePropsParams) => {
   const formId = useMemo(() => {
     return shortId.generate();
   }, []);
@@ -46,16 +43,14 @@ const useModelTableProps = ({
   useFirestoreConnect(firestoreQuery as any);
 
   const projectModels = useSelector(
-    FirebaseSelectors.createProjectModelsSelector(projectId)
+    FirebaseSelectors.createProjectModelsSelector(projectId),
   );
 
   const projectEnumerations = useSelector(
-    FirebaseSelectors.createProjectEnumerationsSelector(projectId)
+    FirebaseSelectors.createProjectEnumerationsSelector(projectId),
   );
 
-  const editingModelField = useSelector(
-    ProjectSelectors.selectEditingModelField
-  );
+  const editingModelField = useSelector(ProjectSelectors.selectEditingModelField);
 
   const onSetEditingModelField = useCallback(
     (modelFieldId?: string) => {
@@ -64,7 +59,7 @@ const useModelTableProps = ({
           ProjectActions.receiveEditingModelField({
             modelFieldId,
             formId,
-          })
+          }),
         );
         dispatch(UiActions.disableModalEscape());
       } else {
@@ -72,14 +67,14 @@ const useModelTableProps = ({
         dispatch(UiActions.enableModalEscape());
       }
     },
-    [dispatch, formId]
+    [dispatch, formId],
   );
 
   const onClickQuickEditModelName = useCallback(
     (model: ModelDoc) => {
       dispatch(ProjectActions.proceedQuickModelNameForm(model));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const editingModelFieldId = useMemo(() => {
@@ -92,29 +87,27 @@ const useModelTableProps = ({
     (modelField: ModelFieldDoc) => {
       dispatch(ProjectActions.deleteModelField(modelField));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const onSubmitModelField = useCallback(
     (data: ModelFieldFormValues) => {
-      dispatch(
-        ProjectActions.submitModelFieldForm({ ...data, modelId: model?.id })
-      );
+      dispatch(ProjectActions.submitModelFieldForm({ ...data, modelId: model?.id }));
     },
-    [dispatch, model]
+    [dispatch, model],
   );
 
   const submittingModelFieldActionsInProgress = useSelector(
-    ProgressSelectors.selectSubmitModelFieldFormItemActions
+    ProgressSelectors.selectSubmitModelFieldFormItemActions,
   );
 
   const checkIsSubmittingModelField = useCallback(
     (modelId?: string) => {
       return submittingModelFieldActionsInProgress.includes(
-        `${ProjectActions.submitModelFieldForm}-${modelId}`
+        `${ProjectActions.submitModelFieldForm}-${modelId}`,
       );
     },
-    [submittingModelFieldActionsInProgress]
+    [submittingModelFieldActionsInProgress],
   );
 
   const role = useProjectRole(project);
@@ -125,14 +118,14 @@ const useModelTableProps = ({
     (modelField: ModelFieldDoc) => {
       dispatch(ProjectActions.refreshModelField(modelField));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const onShowQuickEnumFormModal = useCallback(
     (enumeration: EnumerationDoc) => {
       dispatch(UiActions.showQuickEnumFormModal(enumeration));
     },
-    [dispatch]
+    [dispatch],
   );
 
   return {

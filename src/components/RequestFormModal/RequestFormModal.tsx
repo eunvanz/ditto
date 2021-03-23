@@ -29,9 +29,7 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
   isSubmitting,
   requests,
 }) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    RequestFormValues
-  >({
+  const { register, handleSubmit, errors, formState } = useForm<RequestFormValues>({
     mode: "onChange",
   });
 
@@ -90,8 +88,7 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
                 message: "Operation ID is too long",
               },
               validate: (data: string) => {
-                const isDup =
-                  data && requests.some((item) => item.operationId === data);
+                const isDup = data && requests.some((item) => item.operationId === data);
                 return isDup ? "Operation ID is duplicated." : true;
               },
               pattern: patterns.wordsWithNoSpace,

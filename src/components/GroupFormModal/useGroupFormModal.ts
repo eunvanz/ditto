@@ -41,14 +41,14 @@ const useGroupFormModal = () => {
   useFirestoreConnect(firestoreQuery as any);
 
   const existingGroups = useSelector(
-    FirebaseSelectors.createProjectGroupsSelector(project?.id || "")
+    FirebaseSelectors.createProjectGroupsSelector(project?.id || ""),
   );
 
   const onSubmit = useCallback(
     (values: GroupFormValues) => {
       dispatch(ProjectActions.submitGroupForm(values));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const onDelete = useCallback(() => {
@@ -62,7 +62,7 @@ const useGroupFormModal = () => {
     ProgressSelectors.createInProgressSelector([
       ProjectActions.submitGroupForm.type,
       ProjectActions.deleteGroup.type,
-    ])
+    ]),
   );
 
   const role = useProjectRole(project);

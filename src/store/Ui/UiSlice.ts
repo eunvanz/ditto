@@ -160,7 +160,7 @@ const UiSlice = createSlice({
     },
     removeNotification: (state, action: PayloadAction<React.ReactText>) => {
       state.notifications = state.notifications.filter(
-        (notification) => notification.key !== action.payload
+        (notification) => notification.key !== action.payload,
       );
     },
     showNotification: (
@@ -168,30 +168,22 @@ const UiSlice = createSlice({
       _action: PayloadAction<{
         message: string;
         type?: "default" | "warning" | "success" | "error" | "info";
-      }>
+      }>,
     ) => {},
     showLoading: (state, action: PayloadAction<string>) => {
       state.loadingTasks.push(action.payload);
       state.isLoading = true;
     },
     hideLoading: (state, action: PayloadAction<string>) => {
-      state.loadingTasks = state.loadingTasks.filter(
-        (task) => task !== action.payload
-      );
+      state.loadingTasks = state.loadingTasks.filter((task) => task !== action.payload);
       if (state.loadingTasks.length === 0) {
         state.isLoading = false;
       }
     },
-    receiveProjectFormModal: (
-      state,
-      action: PayloadAction<ProjectFormModalState>
-    ) => {
+    receiveProjectFormModal: (state, action: PayloadAction<ProjectFormModalState>) => {
       state.projectFormModal = action.payload;
     },
-    showProjectFormModal: (
-      _,
-      _action: PayloadAction<ProjectDoc | undefined>
-    ) => {},
+    showProjectFormModal: (_, _action: PayloadAction<ProjectDoc | undefined>) => {},
     hideProjectFormModal: (state, _: PayloadAction<void>) => {
       state.projectFormModal.isVisible = false;
     },
@@ -206,18 +198,15 @@ const UiSlice = createSlice({
     },
     showDelayedLoading: (
       _,
-      _action: PayloadAction<{ taskName: string; delay?: number }>
+      _action: PayloadAction<{ taskName: string; delay?: number }>,
     ) => {},
     receiveQuickModelNameFormModal: (
       state,
-      action: PayloadAction<QuickModelNameFormModalState>
+      action: PayloadAction<QuickModelNameFormModalState>,
     ) => {
       state.quickModelNameFormModal = action.payload;
     },
-    showQuickModelNameFormModal: (
-      _,
-      _action: PayloadAction<ModelDoc | undefined>
-    ) => {},
+    showQuickModelNameFormModal: (_, _action: PayloadAction<ModelDoc | undefined>) => {},
     hideQuickModelNameFormModal: (state, _: PayloadAction<void>) => {
       state.quickModelNameFormModal.isVisible = false;
     },
@@ -226,7 +215,7 @@ const UiSlice = createSlice({
     },
     showQuickEnumFormModal: (
       state,
-      action: PayloadAction<EnumerationDoc | undefined>
+      action: PayloadAction<EnumerationDoc | undefined>,
     ) => {
       state.quickEnumFormModal.isVisible = true;
       state.quickEnumFormModal.enumeration = action.payload;
@@ -234,16 +223,10 @@ const UiSlice = createSlice({
     hideQuickEnumFormModal: (state, _action: PayloadAction<void>) => {
       state.quickEnumFormModal.isVisible = false;
     },
-    receiveGroupFormModal: (
-      state,
-      action: PayloadAction<GroupFormModalState>
-    ) => {
+    receiveGroupFormModal: (state, action: PayloadAction<GroupFormModalState>) => {
       state.groupFormModal = action.payload;
     },
-    showGroupFormModal: (
-      state,
-      action: PayloadAction<GroupDoc | undefined>
-    ) => {
+    showGroupFormModal: (state, action: PayloadAction<GroupDoc | undefined>) => {
       state.groupFormModal.isVisible = true;
       state.groupFormModal.group = action.payload;
     },
@@ -258,13 +241,13 @@ const UiSlice = createSlice({
     },
     receiveCriticalConfirmModal: (
       state,
-      action: PayloadAction<CriticalConfirmModalState>
+      action: PayloadAction<CriticalConfirmModalState>,
     ) => {
       state.criticalConfirmModal = action.payload;
     },
     showCriticalConfirmModal: (
       state,
-      action: PayloadAction<Omit<CriticalConfirmModalState, "isVisible">>
+      action: PayloadAction<Omit<CriticalConfirmModalState, "isVisible">>,
     ) => {
       state.criticalConfirmModal = { isVisible: true, ...action.payload };
     },
@@ -280,7 +263,7 @@ const UiSlice = createSlice({
     },
     showRequestFormModal: (
       state,
-      action: PayloadAction<Omit<RequestFormModalState, "isVisible">>
+      action: PayloadAction<Omit<RequestFormModalState, "isVisible">>,
     ) => {
       state.requestFormModal.isVisible = true;
       state.requestFormModal.projectId = action.payload.projectId;
@@ -315,7 +298,7 @@ const UiSlice = createSlice({
     },
     showConfirmSnackbar: (
       state,
-      action: PayloadAction<Omit<ConfirmSnackbarState, "isVisible">>
+      action: PayloadAction<Omit<ConfirmSnackbarState, "isVisible">>,
     ) => {
       state.confirmSnackbar = { isVisible: true, ...action.payload };
     },

@@ -9,12 +9,7 @@ export interface SignInModalProps {
 
 const SignInModal: React.FC<SignInModalProps> = ({ isVisible, onClose }) => {
   return (
-    <Modal
-      isVisible={isVisible}
-      onClose={onClose}
-      title="Sign in"
-      maxWidth="xs"
-    >
+    <Modal isVisible={isVisible} onClose={onClose} title="Sign in" maxWidth="xs">
       <SignInForm />
     </Modal>
   );

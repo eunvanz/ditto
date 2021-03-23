@@ -22,30 +22,23 @@ const useResponseTabProps = () => {
   ]);
 
   const responseStatuses = useSelector(
-    FirebaseSelectors.createResponseStatusesSelector(projectId, requestId)
+    FirebaseSelectors.createResponseStatusesSelector(projectId, requestId),
   );
 
   const dispatch = useDispatch();
 
   const onSubmitResponseStatusForm = useCallback(
     (values: ResponseStatusFormValues) => {
-      dispatch(
-        ProjectActions.submitResponseStatus({ ...values, projectId, requestId })
-      );
+      dispatch(ProjectActions.submitResponseStatus({ ...values, projectId, requestId }));
     },
-    [dispatch, projectId, requestId]
+    [dispatch, projectId, requestId],
   );
 
   const isSubmittingResponseStatusForm = useSelector(
-    ProgressSelectors.createInProgressSelector(
-      ProjectActions.submitResponseStatus.type
-    )
+    ProgressSelectors.createInProgressSelector(ProjectActions.submitResponseStatus.type),
   );
 
-  useLoading(
-    responseStatuses,
-    `loadingResponseStatuses-${projectId}-${requestId}`
-  );
+  useLoading(responseStatuses, `loadingResponseStatuses-${projectId}-${requestId}`);
 
   const role = useProjectRole(project);
 

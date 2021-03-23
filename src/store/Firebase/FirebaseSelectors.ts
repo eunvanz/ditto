@@ -26,7 +26,7 @@ const selectMyProjects = (state: RootState) =>
 
 const selectExampleProject = createSelector(
   (state: RootState) => state.firestore.ordered.exampleProject,
-  (project) => (project?.[0] as ProjectDoc) || undefined
+  (project) => (project?.[0] as ProjectDoc) || undefined,
 );
 
 const selectOrderedMyProjects = createSelector(
@@ -44,20 +44,18 @@ const selectOrderedMyProjects = createSelector(
           ...orderBy(projects, [`settingsByMember.${auth.uid}.seq`], ["asc"]),
         ]
       : [];
-  }
+  },
 );
 
 const createProjectSelectorByProjectId = (projectId: string) =>
   createSelector(selectOrderedMyProjects, (projects: ProjectDoc[]) => {
-    return projects
-      ? projects.find((project) => project.id === projectId)
-      : undefined;
+    return projects ? projects.find((project) => project.id === projectId) : undefined;
   });
 
 function createOrderedSelector<T>(key: string) {
   return createSelector(
     (state: RootState) => state.firestore.ordered[key],
-    (data) => data as T | undefined
+    (data) => data as T | undefined,
   );
 }
 
@@ -72,7 +70,7 @@ const createProjectEnumerationsSelector = (projectId: string) =>
 
 const createModelFieldsSelector = (projectId: string, modelId?: string) =>
   createOrderedSelector<ModelFieldDoc[]>(
-    `projects/${projectId}/models/${modelId}/modelFields`
+    `projects/${projectId}/models/${modelId}/modelFields`,
   );
 
 const createProjectGroupsSelector = (projectId: string) =>
@@ -82,7 +80,7 @@ const createGroupedProjectGroupsSelector = (projectIds: string[]) =>
   createSelector(
     (state: RootState) =>
       projectIds.map(
-        (projectId) => state.firestore.ordered[`projects/${projectId}/groups`]
+        (projectId) => state.firestore.ordered[`projects/${projectId}/groups`],
       ),
     (projectGroupsArray: GroupDoc[][]) => {
       const groupedProjectGroups: Record<string, GroupDoc[]> = {};
@@ -93,14 +91,14 @@ const createGroupedProjectGroupsSelector = (projectIds: string[]) =>
         }
       });
       return groupedProjectGroups;
-    }
+    },
   );
 
 const createGroupedProjectRequestsSelector = (projectIds: string[]) =>
   createSelector(
     (state: RootState) =>
       projectIds.map(
-        (projectId) => state.firestore.ordered[`projects/${projectId}/requests`]
+        (projectId) => state.firestore.ordered[`projects/${projectId}/requests`],
       ),
     (projectRequestsArray: RequestDoc[][]) => {
       const groupedProjectRequests: Record<string, RequestDoc[]> = {};
@@ -111,92 +109,85 @@ const createGroupedProjectRequestsSelector = (projectIds: string[]) =>
         }
       });
       return groupedProjectRequests;
-    }
+    },
   );
 
 const createRequestSelectorByProjectIdAndRequestId = (
   projectId: string,
-  requestId: string
+  requestId: string,
 ) =>
   createSelector(
     (state: RootState) =>
       // react redux firebase의 버그로 인해 ordered 사용
       state.firestore.ordered[`projects/${projectId}/requests`],
     (requests) =>
-      requests
-        ? requests.find((item: RequestDoc) => item.id === requestId)
-        : undefined
+      requests ? requests.find((item: RequestDoc) => item.id === requestId) : undefined,
   );
 
 const createProjectRequestsSelector = (projectId: string) =>
   createSelector(
-    (state: RootState) =>
-      state.firestore.ordered[`projects/${projectId}/requests`],
-    (requests: RequestDoc[]) => requests
+    (state: RootState) => state.firestore.ordered[`projects/${projectId}/requests`],
+    (requests: RequestDoc[]) => requests,
   );
 
 const createRequestParamsSelector = (
   projectId: string,
   requestId: string,
-  location?: REQUEST_PARAM_LOCATION
+  location?: REQUEST_PARAM_LOCATION,
 ) =>
   createSelector(
     (state: RootState) =>
-      state.firestore.ordered[
-        `projects/${projectId}/requests/${requestId}/params`
-      ],
+      state.firestore.ordered[`projects/${projectId}/requests/${requestId}/params`],
     (params: RequestParamDoc[] | undefined) => {
       if (location) {
         return params?.filter((param) => param.location === location);
       } else {
         return params;
       }
-    }
+    },
   );
 
 const createRequestBodiesSelector = (projectId: string, requestId: string) =>
   createOrderedSelector<RequestBodyDoc[]>(
-    `projects/${projectId}/requests/${requestId}/bodies`
+    `projects/${projectId}/requests/${requestId}/bodies`,
   );
 
 const createResponseStatusesSelector = (projectId: string, requestId: string) =>
   createOrderedSelector<ResponseStatusDoc[]>(
-    `projects/${projectId}/requests/${requestId}/responseStatuses`
+    `projects/${projectId}/requests/${requestId}/responseStatuses`,
   );
 
 const createResponseBodiesSelector = (
   projectId: string,
   requestId: string,
-  responseStatusId: string
+  responseStatusId: string,
 ) =>
   createOrderedSelector<ResponseBodyDoc[]>(
-    `projects/${projectId}/requests/${requestId}/responseStatuses/${responseStatusId}/bodies`
+    `projects/${projectId}/requests/${requestId}/responseStatuses/${responseStatusId}/bodies`,
   );
 
 const createResponseHeadersSelector = (
   projectId: string,
   requestId: string,
-  responseStatusId: string
+  responseStatusId: string,
 ) =>
   createOrderedSelector<ResponseHeaderDoc[]>(
-    `projects/${projectId}/requests/${requestId}/responseStatuses/${responseStatusId}/headers`
+    `projects/${projectId}/requests/${requestId}/responseStatuses/${responseStatusId}/headers`,
   );
 
 const selectUserProfile = createSelector(
   (state: RootState) => state.firebase.profile,
-  (profile) => profile
+  (profile) => profile,
 );
 
 const createProjectMembersSelector = (projectId: string) =>
   createOrderedSelector<UserProfileDoc[]>(`projectMembers/${projectId}`);
 
 const selectSearchUserResult = createOrderedSelector<UserProfileDoc[]>(
-  "searchUserResult"
+  "searchUserResult",
 );
 
-const selectNotifications = createOrderedSelector<NotificationDoc[]>(
-  "notifications"
-);
+const selectNotifications = createOrderedSelector<NotificationDoc[]>("notifications");
 
 const selectAppInfo = (state: RootState) =>
   state.firestore.data.app?.info as AppInfo | undefined;
@@ -209,12 +200,11 @@ const selectPermissionErrors = createSelector(
     if (errorKeys) {
       errorKeys.forEach(
         (errorKey) =>
-          errors.byQuery[errorKey].code === "permission-denied" &&
-          result.push(errorKey)
+          errors.byQuery[errorKey].code === "permission-denied" && result.push(errorKey),
       );
     }
     return result;
-  }
+  },
 );
 
 const FirebaseSelectors = {

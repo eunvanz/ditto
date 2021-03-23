@@ -75,7 +75,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
     >
       <form
         onSubmit={handleSubmit((values) =>
-          onSubmit({ ...values, target: defaultValues?.target })
+          onSubmit({ ...values, target: defaultValues?.target }),
         )}
         noValidate
       >
@@ -91,9 +91,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
                 message: "Group name is too long.",
               },
               validate: (data: string) => {
-                const isDup = existingGroupNames.some(
-                  (groupName) => groupName === data
-                );
+                const isDup = existingGroupNames.some((groupName) => groupName === data);
                 return isDup ? "Group name is duplicated." : true;
               },
             })}
@@ -110,9 +108,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
             <Box mt={2}>
               <Button
                 color="secondary"
-                disabled={
-                  isSubmitDisabled || isNotModified || !formState.isValid
-                }
+                disabled={isSubmitDisabled || isNotModified || !formState.isValid}
                 fullWidth
                 size="large"
                 type="submit"

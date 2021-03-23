@@ -29,9 +29,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<ResponseBodyFormProps> = (args) => (
-  <ResponseBodyForm {...args} />
-);
+const Template: Story<ResponseBodyFormProps> = (args) => <ResponseBodyForm {...args} />;
 
 export const 기본 = Template.bind({});
 기본.args = {};

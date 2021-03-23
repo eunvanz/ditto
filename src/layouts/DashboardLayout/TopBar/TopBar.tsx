@@ -94,11 +94,7 @@ const TopBar: FC<TopBarProps> = ({
           </RouterLink>
         </Hidden>
         <Box ml={2} flexGrow={1} />
-        <Switch
-          checked={isDarkMode}
-          onChange={onToggleDarkMode}
-          color="secondary"
-        />
+        <Switch checked={isDarkMode} onChange={onToggleDarkMode} color="secondary" />
         <Box ml={1}>
           <Screen />
         </Box>

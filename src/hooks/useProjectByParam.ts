@@ -6,7 +6,7 @@ const useProjectByParam = () => {
   const { projectId } = useParams<{ projectId: string }>();
 
   const project = useSelector(
-    FirebaseSelectors.createProjectSelectorByProjectId(projectId)
+    FirebaseSelectors.createProjectSelectorByProjectId(projectId),
   );
 
   return { project, projectId };

@@ -11,9 +11,7 @@ import useLoading from "../../hooks/useLoading";
 import useProjectRole from "../../hooks/useProjectRole";
 import UiSelectors from "../../store/Ui/UiSelectors";
 
-const useModelFormProps: (defaultModelId?: string) => any = (
-  defaultModelId
-) => {
+const useModelFormProps: (defaultModelId?: string) => any = (defaultModelId) => {
   const formId = useMemo(() => {
     return shortId.generate();
   }, []);
@@ -36,15 +34,15 @@ const useModelFormProps: (defaultModelId?: string) => any = (
   useFirestoreConnect(firestoreQuery as any);
 
   const projectModels = useSelector(
-    FirebaseSelectors.createProjectModelsSelector(projectId)
+    FirebaseSelectors.createProjectModelsSelector(projectId),
   );
 
   const modelFields = useSelector(
-    FirebaseSelectors.createModelFieldsSelector(projectId, defaultModelId)
+    FirebaseSelectors.createModelFieldsSelector(projectId, defaultModelId),
   );
 
   const editingModelField = useSelector(
-    (state: RootState) => state.project.editingModelField
+    (state: RootState) => state.project.editingModelField,
   );
 
   const model = useMemo(() => {
@@ -53,11 +51,9 @@ const useModelFormProps: (defaultModelId?: string) => any = (
 
   const onSubmitModel = useCallback(
     (data: ModelNameFormValues) => {
-      dispatch(
-        ProjectActions.submitModelNameForm({ ...data, hasToSetResult: true })
-      );
+      dispatch(ProjectActions.submitModelNameForm({ ...data, hasToSetResult: true }));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const editingModelFieldId = useMemo(() => {

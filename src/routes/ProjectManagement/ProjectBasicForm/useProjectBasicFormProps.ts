@@ -6,10 +6,7 @@ import useProjectRole from "../../../hooks/useProjectRole";
 import FirebaseSelectors from "../../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../../store/Progress/ProgressSelectors";
 import { ProjectActions } from "../../../store/Project/ProjectSlice";
-import {
-  ProjectBasicFormProps,
-  ProjectBasicFormValues,
-} from "./ProjectBasicForm";
+import { ProjectBasicFormProps, ProjectBasicFormValues } from "./ProjectBasicForm";
 
 const useProjectBasicFormProps: () => ProjectBasicFormProps = () => {
   const dispatch = useDispatch();
@@ -18,18 +15,14 @@ const useProjectBasicFormProps: () => ProjectBasicFormProps = () => {
   assertNotEmpty(project);
 
   const isSubmitting = useSelector(
-    ProgressSelectors.createInProgressSelector(
-      ProjectActions.submitProjectForm.type
-    )
+    ProgressSelectors.createInProgressSelector(ProjectActions.submitProjectForm.type),
   );
 
   const onSubmit = useCallback(
     (values: ProjectBasicFormValues) => {
-      dispatch(
-        ProjectActions.submitProjectForm({ data: values, type: "modify" })
-      );
+      dispatch(ProjectActions.submitProjectForm({ data: values, type: "modify" }));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const onDelete = useCallback(() => {
@@ -45,7 +38,7 @@ const useProjectBasicFormProps: () => ProjectBasicFormProps = () => {
       ProjectActions.deleteMember({
         member: userProfile,
         role,
-      })
+      }),
     );
   }, [dispatch, role, userProfile]);
 

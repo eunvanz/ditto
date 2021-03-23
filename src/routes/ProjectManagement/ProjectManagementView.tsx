@@ -1,12 +1,5 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
-import {
-  Container,
-  Box,
-  Tabs,
-  Tab,
-  Divider,
-  makeStyles,
-} from "@material-ui/core";
+import { Container, Box, Tabs, Tab, Divider, makeStyles } from "@material-ui/core";
 import { Helmet } from "react-helmet";
 import Header from "../../components/Header";
 import { MemberRole, ProjectDoc } from "../../types";
@@ -67,7 +60,7 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
     (_, value: string) => {
       history.replace(`?tab=${value}`);
     },
-    [history]
+    [history],
   );
 
   const hasManagerAuthorization = useMemo(() => {
@@ -98,9 +91,7 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
           textColor="secondary"
         >
           {tabs
-            .filter((tab) =>
-              hasManagerAuthorization ? true : tab.value !== "members"
-            )
+            .filter((tab) => (hasManagerAuthorization ? true : tab.value !== "members"))
             .map((tab) => (
               <Tab key={tab.value} label={tab.label} value={tab.value} />
             ))}

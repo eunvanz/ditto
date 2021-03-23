@@ -74,9 +74,7 @@ const defaultProps: Partial<NavBarProps> = {
   ],
 };
 
-const Template: Story<NavBarProps> = (args) => (
-  <NavBar {...defaultProps} {...args} />
-);
+const Template: Story<NavBarProps> = (args) => <NavBar {...defaultProps} {...args} />;
 
 export const 기본 = Template.bind({});
 기본.args = {};

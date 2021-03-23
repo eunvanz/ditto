@@ -22,9 +22,7 @@ const QuickUrlFormModal: React.FC<QuickUrlFormModalProps> = ({
   isSubmitting,
   existingUrls,
 }) => {
-  const { handleSubmit, register, errors, formState } = useForm<
-    ProjectUrlFormValues
-  >({
+  const { handleSubmit, register, errors, formState } = useForm<ProjectUrlFormValues>({
     mode: "onChange",
   });
 

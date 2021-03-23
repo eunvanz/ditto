@@ -15,11 +15,9 @@ const ThemeWrapper: React.FC<ThemeWrapperProps> = ({ children }) => {
 
   const handleOnDarkModeChange = useCallback(
     (isDarkMode: boolean) => {
-      dispatch(
-        UiSlice.actions.receiveTheme(isDarkMode ? THEMES.DARK : THEMES.LIGHT)
-      );
+      dispatch(UiSlice.actions.receiveTheme(isDarkMode ? THEMES.DARK : THEMES.LIGHT));
     },
-    [dispatch]
+    [dispatch],
   );
 
   useEffect(() => {

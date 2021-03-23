@@ -19,9 +19,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story<QuickEnumFormProps> = (args) => (
-  <QuickEnumForm {...args} />
-);
+const Template: Story<QuickEnumFormProps> = (args) => <QuickEnumForm {...args} />;
 
 export const 필드타입_STRING = Template.bind({});
 필드타입_STRING.args = {

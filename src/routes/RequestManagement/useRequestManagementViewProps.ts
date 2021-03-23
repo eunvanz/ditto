@@ -34,17 +34,14 @@ const useRequestManagementViewProps = () => {
   useFirestoreConnect(firestoreQuery as any);
 
   const request = useSelector(
-    FirebaseSelectors.createRequestSelectorByProjectIdAndRequestId(
-      projectId,
-      requestId
-    )
+    FirebaseSelectors.createRequestSelectorByProjectIdAndRequestId(projectId, requestId),
   );
   const project = useSelector(
-    FirebaseSelectors.createProjectSelectorByProjectId(projectId)
+    FirebaseSelectors.createProjectSelectorByProjectId(projectId),
   );
 
   const requests = useSelector(
-    FirebaseSelectors.createProjectRequestsSelector(projectId)
+    FirebaseSelectors.createProjectRequestsSelector(projectId),
   );
 
   const [isNotExist, setIsNotExist] = useState(false);
@@ -62,7 +59,7 @@ const useRequestManagementViewProps = () => {
       dispatch(
         UiActions.showDelayedLoading({
           taskName: `loadingRequests-${projectId}`,
-        })
+        }),
       );
     }
   }, [auth.isEmpty, dispatch, projectId, request, requests]);

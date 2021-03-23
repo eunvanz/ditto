@@ -86,9 +86,7 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
 }) => {
   const classes = useStyles();
 
-  const [isOpen, setIsOpen] = useState<boolean>(
-    requestParams?.length ? true : false
-  );
+  const [isOpen, setIsOpen] = useState<boolean>(requestParams?.length ? true : false);
 
   const toggleOpen = useCallback(() => {
     setIsOpen((isOpen) => !isOpen);
@@ -139,10 +137,7 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
             </SvgIcon>
             {title}
             {requestParams?.length ? (
-              <Chip
-                className={classes.countChip}
-                label={requestParams.length}
-              />
+              <Chip className={classes.countChip} label={requestParams.length} />
             ) : (
               ""
             )}

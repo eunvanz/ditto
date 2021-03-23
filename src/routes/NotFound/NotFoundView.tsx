@@ -56,19 +56,10 @@ const NotFoundView: FC<NotFoundViewProps> = ({ title, description }) => {
             "You either tried some shady route or you came here by mistake. Whichever it is, try using the navigation."}
         </Typography>
         <Box mt={6} display="flex" justifyContent="center">
-          <img
-            alt="Under development"
-            className={classes.image}
-            src={notFoundImage}
-          />
+          <img alt="Under development" className={classes.image} src={notFoundImage} />
         </Box>
         <Box mt={6} display="flex" justifyContent="center">
-          <Button
-            color="secondary"
-            component={RouterLink}
-            to="/"
-            variant="outlined"
-          >
+          <Button color="secondary" component={RouterLink} to="/" variant="outlined">
             Back to home
           </Button>
         </Box>

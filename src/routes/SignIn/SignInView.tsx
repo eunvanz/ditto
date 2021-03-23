@@ -43,12 +43,7 @@ const SignInView: React.FC<SignInViewProps> = () => {
         </Box>
         <Card>
           <CardContent className={classes.cardContent}>
-            <Box
-              alignItems="center"
-              display="flex"
-              justifyContent="space-between"
-              mb={3}
-            >
+            <Box alignItems="center" display="flex" justifyContent="space-between" mb={3}>
               <div>
                 <Typography color="textPrimary" gutterBottom variant="h2">
                   Sign in

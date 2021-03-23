@@ -4,12 +4,7 @@ import RequestManagementView from "./RequestManagementView";
 import useRequestManagementViewProps from "./useRequestManagementViewProps";
 
 const RequestManagementViewContainer = () => {
-  const {
-    request,
-    key,
-    isNotExist,
-    ...restProps
-  } = useRequestManagementViewProps();
+  const { request, key, isNotExist, ...restProps } = useRequestManagementViewProps();
 
   return request ? (
     <RequestManagementView request={request} key={key} {...restProps} />

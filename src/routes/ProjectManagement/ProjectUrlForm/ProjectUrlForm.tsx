@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-} from "react";
+import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import isEqual from "lodash/isEqual";
 import PerfectScrollbar from "react-perfect-scrollbar";
@@ -75,9 +69,9 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
 
   const [isNewFormVisible, setIsNewFormVisible] = useState(false);
   const [isEditFormVisible, setIsEditFormVisible] = useState(false);
-  const [currentProjectUrl, setCurrentProjectUrl] = useState<
-    ProjectUrlDoc | undefined
-  >(undefined);
+  const [currentProjectUrl, setCurrentProjectUrl] = useState<ProjectUrlDoc | undefined>(
+    undefined,
+  );
   const [fieldNameToFocus, setFieldNameToFocus] = useState<
     keyof ProjectUrlFormValues | undefined
   >(undefined);
@@ -105,7 +99,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
       setIsNewFormVisible(false);
       setIsEditFormVisible(false);
     },
-    [currentProjectUrl, handleSubmit, onSubmit]
+    [currentProjectUrl, handleSubmit, onSubmit],
   );
 
   const watchedValues = watch();
@@ -131,9 +125,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
     setCurrentProjectUrl(undefined);
   }, []);
 
-  const onBlurTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined
-  );
+  const onBlurTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const handleOnBlur = useCallback(() => {
     isFocusingRef.current = false;
@@ -142,9 +134,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
       const hasError = !!Object.keys(errors).length;
       if (!currentProjectUrl) {
         // 모든 필드가 비어있는 경우 작성 취소로 간주
-        const isCanceled = Object.entries(getValues()).every(
-          ([, value]) => !value
-        );
+        const isCanceled = Object.entries(getValues()).every(([, value]) => !value);
         if (isCanceled && !isFocusingRef.current) {
           setIsNewFormVisible(false);
           return;
@@ -156,14 +146,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
         hideForms();
       }
     }, 100);
-  }, [
-    currentProjectUrl,
-    errors,
-    getValues,
-    handleOnSubmit,
-    hideForms,
-    isModified,
-  ]);
+  }, [currentProjectUrl, errors, getValues, handleOnSubmit, hideForms, isModified]);
 
   const handleOnFocus = useCallback(() => {
     isFocusingRef.current = true;
@@ -182,7 +165,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
         setFieldNameToFocus(fieldName);
       }
     },
-    [isNewFormVisible, role]
+    [isNewFormVisible, role],
   );
 
   useEffect(() => {
@@ -224,8 +207,7 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
           <Box minWidth={700}>
             <Table>
               <caption>
-                Base URLs are used for setting URL of operations in this
-                project.
+                Base URLs are used for setting URL of operations in this project.
               </caption>
               <TableHead>
                 <TableRow>
@@ -240,33 +222,26 @@ const ProjectUrlForm: React.FC<ProjectUrlFormProps> = ({
               <TableBody>
                 {projectUrls.map((projectUrl) => (
                   <TableRow key={projectUrl.id}>
-                    {isEditFormVisible &&
-                    currentProjectUrl?.id === projectUrl.id ? (
+                    {isEditFormVisible && currentProjectUrl?.id === projectUrl.id ? (
                       <ProjectUrlFormItem
                         formProps={formProps}
                         autoFocusField={fieldNameToFocus}
                         onBlur={handleOnBlur}
                         onFocus={handleOnFocus}
                         existingUrls={projectUrls.filter(
-                          (item) => item.id !== projectUrl.id
+                          (item) => item.id !== projectUrl.id,
                         )}
                       />
                     ) : (
                       <>
-                        <TableCell
-                          onClick={() => showEditForm(projectUrl, "label")}
-                        >
+                        <TableCell onClick={() => showEditForm(projectUrl, "label")}>
                           {projectUrl.label}
                         </TableCell>
-                        <TableCell
-                          onClick={() => showEditForm(projectUrl, "url")}
-                        >
+                        <TableCell onClick={() => showEditForm(projectUrl, "url")}>
                           {projectUrl.url}
                         </TableCell>
                         <TableCell
-                          onClick={() =>
-                            showEditForm(projectUrl, "description")
-                          }
+                          onClick={() => showEditForm(projectUrl, "description")}
                         >
                           {projectUrl.description}
                         </TableCell>

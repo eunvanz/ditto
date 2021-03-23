@@ -19,9 +19,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story<QuickUrlFormModalProps> = (args) => (
-  <QuickUrlFormModal {...args} />
-);
+const Template: Story<QuickUrlFormModalProps> = (args) => <QuickUrlFormModal {...args} />;
 
 export const 기본 = Template.bind({});
 기본.args = {};

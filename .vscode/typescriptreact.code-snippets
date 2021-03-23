@@ -1,0 +1,174 @@
+{
+  "React Functional Component": {
+    "prefix": "rfc",
+    "body": [
+      "const $1 = () => {",
+      "  return (",
+      "    <>",
+      "    </>",
+      "  );",
+      "};",
+      "",
+      "export default $1"
+    ]
+  },
+  "Use Effect": {
+    "prefix": "usef",
+    "body": [
+      "useEffect$1(() => {",
+      "  $2",
+      "}, [$3]);"
+    ]
+  },
+  "Use State": {
+    "prefix": "usst",
+    "body": [
+      "const [$1, $2] = useState$3($4);"
+    ]
+  },
+  "Use Callback": {
+    "prefix": "uscb",
+    "body": [
+      "const $1 = useCallback$2(() => {",
+      "  $3",
+      "}, [$4]);"
+    ]
+  },
+  "Use Memo": {
+    "prefix": "usmm",
+    "body": [
+      "const $1 = useMemo$2(() => {",
+      "  $3",
+      "}, [$4]);"
+    ]
+  },
+  "Use Ref": {
+    "prefix": "usrf",
+    "body": [
+      "const $1 = useRef$2<$3>(null);"
+    ]
+  },
+  "Component Test Template": {
+    "prefix": "testcomp",
+    "body": [
+      "import { render } from \"@testing-library/react\";",
+      "",
+      "import $1 from \"./$1\";",
+      "",
+      "describe(\"$1\", () => {",
+      "  const setup = (props: $1Props) => {",
+      "    const wrapper = render(<$1 {...props} />);",
+      "    return {",
+      "      wrapper,",
+      "    };",
+      "  };",
+      "",
+      "  it(\"이전 스냅샷과 일치한다.\", () => {",
+      "    const { wrapper } = setup();",
+      "    expect(wrapper).toMatchSnapshot();",
+      "  });",
+      "",
+      "  it(\"$2\", () => {",
+      "    $5",
+      "  });",
+      "});"
+    ]
+  },
+  "Component Test With Storybook Template": {
+    "prefix": "testcompstory",
+    "body": [
+      "import { render, screen } from \"@testing-library/react\";",
+      "",
+      "import { $3 } from \"./$1.stories\";",
+      "",
+      "describe(\"$1\", () => {",
+      "  describe(\"$2\", () => {",
+      "    const setup = (props?: Partial<$1Props>) => render($3(props));",
+      "",
+      "    it(\"이전 스냅샷과 일치한다.\", () => {",
+      "      const { container } = setup();",
+      "      expect(container).toMatchSnapshot();",
+      "    });",
+      "",
+      "    it(\"$4\", () => {",
+      "      $5",
+      "    });",
+      "",
+      "  });",
+      "});",
+      ""
+    ]
+  },
+  "Test Template": {
+    "prefix": "test",
+    "body": [
+      "describe(\"$1\", () => {",
+      "  $2",
+      "  it(\"$3\", () => {",
+      "    $4",
+      "  });",
+      "})"
+    ]
+  },
+  "Component Template": {
+    "prefix": "compt",
+    "body": [
+      "import React from \"react\";",
+      "",
+      "export interface $1Props {",
+      "  $2",
+      "}",
+      "",
+      "export const $1: React.FC<$1Props> = ({",
+      "  $2",
+      "}) => {",
+      "  return <>$3</>",
+      "}"
+    ],
+    "description": "Component Template"
+  },
+  "Container Template": {
+    "prefix": "contt",
+    "body": [
+      "import React from \"react\";",
+      "import $1 from \"./$1\"",
+      "",
+      "const $1Container = () => {",
+      "  return <$1 />;",
+      "}",
+      "",
+      "export default $1Container"
+    ],
+    "description": "Container Template"
+  },
+  "Storybook Template ": {
+    "prefix": "storyt",
+    "body": [
+      "import React from \"react\";",
+      "import { Story, Meta } from \"@storybook/react/types-6-0\";",
+      "",
+      "import $1, { $1Props } from \"./$1\";",
+      "",
+      "type PartialProps = Partial<$1Props>;",
+      "",
+      "const defaultProps: PartialProps = {",
+      "  $4",
+      "};",
+      "",
+      "export default {",
+      "  title: \"$2/$3\",",
+      "  component: $1,",
+      "  args: defaultProps,",
+      "} as Meta;",
+      "",
+      "const Template: Story<$1Props> = (args) => (",
+      "  <$1 {...defaultProps} {...args} />",
+      ");",
+      "",
+      "export const 기본 = Template.bind({});",
+      "기본.args = {}",
+      ""
+    ],
+    "description": "Storybook Template"
+  }
+}

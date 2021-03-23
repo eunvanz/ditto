@@ -174,8 +174,7 @@ const notifications: NotificationDoc[] = [
   {
     id: "mockId",
     title: "Pet Store",
-    content:
-      "The operation {Add a new pet to the store} has been deleted by {Benjamin}.",
+    content: "The operation {Add a new pet to the store} has been deleted by {Benjamin}.",
     userId: "mockId",
     isRead: false,
     updatedAt: {

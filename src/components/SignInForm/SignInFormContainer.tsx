@@ -8,18 +8,14 @@ const SignInFormContainer = () => {
   const dispatch = useDispatch();
 
   const isSigningIn = useSelector(
-    ProgressSelectors.createInProgressSelector(
-      AuthActions.signInWithGoogle.type
-    )
+    ProgressSelectors.createInProgressSelector(AuthActions.signInWithGoogle.type),
   );
 
   const loginWithGoogle = useCallback(() => {
     return dispatch(AuthActions.signInWithGoogle());
   }, [dispatch]);
 
-  return (
-    <SignInForm onClickGoogle={loginWithGoogle} isSigningIn={isSigningIn} />
-  );
+  return <SignInForm onClickGoogle={loginWithGoogle} isSigningIn={isSigningIn} />;
 };
 
 export default SignInFormContainer;

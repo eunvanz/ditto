@@ -73,7 +73,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({
       <div
         className={clsx(
           classes.wrapper,
-          screenMode === SCREEN_MODE.WIDE ? "wide" : undefined
+          screenMode === SCREEN_MODE.WIDE ? "wide" : undefined,
         )}
       >
         <div className={classes.contentContainer}>

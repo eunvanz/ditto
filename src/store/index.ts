@@ -4,10 +4,7 @@ import UiSlice, { initialUiState } from "./Ui/UiSlice";
 import ProgressSlice, { initialProgressState } from "./Progress/ProgressSlice";
 import ProjectSlice, { initialProjectState } from "./Project/ProjectSlice";
 import watchAllActions from "./RootSaga";
-import FirebaseSlice, {
-  initialFirebaseState,
-  initialFirestoreState,
-} from "./Firebase";
+import FirebaseSlice, { initialFirebaseState, initialFirestoreState } from "./Firebase";
 import ErrorSlice, { initialErrorState } from "./Error/ErrorSlice";
 import AuthSlice, { initialAuthState } from "./Auth/AuthSlice";
 import { FirebaseReducer } from "react-redux-firebase";

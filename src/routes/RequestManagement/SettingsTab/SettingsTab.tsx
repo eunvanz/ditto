@@ -114,7 +114,7 @@ const SettingTab: React.FC<SettingsTabProps> = ({
         });
       })();
     },
-    [handleSubmit, onSubmit, request]
+    [handleSubmit, onSubmit, request],
   );
 
   return (

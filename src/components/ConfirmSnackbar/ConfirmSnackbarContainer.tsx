@@ -9,7 +9,7 @@ const ConfirmSnackbarContainer = () => {
   const dispatch = useDispatch();
 
   const { isVisible, confirmText, message, confirmAction } = useSelector(
-    UiSelectors.selectConfirmSnackbar
+    UiSelectors.selectConfirmSnackbar,
   );
 
   const key = useMemo(() => {

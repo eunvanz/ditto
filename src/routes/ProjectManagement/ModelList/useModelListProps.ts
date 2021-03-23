@@ -17,7 +17,7 @@ export interface UseModelListPropsParams {
 }
 
 const useModelListProps: (
-  params: UseModelListPropsParams
+  params: UseModelListPropsParams,
 ) => ModelListProps & ModelFormContainerProps = ({ project }) => {
   const location = useLocation();
 
@@ -32,15 +32,13 @@ const useModelListProps: (
     orderBy: ["createdAt", "asc"],
   });
 
-  const models = useSelector(
-    FirebaseSelectors.createProjectModelsSelector(project.id)
-  );
+  const models = useSelector(FirebaseSelectors.createProjectModelsSelector(project.id));
 
   const onDelete = useCallback(
     (model: ModelDoc) => {
       dispatch(ProjectActions.deleteModel(model));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const [isModelFormVisible, setIsModelFormVisible] = useState(false);
@@ -50,7 +48,7 @@ const useModelListProps: (
       dispatch(ProjectActions.receiveCurrentModel(model));
       setIsModelFormVisible(true);
     },
-    [dispatch]
+    [dispatch],
   );
 
   const onClickAdd = useCallback(() => {

@@ -69,7 +69,7 @@ const RequestManagementView: React.FC<RequestManagementViewProps> = ({
     (_, value: string) => {
       history.replace(`?tab=${value}`);
     },
-    [history]
+    [history],
   );
 
   useEffect(() => {

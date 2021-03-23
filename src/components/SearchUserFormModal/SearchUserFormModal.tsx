@@ -5,10 +5,7 @@ import SearchUserForm from "../SearchUserForm";
 
 export interface SearchUserFormModalProps extends ModalBase {}
 
-const SearchUserFormModal = ({
-  isVisible,
-  onClose,
-}: SearchUserFormModalProps) => {
+const SearchUserFormModal = ({ isVisible, onClose }: SearchUserFormModalProps) => {
   return (
     <Modal
       isVisible={isVisible}

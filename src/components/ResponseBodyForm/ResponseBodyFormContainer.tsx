@@ -8,9 +8,7 @@ export interface ResponseBodyFormContainerProps {
   onEditResponseStatus: () => void;
 }
 
-const ResponseBodyFormContainer = (
-  containerProps: ResponseBodyFormContainerProps
-) => {
+const ResponseBodyFormContainer = (containerProps: ResponseBodyFormContainerProps) => {
   const props = useResponseBodyFormProps(containerProps);
   return <ResponseBodyForm {...props} />;
 };

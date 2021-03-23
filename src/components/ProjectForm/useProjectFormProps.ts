@@ -9,9 +9,7 @@ const useProjectFormProps: () => ProjectFormProps = () => {
   const dispatch = useDispatch();
 
   const isSubmitting = useSelector(
-    ProgressSelectors.createInProgressSelector(
-      ProjectActions.submitProjectForm.type
-    )
+    ProgressSelectors.createInProgressSelector(ProjectActions.submitProjectForm.type),
   );
 
   const { project } = useSelector(UiSelectors.selectProjectFormModal);
@@ -24,11 +22,9 @@ const useProjectFormProps: () => ProjectFormProps = () => {
 
   const onSubmit = useCallback(
     (values: ProjectFormValues) => {
-      dispatch(
-        ProjectActions.submitProjectForm({ data: values, type: "create" })
-      );
+      dispatch(ProjectActions.submitProjectForm({ data: values, type: "create" }));
     },
-    [dispatch]
+    [dispatch],
   );
 
   return {

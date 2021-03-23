@@ -21,7 +21,7 @@ const useMembersTabProps = () => {
   ]);
 
   const allMembers = useSelector(
-    FirebaseSelectors.createProjectMembersSelector(projectId)
+    FirebaseSelectors.createProjectMembersSelector(projectId),
   );
 
   useLoading(allMembers, "loadingMembers");

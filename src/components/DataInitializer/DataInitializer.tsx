@@ -60,19 +60,12 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
         dispatch(UiActions.hideLoading("loadingProjects"));
       } else {
         dispatch(AuthActions.refreshProfile());
-        userProfile.theme &&
-          dispatch(UiActions.receiveTheme(userProfile.theme));
+        userProfile.theme && dispatch(UiActions.receiveTheme(userProfile.theme));
         userProfile.screenMode &&
           dispatch(UiActions.receiveScreenMode(userProfile.screenMode));
       }
     }
-  }, [
-    auth.isEmpty,
-    auth.isLoaded,
-    dispatch,
-    userProfile.screenMode,
-    userProfile.theme,
-  ]);
+  }, [auth.isEmpty, auth.isLoaded, dispatch, userProfile.screenMode, userProfile.theme]);
 
   useEffect(() => {
     if (isLoaded(projects)) {
@@ -92,7 +85,7 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
           message: `New version ${appInfo.version} is available!`,
           confirmText: "Reload",
           confirmAction: UiActions.reloadApp(),
-        })
+        }),
       );
     }
   }, [appInfo, dispatch]);

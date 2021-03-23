@@ -23,13 +23,11 @@ const useQuickUrlFormModalProps = () => {
     (values: ProjectUrlFormValues) => {
       dispatch(ProjectActions.submitProjectUrlForm(values));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const isSubmitting = useSelector(
-    ProgressSelectors.createInProgressSelector(
-      ProjectActions.submitProjectUrlForm.type
-    )
+    ProgressSelectors.createInProgressSelector(ProjectActions.submitProjectUrlForm.type),
   );
 
   const project = useSelector(ProjectSelectors.selectCurrentProject);
@@ -41,7 +39,7 @@ const useQuickUrlFormModalProps = () => {
   });
 
   const existingUrls = useSelector(
-    FirebaseSelectors.createProjectUrlsSelector(project.id)
+    FirebaseSelectors.createProjectUrlsSelector(project.id),
   );
 
   return {

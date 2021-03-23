@@ -9,10 +9,7 @@ const useRequestByParam = () => {
   }>();
 
   const request = useSelector(
-    FirebaseSelectors.createRequestSelectorByProjectIdAndRequestId(
-      projectId,
-      requestId
-    )
+    FirebaseSelectors.createRequestSelectorByProjectIdAndRequestId(projectId, requestId),
   );
 
   return { request, requestId };

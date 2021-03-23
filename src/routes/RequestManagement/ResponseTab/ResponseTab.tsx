@@ -37,10 +37,7 @@ const ResponseTab: React.FC<ResponseTabProps> = ({
     return checkHasAuthorization(role, "manager");
   }, [role]);
 
-  const [
-    responseStatusFormModalState,
-    setResponseStatusFormModalState,
-  ] = useState<
+  const [responseStatusFormModalState, setResponseStatusFormModalState] = useState<
     Pick<
       ResponseStatusFormModalProps,
       "isVisible" | "existingStatusCodes" | "defaultValues"
@@ -80,7 +77,7 @@ const ResponseTab: React.FC<ResponseTabProps> = ({
         });
       }
     },
-    [responseStatuses]
+    [responseStatuses],
   );
 
   useEffect(() => {
@@ -115,9 +112,7 @@ const ResponseTab: React.FC<ResponseTabProps> = ({
           </Box>
           <ResponseStatusFormModal
             isVisible={responseStatusFormModalState.isVisible}
-            existingStatusCodes={
-              responseStatusFormModalState.existingStatusCodes
-            }
+            existingStatusCodes={responseStatusFormModalState.existingStatusCodes}
             defaultValues={responseStatusFormModalState.defaultValues}
             onSubmit={onSubmitResponseStatusForm}
             isSubmitting={isSubmittingResponseStatusForm}

@@ -23,10 +23,7 @@ export interface SignInFormProps {
   isSigningIn: boolean;
 }
 
-const SignInForm: React.FC<SignInFormProps> = ({
-  onClickGoogle,
-  isSigningIn,
-}) => {
+const SignInForm: React.FC<SignInFormProps> = ({ onClickGoogle, isSigningIn }) => {
   const classes = useStyles();
 
   return (

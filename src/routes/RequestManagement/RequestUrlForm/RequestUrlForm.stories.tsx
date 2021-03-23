@@ -26,9 +26,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<RequestUrlFormProps> = (args) => (
-  <RequestUrlForm {...args} />
-);
+const Template: Story<RequestUrlFormProps> = (args) => <RequestUrlForm {...args} />;
 
 export const 기본 = Template.bind({});
 기본.args = {};

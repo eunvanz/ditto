@@ -1,9 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
 
-import QuickModelNameForm, {
-  QuickModelNameFormProps,
-} from "./QuickModelNameForm";
+import QuickModelNameForm, { QuickModelNameFormProps } from "./QuickModelNameForm";
 
 const defaultProps: Partial<QuickModelNameFormProps> = {
   existingModelNames: ["Product", "OrderItem"],

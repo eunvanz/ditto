@@ -22,34 +22,34 @@ const useRequestBodyForm = () => {
   });
 
   const requestBodies = useSelector(
-    FirebaseSelectors.createRequestBodiesSelector(projectId, requestId)
+    FirebaseSelectors.createRequestBodiesSelector(projectId, requestId),
   );
 
   const onSubmit = useCallback(
     (values: ModelFieldFormValues) => {
       dispatch(ProjectActions.submitRequestBodyForm({ ...values, requestId }));
     },
-    [dispatch, requestId]
+    [dispatch, requestId],
   );
 
   const onDelete = useCallback(
     (requestBody: ModelFieldDoc) => {
       dispatch(ProjectActions.deleteRequestBody(requestBody as RequestBodyDoc));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const submittingRequestBodyActionsInProgress = useSelector(
-    ProgressSelectors.selectSubmitRequestBodyFormActions
+    ProgressSelectors.selectSubmitRequestBodyFormActions,
   );
 
   const checkIsSubmittingRequestBody = useCallback(
     (id?: string) => {
       return submittingRequestBodyActionsInProgress.includes(
-        `${ProjectActions.submitRequestBodyForm}-${id}`
+        `${ProjectActions.submitRequestBodyForm}-${id}`,
       );
     },
-    [submittingRequestBodyActionsInProgress]
+    [submittingRequestBodyActionsInProgress],
   );
 
   const role = useProjectRole(project);

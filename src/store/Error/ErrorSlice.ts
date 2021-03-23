@@ -21,10 +21,7 @@ const ErrorSlice = createSlice({
   reducers: {
     catchError: (state, action: PayloadAction<ErrorPayload>) => {
       const { retryPath } = action.payload;
-      if (
-        retryPath &&
-        ![ROUTE.ERROR, ROUTE.NETWORK_ERROR].includes(retryPath)
-      ) {
+      if (retryPath && ![ROUTE.ERROR, ROUTE.NETWORK_ERROR].includes(retryPath)) {
         // 이미 오류페이지에 진입한 상태에서의 retryPath는 무시
         state.retryPath = action.payload.retryPath;
       }

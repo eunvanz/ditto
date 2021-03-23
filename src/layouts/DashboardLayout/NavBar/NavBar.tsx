@@ -2,14 +2,7 @@ import React, { useEffect } from "react";
 import { FC, ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import {
-  Box,
-  Drawer,
-  Hidden,
-  List,
-  ListSubheader,
-  makeStyles,
-} from "@material-ui/core";
+import { Box, Drawer, Hidden, List, ListSubheader, makeStyles } from "@material-ui/core";
 import NavItem, { NavItemProps } from "./NavItem";
 import { SCREEN_MODE } from "../../../store/Ui/UiSlice";
 
@@ -50,7 +43,7 @@ function renderNavItems({
       {items.reduce(
         (acc: any[], item: SectionItem) =>
           reduceChildRoutes({ acc, item, pathname, depth }),
-        []
+        [],
       )}
     </List>
   );
@@ -77,7 +70,7 @@ function reduceChildRoutes({
           pathname,
           items: item.items,
         })}
-      </NavItem>
+      </NavItem>,
     );
   } else {
     acc.push(<NavItem depth={depth} href={item.href} key={key} {...item} />);

@@ -20,9 +20,7 @@ export function* catchErrorFlow() {
       email: userProfile.email,
     });
     Sentry.captureException(error);
-    if (
-      ![ROUTE.NETWORK_ERROR, ROUTE.ERROR].includes(window.location.pathname)
-    ) {
+    if (![ROUTE.NETWORK_ERROR, ROUTE.ERROR].includes(window.location.pathname)) {
       yield* call(Alert.message, {
         title: "오류",
         message: error.message || "알 수 없는 오류가 발생했습니다.",

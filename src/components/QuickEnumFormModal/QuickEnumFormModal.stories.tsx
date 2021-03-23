@@ -1,9 +1,7 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
 
-import QuickEnumFormModal, {
-  QuickEnumFormModalProps,
-} from "./QuickEnumFormModal";
+import QuickEnumFormModal, { QuickEnumFormModalProps } from "./QuickEnumFormModal";
 import { withRedux } from "../../helpers/storybookHelpers";
 import { initialRootState } from "../../store";
 import mockProject from "../../mocks/mockProject";

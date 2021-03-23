@@ -90,7 +90,7 @@ const EnumForm: React.FC<EnumFormProps> = ({
       setFieldNameToFocus(fieldName);
       setTimeout(clearErrors);
     },
-    [clearErrors, hasManagerAuthorization]
+    [clearErrors, hasManagerAuthorization],
   );
 
   const hideForm = useCallback(() => {
@@ -129,7 +129,7 @@ const EnumForm: React.FC<EnumFormProps> = ({
       onSubmit({ ...data, target: currentEnumeration });
       hideForm();
     },
-    [currentEnumeration, hideForm, onSubmit]
+    [currentEnumeration, hideForm, onSubmit],
   );
 
   return enumerations ? (
@@ -139,9 +139,7 @@ const EnumForm: React.FC<EnumFormProps> = ({
       <PerfectScrollbar>
         <Box minWidth={700}>
           <Table>
-            <caption>
-              Enumerations are shared and reusable in this project.
-            </caption>
+            <caption>Enumerations are shared and reusable in this project.</caption>
             <TableHead>
               <TableRow>
                 <TableCell component="th" className={classes.nameCell}>
@@ -160,8 +158,7 @@ const EnumForm: React.FC<EnumFormProps> = ({
             <TableBody>
               {enumerations.map((enumeration) => (
                 <TableRow key={enumeration.id}>
-                  {isEditFormVisible &&
-                  currentEnumeration?.id === enumeration.id ? (
+                  {isEditFormVisible && currentEnumeration?.id === enumeration.id ? (
                     <EnumFormItem
                       formProps={formProps}
                       autoFocusField={fieldNameToFocus}
@@ -169,29 +166,21 @@ const EnumForm: React.FC<EnumFormProps> = ({
                       onSubmit={submitAndHideForm}
                       onCancel={hideForm}
                       existingEnumerations={enumerations.filter(
-                        (item) => item.id !== enumeration.id
+                        (item) => item.id !== enumeration.id,
                       )}
                     />
                   ) : (
                     <>
-                      <TableCell
-                        onClick={() => showEditForm(enumeration, "name")}
-                      >
+                      <TableCell onClick={() => showEditForm(enumeration, "name")}>
                         {enumeration.name}
                       </TableCell>
-                      <TableCell
-                        onClick={() => showEditForm(enumeration, "fieldType")}
-                      >
+                      <TableCell onClick={() => showEditForm(enumeration, "fieldType")}>
                         {enumeration.fieldType}
                       </TableCell>
-                      <TableCell
-                        onClick={() => showEditForm(enumeration, "items")}
-                      >
+                      <TableCell onClick={() => showEditForm(enumeration, "items")}>
                         {enumeration.items.join(", ")}
                       </TableCell>
-                      <TableCell
-                        onClick={() => showEditForm(enumeration, "description")}
-                      >
+                      <TableCell onClick={() => showEditForm(enumeration, "description")}>
                         {enumeration.description}
                       </TableCell>
                       <TableCell align="right">

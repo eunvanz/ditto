@@ -44,13 +44,13 @@ const useSearchUserFormProps = () => {
     (members: UserProfileDoc[], role: MemberRole) => {
       dispatch(ProjectActions.addMembers({ members, role }));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const { role } = useSelector(UiSelectors.selectSearchUserFormModal);
 
   const isSubmitting = useSelector(
-    ProgressSelectors.createInProgressSelector(ProjectActions.addMembers.type)
+    ProgressSelectors.createInProgressSelector(ProjectActions.addMembers.type),
   );
 
   return {

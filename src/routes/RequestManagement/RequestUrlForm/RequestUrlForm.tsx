@@ -125,7 +125,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
       request,
       trigger,
       watchedValues,
-    ]
+    ],
   );
 
   useEffect(() => {
@@ -142,14 +142,12 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
         .filter((item) => item.id !== request.id)
         .some((item) => {
           return (
-            `${item.method}${item.baseUrl}${item.path}`.replace(
-              /{[a-zA-Z]+}/g,
-              "{}"
-            ) === url.replace(/{[a-zA-Z]+}/g, "{}")
+            `${item.method}${item.baseUrl}${item.path}`.replace(/{[a-zA-Z]+}/g, "{}") ===
+            url.replace(/{[a-zA-Z]+}/g, "{}")
           );
         });
     },
-    [request.id, requests]
+    [request.id, requests],
   );
 
   return (
@@ -214,9 +212,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
                   const fullUrl = `${urlPrefix}${data}`;
                   const isValidUrl = regExps.pathParamUrl.test(fullUrl);
                   const braceRemovedUrl = fullUrl.replace(/{[a-zA-Z]+}/g, "");
-                  const isParamWrappedProperly = regExps.url.test(
-                    braceRemovedUrl
-                  );
+                  const isParamWrappedProperly = regExps.url.test(braceRemovedUrl);
                   if (
                     data &&
                     watchedBaseUrl !== BASE_URL.NEW &&
@@ -230,7 +226,7 @@ const RequestUrlForm: React.FC<RequestUrlFormProps> = ({
                   }
                   if (
                     checkIsDuplicatedUrl(
-                      `${watchedValues.method}${watchedValues.baseUrl}${data}`
+                      `${watchedValues.method}${watchedValues.baseUrl}${data}`,
                     )
                   ) {
                     return "URL is duplicated.";

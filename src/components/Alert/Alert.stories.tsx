@@ -16,9 +16,7 @@ const defaultProps: Partial<AlertProps> = {
   message: "Are you sure to sign out?",
 };
 
-const Template: Story<AlertProps> = (args) => (
-  <Alert {...defaultProps} {...args} />
-);
+const Template: Story<AlertProps> = (args) => <Alert {...defaultProps} {...args} />;
 
 export const 기본 = Template.bind({});
 기본.args = {};

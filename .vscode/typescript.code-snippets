@@ -1,0 +1,202 @@
+{
+  "Index Template": {
+    "prefix": "cidx",
+    "body": [
+      "import $1 from \"./$1\"",
+      "",
+      "export default $1",
+      ""
+    ]
+  },
+  "Test Template": {
+    "prefix": "test",
+    "body": [
+      "describe(\"$1\", () => {",
+      "  $2",
+      "  it(\"$3\", () => {",
+      "    $4",
+      "  });",
+      "})"
+    ]
+  },
+  "Slice Template": {
+    "prefix": "slicet",
+    "body": [
+      "import { createSlice, PayloadAction } from \"@reduxjs/toolkit\";",
+      "",
+      "export type $1State = $2",
+      "",
+      "export const initial$1State: $1State = $3;",
+      "",
+      "const $1Slice = createSlice({",
+      "  name: \"$1\",",
+      "  initialState: initial$1State,",
+      "  reducers: {",
+      "    $4: (state, action: PayloadAction<$5>) => {",
+      "      $6",
+      "    }",
+      "  },",
+      "});",
+      "",
+      "export const $1Actions = $1Slice.actions",
+      "",
+      "export default $1Slice;",
+      ""
+    ]
+  },
+  "Reducer Function": {
+    "prefix": "redf",
+    "body": [
+      "$1: (state, action: PayloadAction<$2>) => {",
+      "  $3",
+      "},"
+    ]
+  },
+  "Empty Reducer Function": {
+    "prefix": "redfemp",
+    "body": [
+      "$1: (_, _action: PayloadAction<$2>) => {}"
+    ]
+  },
+  "Slice Test": {
+    "prefix": "testslice",
+    "body": [
+      "import $1Slice, { initial$1State } from \"./$1Slice\";",
+      "",
+      "describe(\"$1Slice\", () => {",
+      "  const slice = $1Slice;",
+      "",
+      "  describe(\"reducer\", () => {",
+      "    const reducer = $1Slice.reducer;",
+      "",
+      "    describe(\"$2\", () => {",
+      "      const action = slice.actions.$2;",
+      "",
+      "      it(\"$3\", () => {",
+      "        const initialState: $1State = initial$1State;",
+      "        const payload = $4;",
+      "",
+      "        const resultState = reducer(initialState, action(payload));",
+      "",
+      "        expect(resultState).toEqual($5);",
+      "      });",
+      "    });",
+      "  });",
+      "});"
+    ]
+  },
+  "Saga Template": {
+    "prefix": "sagat",
+    "body": [
+      "import { fork, take, all } from \"typed-redux-saga\";",
+      "import $1Slice from \"./$1Slice\";",
+      "",
+      "export function* $2Flow() {",
+      "  while (true) {",
+      "    const { type } = yield* take($1Actions.$2);",
+      "  }",
+      "}",
+      "",
+      "export function* watch$1Actions() {",
+      "  yield* all([fork($2Flow)]);",
+      "}"
+    ]
+  },
+  "Saga Flow Template": {
+    "prefix": "sagaflow",
+    "body": [
+      "export function* $2Flow() {",
+      "  while (true) {",
+      "    const { type } = yield* take($1Actions.$2);",
+      "  }",
+      "}"
+    ]
+  },
+  "Saga Test": {
+    "prefix": "testsaga",
+    "body": [
+      "import $1Slice from \"./$1Slice\";",
+      "import { expectSaga } from \"redux-saga-test-plan\";",
+      "import * as matchers from \"redux-saga-test-plan/matchers\";",
+      "import {",
+      "  $2Flow,",
+      "  watch$1Actions,",
+      "} from \"./$1Saga\";",
+      "",
+      "describe(\"$1Saga\", () => {",
+      "  describe(\"$2Flow\", () => {",
+      "    const actionCreator = $1Actions.$2;",
+      "    const action = actionCreator();",
+      "",
+      "    it(\"$3\", () => {",
+      "      return expectSaga($2Flow)",
+      "        .take(actionCreator)",
+      "        .dispatch(action)",
+      "        .silentRun();",
+      "    });",
+      "  });",
+      "",
+      "  describe(\"watch$1Actions\", () => {",
+      "    it(\"$4과 관련된 모든 액션들을 감시한다.\", () => {",
+      "      return expectSaga(watch$1Actions)",
+      "        .fork($2Flow)",
+      "        .silentRun();",
+      "    });",
+      "  });",
+      "});"
+    ]
+  },
+  "Describe Saga": {
+    "prefix": "descsaga",
+    "body": [
+      "describe(\"$2Flow\", () => {",
+      "  const actionCreator = $1Actions.$2;",
+      "",
+      "  it(\"$3\", () => {",
+      "    const action = actionCreator();",
+      "",
+      "    return expectSaga($2Flow)",
+      "      .take(actionCreator)",
+      "      .dispatch(action)",
+      "      .silentRun();",
+      "  });",
+      "});"
+    ]
+  },
+  "Use Effect": {
+    "prefix": "usef",
+    "body": [
+      "useEffect$1(() => {",
+      "  $2",
+      "}, [$3]);"
+    ]
+  },
+  "Use State": {
+    "prefix": "usst",
+    "body": [
+      "const [$1, $2] = useState$3($4);"
+    ]
+  },
+  "Use Callback": {
+    "prefix": "uscb",
+    "body": [
+      "const $1 = useCallback$2(() => {",
+      "  $3",
+      "}, [$4]);"
+    ]
+  },
+  "Use Memo": {
+    "prefix": "usmm",
+    "body": [
+      "const $1 = useMemo$2(() => {",
+      "  $3",
+      "}, [$4]);"
+    ]
+  },
+  "Use Ref": {
+    "prefix": "usrf",
+    "body": [
+      "const $1 = useRef$2<$3 | null>(null);"
+    ]
+  }
+}

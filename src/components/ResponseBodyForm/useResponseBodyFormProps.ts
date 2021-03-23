@@ -40,16 +40,16 @@ const useResponseBodyFormProps = ({
     FirebaseSelectors.createResponseBodiesSelector(
       responseStatus.projectId,
       responseStatus.requestId,
-      responseStatus.id
-    )
+      responseStatus.id,
+    ),
   );
 
   const responseHeaders = useSelector(
     FirebaseSelectors.createResponseHeadersSelector(
       responseStatus.projectId,
       responseStatus.requestId,
-      responseStatus.id
-    )
+      responseStatus.id,
+    ),
   );
 
   const onDeleteResponseStatus = useCallback(() => {
@@ -64,33 +64,26 @@ const useResponseBodyFormProps = ({
           requestId: responseStatus.requestId,
           projectId: responseStatus.projectId,
           responseStatusId: responseStatus.id,
-        })
+        }),
       );
     },
-    [
-      dispatch,
-      responseStatus.id,
-      responseStatus.projectId,
-      responseStatus.requestId,
-    ]
+    [dispatch, responseStatus.id, responseStatus.projectId, responseStatus.requestId],
   );
 
   const onDeleteResponseBody = useCallback(
     (responseBody: ModelFieldDoc) => {
-      dispatch(
-        ProjectActions.deleteResponseBody(responseBody as ResponseBodyDoc)
-      );
+      dispatch(ProjectActions.deleteResponseBody(responseBody as ResponseBodyDoc));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const submittingRequestBodyActionsInProgress = useSelector(
-    ProgressSelectors.selectSubmitResponseBodyFormActions
+    ProgressSelectors.selectSubmitResponseBodyFormActions,
   );
 
   const checkIsSubmittingResponseBody = (id?: string) => {
     return submittingRequestBodyActionsInProgress.includes(
-      `${ProjectActions.submitResponseBodyForm}-${id}`
+      `${ProjectActions.submitResponseBodyForm}-${id}`,
     );
   };
 
@@ -102,33 +95,26 @@ const useResponseBodyFormProps = ({
           requestId: responseStatus.requestId,
           projectId: responseStatus.projectId,
           responseStatusId: responseStatus.id,
-        })
+        }),
       );
     },
-    [
-      dispatch,
-      responseStatus.id,
-      responseStatus.projectId,
-      responseStatus.requestId,
-    ]
+    [dispatch, responseStatus.id, responseStatus.projectId, responseStatus.requestId],
   );
 
   const onDeleteResponseHeader = useCallback(
     (responseHeader: ModelFieldDoc) => {
-      dispatch(
-        ProjectActions.deleteResponseHeader(responseHeader as ResponseHeaderDoc)
-      );
+      dispatch(ProjectActions.deleteResponseHeader(responseHeader as ResponseHeaderDoc));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const submittingRequestHeaderActionsInProgress = useSelector(
-    ProgressSelectors.selectSubmitResponseHeaderFormActions
+    ProgressSelectors.selectSubmitResponseHeaderFormActions,
   );
 
   const checkIsSubmittingResponseHeader = (id?: string) => {
     return submittingRequestHeaderActionsInProgress.includes(
-      `${ProjectActions.submitResponseHeaderForm}-${id}`
+      `${ProjectActions.submitResponseHeaderForm}-${id}`,
     );
   };
 

@@ -1,9 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  ReduxFirestoreQuerySetting,
-  useFirestoreConnect,
-} from "react-redux-firebase";
+import { ReduxFirestoreQuerySetting, useFirestoreConnect } from "react-redux-firebase";
 import { getTrueKeys } from "../../helpers/projectHelpers";
 import useAuth from "../../hooks/useAuth";
 import useProjectByParam from "../../hooks/useProjectByParam";

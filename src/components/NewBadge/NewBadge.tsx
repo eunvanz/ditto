@@ -1,11 +1,5 @@
 import React, { FC } from "react";
-import {
-  Theme,
-  createStyles,
-  withStyles,
-  Badge,
-  BadgeProps,
-} from "@material-ui/core";
+import { Theme, createStyles, withStyles, Badge, BadgeProps } from "@material-ui/core";
 
 const StyledBadge = withStyles((_: Theme) =>
   createStyles({
@@ -16,7 +10,7 @@ const StyledBadge = withStyles((_: Theme) =>
       top: 2,
       right: -2,
     },
-  })
+  }),
 )(Badge);
 
 export interface NewBadgeProps extends BadgeProps {
@@ -26,12 +20,7 @@ export interface NewBadgeProps extends BadgeProps {
 
 const NewBadge: FC<NewBadgeProps> = ({ isVisible, children, ...restProps }) => {
   return (
-    <StyledBadge
-      invisible={!isVisible}
-      color="error"
-      variant="dot"
-      {...restProps}
-    >
+    <StyledBadge invisible={!isVisible} color="error" variant="dot" {...restProps}>
       {children}
     </StyledBadge>
   );

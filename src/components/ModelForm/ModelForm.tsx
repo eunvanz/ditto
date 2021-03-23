@@ -126,7 +126,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
         }
       }
     },
-    [editingModelFieldId]
+    [editingModelFieldId],
   );
 
   useEffect(() => {
@@ -183,12 +183,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
     );
   } else {
     return (
-      <ModelTable
-        model={model}
-        modelFields={modelFields}
-        depth={depth}
-        role={role}
-      />
+      <ModelTable model={model} modelFields={modelFields} depth={depth} role={role} />
     );
   }
 };

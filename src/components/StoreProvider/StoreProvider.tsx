@@ -18,9 +18,7 @@ const rrfProps = {
 const StoreProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <Provider store={store}>
-      <ReactReduxFirebaseProvider {...rrfProps}>
-        {children}
-      </ReactReduxFirebaseProvider>
+      <ReactReduxFirebaseProvider {...rrfProps}>{children}</ReactReduxFirebaseProvider>
     </Provider>
   );
 };

@@ -128,7 +128,7 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
   const classes = useStyles();
 
   const [isOpen, setIsOpen] = useState<boolean>(
-    responseBodies?.length || responseHeaders?.length ? true : false
+    responseBodies?.length || responseHeaders?.length ? true : false,
   );
 
   const toggleOpen = useCallback(() => {
@@ -157,15 +157,10 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
             </SvgIcon>
             <StatusBadge statusCode={responseStatus.statusCode} />
             {responseStatus.description && (
-              <span className={classes.description}>
-                {responseStatus.description}
-              </span>
+              <span className={classes.description}>{responseStatus.description}</span>
             )}
             {responseBodies?.length ? (
-              <Chip
-                className={classes.countChip}
-                label={responseBodies.length}
-              />
+              <Chip className={classes.countChip} label={responseBodies.length} />
             ) : (
               ""
             )}

@@ -6,11 +6,7 @@ import useRequestByParam from "../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
-import {
-  ModelFieldDoc,
-  RequestParamDoc,
-  REQUEST_PARAM_LOCATION,
-} from "../../types";
+import { ModelFieldDoc, RequestParamDoc, REQUEST_PARAM_LOCATION } from "../../types";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import { RequestParamFormProps } from "./RequestParamForm";
 
@@ -19,17 +15,13 @@ export interface UseRequestParamFormPropsParams {
 }
 
 const useRequestParamFormProps: (
-  params: UseRequestParamFormPropsParams
+  params: UseRequestParamFormPropsParams,
 ) => RequestParamFormProps = ({ location }: UseRequestParamFormPropsParams) => {
   const { projectId, project } = useProjectByParam();
   const { requestId } = useRequestByParam();
 
   const requestParams = useSelector(
-    FirebaseSelectors.createRequestParamsSelector(
-      projectId,
-      requestId,
-      location
-    )
+    FirebaseSelectors.createRequestParamsSelector(projectId, requestId, location),
   );
 
   const dispatch = useDispatch();
@@ -41,32 +33,30 @@ const useRequestParamFormProps: (
           ...values,
           requestId,
           location,
-        })
+        }),
       );
     },
-    [dispatch, location, requestId]
+    [dispatch, location, requestId],
   );
 
   const onDeleteRequestParam = useCallback(
     (requestParam: ModelFieldDoc) => {
-      dispatch(
-        ProjectActions.deleteRequestParam(requestParam as RequestParamDoc)
-      );
+      dispatch(ProjectActions.deleteRequestParam(requestParam as RequestParamDoc));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const submittingRequestParamActionsInProgress = useSelector(
-    ProgressSelectors.selectSubmitRequestParamFormActions
+    ProgressSelectors.selectSubmitRequestParamFormActions,
   );
 
   const checkIsSubmittingRequestParam = useCallback(
     (id?: string) => {
       return submittingRequestParamActionsInProgress.includes(
-        `${ProjectActions.submitRequestParamForm}-${id}`
+        `${ProjectActions.submitRequestParamForm}-${id}`,
       );
     },
-    [submittingRequestParamActionsInProgress]
+    [submittingRequestParamActionsInProgress],
   );
 
   const role = useProjectRole(project);
