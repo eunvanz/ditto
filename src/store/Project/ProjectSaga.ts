@@ -50,7 +50,7 @@ import {
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
-import { assertNotEmpty } from "../../helpers/commonHelpers";
+import { assertNotEmpty, removeEmpty } from "../../helpers/commonHelpers";
 import history from "../../helpers/history";
 import ROUTE from "../../paths";
 import ProjectSelectors from "./ProjectSelectors";
@@ -650,7 +650,7 @@ export function* getUpdatedModelField({
       | "description",
   ) => {
     const isKeyUpdated = target[key].value !== payload[key];
-    return {
+    const result = {
       createdAt: target[key].createdAt,
       createdBy: target[key].createdBy,
       value: payload[key],
@@ -664,6 +664,7 @@ export function* getUpdatedModelField({
         },
       },
     };
+    return removeEmpty(result);
   };
   return {
     fieldName: getKeyProps("fieldName"),

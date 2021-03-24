@@ -134,7 +134,6 @@ export enum FIELD_TYPE {
   STRING = "string",
   BOOLEAN = "boolean",
   OBJECT = "object",
-  FILE = "file",
 }
 
 export const fieldTypes = Object.keys(FIELD_TYPE).map(
@@ -179,7 +178,6 @@ export const formats: { [k in FIELD_TYPE]: (string | undefined)[] } = {
   ],
   [FIELD_TYPE.BOOLEAN]: [FORMAT.NONE],
   [FIELD_TYPE.OBJECT]: [FORMAT.NEW_MODEL],
-  [FIELD_TYPE.FILE]: [FORMAT.NONE],
 };
 
 export interface ModelCell<T> extends Recordable {
@@ -380,7 +378,7 @@ export interface ReferenceObject {
 }
 
 export interface ParameterObject {
-  name: string;
+  name?: string;
   in: string;
   description?: string;
   required: boolean;
@@ -417,6 +415,7 @@ export interface OperationObject {
   requestBody?: RequestBodyObject | ReferenceObject;
   responses: ResponsesObject;
   deprecated: boolean;
+  servers?: ServerObject[];
 }
 
 export type OasPaths = Record<
@@ -429,6 +428,19 @@ export type OasPaths = Record<
     patch?: OperationObject;
   }
 >;
+
+export interface ServerObject {
+  url: string;
+  description?: string;
+  variables?: Record<
+    string,
+    {
+      enum?: string[];
+      default: string;
+      description: string;
+    }
+  >;
+}
 
 export interface Oas {
   openapi: string;
@@ -447,18 +459,7 @@ export interface Oas {
     };
     version: string;
   };
-  servers?: {
-    url: string;
-    description?: string;
-    variables?: Record<
-      string,
-      {
-        enum?: string[];
-        default: string;
-        description: string;
-      }
-    >;
-  }[];
+  servers?: ServerObject[];
   paths: OasPaths;
   components?: {
     schemas: Record<string, SchemaObject | ReferenceObject>;

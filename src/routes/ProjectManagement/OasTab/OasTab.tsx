@@ -3,7 +3,7 @@ import { Card, CardHeader, Divider } from "@material-ui/core";
 import { Oas, THEMES } from "../../../types";
 import YAML from "yaml";
 import Editor from "react-ace";
-import "ace-builds/src-noconflict/theme-monokai";
+import "ace-builds/src-noconflict/theme-nord_dark";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/mode-yaml";
 
@@ -19,10 +19,11 @@ export const OasTab: React.FC<OasTabProps> = ({ data, theme }) => {
       <Divider />
       <Editor
         mode="yaml"
-        theme={theme === THEMES.LIGHT ? "github" : "monokai"}
+        theme={theme === THEMES.LIGHT ? "github" : "nord_dark"}
         value={YAML.stringify(JSON.parse(JSON.stringify(data)))}
         width="100%"
         height={`calc(100vh - 400px)`}
+        setOptions={{ fixedWidthGutter: true }}
       />
     </Card>
   );

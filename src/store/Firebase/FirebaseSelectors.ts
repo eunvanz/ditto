@@ -273,6 +273,9 @@ const createProjectOpenApiSpecSelector = (projectId: string) =>
       const getEnum = (enumId: string) => {
         return enums?.find((item) => item.id === enumId);
       };
+      const getUrl = (urlId: string) => {
+        return urls?.find((item) => item.id === urlId);
+      };
       const getSchema = (modelField: ModelFieldDoc) => {
         const isObject = modelField.fieldType.value === FIELD_TYPE.OBJECT;
         const isArray = modelField.isArray.value;
@@ -315,7 +318,7 @@ const createProjectOpenApiSpecSelector = (projectId: string) =>
           });
           schemas[model.name] = {
             type: FIELD_TYPE.OBJECT,
-            required,
+            required: required.length ? required : undefined,
             properties,
           };
         });
@@ -373,7 +376,6 @@ const createProjectOpenApiSpecSelector = (projectId: string) =>
 
                     responseHeaders?.forEach((responseHeader) => {
                       headers[responseHeader.fieldName.value] = {
-                        name: responseHeader.fieldName.value,
                         description: responseHeader.description.value,
                         required: responseHeader.isRequired.value,
                         deprecated: false,
@@ -394,6 +396,10 @@ const createProjectOpenApiSpecSelector = (projectId: string) =>
                       schema: getSchema(requestBody),
                     };
                   });
+
+                  const operationUrl = request.baseUrl
+                    ? getUrl(request.baseUrl)
+                    : undefined;
 
                   const operationObject: OperationObject = {
                     tags: requestGroupName ? [requestGroupName] : undefined,
@@ -425,6 +431,14 @@ const createProjectOpenApiSpecSelector = (projectId: string) =>
                       : undefined,
                     responses,
                     deprecated: request.isDeprecated || false,
+                    servers: operationUrl
+                      ? [
+                          {
+                            url: operationUrl.url,
+                            description: operationUrl.label,
+                          },
+                        ]
+                      : undefined,
                   };
                   if (request.path) {
                     map[`/${request.path}`] = {

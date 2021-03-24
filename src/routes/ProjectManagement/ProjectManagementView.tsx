@@ -54,7 +54,7 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
       { value: "members", label: "Members" },
       { value: "models", label: "Models" },
       { value: "enums", label: "Enumerations" },
-      { value: "oas", label: "Open API Spec" },
+      { value: "export", label: "Export" },
     ];
   }, []);
 
@@ -106,7 +106,7 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({
         {activeTab === "members" && project && <MembersTab />}
         {activeTab === "models" && project && <ModelList project={project} />}
         {activeTab === "enums" && project && <EnumForm project={project} />}
-        {activeTab === "oas" && project && <OasTab />}
+        {activeTab === "export" && project && <OasTab />}
       </Box>
     </Container>
   );

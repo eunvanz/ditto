@@ -1,4 +1,5 @@
 import { BASE_NAME } from "./history";
+import pickBy from "lodash/pickBy";
 
 export const isEmpty = (value: any) => {
   return (
@@ -40,4 +41,12 @@ export function convertRecordToArray<T>(record: Record<string, T>) {
 export const getPathFromLocation = (location: Location) => {
   const pathname = location.pathname.replace(BASE_NAME, "");
   return `${pathname}${location.search}`;
+};
+
+/**
+ * obj의 비어있는 properties 삭제
+ * @param obj
+ */
+export const removeEmpty = (obj: any) => {
+  return pickBy(obj, (v) => v !== undefined);
 };
