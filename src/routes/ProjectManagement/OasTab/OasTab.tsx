@@ -2,14 +2,19 @@ import React from "react";
 import { Card, CardHeader, Divider, LinearProgress, makeStyles } from "@material-ui/core";
 import Editor from "react-ace";
 import YAML from "yaml";
-import { Oas, THEMES } from "../../../types";
+import clsx from "clsx";
 import "ace-builds/src-noconflict/mode-yaml";
 import "ace-builds/src-noconflict/theme-chrome";
 import "ace-builds/src-noconflict/theme-nord_dark";
+import { Oas, THEMES } from "../../../types";
 
 const useStyles = makeStyles(() => ({
   progressBar: {
     height: 2,
+    transition: "opacity 2s",
+    "&.finished": {
+      opacity: 0,
+    },
   },
 }));
 
@@ -25,13 +30,12 @@ export const OasTab: React.FC<OasTabProps> = ({ data, theme, progress }) => {
   return (
     <Card>
       <CardHeader title="Open api spec" />
-      {progress !== 100 && (
-        <LinearProgress
-          className={classes.progressBar}
-          variant="determinate"
-          value={progress}
-        />
-      )}
+      <LinearProgress
+        color="secondary"
+        className={clsx(classes.progressBar, { finished: progress === 100 })}
+        variant="determinate"
+        value={progress}
+      />
       <Divider />
       <Editor
         mode="yaml"
