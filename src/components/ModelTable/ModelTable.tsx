@@ -27,6 +27,7 @@ import ModelFieldFormItem, {
   ModelFieldFormItemProps,
 } from "../ModelForm/ModelFieldFormItem";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
+import { EXAMPLE_PROJECT_ID } from "../../constants";
 
 const useStyles = makeStyles((theme: Theme) => ({
   fieldNameCell: {
@@ -339,7 +340,11 @@ const Wrapper: React.FC<WrapperProps> = ({
           <TableCell
             colSpan={8}
             style={{ paddingLeft: indentionPadding, paddingRight: 4 }}
-            className={hasUpdatedFields ? classes.updatedFieldCell : undefined}
+            className={
+              hasUpdatedFields && model?.projectId !== EXAMPLE_PROJECT_ID
+                ? classes.updatedFieldCell
+                : undefined
+            }
           >
             <Button
               className={classes.addButton}
