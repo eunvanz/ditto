@@ -94,6 +94,8 @@ export type ModelTableProps = {
   | "customFieldNameInput"
   | "onShowQuickEnumFormModal"
   | "onRefreshModelField"
+  | "isExampleAvailable"
+  | "onClickExample"
 >;
 
 const ModelTable: React.FC<ModelTableProps> = ({
@@ -120,6 +122,8 @@ const ModelTable: React.FC<ModelTableProps> = ({
   userProfile,
   onRefreshModelField,
   onShowQuickEnumFormModal,
+  isExampleAvailable,
+  onClickExample,
 }) => {
   const classes = useStyles();
 
@@ -214,6 +218,8 @@ const ModelTable: React.FC<ModelTableProps> = ({
           userProfile={userProfile}
           onRefreshModelField={onRefreshModelField}
           onShowQuickEnumFormModal={onShowQuickEnumFormModal}
+          isExampleAvailable={isExampleAvailable}
+          onClickExample={onClickExample}
         />
       ))}
       {hasManagerAuthorization && (
@@ -243,6 +249,8 @@ const ModelTable: React.FC<ModelTableProps> = ({
               userProfile={userProfile}
               onRefreshModelField={onRefreshModelField}
               onShowQuickEnumFormModal={onShowQuickEnumFormModal}
+              isExampleAvailable={isExampleAvailable}
+              onClickExample={onClickExample}
             />
           ) : (
             <TableRow>

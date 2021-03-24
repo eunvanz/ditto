@@ -16,6 +16,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import CheckIcon from "@material-ui/icons/Check";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import ClearIcon from "@material-ui/icons/Clear";
+import DescriptionOutlinedIcon from "@material-ui/icons/DescriptionOutlined";
 import { ModelFieldFormValues } from "./ModelForm";
 import ModelForm from "./index";
 import {
@@ -110,6 +111,8 @@ export interface ModelFieldFormItemProps {
   userProfile: UserProfileDoc;
   onRefreshModelField: (modelField: ModelFieldDoc) => void;
   onShowQuickEnumFormModal: (enumeration: EnumerationDoc) => void;
+  isExampleAvailable?: boolean;
+  onClickExample?: () => void;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -131,6 +134,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   userProfile,
   onRefreshModelField,
   onShowQuickEnumFormModal,
+  isExampleAvailable = false,
+  onClickExample,
 }) => {
   const classes = useStyles();
 
@@ -734,11 +739,20 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                   </IconButton>
                 </Box>
               ) : (
-                <IconButton onClick={onDelete}>
-                  <SvgIcon fontSize="small">
-                    <DeleteOutlineIcon />
-                  </SvgIcon>
-                </IconButton>
+                <Box>
+                  {isExampleAvailable && onClickExample && (
+                    <IconButton onClick={onClickExample}>
+                      <SvgIcon fontSize="small">
+                        <DescriptionOutlinedIcon />
+                      </SvgIcon>
+                    </IconButton>
+                  )}
+                  <IconButton onClick={onDelete}>
+                    <SvgIcon fontSize="small">
+                      <DeleteOutlineIcon />
+                    </SvgIcon>
+                  </IconButton>
+                </Box>
               )}
             </>
           )}
