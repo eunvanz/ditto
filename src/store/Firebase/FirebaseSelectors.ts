@@ -463,6 +463,18 @@ const createProjectOpenApiSpecSelector = (projectId: string) =>
     },
   );
 
+const selectProgress = createSelector(
+  (state: RootState) => state.firestore.status.requesting,
+  (requesting) => {
+    const requestingKeys = Object.keys(requesting);
+    const loadedCnt = requestingKeys.filter((key) => !requesting[key]).length;
+    if (requestingKeys.length) {
+      return (loadedCnt * 100) / requestingKeys.length;
+    }
+    return 100;
+  },
+);
+
 const FirebaseSelectors = {
   selectMyProjects,
   selectOrderedMyProjects,
@@ -491,6 +503,7 @@ const FirebaseSelectors = {
   createProjectOpenApiSpecSelector,
   createProjectResponseStatuses,
   createProjectModelFieldsSelector,
+  selectProgress,
 };
 
 export default FirebaseSelectors;

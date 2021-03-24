@@ -92,9 +92,12 @@ const useOasTabProps = () => {
 
   useFirestoreConnect(firestoreQuery);
 
+  const progress = useSelector(FirebaseSelectors.selectProgress);
+
   return {
     data: oas,
     theme,
+    progress,
   };
 };
 
