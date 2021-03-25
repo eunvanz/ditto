@@ -78,7 +78,7 @@ export const OasTab: React.FC<OasTabProps> = ({ data, theme, progress }) => {
             : JSON.stringify(data, null, 2)
         }
         width="100%"
-        height={`calc(100vh - 404px)`}
+        height={`calc(100vh - 414px)`}
         setOptions={{ fixedWidthGutter: true }}
       />
     </Card>
