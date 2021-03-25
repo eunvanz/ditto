@@ -26,6 +26,12 @@ const useStyles = makeStyles(() => ({
       opacity: 0,
     },
   },
+  header: {
+    "& .MuiCardHeader-action": {
+      marginTop: 0,
+      marginRight: 0,
+    },
+  },
 }));
 
 export interface OasTabProps {
@@ -42,6 +48,7 @@ export const OasTab: React.FC<OasTabProps> = ({ data, theme, progress }) => {
   return (
     <Card>
       <CardHeader
+        className={classes.header}
         title="Open api spec"
         action={
           <FormControl size="small">
