@@ -14,12 +14,14 @@ export function* catchErrorFlow() {
     console.error("an error has been caught in saga - ", error);
 
     const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
-    Sentry.setUser({
-      username: userProfile.name,
-      id: userProfile.uid,
-      email: userProfile.email,
+    Sentry.withScope((scope) => {
+      scope.setUser({
+        username: userProfile.name,
+        id: userProfile.uid,
+        email: userProfile.email,
+      });
+      Sentry.captureException(error);
     });
-    Sentry.captureException(error);
     if (![ROUTE.NETWORK_ERROR, ROUTE.ERROR].includes(window.location.pathname)) {
       yield* call(Alert.message, {
         title: "오류",
