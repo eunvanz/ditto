@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-  Card,
-  CardHeader,
-  Divider,
-  FormControl,
-  LinearProgress,
-  makeStyles,
-  MenuItem,
-  Select,
-} from "@material-ui/core";
+import { Card, CardHeader, Divider, LinearProgress, makeStyles } from "@material-ui/core";
 import Editor from "react-ace";
 import YAML from "yaml";
 import clsx from "clsx";
@@ -17,6 +8,7 @@ import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-chrome";
 import "ace-builds/src-noconflict/theme-nord_dark";
 import { Oas, THEMES } from "../../../types";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 
 const useStyles = makeStyles(() => ({
   progressBar: {
@@ -51,15 +43,15 @@ export const OasTab: React.FC<OasTabProps> = ({ data, theme, progress }) => {
         className={classes.header}
         title="Open api spec"
         action={
-          <FormControl size="small">
-            <Select
-              value={format}
-              onChange={(e) => setFormat(e.target.value as "yaml" | "json")}
-            >
-              <MenuItem value="yaml">YAML</MenuItem>
-              <MenuItem value="json">JSON</MenuItem>
-            </Select>
-          </FormControl>
+          <ToggleButtonGroup
+            size="small"
+            onChange={(_, value) => setFormat(value as "yaml" | "json")}
+            exclusive
+            value={format}
+          >
+            <ToggleButton value="yaml">YAML</ToggleButton>
+            <ToggleButton value="jason">JSON</ToggleButton>
+          </ToggleButtonGroup>
         }
       />
       <LinearProgress
@@ -78,7 +70,7 @@ export const OasTab: React.FC<OasTabProps> = ({ data, theme, progress }) => {
             : JSON.stringify(data, null, 2)
         }
         width="100%"
-        height={`calc(100vh - 414px)`}
+        height={`calc(100vh - 423px)`}
         setOptions={{ fixedWidthGutter: true }}
       />
     </Card>
