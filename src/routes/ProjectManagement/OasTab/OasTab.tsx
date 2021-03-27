@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Card, CardHeader, Divider, LinearProgress, makeStyles } from "@material-ui/core";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import Editor from "react-ace";
 import YAML from "yaml";
 import clsx from "clsx";
@@ -8,7 +9,6 @@ import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-chrome";
 import "ace-builds/src-noconflict/theme-nord_dark";
 import { Oas, THEMES } from "../../../types";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 
 const useStyles = makeStyles(() => ({
   progressBar: {
@@ -70,7 +70,7 @@ export const OasTab: React.FC<OasTabProps> = ({ data, theme, progress }) => {
             : JSON.stringify(data, null, 2)
         }
         width="100%"
-        height={`calc(100vh - 423px)`}
+        height={`calc(100vh - ${data?.info.description ? 461 : 423}px)`}
         setOptions={{ fixedWidthGutter: true }}
       />
     </Card>
