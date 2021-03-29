@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Box, IconButton, SvgIcon, TableCell, TextField } from "@material-ui/core";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Controller, UseFormMethods } from "react-hook-form";
+import InputItems from "../../../components/InputItems";
 import { registerOptions } from "../../../helpers/formHelpers";
 import { EnumerationDoc, FIELD_TYPE } from "../../../types";
 import { EnumFormValues } from "./EnumForm";
@@ -36,14 +37,21 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
     setValue,
   } = formProps;
 
+  const watchedItems = watch("items");
   const watchedFieldType = watch("fieldType");
 
+  const [items, setItems] = useState(watchedItems);
+
   const handleOnSubmit = useCallback(async () => {
+    if (items.length === 0) {
+      return;
+    }
     trigger();
     await handleSubmit((data) => {
-      onSubmit(data);
+      delete data.itemInput;
+      onSubmit({ ...data, items });
     })();
-  }, [handleSubmit, onSubmit, trigger]);
+  }, [handleSubmit, items, onSubmit, trigger]);
 
   const handleOnCancel = useCallback(() => {
     onCancel();
@@ -67,6 +75,16 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
       window.removeEventListener("keyup", handleOnPressKey);
     };
   }, [handleOnPressKey]);
+
+  useEffect(() => {
+    register("items");
+  }, [register]);
+
+  useEffect(() => {
+    if (watchedItems) {
+      setItems(watchedItems);
+    }
+  }, [watchedItems]);
 
   return (
     <>
@@ -118,21 +136,35 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
         />
       </TableCell>
       <TableCell>
-        <TextField
+        <InputItems
           size="small"
           autoFocus={autoFocusField === "items"}
-          name="items"
+          name="itemInput"
           onChange={(e) => {
             const { value } = e.target;
-            setValue("items", value.replace(" ", ""));
-            trigger();
+            setValue("itemInput", value.replace(" ", ""));
+            trigger("itemInput");
           }}
-          inputRef={register(registerOptions.enumerationForm.items(watchedFieldType))}
+          items={items}
+          inputRef={register(
+            registerOptions.enumerationForm.itemInput(watchedFieldType, items),
+          )}
           fullWidth
           required
-          error={!!errors.items}
-          helperText={errors.items?.message}
-          placeholder="Separate values with comma"
+          error={!!errors.itemInput}
+          helperText={errors.itemInput?.message}
+          placeholder="Enter an item to add"
+          onAddItem={async () => {
+            const isValid = await trigger("itemInput");
+            const value = formProps.getValues().itemInput;
+            if (isValid && value) {
+              setItems((items) => [...items, value]);
+              setValue("itemInput", "");
+            }
+          }}
+          onDeleteItem={(itemToDelete) =>
+            setItems((items) => items.filter((item) => item !== itemToDelete))
+          }
         />
       </TableCell>
       <TableCell>

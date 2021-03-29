@@ -116,7 +116,7 @@ const EnumForm: React.FC<EnumFormProps> = ({
       setValue("fieldType", currentEnumeration.fieldType, {
         shouldValidate: true,
       });
-      setValue("items", currentEnumeration.items.join(","), {
+      setValue("items", currentEnumeration.items, {
         shouldValidate: true,
       });
       setValue("description", currentEnumeration.description, {

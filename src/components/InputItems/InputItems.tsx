@@ -36,7 +36,7 @@ export const InputItems: React.FC<InputItemsProps> = ({
   return (
     <>
       <Box>
-        <TextField variant="outlined" fullWidth onKeyUp={handleOnKeyUp} {...restProps} />
+        <TextField onKeyUp={handleOnKeyUp} {...restProps} />
       </Box>
       <Box mt={1}>
         {items?.map((item) => (

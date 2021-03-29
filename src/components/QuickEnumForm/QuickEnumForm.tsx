@@ -117,6 +117,8 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
           }}
           onDeleteItem={(itemToDelete) => setItems((items) => items.filter((item) => item !== itemToDelete))}
           required
+          fullWidth
+          variant="outlined"
         />
       </Box>
       <Box mt={2}>
