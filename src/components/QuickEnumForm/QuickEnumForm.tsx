@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Box, Button, TextField } from "@material-ui/core";
+import isEqual from "lodash/isEqual";
 import { useForm } from "react-hook-form";
 import { registerOptions } from "../../helpers/formHelpers";
 import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
@@ -42,6 +43,7 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
     trigger,
     getValues,
     reset,
+    watch,
   } = useForm<EnumFormValues>({
     mode: "onChange",
     defaultValues,
@@ -51,10 +53,21 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
 
   const [items, setItems] = useState(defaultValues.items);
 
+  const watchedValue = watch();
+
+  const isModified = useMemo(() => {
+    return !isEqual(defaultValues, {
+      name: watchedValue.name,
+      items,
+      fieldType,
+      description: watchedValue.description,
+    });
+  }, [defaultValues, fieldType, items, watchedValue.description, watchedValue.name]);
+
   const isSubmittable = useMemo(() => {
-    return !isSubmitting && formState.isValid && items.length;
-  }, [formState.isValid, isSubmitting, items.length]);
-  
+    return !isSubmitting && formState.isValid && items.length && isModified;
+  }, [formState.isValid, isModified, isSubmitting, items.length]);
+
   const handleOnSubmit = useCallback(
     async (e) => {
       e.preventDefault();
@@ -71,10 +84,9 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
     [fieldType, getValues, handleSubmit, items, onSubmit, trigger],
   );
 
-
   useEffect(() => {
     if (defaultValues.items) {
-      setItems(defaultValues.items)
+      setItems(defaultValues.items);
     }
   }, [defaultValues.items]);
 
@@ -108,14 +120,16 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
           helperText={errors.itemInput?.message}
           placeholder="Enter an item to add"
           onAddItem={async () => {
-            const isValid = await trigger("itemInput")
-            const value = getValues().itemInput
+            const isValid = await trigger("itemInput");
+            const value = getValues().itemInput;
             if (isValid && value) {
-              setItems((items) => [...items, value])
-              setValue("itemInput", "")
+              setItems((items) => [...items, value]);
+              setValue("itemInput", "");
             }
           }}
-          onDeleteItem={(itemToDelete) => setItems((items) => items.filter((item) => item !== itemToDelete))}
+          onDeleteItem={(itemToDelete) =>
+            setItems((items) => items.filter((item) => item !== itemToDelete))
+          }
           required
           fullWidth
           variant="outlined"
