@@ -59,11 +59,11 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
     async (e) => {
       e.preventDefault();
       if (items.length === 0) {
-        return
+        return;
       }
       trigger();
-      const values = getValues()
-      delete values.itemInput
+      const values = getValues();
+      delete values.itemInput;
       await handleSubmit(() => {
         onSubmit({ ...getValues(), fieldType, items });
       })();
