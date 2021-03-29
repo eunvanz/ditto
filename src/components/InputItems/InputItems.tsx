@@ -1,16 +1,41 @@
 import React from "react";
-import { Box, TextField } from "@material-ui/core";
+import { Box, Chip, makeStyles, TextField, TextFieldProps } from "@material-ui/core";
+import { Theme } from "../../theme";
 
-export interface InputItemsProps {
-  items?: string[] | number[];
-  type: "string" | "number";
+const useStyles = makeStyles((theme: Theme) => ({
+  itemChip: {
+    marginRight: theme.spacing(1),
+  },
+}));
+
+export interface InputItemsOwnProps {
+  items: string[];
+  onDeleteItem: (item: string) => void;
 }
 
-export const InputItems: React.FC<InputItemsProps> = ({ items, type }) => {
+export type InputItemsProps = InputItemsOwnProps & TextFieldProps;
+
+export const InputItems: React.FC<InputItemsProps> = ({
+  items,
+  onDeleteItem,
+  ...restProps
+}) => {
+  const classes = useStyles();
+
   return (
     <>
       <Box>
-        <TextField />
+        <TextField variant="outlined" fullWidth {...restProps} />
+      </Box>
+      <Box mt={1}>
+        {items?.map((item) => (
+          <Chip
+            className={classes.itemChip}
+            color="default"
+            label={item}
+            onDelete={() => onDeleteItem(item)}
+          />
+        ))}
       </Box>
     </>
   );
