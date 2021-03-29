@@ -1,10 +1,11 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Box, Button, TextField } from "@material-ui/core";
 import { useForm } from "react-hook-form";
 import { registerOptions } from "../../helpers/formHelpers";
 import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
 import { EnumFormValues } from "../../routes/ProjectManagement/EnumForm/EnumForm";
 import { EnumerationDoc, FIELD_TYPE } from "../../types";
+import InputItems from "../InputItems";
 
 export interface QuickEnumFormProps {
   onSubmit: (values: EnumFormValues) => void;
@@ -24,7 +25,8 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
   const defaultValues: EnumFormValues = useMemo(
     () => ({
       name: enumeration?.name || "",
-      items: enumeration?.items.join(",") || "",
+      // @ts-ignore
+      items: enumeration?.items?.map((item) => String(item)) || [],
       fieldType,
       description: enumeration?.description || "",
     }),
@@ -47,20 +49,34 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
 
   useSyncDefaultValues(reset, defaultValues);
 
-  const isSubmittable = useMemo(() => {
-    return !isSubmitting && formState.isValid;
-  }, [formState.isValid, isSubmitting]);
+  const [items, setItems] = useState(defaultValues.items);
 
+  const isSubmittable = useMemo(() => {
+    return !isSubmitting && formState.isValid && items.length;
+  }, [formState.isValid, isSubmitting, items.length]);
+  
   const handleOnSubmit = useCallback(
     async (e) => {
       e.preventDefault();
+      if (items.length === 0) {
+        return
+      }
       trigger();
+      const values = getValues()
+      delete values.itemInput
       await handleSubmit(() => {
-        onSubmit({ ...getValues(), fieldType });
+        onSubmit({ ...getValues(), fieldType, items });
       })();
     },
-    [fieldType, getValues, handleSubmit, onSubmit, trigger],
+    [fieldType, getValues, handleSubmit, items, onSubmit, trigger],
   );
+
+
+  useEffect(() => {
+    if (defaultValues.items) {
+      setItems(defaultValues.items)
+    }
+  }, [defaultValues.items]);
 
   return existingEnumerations ? (
     <form onSubmit={handleOnSubmit} noValidate>
@@ -78,21 +94,29 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
         />
       </Box>
       <Box mt={2}>
-        <TextField
-          name="items"
+        <InputItems
+          name="itemInput"
+          items={items}
           label="Values"
+          inputRef={register(registerOptions.enumerationForm.itemInput(fieldType, items))}
           onChange={(e) => {
             const { value } = e.target;
-            setValue("items", value.replace(" ", ""));
-            trigger();
+            setValue("itemInput", value.replace(" ", ""));
+            trigger("itemInput");
           }}
-          inputRef={register(registerOptions.enumerationForm.items(fieldType))}
-          variant="outlined"
-          fullWidth
+          error={!!errors.itemInput}
+          helperText={errors.itemInput?.message}
+          placeholder="Enter an item to add"
+          onAddItem={async () => {
+            const isValid = await trigger("itemInput")
+            const value = getValues().itemInput
+            if (isValid && value) {
+              setItems((items) => [...items, value])
+              setValue("itemInput", "")
+            }
+          }}
+          onDeleteItem={(itemToDelete) => setItems((items) => items.filter((item) => item !== itemToDelete))}
           required
-          error={!!errors.items}
-          helperText={errors.items?.message}
-          placeholder="Separate values with comma"
         />
       </Box>
       <Box mt={2}>

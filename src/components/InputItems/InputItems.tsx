@@ -1,4 +1,4 @@
-import React from "react";
+import React, { KeyboardEvent, useCallback } from "react";
 import { Box, Chip, makeStyles, TextField, TextFieldProps } from "@material-ui/core";
 import { Theme } from "../../theme";
 
@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export interface InputItemsOwnProps {
   items: string[];
+  onAddItem: () => void;
   onDeleteItem: (item: string) => void;
 }
 
@@ -17,15 +18,25 @@ export type InputItemsProps = InputItemsOwnProps & TextFieldProps;
 
 export const InputItems: React.FC<InputItemsProps> = ({
   items,
+  onAddItem,
   onDeleteItem,
   ...restProps
 }) => {
   const classes = useStyles();
 
+  const handleOnKeyUp = useCallback(
+    (e: KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === "Enter") {
+        onAddItem();
+      }
+    },
+    [onAddItem],
+  );
+
   return (
     <>
       <Box>
-        <TextField variant="outlined" fullWidth {...restProps} />
+        <TextField variant="outlined" fullWidth onKeyUp={handleOnKeyUp} {...restProps} />
       </Box>
       <Box mt={1}>
         {items?.map((item) => (

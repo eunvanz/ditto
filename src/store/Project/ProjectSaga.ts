@@ -1096,8 +1096,8 @@ export function* submitEnumFormFlow() {
       const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
       const items =
         payload.fieldType === FIELD_TYPE.INTEGER
-          ? payload.items.split(",").map((item) => Number(item))
-          : payload.items.split(",");
+          ? payload.items.map((item) => Number(item))
+          : payload.items;
       if (!!target) {
         yield* put(UiActions.showDelayedLoading({ taskName: "submitEnumForm" }));
         const updatedRecordProps = yield* call(getUpdatedRecordProps);

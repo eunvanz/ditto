@@ -40,7 +40,8 @@ const useStyles = makeStyles(() => ({
 export interface EnumFormValues {
   name: string;
   fieldType: FIELD_TYPE;
-  items: string;
+  itemInput?: string;
+  items: string[];
   description?: string;
   target?: EnumerationDoc;
 }

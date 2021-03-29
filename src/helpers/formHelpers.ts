@@ -17,6 +17,26 @@ export const registerOptions = {
       },
       pattern: patterns.wordsWithNoSpace,
     }),
+    itemInput: (fieldType: FIELD_TYPE, items: string[]) => ({
+      maxLength: {
+        value: 100,
+        message: "Values are too long.",
+      },
+      validate: {
+        pattern: (value: any) => {
+          if (fieldType === FIELD_TYPE.STRING) {
+            return (
+              regExps.enumValue.string.test(value) || "Not allowed character is included."
+            );
+          } else if (fieldType === FIELD_TYPE.INTEGER) {
+            return regExps.enumValue.integer.test(value) || "Only numbers are allowed.";
+          }
+        },
+        exclusive: (value: string) => {
+          return !items.includes(value) || "The same item exists already.";
+        },
+      },
+    }),
     items: (fieldType: FIELD_TYPE) => ({
       required: "Values are required.",
       maxLength: {
