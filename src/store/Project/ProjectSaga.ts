@@ -385,7 +385,7 @@ export function* deleteModelFieldFlow() {
         const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
         yield* call(
           sendNotificationsToProjectMembers,
-          `The model field {${modelField.fieldName}} has been deleted by {${userProfile.name}}.`,
+          `The model field {${modelField.fieldName.value}} has been deleted by {${userProfile.name}}.`,
           `./projects/${modelField.projectId}?tab=models&model=${modelField.modelId}`,
         );
         yield* put(
