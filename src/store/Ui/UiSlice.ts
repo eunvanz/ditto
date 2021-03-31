@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { OptionsObject } from "notistack";
+import { ExampleFormModalProps } from "../../components/ExampleFormModal/ExampleFormModal";
 import {
   THEMES,
   ProjectDoc,
@@ -8,6 +9,7 @@ import {
   RequestDoc,
   MemberRole,
   EnumerationDoc,
+  ModelFieldDoc,
 } from "../../types";
 
 export interface Notification {
@@ -37,6 +39,7 @@ export type UiState = {
   searchUserFormModal: SearchUserFormModalState;
   screenMode: SCREEN_MODE;
   confirmSnackbar: ConfirmSnackbarState;
+  exampleFormModal: ExampleFormModalState;
 };
 
 export interface ConfirmSnackbarState {
@@ -88,6 +91,11 @@ export interface ProjectFormModalState {
   isVisible: boolean;
   project?: ProjectDoc;
 }
+
+export type ExampleFormModalState = Pick<
+  ExampleFormModalProps,
+  "isVisible" | "modelField"
+>;
 
 export enum SCREEN_MODE {
   WIDE = "WIDE",
@@ -145,6 +153,9 @@ export const initialUiState: UiState = {
     isVisible: false,
     message: "",
     confirmText: "",
+  },
+  exampleFormModal: {
+    isVisible: false,
   },
 };
 
@@ -285,6 +296,13 @@ const UiSlice = createSlice({
     },
     hideSearchUserFormModal: (state, _action: PayloadAction<void>) => {
       state.searchUserFormModal.isVisible = false;
+    },
+    showExampleFormModal: (state, action: PayloadAction<ModelFieldDoc>) => {
+      state.exampleFormModal.isVisible = true;
+      state.exampleFormModal.modelField = action.payload;
+    },
+    hideExampleFormModal: (state, _action: PayloadAction<void>) => {
+      state.exampleFormModal.isVisible = false;
     },
     receiveScreenMode: (state, action: PayloadAction<SCREEN_MODE>) => {
       state.screenMode = action.payload;

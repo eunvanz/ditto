@@ -78,7 +78,7 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
       const values = getValues();
       delete values.itemInput;
       await handleSubmit(() => {
-        onSubmit({ ...getValues(), fieldType, items });
+        onSubmit({ ...values, fieldType, items });
       })();
     },
     [fieldType, getValues, handleSubmit, items, onSubmit, trigger],
