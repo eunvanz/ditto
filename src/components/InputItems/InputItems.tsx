@@ -37,7 +37,16 @@ export const InputItems: React.FC<InputItemsProps> = ({
   return (
     <>
       <Box>
-        <TextField onKeyUp={handleOnKeyUp} {...restProps} />
+        <TextField
+          onKeyDown={(e) => {
+            // 엔터키로 form submit 하지 않음
+            if (e.key === "Enter") {
+              e.preventDefault()
+            }
+          }}
+          onKeyUp={handleOnKeyUp}
+          {...restProps}
+        />
       </Box>
       <Box mt={1}>
         {items?.map((item) => (
