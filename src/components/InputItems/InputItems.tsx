@@ -26,6 +26,7 @@ export const InputItems: React.FC<InputItemsProps> = ({
 
   const handleOnKeyUp = useCallback(
     (e: KeyboardEvent<HTMLDivElement>) => {
+      e.stopPropagation();
       if (e.key === "Enter") {
         onAddItem();
       }
