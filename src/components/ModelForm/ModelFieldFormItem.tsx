@@ -397,9 +397,15 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
   }, []);
 
   const isExampleButtonVisible = useMemo(() => {
-    return isExampleAvailable && onClickExample && modelField && modelField.enum.value === ENUMERATION.NONE
-    && [FIELD_TYPE.STRING, FIELD_TYPE.INTEGER, FIELD_TYPE.NUMBER]
-    .includes(modelField.fieldType.value)
+    return (
+      isExampleAvailable &&
+      onClickExample &&
+      modelField &&
+      modelField.enum.value === ENUMERATION.NONE &&
+      [FIELD_TYPE.STRING, FIELD_TYPE.INTEGER, FIELD_TYPE.NUMBER].includes(
+        modelField.fieldType.value,
+      )
+    );
   }, [isExampleAvailable, modelField, onClickExample]);
 
   return (
