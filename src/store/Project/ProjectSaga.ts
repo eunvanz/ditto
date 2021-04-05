@@ -2180,30 +2180,35 @@ export function* handleRefreshModelField(
         modelFieldType = "modelField";
         return true;
       }
+      return false;
     }) ||
     requestParams?.find((item) => {
       if (item.id === payload.id) {
         modelFieldType = "requestParam";
         return true;
       }
+      return false;
     }) ||
     requestBodies?.find((item) => {
       if (item.id === payload.id) {
         modelFieldType = "requestBody";
         return true;
       }
+      return false;
     }) ||
     responseBodies?.find((item) => {
       if (item.id === payload.id) {
         modelFieldType = "responseBody";
         return true;
       }
+      return false;
     }) ||
     responseHeaders?.find((item) => {
       if (item.id === payload.id) {
         modelFieldType = "responseHeader";
         return true;
       }
+      return false
     });
 
   if (latestModelField) {
