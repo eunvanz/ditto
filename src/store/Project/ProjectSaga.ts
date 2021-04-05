@@ -2276,6 +2276,34 @@ export function* handleRefreshModelField(
   }
 }
 
+export function* submitExamplesFlow() {
+  while (true) {
+    const { type, payload } = yield* take(ProjectActions.submitExamples);
+    yield* put(ProgressActions.startProgress(type))
+    yield* put(UiActions.showDelayedLoading({ taskName: type }))
+    const { target } = payload
+    if (!target) {
+      yield* put(ErrorActions.catchError({ error: Error("Target model field is not defined."), isAlertOnly: true }))
+      continue;
+    }
+    const data = {
+      modelId: target.modelId,
+      projectId: target.projectId,
+      modelFieldId: target.id,
+      examples: target.fieldType.value === FIELD_TYPE.INTEGER ? payload.examples.map((item) => Number(item)) : payload.examples
+    }
+    try {
+      yield* call(Firework.updateModelFieldExamples, data)
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }))
+    } finally {
+      yield* put(UiActions.hideLoading(type))
+      yield* put(UiActions.hideExampleFormModal())
+      yield* put(ProgressActions.finishProgress(type))
+    }
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -2310,5 +2338,6 @@ export function* watchProjectActions() {
     fork(changeMemberRoleFlow),
     fork(markNotificationsAsReadFlow),
     takeEvery(ProjectActions.refreshModelField, handleRefreshModelField),
+    fork(submitExamplesFlow)
   ]);
 }

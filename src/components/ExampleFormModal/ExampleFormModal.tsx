@@ -18,6 +18,7 @@ export interface ExampleFormModalProps {
 export interface ExampleFormValues {
   itemInput?: string;
   examples: string[];
+  target?: ModelFieldDoc;
 }
 
 export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
@@ -55,10 +56,10 @@ export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
       e.preventDefault();
       trigger();
       await handleSubmit(() => {
-        onSubmit({ examples: items });
+        onSubmit({ examples: items, target: modelField });
       })();
     },
-    [handleSubmit, items, onSubmit, trigger],
+    [handleSubmit, items, modelField, onSubmit, trigger],
   );
 
   const isModified = useMemo(() => {

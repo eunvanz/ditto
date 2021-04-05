@@ -103,6 +103,22 @@ function* updateModelField(id: string, modelField: Modifiable<ModelFieldItem>) {
   );
 }
 
+function* updateModelFieldExamples(data: {
+  projectId: string;
+  modelId: string;
+  modelFieldId: string;
+  examples: string[] | number[];
+}) {
+  yield* call(
+    updateDocument,
+    `projects/${data.projectId}/models/${data.modelId}/modelFields`,
+    data.modelFieldId,
+    {
+      examples: data.examples,
+    },
+  );
+}
+
 function* addModel(data: ModelItem) {
   return yield* call(addDocument, `projects/${data.projectId}/models`, data);
 }
@@ -446,6 +462,7 @@ export const realFirework = {
   getProjectRef,
   addNotification,
   updateNotification,
+  updateModelFieldExamples,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

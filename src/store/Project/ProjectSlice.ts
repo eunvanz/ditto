@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ExampleFormValues } from "../../components/ExampleFormModal/ExampleFormModal";
 import { GroupFormValues } from "../../components/GroupFormModal/GroupFormModal";
 import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
 import { ModelNameFormValues } from "../../components/ModelForm/ModelNameForm";
@@ -176,6 +177,7 @@ const ProjectSlice = createSlice({
     ) => {},
     markNotificationsAsRead: (_, _action: PayloadAction<string[]>) => {},
     refreshModelField: (_, _action: PayloadAction<ModelFieldDoc>) => {},
+    submitExamples: (_, _action: PayloadAction<ExampleFormValues>) => {},
   },
 });
 

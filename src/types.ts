@@ -196,6 +196,7 @@ export interface ModelFieldItem extends Recordable {
   enum: ModelCell<string>;
   description: ModelCell<string>;
   settingsByMember: Record<string, BaseSettings>;
+  examples?: string[] | number[];
 }
 
 export type Modifiable<T extends CommonModelFieldItem> = Omit<
