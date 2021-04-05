@@ -80,6 +80,7 @@ export interface ModelFormProps {
   isVisible?: boolean;
   role: MemberRole;
   screenMode: SCREEN_MODE;
+  onClickExample: (modelField: ModelFieldDoc) => void;
 }
 
 const ModelForm: React.FC<ModelFormProps> = ({
@@ -92,6 +93,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   editingModelFieldId,
   isVisible,
   role,
+  onClickExample
 }) => {
   const classes = useStyles();
 
@@ -177,13 +179,16 @@ const ModelForm: React.FC<ModelFormProps> = ({
             checkIsNewFormDisabled={checkIsNewFormDisabled}
             onShowNewForm={checkModelNameInput}
             role={role}
+            isExampleAvailable
+            onClickExample={onClickExample}
           />
         </Box>
       </Card>
     );
   } else {
     return (
-      <ModelTable model={model} modelFields={modelFields} depth={depth} role={role} />
+      <ModelTable model={model} modelFields={modelFields} depth={depth} role={role}
+      isExampleAvailable onClickExample={onClickExample} />
     );
   }
 };

@@ -112,7 +112,7 @@ export interface ModelFieldFormItemProps {
   onRefreshModelField: (modelField: ModelFieldDoc) => void;
   onShowQuickEnumFormModal: (enumeration: EnumerationDoc) => void;
   isExampleAvailable?: boolean;
-  onClickExample?: () => void;
+  onClickExample?: (modelField: ModelFieldDoc) => void;
 }
 
 const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
@@ -395,6 +395,12 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     };
     // eslint-disable-next-line
   }, []);
+
+  const isExampleButtonVisible = useMemo(() => {
+    return isExampleAvailable && onClickExample && modelField && modelField.enum.value === ENUMERATION.NONE
+    && [FIELD_TYPE.STRING, FIELD_TYPE.INTEGER, FIELD_TYPE.NUMBER]
+    .includes(modelField.fieldType.value)
+  }, [isExampleAvailable, modelField, onClickExample]);
 
   return (
     <>
@@ -740,8 +746,8 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 </Box>
               ) : (
                 <Box>
-                  {isExampleAvailable && onClickExample && (
-                    <IconButton onClick={onClickExample}>
+                  {isExampleButtonVisible && (
+                    <IconButton onClick={() => onClickExample?.(modelField!)}>
                       <SvgIcon fontSize="small">
                         <DescriptionOutlinedIcon />
                       </SvgIcon>

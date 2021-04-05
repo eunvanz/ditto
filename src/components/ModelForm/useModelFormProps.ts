@@ -9,6 +9,9 @@ import { RootState } from "../../store";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import UiSelectors from "../../store/Ui/UiSelectors";
+import { UiActions } from "../../store/Ui/UiSlice";
+import { ModelFieldDoc } from "../../types";
+import { EXAMPLE_TYPES } from "../ExampleFormModal/ExampleFormModal";
 import { ModelNameFormValues } from "./ModelNameForm";
 
 const useModelFormProps: (defaultModelId?: string) => any = (defaultModelId) => {
@@ -69,6 +72,18 @@ const useModelFormProps: (defaultModelId?: string) => any = (defaultModelId) => 
 
   const screenMode = useSelector(UiSelectors.selectScreenMode);
 
+  const onClickExample = useCallback(
+    (modelField: ModelFieldDoc) => {
+      dispatch(
+        UiActions.showExampleFormModal({
+          modelField,
+          type: EXAMPLE_TYPES.MODEL_FIELD,
+        }),
+      );
+    },
+    [dispatch],
+  );
+
   return {
     model,
     modelFields: modelFields || [],
@@ -77,6 +92,7 @@ const useModelFormProps: (defaultModelId?: string) => any = (defaultModelId) => 
     editingModelFieldId,
     role,
     screenMode,
+    onClickExample,
   };
 };
 
