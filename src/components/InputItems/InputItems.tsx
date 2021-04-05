@@ -51,6 +51,7 @@ export const InputItems: React.FC<InputItemsProps> = ({
       <Box mt={1}>
         {items?.map((item) => (
           <Chip
+            key={item}
             className={classes.itemChip}
             color="default"
             label={item}

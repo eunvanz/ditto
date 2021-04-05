@@ -78,9 +78,7 @@ export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
   );
 
   const isModified = useMemo(() => {
-    return !isEqual(defaultValues, {
-      examples: items,
-    });
+    return !isEqual(defaultValues.examples, items);
   }, [defaultValues, items]);
 
   const isSubmittable = useMemo(() => {

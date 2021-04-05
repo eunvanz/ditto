@@ -2354,6 +2354,10 @@ export function* submitExamplesFlow() {
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }))
     } finally {
+      yield* put(UiActions.showNotification({
+        type: "success",
+        message: "Example data has been saved."
+      }))
       yield* put(UiActions.hideLoading(type))
       yield* put(UiActions.hideExampleFormModal())
       yield* put(ProgressActions.finishProgress(type))

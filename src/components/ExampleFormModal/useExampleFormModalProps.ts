@@ -9,7 +9,7 @@ import { ExampleFormValues } from "./ExampleFormModal";
 const useExampleFormModalProps = () => {
   const dispatch = useDispatch();
 
-  const { isVisible, modelField } = useSelector(UiSelectors.selectExampleFormModal);
+  const { isVisible, modelField, type } = useSelector(UiSelectors.selectExampleFormModal);
 
   const onClose = useCallback(() => {
     dispatch(UiActions.hideExampleFormModal());
@@ -32,6 +32,7 @@ const useExampleFormModalProps = () => {
     onClose,
     onSubmit,
     isSubmitting,
+    type,
   };
 };
 
