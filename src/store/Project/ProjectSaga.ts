@@ -47,6 +47,9 @@ import {
   NotificationItem,
   UserProfileDoc,
   RequestDoc,
+  FieldTypeHasExamples,
+  RequestParamDoc,
+  RequestBodyDoc,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -63,6 +66,7 @@ import {
   getRequestParamLocationName,
   getTrueKeys,
 } from "../../helpers/projectHelpers";
+import { EXAMPLE_TYPES } from "../../components/ExampleFormModal/ExampleFormModal";
 
 function* getProperDoc<T extends Recordable>(
   values: any & { target?: Doc<T, BaseSettings> },
@@ -2286,14 +2290,62 @@ export function* submitExamplesFlow() {
       yield* put(ErrorActions.catchError({ error: Error("Target model field is not defined."), isAlertOnly: true }))
       continue;
     }
-    const data = {
-      modelId: target.modelId,
-      projectId: target.projectId,
-      modelFieldId: target.id,
-      examples: target.fieldType.value === FIELD_TYPE.INTEGER ? payload.examples.map((item) => Number(item)) : payload.examples
+    if (![FIELD_TYPE.STRING, FIELD_TYPE.NUMBER, FIELD_TYPE.INTEGER].includes(target.fieldType.value)) {
+      yield* put(ErrorActions.catchError({ error: Error("Field type is invalid."), isAlertOnly: true }))
+      continue;
     }
+
     try {
-      yield* call(Firework.updateModelFieldExamples, data)
+      const examples = target.fieldType.value === FIELD_TYPE.STRING ? payload.examples : payload.examples.map((item) => Number(item))
+      const fieldType = target.fieldType.value as FieldTypeHasExamples
+      if (payload.type === EXAMPLE_TYPES.MODEL_FIELD) {
+        const data = {
+          modelId: target.modelId,
+          projectId: target.projectId,
+          modelFieldId: target.id,
+          examples,
+          fieldType,
+        }
+        yield* call(Firework.updateModelFieldExamples, data)
+      } else if (payload.type === EXAMPLE_TYPES.REQUEST_PARAM) {
+        const data = {
+          projectId: target.projectId,
+          requestId: (target as RequestParamDoc).requestId,
+          requestParamId: target.id,
+          examples,
+          fieldType,
+        }
+        yield* call(Firework.updateRequestParamExamples, data)
+      } else if (payload.type === EXAMPLE_TYPES.REQUEST_BODY) {
+        const data = {
+          projectId: target.projectId,
+          requestId: (target as RequestBodyDoc).requestId,
+          requestBodyId: target.id,
+          examples,
+          fieldType,
+        }
+        yield* call(Firework.updateRequestBodyExamples, data)
+      } else if (payload.type === EXAMPLE_TYPES.RESPONSE_BODY) {
+        const data = {
+          projectId: target.projectId,
+          requestId: (target as ResponseBodyDoc).requestId,
+          responseStatusId: (target as ResponseBodyDoc).responseStatusId,
+          responseBodyId: target.id,
+          examples,
+          fieldType,
+        }
+        yield* call(Firework.updateResponseBodyExamples, data)
+      } else if (payload.type === EXAMPLE_TYPES.RESPONSE_HEADER) {
+        const data = {
+          projectId: target.projectId,
+          requestId: (target as ResponseHeaderDoc).requestId,
+          responseStatusId: (target as ResponseHeaderDoc).responseStatusId,
+          responseHeaderId: target.id,
+          examples,
+          fieldType,
+        }
+        yield* call(Firework.updateResponseHeaderExamples, data)
+      }
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }))
     } finally {

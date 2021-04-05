@@ -185,6 +185,8 @@ export interface ModelCell<T> extends Recordable {
   settingsByMember: Record<string, ModelCellSettings>;
 }
 
+export type FieldTypeHasExamples = FIELD_TYPE.STRING | FIELD_TYPE.INTEGER | FIELD_TYPE.NUMBER
+
 export interface ModelFieldItem extends Recordable {
   projectId: string;
   modelId: string;
@@ -196,7 +198,11 @@ export interface ModelFieldItem extends Recordable {
   enum: ModelCell<string>;
   description: ModelCell<string>;
   settingsByMember: Record<string, BaseSettings>;
-  examples?: string[] | number[];
+  examples?: {
+    [FIELD_TYPE.STRING]?: string[];
+    [FIELD_TYPE.INTEGER]?: number[];
+    [FIELD_TYPE.NUMBER]?: number[];
+  };
 }
 
 export type Modifiable<T extends CommonModelFieldItem> = Omit<
@@ -476,3 +482,5 @@ export interface Oas {
     url: string;
   };
 }
+
+export type ModelFieldDocLike = ModelFieldDoc | RequestParamDoc | RequestBodyDoc | ResponseBodyDoc | ResponseHeaderDoc;

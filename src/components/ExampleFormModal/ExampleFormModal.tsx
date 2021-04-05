@@ -2,23 +2,34 @@ import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { Box, Button } from "@material-ui/core";
 import isEqual from "lodash/isEqual";
 import { useForm } from "react-hook-form";
+import { registerOptions } from "../../helpers/formHelpers";
 import { getTextFieldErrorProps } from "../../helpers/projectHelpers";
-import { ModelFieldDoc } from "../../types";
+import { FieldTypeHasExamples, FIELD_TYPE, ModelFieldDocLike } from "../../types";
 import InputItems from "../InputItems";
 import Modal from "../Modal";
+
+export enum EXAMPLE_TYPES {
+  MODEL_FIELD = "MODEL_FIELD",
+  REQUEST_PARAM = "REQUEST_PARAM",
+  REQUEST_BODY = "REQUEST_BODY",
+  RESPONSE_BODY = "RESPONSE_BODY",
+  RESPONSE_HEADER = "RESPONSE_HEADER",
+}
 
 export interface ExampleFormModalProps {
   isVisible: boolean;
   onClose: () => void;
-  modelField?: ModelFieldDoc;
+  modelField?: ModelFieldDocLike;
   onSubmit: (values: ExampleFormValues) => void;
   isSubmitting: boolean;
+  type?: EXAMPLE_TYPES;
 }
 
 export interface ExampleFormValues {
   itemInput?: string;
   examples: string[];
-  target?: ModelFieldDoc;
+  target?: ModelFieldDocLike;
+  type?: EXAMPLE_TYPES;
 }
 
 export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
@@ -27,12 +38,16 @@ export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
   modelField,
   onSubmit,
   isSubmitting,
+  type,
 }) => {
   const defaultValues = useMemo(() => {
     return {
       itemInput: "",
-      // @ts-ignore
-      examples: modelField.examples?.map((item: string | number) => String(item)) || [],
+      examples:
+        modelField?.examples?.[
+          modelField?.fieldType.value as FieldTypeHasExamples
+          // @ts-ignore
+        ]?.map((item: string | number) => String(item)) || [],
     };
   }, [modelField]);
 
@@ -56,10 +71,10 @@ export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
       e.preventDefault();
       trigger();
       await handleSubmit(() => {
-        onSubmit({ examples: items, target: modelField });
+        onSubmit({ examples: items, target: modelField, type });
       })();
     },
-    [handleSubmit, items, modelField, onSubmit, trigger],
+    [handleSubmit, items, modelField, onSubmit, trigger, type],
   );
 
   const isModified = useMemo(() => {
@@ -86,7 +101,12 @@ export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
             name="itemInput"
             items={items}
             label="Data"
-            inputRef={register}
+            inputRef={register(
+              registerOptions.enumerationForm.itemInput(
+                modelField?.fieldType.value || FIELD_TYPE.STRING,
+                items,
+              ),
+            )}
             variant="outlined"
             {...getTextFieldErrorProps(errors.itemInput)}
             placeholder="Enter an example data to add"

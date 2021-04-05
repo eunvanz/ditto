@@ -1,6 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { OptionsObject } from "notistack";
-import { ExampleFormModalProps } from "../../components/ExampleFormModal/ExampleFormModal";
+import {
+  ExampleFormModalProps,
+  EXAMPLE_TYPES,
+} from "../../components/ExampleFormModal/ExampleFormModal";
 import {
   THEMES,
   ProjectDoc,
@@ -9,7 +12,7 @@ import {
   RequestDoc,
   MemberRole,
   EnumerationDoc,
-  ModelFieldDoc,
+  ModelFieldDocLike,
 } from "../../types";
 
 export interface Notification {
@@ -94,7 +97,7 @@ export interface ProjectFormModalState {
 
 export type ExampleFormModalState = Pick<
   ExampleFormModalProps,
-  "isVisible" | "modelField"
+  "isVisible" | "modelField" | "type"
 >;
 
 export enum SCREEN_MODE {
@@ -297,9 +300,13 @@ const UiSlice = createSlice({
     hideSearchUserFormModal: (state, _action: PayloadAction<void>) => {
       state.searchUserFormModal.isVisible = false;
     },
-    showExampleFormModal: (state, action: PayloadAction<ModelFieldDoc>) => {
+    showExampleFormModal: (
+      state,
+      action: PayloadAction<{ modelField: ModelFieldDocLike; type: EXAMPLE_TYPES }>,
+    ) => {
       state.exampleFormModal.isVisible = true;
-      state.exampleFormModal.modelField = action.payload;
+      state.exampleFormModal.modelField = action.payload.modelField;
+      state.exampleFormModal.type = action.payload.type;
     },
     hideExampleFormModal: (state, _action: PayloadAction<void>) => {
       state.exampleFormModal.isVisible = false;

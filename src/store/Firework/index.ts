@@ -27,6 +27,7 @@ import {
   ResponseHeaderDoc,
   UserProfile,
   NotificationItem,
+  FieldTypeHasExamples,
 } from "../../types";
 import mockFirework from "./mockFirework";
 
@@ -108,13 +109,14 @@ function* updateModelFieldExamples(data: {
   modelId: string;
   modelFieldId: string;
   examples: string[] | number[];
+  fieldType: FieldTypeHasExamples;
 }) {
   yield* call(
     updateDocument,
     `projects/${data.projectId}/models/${data.modelId}/modelFields`,
     data.modelFieldId,
     {
-      examples: data.examples,
+      [`examples.${data.fieldType}`]: data.examples,
     },
   );
 }
@@ -242,6 +244,23 @@ function* updateRequestParam(id: string, data: Modifiable<RequestParamItem>) {
   );
 }
 
+function* updateRequestParamExamples(data: {
+  projectId: string;
+  requestId: string;
+  requestParamId: string;
+  examples: string[] | number[];
+  fieldType: FieldTypeHasExamples;
+}) {
+  yield* call(
+    updateDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/params`,
+    data.requestParamId,
+    {
+      [`examples.${data.fieldType}`]: data.examples,
+    },
+  );
+}
+
 function* deleteRequestParam(data: RequestParamDoc) {
   yield* call(
     deleteDocument,
@@ -264,6 +283,23 @@ function* updateRequestBody(id: string, data: Modifiable<RequestBodyItem>) {
     `projects/${data.projectId}/requests/${data.requestId}/bodies`,
     id,
     data,
+  );
+}
+
+function* updateRequestBodyExamples(data: {
+  projectId: string;
+  requestId: string;
+  requestBodyId: string;
+  examples: string[] | number[];
+  fieldType: FieldTypeHasExamples;
+}) {
+  yield* call(
+    updateDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/bodies`,
+    data.requestBodyId,
+    {
+      [`examples.${data.fieldType}`]: data.examples,
+    },
   );
 }
 
@@ -321,6 +357,24 @@ function* updateResponseBody(id: string, data: Modifiable<ResponseBodyItem>) {
   );
 }
 
+function* updateResponseBodyExamples(data: {
+  projectId: string;
+  requestId: string;
+  responseStatusId: string;
+  responseBodyId: string;
+  examples: string[] | number[];
+  fieldType: FieldTypeHasExamples;
+}) {
+  yield* call(
+    updateDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/bodies`,
+    data.responseBodyId,
+    {
+      [`examples.${data.fieldType}`]: data.examples,
+    },
+  );
+}
+
 function* deleteResponseBody(data: ResponseBodyDoc) {
   yield* call(
     deleteDocument,
@@ -343,6 +397,24 @@ function* updateResponseHeader(id: string, data: Modifiable<ResponseHeaderItem>)
     `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/headers`,
     id,
     data,
+  );
+}
+
+function* updateResponseHeaderExamples(data: {
+  projectId: string;
+  requestId: string;
+  responseStatusId: string;
+  responseHeaderId: string;
+  examples: string[] | number[];
+  fieldType: FieldTypeHasExamples;
+}) {
+  yield* call(
+    updateDocument,
+    `projects/${data.projectId}/requests/${data.requestId}/responseStatuses/${data.responseStatusId}/headers`,
+    data.responseHeaderId,
+    {
+      [`examples.${data.fieldType}`]: data.examples,
+    },
   );
 }
 
@@ -463,6 +535,10 @@ export const realFirework = {
   addNotification,
   updateNotification,
   updateModelFieldExamples,
+  updateRequestParamExamples,
+  updateRequestBodyExamples,
+  updateResponseBodyExamples,
+  updateResponseHeaderExamples,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";
