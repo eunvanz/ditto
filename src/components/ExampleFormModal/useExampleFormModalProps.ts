@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
