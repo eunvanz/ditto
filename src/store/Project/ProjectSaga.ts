@@ -2208,7 +2208,7 @@ export function* handleRefreshModelField(
         modelFieldType = "responseHeader";
         return true;
       }
-      return false
+      return false;
     });
 
   if (latestModelField) {
@@ -2288,21 +2288,38 @@ export function* handleRefreshModelField(
 export function* submitExamplesFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.submitExamples);
-    yield* put(ProgressActions.startProgress(type))
-    yield* put(UiActions.showDelayedLoading({ taskName: type }))
-    const { target } = payload
+    yield* put(ProgressActions.startProgress(type));
+    yield* put(UiActions.showDelayedLoading({ taskName: type }));
+    const { target } = payload;
     if (!target) {
-      yield* put(ErrorActions.catchError({ error: Error("Target model field is not defined."), isAlertOnly: true }))
+      yield* put(
+        ErrorActions.catchError({
+          error: Error("Target model field is not defined."),
+          isAlertOnly: true,
+        }),
+      );
       continue;
     }
-    if (![FIELD_TYPE.STRING, FIELD_TYPE.NUMBER, FIELD_TYPE.INTEGER].includes(target.fieldType.value)) {
-      yield* put(ErrorActions.catchError({ error: Error("Field type is invalid."), isAlertOnly: true }))
+    if (
+      ![FIELD_TYPE.STRING, FIELD_TYPE.NUMBER, FIELD_TYPE.INTEGER].includes(
+        target.fieldType.value,
+      )
+    ) {
+      yield* put(
+        ErrorActions.catchError({
+          error: Error("Field type is invalid."),
+          isAlertOnly: true,
+        }),
+      );
       continue;
     }
 
     try {
-      const examples = target.fieldType.value === FIELD_TYPE.STRING ? payload.examples : payload.examples.map((item) => Number(item))
-      const fieldType = target.fieldType.value as FieldTypeHasExamples
+      const examples =
+        target.fieldType.value === FIELD_TYPE.STRING
+          ? payload.examples
+          : payload.examples.map((item) => Number(item));
+      const fieldType = target.fieldType.value as FieldTypeHasExamples;
       if (payload.type === EXAMPLE_TYPES.MODEL_FIELD) {
         const data = {
           modelId: target.modelId,
@@ -2310,8 +2327,8 @@ export function* submitExamplesFlow() {
           modelFieldId: target.id,
           examples,
           fieldType,
-        }
-        yield* call(Firework.updateModelFieldExamples, data)
+        };
+        yield* call(Firework.updateModelFieldExamples, data);
       } else if (payload.type === EXAMPLE_TYPES.REQUEST_PARAM) {
         const data = {
           projectId: target.projectId,
@@ -2319,8 +2336,8 @@ export function* submitExamplesFlow() {
           requestParamId: target.id,
           examples,
           fieldType,
-        }
-        yield* call(Firework.updateRequestParamExamples, data)
+        };
+        yield* call(Firework.updateRequestParamExamples, data);
       } else if (payload.type === EXAMPLE_TYPES.REQUEST_BODY) {
         const data = {
           projectId: target.projectId,
@@ -2328,8 +2345,8 @@ export function* submitExamplesFlow() {
           requestBodyId: target.id,
           examples,
           fieldType,
-        }
-        yield* call(Firework.updateRequestBodyExamples, data)
+        };
+        yield* call(Firework.updateRequestBodyExamples, data);
       } else if (payload.type === EXAMPLE_TYPES.RESPONSE_BODY) {
         const data = {
           projectId: target.projectId,
@@ -2338,8 +2355,8 @@ export function* submitExamplesFlow() {
           responseBodyId: target.id,
           examples,
           fieldType,
-        }
-        yield* call(Firework.updateResponseBodyExamples, data)
+        };
+        yield* call(Firework.updateResponseBodyExamples, data);
       } else if (payload.type === EXAMPLE_TYPES.RESPONSE_HEADER) {
         const data = {
           projectId: target.projectId,
@@ -2348,19 +2365,21 @@ export function* submitExamplesFlow() {
           responseHeaderId: target.id,
           examples,
           fieldType,
-        }
-        yield* call(Firework.updateResponseHeaderExamples, data)
+        };
+        yield* call(Firework.updateResponseHeaderExamples, data);
       }
     } catch (error) {
-      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }))
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     } finally {
-      yield* put(UiActions.showNotification({
-        type: "success",
-        message: "Example data has been saved."
-      }))
-      yield* put(UiActions.hideLoading(type))
-      yield* put(UiActions.hideExampleFormModal())
-      yield* put(ProgressActions.finishProgress(type))
+      yield* put(
+        UiActions.showNotification({
+          type: "success",
+          message: "Example data has been saved.",
+        }),
+      );
+      yield* put(UiActions.hideLoading(type));
+      yield* put(UiActions.hideExampleFormModal());
+      yield* put(ProgressActions.finishProgress(type));
     }
   }
 }
@@ -2399,6 +2418,6 @@ export function* watchProjectActions() {
     fork(changeMemberRoleFlow),
     fork(markNotificationsAsReadFlow),
     takeEvery(ProjectActions.refreshModelField, handleRefreshModelField),
-    fork(submitExamplesFlow)
+    fork(submitExamplesFlow),
   ]);
 }
