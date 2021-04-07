@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   makeStyles,
   Dialog,
@@ -37,23 +38,49 @@ const Modal: React.FC<ModalProps> = ({
 }) => {
   const classes = useStyles();
 
-  return (
-    <Dialog open={isVisible} onClose={onClose} fullWidth {...restProps}>
-      <Card>
-        <CardHeader
-          title={title}
-          action={
-            <IconButton size="small" onClick={onClose}>
-              <CloseIcon />
-            </IconButton>
-          }
-          className={classes.cardHeader}
-        />
-        <Divider />
-        <CardContent>{children}</CardContent>
-      </Card>
-    </Dialog>
-  );
+  const [hasToRender, setHasToRender] = useState(isVisible);
+
+  const timeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (isVisible) {
+      setHasToRender(true);
+    } else {
+      // 다이얼로그가 사라지는 애니메이션 이후 컴포넌트 삭제 (200ms)
+      timeoutRef.current = setTimeout(() => {
+        setHasToRender(false);
+      }, 200);
+    }
+  }, [isVisible]);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  return hasToRender
+    ? createPortal(
+        <Dialog open={isVisible} onClose={onClose} fullWidth {...restProps}>
+          <Card>
+            <CardHeader
+              title={title}
+              action={
+                <IconButton size="small" onClick={onClose}>
+                  <CloseIcon />
+                </IconButton>
+              }
+              className={classes.cardHeader}
+            />
+            <Divider />
+            <CardContent>{children}</CardContent>
+          </Card>
+        </Dialog>,
+        document.body,
+      )
+    : null;
 };
 
 export default Modal;

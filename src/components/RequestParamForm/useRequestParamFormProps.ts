@@ -6,7 +6,9 @@ import useRequestByParam from "../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
+import { UiActions } from "../../store/Ui/UiSlice";
 import { ModelFieldDoc, RequestParamDoc, REQUEST_PARAM_LOCATION } from "../../types";
+import { EXAMPLE_TYPES } from "../ExampleFormModal/ExampleFormModal";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import { RequestParamFormProps } from "./RequestParamForm";
 
@@ -63,6 +65,18 @@ const useRequestParamFormProps: (
 
   const userProfile = useSelector(FirebaseSelectors.selectUserProfile);
 
+  const onClickExample = useCallback(
+    (modelField: ModelFieldDoc) => {
+      dispatch(
+        UiActions.showExampleFormModal({
+          modelField,
+          type: EXAMPLE_TYPES.REQUEST_PARAM,
+        }),
+      );
+    },
+    [dispatch],
+  );
+
   return {
     location,
     requestParams,
@@ -71,6 +85,7 @@ const useRequestParamFormProps: (
     checkIsSubmittingRequestParam,
     role,
     userProfile,
+    onClickExample,
   };
 };
 

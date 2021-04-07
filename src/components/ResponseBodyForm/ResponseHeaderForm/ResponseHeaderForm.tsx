@@ -14,6 +14,7 @@ export interface ResponseHeaderFormProps {
   onDelete: (responseHeader: ModelFieldDoc) => void;
   checkIsSubmitting: (id?: string) => boolean;
   role: MemberRole;
+  onClickExample: (modelField: ModelFieldDoc) => void;
 }
 
 const ResponseHeaderForm: React.FC<ResponseHeaderFormProps> = ({
@@ -22,6 +23,7 @@ const ResponseHeaderForm: React.FC<ResponseHeaderFormProps> = ({
   onDelete,
   checkIsSubmitting,
   role,
+  onClickExample,
 }) => {
   return (
     <RequestParamForm
@@ -31,6 +33,7 @@ const ResponseHeaderForm: React.FC<ResponseHeaderFormProps> = ({
       onDeleteRequestParam={onDelete}
       checkIsSubmittingRequestParam={checkIsSubmitting}
       role={role}
+      onClickExample={onClickExample}
     />
   );
 };

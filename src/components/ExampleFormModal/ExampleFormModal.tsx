@@ -82,8 +82,8 @@ export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
   }, [defaultValues, items]);
 
   const isSubmittable = useMemo(() => {
-    return !isSubmitting && formState.isValid && items.length && isModified;
-  }, [formState.isValid, isModified, isSubmitting, items.length]);
+    return !isSubmitting && formState.isValid && isModified;
+  }, [formState.isValid, isModified, isSubmitting]);
 
   useEffect(() => {
     if (defaultValues.examples) {
@@ -107,7 +107,7 @@ export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
             )}
             variant="outlined"
             {...getTextFieldErrorProps(errors.itemInput)}
-            placeholder="Enter an example data to add"
+            placeholder="Enter an example to add"
             onAddItem={async () => {
               const isValid = await trigger("itemInput");
               const value = getValues().itemInput;
@@ -120,6 +120,7 @@ export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
               setItems((items) => items.filter((item) => item !== itemToDelete))
             }
             fullWidth
+            autoFocus
           />
         </Box>
         <Box mt={2}>

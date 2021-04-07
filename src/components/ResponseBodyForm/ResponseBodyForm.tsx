@@ -109,6 +109,7 @@ export interface ResponseBodyFormProps {
   onDeleteResponseHeader: (responseHeader: ModelFieldDoc) => void;
   checkIsSubmittingResponseHeader: (id?: string) => boolean;
   role: MemberRole;
+  onClickExample: (modelField: ModelFieldDoc) => void;
 }
 
 const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
@@ -124,6 +125,7 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
   onDeleteResponseHeader,
   checkIsSubmittingResponseHeader,
   role,
+  onClickExample,
 }) => {
   const classes = useStyles();
 
@@ -255,6 +257,7 @@ const ResponseBodyForm: React.FC<ResponseBodyFormProps> = ({
             onDelete={onDeleteResponseHeader}
             checkIsSubmitting={checkIsSubmittingResponseHeader}
             role={role}
+            onClickExample={onClickExample}
           />
         </Box>
       </Collapse>

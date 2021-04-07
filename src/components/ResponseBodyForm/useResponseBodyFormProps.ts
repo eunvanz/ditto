@@ -6,12 +6,14 @@ import useProjectRole from "../../hooks/useProjectRole";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
+import { UiActions } from "../../store/Ui/UiSlice";
 import {
   ModelFieldDoc,
   ResponseBodyDoc,
   ResponseHeaderDoc,
   ResponseStatusDoc,
 } from "../../types";
+import { EXAMPLE_TYPES } from "../ExampleFormModal/ExampleFormModal";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 
 export interface UseResponseBodyFormPropsParams {
@@ -122,6 +124,18 @@ const useResponseBodyFormProps = ({
 
   const role = useProjectRole(project);
 
+  const onClickExample = useCallback(
+    (modelField: ModelFieldDoc) => {
+      dispatch(
+        UiActions.showExampleFormModal({
+          modelField,
+          type: EXAMPLE_TYPES.RESPONSE_BODY,
+        }),
+      );
+    },
+    [dispatch],
+  );
+
   return {
     responseStatus,
     responseBodies,
@@ -135,6 +149,7 @@ const useResponseBodyFormProps = ({
     onEditResponseStatus,
     responseHeaders,
     role,
+    onClickExample,
   };
 };
 

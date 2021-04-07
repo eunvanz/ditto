@@ -24,6 +24,7 @@ export interface RequestParamFormProps {
   onDeleteRequestParam: (requestParam: ModelFieldDoc) => void;
   checkIsSubmittingRequestParam: (id?: string) => boolean;
   role: MemberRole;
+  onClickExample: (modelField: ModelFieldDoc) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -83,6 +84,7 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
   onDeleteRequestParam,
   checkIsSubmittingRequestParam,
   role,
+  onClickExample,
 }) => {
   const classes = useStyles();
 
@@ -157,6 +159,8 @@ const RequestParamForm: React.FC<RequestParamFormProps> = ({
               customFieldName="Key"
               disabledColumns={disabledColumns}
               role={role}
+              isExampleAvailable
+              onClickExample={onClickExample}
             />
           </Box>
         </PerfectScrollbar>

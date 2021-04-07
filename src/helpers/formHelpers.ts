@@ -29,7 +29,9 @@ export const registerOptions = {
               regExps.enumValue.string.test(value) || "Not allowed character is included."
             );
           } else if (fieldType === FIELD_TYPE.INTEGER) {
-            return regExps.enumValue.integer.test(value) || "Only numbers are allowed.";
+            return regExps.enumValue.integer.test(value) || "Only integers are allowed.";
+          } else if (fieldType === FIELD_TYPE.NUMBER) {
+            return !isNaN(Number(value)) || "Only numbers are allowed.";
           }
         },
         exclusive: (value: string) => {
