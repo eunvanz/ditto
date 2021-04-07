@@ -468,6 +468,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                       error={!!errors.fieldName}
                       helperText={errors.fieldName?.message}
                       placeholder={customFieldName || "Field name"}
+                      autoComplete="off"
                     />
                   );
                 }
@@ -565,6 +566,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                           error={!!errors.fieldType}
                           helperText={errors.fieldType?.message}
                           disabled={disabledColumns?.includes("fieldType")}
+                          autoComplete="off"
                         />
                       );
                     }}
@@ -609,6 +611,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                         autoFocus={autoFocusField === "format"}
                         placeholder="Format"
                         disabled={disabledColumns?.includes("format")}
+                        autoComplete="off"
                       />
                     )}
                     onFocus={() => setIsDisabledEnterSubmit(true)}
@@ -658,6 +661,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                         }
                         disabled={checkIsColumnDisabled("enum")}
                         placeholder="Enumerations"
+                        autoComplete="off"
                       />
                     )}
                     onFocus={() => setIsDisabledEnterSubmit(true)}
@@ -727,6 +731,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                   error={!!errors.description}
                   helperText={errors.description?.message}
                   placeholder="Description"
+                  autoComplete="off"
                 />
               )}
             />

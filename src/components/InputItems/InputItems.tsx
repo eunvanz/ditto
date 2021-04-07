@@ -41,10 +41,11 @@ export const InputItems: React.FC<InputItemsProps> = ({
           onKeyDown={(e) => {
             // 엔터키로 form submit 하지 않음
             if (e.key === "Enter") {
-              e.preventDefault()
+              e.preventDefault();
             }
           }}
           onKeyUp={handleOnKeyUp}
+          autoComplete="off"
           {...restProps}
         />
       </Box>
