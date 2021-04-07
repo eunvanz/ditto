@@ -71,12 +71,10 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
     if (isLoaded(projects)) {
       setIsDataInitialized(true);
       dispatch(UiActions.hideLoading("loadingProjects"));
+    } else {
+      dispatch(UiActions.showLoading("loadingProjects"));
     }
   }, [dispatch, projects]);
-
-  useEffect(() => {
-    dispatch(UiActions.showLoading("loadingProjects"));
-  }, [dispatch]);
 
   useEffect(() => {
     if (appInfo && cmp(appInfo.version, APP_VERSION) > 0) {
