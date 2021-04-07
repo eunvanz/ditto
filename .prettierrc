@@ -9,16 +9,5 @@
   "singleQuote": false,
   "tabWidth": 2,
   "trailingComma": "all",
-  "useTabs": false,
-  "importOrder": [
-    "^react$",
-    "^react-dom$",
-    "^[^.]*$",
-    "^\\.+$",
-    "^[@\\w].*(?<!(?:.svg|.png|.scss))$",
-    ".*(?<!(?:.svg|.png|.scss))$",
-    "^[@\\w].*.scss$",
-    ".scss$",
-    "(.png|.svg)$"
-  ]
+  "useTabs": false
 }
