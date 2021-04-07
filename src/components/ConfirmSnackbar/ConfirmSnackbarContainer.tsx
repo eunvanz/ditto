@@ -28,7 +28,7 @@ const ConfirmSnackbarContainer = () => {
 
   return (
     <ConfirmSnackbar
-      key={key}
+      snackbarKey={key}
       isVisible={isVisible}
       onClose={handleOnClose}
       confirmText={confirmText}

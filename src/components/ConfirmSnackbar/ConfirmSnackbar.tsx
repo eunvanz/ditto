@@ -32,7 +32,7 @@ export interface ConfirmSnackbarProps {
   onConfirm: () => void;
   confirmText: string;
   onClose: () => void;
-  key?: string;
+  snackbarKey?: string;
 }
 
 const ConfirmSnackbar: React.FC<ConfirmSnackbarProps> = ({
@@ -41,14 +41,14 @@ const ConfirmSnackbar: React.FC<ConfirmSnackbarProps> = ({
   onConfirm,
   confirmText,
   onClose,
-  key,
+  snackbarKey,
 }) => {
   const classes = useStyles();
 
   return (
     <Snackbar
       className={classes.root}
-      key={key}
+      key={snackbarKey}
       anchorOrigin={{
         vertical: "bottom",
         horizontal: "left",
