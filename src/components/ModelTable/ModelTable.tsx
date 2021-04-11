@@ -7,7 +7,7 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { EditOutlined, ArrowDropDown, ArrowRight, Add } from "@material-ui/icons";
+import { EditOutlined, ArrowDropDown, ArrowRight, Add, Code } from "@material-ui/icons";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   checkHasAuthorization,
@@ -55,11 +55,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   submit: {
     display: "none",
   },
-  addSubButton: {
-    marginLeft: 10,
+  subButton: {
     color: theme.palette.text.secondary,
   },
   updatedFieldCell: commonStyles.updatedFieldCell,
+  modelName: {
+    marginRight: 10,
+  },
 }));
 
 export type ModelTableProps = {
@@ -362,15 +364,17 @@ const Wrapper: React.FC<WrapperProps> = ({
             >
               {!isDetailVisible && (
                 <>
-                  <ArrowRight fontSize="small" /> {model?.name}
+                  <ArrowRight fontSize="small" />
+                  <span className={classes.modelName}>{model?.name}</span>
                 </>
               )}
               {isDetailVisible && (
                 <>
-                  <ArrowDropDown fontSize="small" /> {model?.name}
+                  <ArrowDropDown fontSize="small" />
+                  <span className={classes.modelName}>{model?.name}</span>
                   {hasManagerAuthorization && (
                     <Button
-                      className={classes.addSubButton}
+                      className={classes.subButton}
                       size="small"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -382,6 +386,9 @@ const Wrapper: React.FC<WrapperProps> = ({
                   )}
                 </>
               )}
+              <Button className={classes.subButton} size="small">
+                <Code fontSize="small" />
+              </Button>
             </Button>
           </TableCell>
         </TableRow>
