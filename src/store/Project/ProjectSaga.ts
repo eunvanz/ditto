@@ -2292,26 +2292,14 @@ export function* submitExamplesFlow() {
     yield* put(UiActions.showDelayedLoading({ taskName: type }));
     const { target } = payload;
     if (!target) {
-      yield* put(
-        ErrorActions.catchError({
-          error: Error("Target model field is not defined."),
-          isAlertOnly: true,
-        }),
-      );
-      continue;
+      throw new Error("Target model field is not defined.");
     }
     if (
       ![FIELD_TYPE.STRING, FIELD_TYPE.NUMBER, FIELD_TYPE.INTEGER].includes(
         target.fieldType.value,
       )
     ) {
-      yield* put(
-        ErrorActions.catchError({
-          error: Error("Field type is invalid."),
-          isAlertOnly: true,
-        }),
-      );
-      continue;
+      throw new Error("Field type is invalid.");
     }
 
     try {
