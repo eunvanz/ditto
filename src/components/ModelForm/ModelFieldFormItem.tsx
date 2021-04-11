@@ -10,6 +10,7 @@ import {
   TableRow,
   Tooltip,
   Button,
+  Badge,
 } from "@material-ui/core";
 import { Controller, ControllerRenderProps, useForm } from "react-hook-form";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -31,6 +32,7 @@ import {
   MemberRole,
   UserProfileDoc,
   ModelFieldKey,
+  FieldTypeHasExamples,
 } from "../../types";
 import {
   checkHasAuthorization,
@@ -759,9 +761,19 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 <Box>
                   {isExampleButtonVisible && (
                     <IconButton onClick={() => onClickExample?.(modelField!)}>
-                      <SvgIcon fontSize="small">
-                        <DescriptionOutlinedIcon />
-                      </SvgIcon>
+                      <Badge
+                        color="secondary"
+                        variant="dot"
+                        invisible={
+                          !modelField?.examples?.[
+                            modelField?.fieldType.value as FieldTypeHasExamples
+                          ]?.length
+                        }
+                      >
+                        <SvgIcon fontSize="small">
+                          <DescriptionOutlinedIcon />
+                        </SvgIcon>
+                      </Badge>
                     </IconButton>
                   )}
                   <IconButton onClick={onDelete}>
