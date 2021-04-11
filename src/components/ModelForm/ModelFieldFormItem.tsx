@@ -410,6 +410,11 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
     );
   }, [isExampleAvailable, modelField, onClickExample]);
 
+  const hasExamples = useMemo(() => {
+    return !modelField?.examples?.[modelField?.fieldType.value as FieldTypeHasExamples]
+      ?.length;
+  }, [modelField?.examples, modelField?.fieldType.value]);
+
   return (
     <>
       <TableRow>
@@ -761,15 +766,7 @@ const ModelFormItem: React.FC<ModelFieldFormItemProps> = ({
                 <Box>
                   {isExampleButtonVisible && (
                     <IconButton onClick={() => onClickExample?.(modelField!)}>
-                      <Badge
-                        color="secondary"
-                        variant="dot"
-                        invisible={
-                          !modelField?.examples?.[
-                            modelField?.fieldType.value as FieldTypeHasExamples
-                          ]?.length
-                        }
-                      >
+                      <Badge color="secondary" variant="dot" invisible={hasExamples}>
                         <SvgIcon fontSize="small">
                           <DescriptionOutlinedIcon />
                         </SvgIcon>
