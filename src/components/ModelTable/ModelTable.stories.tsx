@@ -2,12 +2,14 @@ import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
 import mockProject from "../../mocks/mockProject";
 import ModelTable, { ModelTableProps } from "./ModelTable";
+import mockUser from "../../mocks/mockUser";
 
 const defaultProps: Partial<ModelTableProps> = {
   modelFields: mockProject.modelFields,
   projectModels: mockProject.models,
   projectEnumerations: mockProject.enumerations,
   checkIsSubmittingModelField: () => false,
+  userProfile: mockUser.profile,
 };
 
 export default {
