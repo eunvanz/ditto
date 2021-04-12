@@ -240,7 +240,7 @@ export const convertInterfacesToCode = (
           result = `${result}  ${item
             .toString()
             .toUpperCase()
-            .replace(/[0-9()@:%_+.~#?&//={}]/g, "")} = "${item}",\n`;
+            .replace(/[0-9()@:%+.~#?&//={}]/g, "")} = "${item}",\n`;
         });
         result = `${result}}\n`;
       } else {
