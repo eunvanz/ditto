@@ -15,6 +15,8 @@ export type ModelTableContainerProps = Omit<
   | "userProfile"
   | "onRefreshModelField"
   | "onShowQuickEnumFormModal"
+  | "onShowMockDataModal"
+  | "onShowTypescriptInterfaceModal"
 >;
 
 const ModelTableContainer = ({

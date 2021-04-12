@@ -50,6 +50,10 @@ import {
   FieldTypeHasExamples,
   RequestParamDoc,
   RequestBodyDoc,
+  ModelFieldDoc,
+  InterfaceField,
+  Interface,
+  fieldTypes,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -65,6 +69,7 @@ import {
   getProjectKeyByRole,
   getRequestParamLocationName,
   getTrueKeys,
+  getTypescriptFieldType,
 } from "../../helpers/projectHelpers";
 import { EXAMPLE_TYPES } from "../../components/ExampleFormModal/ExampleFormModal";
 
@@ -2369,6 +2374,58 @@ export function* submitExamplesFlow() {
       yield* put(UiActions.hideExampleFormModal());
       yield* put(ProgressActions.finishProgress(type));
     }
+  }
+}
+
+async function generateInterface(
+  model: ModelDoc,
+  projectModels: ModelDoc[],
+  interfaces?: Interface[],
+) {
+  const modelFieldsRef = Firework.getModelFieldsRef(model);
+  const modelFieldsSnapshot = await modelFieldsRef.get();
+
+  const result: Interface[] = interfaces || [
+    {
+      name: model.name,
+      fields: [] as InterfaceField[],
+    },
+  ];
+
+  modelFieldsSnapshot.forEach((doc) => {
+    const data = doc.data() as ModelFieldDoc;
+    const lastInterface = result[result.length - 1];
+    const type = getTypescriptFieldType(data.fieldType.value, data.format.value);
+
+    if (!fieldTypes.includes(type)) {
+      result.push({
+        name: type,
+        fields: [],
+      });
+    }
+
+    lastInterface.fields.push({
+      name: data.fieldName.value,
+      isRequired: data.isRequired.value,
+      isArray: data.isArray.value,
+      type,
+    });
+  });
+}
+
+export function* generateTypescriptInterfaceFlow() {
+  while (true) {
+    const { type, payload } = yield* take(ProjectActions.generateTypescriptInterface);
+    yield* put(ProgressActions.startProgress(type));
+    yield* put(UiActions.showDelayedLoading({ taskName: type }));
+    const currentProject = yield* call(selectAndCheckProject);
+    if (!currentProject) {
+      continue;
+    }
+    const projectModels = yield* select(
+      FirebaseSelectors.createProjectModelsSelector(currentProject.id),
+    );
+    const targetModel = payload;
   }
 }
 

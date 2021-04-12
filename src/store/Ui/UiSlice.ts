@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { OptionsObject } from "notistack";
+import { CodeModalProps } from "../../components/CodeModal/CodeModal";
 import {
   ExampleFormModalProps,
   EXAMPLE_TYPES,
@@ -43,6 +44,7 @@ export type UiState = {
   screenMode: SCREEN_MODE;
   confirmSnackbar: ConfirmSnackbarState;
   exampleFormModal: ExampleFormModalState;
+  codeModal: CodeModalState;
 };
 
 export interface ConfirmSnackbarState {
@@ -105,6 +107,11 @@ export enum SCREEN_MODE {
   DEFAULT = "DEFAULT",
 }
 
+export type CodeModalState = Pick<
+  CodeModalProps,
+  "isVisible" | "mode" | "value" | "title"
+>;
+
 export const initialUiState: UiState = {
   theme: window.matchMedia?.("(prefers-color-scheme: dark)").matches
     ? THEMES.DARK
@@ -159,6 +166,12 @@ export const initialUiState: UiState = {
   },
   exampleFormModal: {
     isVisible: false,
+  },
+  codeModal: {
+    isVisible: false,
+    mode: "javascript",
+    value: "",
+    title: "",
   },
 };
 
@@ -331,6 +344,18 @@ const UiSlice = createSlice({
       state.confirmSnackbar.isVisible = false;
     },
     reloadApp: (_, _action: PayloadAction<void>) => {},
+    showCodeModal: (
+      state,
+      action: PayloadAction<Pick<CodeModalState, "mode" | "title" | "value">>,
+    ) => {
+      state.codeModal.isVisible = true;
+      state.codeModal.mode = action.payload.mode;
+      state.codeModal.title = action.payload.title;
+      state.codeModal.value = action.payload.value;
+    },
+    hideCodeModal: (state, _action: PayloadAction<void>) => {
+      state.codeModal.isVisible = false;
+    },
   },
 });
 

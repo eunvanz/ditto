@@ -64,6 +64,8 @@ const selectConfirmSnackbar = (state: RootState) => state.ui.confirmSnackbar;
 
 const selectExampleFormModal = (state: RootState) => state.ui.exampleFormModal;
 
+const selectCodeModal = (state: RootState) => state.ui.codeModal;
+
 const UiSelectors = {
   selectTheme,
   selectProjectFormModal,
@@ -80,6 +82,7 @@ const UiSelectors = {
   selectScreenMode,
   selectConfirmSnackbar,
   selectExampleFormModal,
+  selectCodeModal,
 };
 
 export default UiSelectors;

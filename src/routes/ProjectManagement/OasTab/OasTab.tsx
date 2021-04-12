@@ -9,6 +9,7 @@ import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-chrome";
 import "ace-builds/src-noconflict/theme-nord_dark";
 import { Oas, THEMES } from "../../../types";
+import { getEditorTheme } from "../../../helpers/projectHelpers";
 
 const useStyles = makeStyles(() => ({
   progressBar: {
@@ -63,7 +64,7 @@ export const OasTab: React.FC<OasTabProps> = ({ data, theme, progress }) => {
       <Divider />
       <Editor
         mode={format}
-        theme={theme === THEMES.LIGHT ? "chrome" : "nord_dark"}
+        theme={getEditorTheme(theme)}
         value={
           format === "yaml"
             ? YAML.stringify(JSON.parse(JSON.stringify(data)))

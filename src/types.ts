@@ -185,7 +185,10 @@ export interface ModelCell<T> extends Recordable {
   settingsByMember: Record<string, ModelCellSettings>;
 }
 
-export type FieldTypeHasExamples = FIELD_TYPE.STRING | FIELD_TYPE.INTEGER | FIELD_TYPE.NUMBER
+export type FieldTypeHasExamples =
+  | FIELD_TYPE.STRING
+  | FIELD_TYPE.INTEGER
+  | FIELD_TYPE.NUMBER;
 
 export interface ModelFieldItem extends Recordable {
   projectId: string;
@@ -330,6 +333,7 @@ export type ResponseHeaderDoc = Doc<ResponseHeaderItem, BaseSettings> & ModelFie
 export interface ModalBase {
   isVisible: boolean;
   onClose: () => void;
+  title?: string;
 }
 
 export type MemberRole = "owner" | "manager" | "guest";
@@ -483,4 +487,21 @@ export interface Oas {
   };
 }
 
-export type ModelFieldDocLike = ModelFieldDoc | RequestParamDoc | RequestBodyDoc | ResponseBodyDoc | ResponseHeaderDoc;
+export type ModelFieldDocLike =
+  | ModelFieldDoc
+  | RequestParamDoc
+  | RequestBodyDoc
+  | ResponseBodyDoc
+  | ResponseHeaderDoc;
+
+export interface Interface {
+  name: string;
+  fields: InterfaceField[];
+}
+
+export interface InterfaceField {
+  name: string;
+  isRequired: boolean;
+  isArray: boolean;
+  type: string;
+}

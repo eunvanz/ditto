@@ -128,6 +128,20 @@ const useModelTableProps = ({ model, modelFields }: UseModelTablePropsParams) =>
     [dispatch],
   );
 
+  const onShowMockDataModal = useCallback(() => {
+    // TODO:
+  }, []);
+
+  const onShowTypescriptInterfaceModal = useCallback(() => {
+    dispatch(
+      UiActions.showCodeModal({
+        title: "Typescript interface",
+        mode: "typescript",
+        value: "",
+      }),
+    );
+  }, [dispatch]);
+
   return {
     model,
     modelFields,
@@ -143,6 +157,8 @@ const useModelTableProps = ({ model, modelFields }: UseModelTablePropsParams) =>
     userProfile,
     onRefreshModelField,
     onShowQuickEnumFormModal,
+    onShowMockDataModal,
+    onShowTypescriptInterfaceModal,
   };
 };
 

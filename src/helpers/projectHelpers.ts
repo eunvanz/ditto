@@ -9,6 +9,9 @@ import {
   REQUEST_PARAM_LOCATION,
   ModelFieldDoc,
   ModelFieldKey,
+  THEMES,
+  ModelDoc,
+  FIELD_TYPE,
 } from "../types";
 
 export const patterns = {
@@ -180,4 +183,22 @@ export const commonStyles = {
   updatedFieldCell: {
     backgroundColor: "rgba(255,0,0,0.1)",
   },
+};
+
+export const getEditorTheme = (theme: THEMES) => {
+  return theme === THEMES.LIGHT ? "chrome" : "nord_dark";
+};
+
+export const getTypescriptFieldType = (fieldType: FIELD_TYPE, format: string) => {
+  switch (fieldType) {
+    case FIELD_TYPE.BOOLEAN:
+      return "boolean";
+    case FIELD_TYPE.INTEGER:
+    case FIELD_TYPE.NUMBER:
+      return "number";
+    case FIELD_TYPE.STRING:
+      return "string";
+    case FIELD_TYPE.OBJECT:
+      return format;
+  }
 };

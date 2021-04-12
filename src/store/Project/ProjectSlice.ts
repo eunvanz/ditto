@@ -178,6 +178,7 @@ const ProjectSlice = createSlice({
     markNotificationsAsRead: (_, _action: PayloadAction<string[]>) => {},
     refreshModelField: (_, _action: PayloadAction<ModelFieldDoc>) => {},
     submitExamples: (_, _action: PayloadAction<ExampleFormValues>) => {},
+    generateTypescriptInterface: (_, _action: PayloadAction<ModelDoc>) => {},
   },
 });
 

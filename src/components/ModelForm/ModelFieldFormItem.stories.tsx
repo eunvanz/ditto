@@ -3,11 +3,14 @@ import { Table, TableBody } from "@material-ui/core";
 import { Story, Meta } from "@storybook/react/types-6-0";
 import mockProject from "../../mocks/mockProject";
 import ModelFieldFormItem, { ModelFieldFormItemProps } from "./ModelFieldFormItem";
+import mockUser from "../../mocks/mockUser";
+import { action } from "@storybook/addon-actions";
 
 const defaultProps: Partial<ModelFieldFormItemProps> = {
   modelFields: mockProject.modelFields,
   projectModels: mockProject.models,
   projectEnumerations: mockProject.enumerations,
+  userProfile: mockUser.profile,
 };
 
 export default {
@@ -42,4 +45,5 @@ export const 뎁스 = Template.bind({});
 뎁스.args = {
   modelField: mockProject.modelFields[0],
   depth: 2,
+  onRefreshModelField: action("onRefreshModelField"),
 };

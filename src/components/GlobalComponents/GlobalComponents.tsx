@@ -1,4 +1,5 @@
 import React from "react";
+import CodeModal from "../CodeModal";
 import ConfirmSnackbar from "../ConfirmSnackbar";
 import CriticalConfirmModal from "../CriticalConfirmModal";
 import ExampleFormModal from "../ExampleFormModal";
@@ -25,6 +26,7 @@ const GlobalComponents: React.FC = () => {
       <RequestFormModal />
       <ConfirmSnackbar />
       <ExampleFormModal />
+      <CodeModal />
     </>
   );
 };
