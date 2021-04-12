@@ -2378,11 +2378,17 @@ export function* submitExamplesFlow() {
   }
 }
 
-async function generateInterface(
-  model: ModelDoc,
-  projectModels: ModelDoc[],
-  interfaces?: Interface[],
-) {
+async function generateInterface({
+  model,
+  projectModels,
+  projectEnumerations,
+  interfaces,
+}: {
+  model: ModelDoc;
+  projectModels: ModelDoc[];
+  projectEnumerations: EnumerationDoc[];
+  interfaces?: Interface[];
+}) {
   const modelFieldsRef = Firework.getModelFieldsRef(model);
   const modelFieldsSnapshot = await modelFieldsRef.get();
 
@@ -2406,12 +2412,17 @@ async function generateInterface(
       data.format.value,
       projectModels,
     );
+    const hasEnumValue = data.enum.value !== ENUMERATION.NONE;
+    const enumeration = hasEnumValue
+      ? projectEnumerations.find((item) => item.id === data.enum.value)?.name
+      : undefined;
 
     targetInterface.fields.push({
       name: data.fieldName.value,
       isRequired: data.isRequired.value,
       isArray: data.isArray.value,
-      type: type || "Object",
+      type: enumeration || type || "Object",
+      hasEnumeration: hasEnumValue,
     });
 
     if (!fieldTypes.includes(type)) {
@@ -2420,7 +2431,12 @@ async function generateInterface(
         // 이미 정의된 모델이 있는지 체크
         const isAlreadyDefined = result.some((item) => item.name === fieldTypeModel.name);
         if (!isAlreadyDefined) {
-          result = await generateInterface(fieldTypeModel, projectModels, result);
+          result = await generateInterface({
+            model: fieldTypeModel,
+            projectModels,
+            projectEnumerations,
+            interfaces: result,
+          });
         }
       }
     }
@@ -2444,16 +2460,19 @@ export function* generateTypescriptInterfaceFlow() {
     const projectModels = yield* select(
       FirebaseSelectors.createProjectModelsSelector(currentProject.id),
     );
-    if (!projectModels) {
+    const projectEnumerations = yield* select(
+      FirebaseSelectors.createProjectEnumerationsSelector(currentProject.id),
+    );
+    if (!projectModels || !projectEnumerations) {
       continue;
     }
     const targetModel = payload;
-    const result: Interface[] = yield* call(
-      generateInterface,
-      targetModel,
+    const result: Interface[] = yield* call(generateInterface, {
+      model: targetModel,
       projectModels,
-    );
-    const interfaceCode = convertInterfacesToCode(result);
+      projectEnumerations,
+    });
+    const interfaceCode = convertInterfacesToCode(result, projectEnumerations);
     yield* put(
       UiActions.showCodeModal({
         title: "Typescript interface",

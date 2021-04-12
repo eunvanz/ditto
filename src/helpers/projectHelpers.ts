@@ -13,6 +13,7 @@ import {
   FIELD_TYPE,
   ModelDoc,
   Interface,
+  EnumerationDoc,
 } from "../types";
 
 export const patterns = {
@@ -208,16 +209,47 @@ export const getTypescriptFieldType = (
   }
 };
 
-export const convertInterfacesToCode = (interfaces: Interface[]) => {
+export const convertInterfacesToCode = (
+  interfaces: Interface[],
+  enumerations: EnumerationDoc[],
+) => {
   let result = "";
+  const enumerationsToDefine: string[] = [];
   interfaces.forEach((item) => {
     result = `${result}\nexport interface ${item.name} {\n`;
     item.fields.forEach((field) => {
       result = `${result}  ${field.name}${field.isRequired ? "" : "?"}: ${field.type}${
         field.isArray ? "[];" : ";"
       }\n`;
+      if (field.hasEnumeration) {
+        const isAlreadyDefined = enumerationsToDefine.some((item) => item === field.type);
+        !isAlreadyDefined && enumerationsToDefine.push(field.type);
+      }
     });
     result = `${result}}\n`;
   });
+
+  enumerationsToDefine.forEach((item) => {
+    const targetEnumeration = enumerations.find(
+      (enumeration) => enumeration.name === item,
+    );
+    if (targetEnumeration) {
+      if (targetEnumeration.fieldType === FIELD_TYPE.STRING) {
+        result = `${result}\nexport enum ${targetEnumeration.name} {\n`;
+        targetEnumeration.items.forEach((item: string | number) => {
+          result = `${result}  ${item
+            .toString()
+            .toUpperCase()
+            .replace(/[0-9()@:%_+.~#?&//={}]/g, "")} = "${item}",\n`;
+        });
+        result = `${result}}\n`;
+      } else {
+        result = `${result}\nexport type ${
+          targetEnumeration.name
+        } = ${targetEnumeration.items.join(" | ")}\n`;
+      }
+    }
+  });
+
   return result;
 };

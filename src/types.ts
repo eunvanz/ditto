@@ -504,4 +504,5 @@ export interface InterfaceField {
   isRequired: boolean;
   isArray: boolean;
   type: string;
+  hasEnumeration: boolean;
 }
