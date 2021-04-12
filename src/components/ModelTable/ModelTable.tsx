@@ -438,14 +438,14 @@ const CodeButton: React.FC<CodeButtonProps> = ({
 
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  const showMockDataModal = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setIsMenuOpen(false);
-      onShowMockDataModal();
-    },
-    [onShowMockDataModal],
-  );
+  // const showMockDataModal = useCallback(
+  //   (e: React.MouseEvent) => {
+  //     e.stopPropagation();
+  //     setIsMenuOpen(false);
+  //     onShowMockDataModal();
+  //   },
+  //   [onShowMockDataModal],
+  // );
 
   const showTypescriptInterfaceModal = useCallback(
     (e: React.MouseEvent) => {
@@ -473,7 +473,7 @@ const CodeButton: React.FC<CodeButtonProps> = ({
         anchorEl={buttonRef.current}
         open={isMenuOpen}
       >
-        <MenuItem onClick={showMockDataModal}>JSON mock data</MenuItem>
+        {/* <MenuItem onClick={showMockDataModal}>JSON mock data</MenuItem> */}
         <MenuItem onClick={showTypescriptInterfaceModal}>Typescript interface</MenuItem>
       </Menu>
     </>
