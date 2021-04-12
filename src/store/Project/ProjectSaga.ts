@@ -66,6 +66,7 @@ import UiSelectors from "../Ui/UiSelectors";
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
 import {
+  convertInterfacesToCode,
   getProjectKeyByRole,
   getRequestParamLocationName,
   getTrueKeys,
@@ -2385,34 +2386,52 @@ async function generateInterface(
   const modelFieldsRef = Firework.getModelFieldsRef(model);
   const modelFieldsSnapshot = await modelFieldsRef.get();
 
-  const result: Interface[] = interfaces || [
-    {
-      name: model.name,
-      fields: [] as InterfaceField[],
-    },
-  ];
+  let result: Interface[] = interfaces || [];
 
+  // result에 model 추가
+  result.push({
+    name: model.name,
+    fields: [] as InterfaceField[],
+  });
+
+  const docs: ModelFieldDoc[] = [];
   modelFieldsSnapshot.forEach((doc) => {
-    const data = doc.data() as ModelFieldDoc;
-    const lastInterface = result[result.length - 1];
-    const type = getTypescriptFieldType(data.fieldType.value, data.format.value);
+    docs.push(doc.data() as ModelFieldDoc);
+  });
+  for (const data of docs) {
+    const targetIndex = result.findIndex((item) => item.name === model.name);
+    const targetInterface = result[targetIndex];
+    const type = getTypescriptFieldType(
+      data.fieldType.value,
+      data.format.value,
+      projectModels,
+    );
 
-    if (!fieldTypes.includes(type)) {
-      result.push({
-        name: type,
-        fields: [],
-      });
-    }
-
-    lastInterface.fields.push({
+    targetInterface.fields.push({
       name: data.fieldName.value,
       isRequired: data.isRequired.value,
       isArray: data.isArray.value,
-      type,
+      type: type || "Object",
     });
-  });
+
+    if (!fieldTypes.includes(type)) {
+      const fieldTypeModel = projectModels.find((model) => model.name === type);
+      if (fieldTypeModel) {
+        // 이미 정의된 모델이 있는지 체크
+        const isAlreadyDefined = result.some((item) => item.name === fieldTypeModel.name);
+        if (!isAlreadyDefined) {
+          result = await generateInterface(fieldTypeModel, projectModels, result);
+        }
+      }
+    }
+  }
+
+  return result;
 }
 
+/**
+ * 타입스트립트 인터페이스를 생성하고 CodeModal로 보여준다.
+ */
 export function* generateTypescriptInterfaceFlow() {
   while (true) {
     const { type, payload } = yield* take(ProjectActions.generateTypescriptInterface);
@@ -2425,7 +2444,25 @@ export function* generateTypescriptInterfaceFlow() {
     const projectModels = yield* select(
       FirebaseSelectors.createProjectModelsSelector(currentProject.id),
     );
+    if (!projectModels) {
+      continue;
+    }
     const targetModel = payload;
+    const result: Interface[] = yield* call(
+      generateInterface,
+      targetModel,
+      projectModels,
+    );
+    const interfaceCode = convertInterfacesToCode(result);
+    yield* put(
+      UiActions.showCodeModal({
+        title: "Typescript interface",
+        mode: "typescript",
+        value: interfaceCode,
+      }),
+    );
+    yield* put(ProgressActions.finishProgress(type));
+    yield* put(UiActions.hideLoading(type));
   }
 }
 
@@ -2464,5 +2501,6 @@ export function* watchProjectActions() {
     fork(markNotificationsAsReadFlow),
     takeEvery(ProjectActions.refreshModelField, handleRefreshModelField),
     fork(submitExamplesFlow),
+    fork(generateTypescriptInterfaceFlow),
   ]);
 }

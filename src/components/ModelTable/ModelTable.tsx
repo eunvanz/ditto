@@ -400,7 +400,6 @@ const Wrapper: React.FC<WrapperProps> = ({
               )}
               {model && (
                 <CodeButton
-                  model={model}
                   onShowMockDataModal={onShowMockDataModal}
                   onShowTypescriptInterfaceModal={onShowTypescriptInterfaceModal}
                 />

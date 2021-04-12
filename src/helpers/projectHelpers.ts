@@ -10,8 +10,9 @@ import {
   ModelFieldDoc,
   ModelFieldKey,
   THEMES,
-  ModelDoc,
   FIELD_TYPE,
+  ModelDoc,
+  Interface,
 } from "../types";
 
 export const patterns = {
@@ -189,7 +190,11 @@ export const getEditorTheme = (theme: THEMES) => {
   return theme === THEMES.LIGHT ? "chrome" : "nord_dark";
 };
 
-export const getTypescriptFieldType = (fieldType: FIELD_TYPE, format: string) => {
+export const getTypescriptFieldType = (
+  fieldType: FIELD_TYPE,
+  format: string,
+  projectModels: ModelDoc[],
+) => {
   switch (fieldType) {
     case FIELD_TYPE.BOOLEAN:
       return "boolean";
@@ -199,6 +204,20 @@ export const getTypescriptFieldType = (fieldType: FIELD_TYPE, format: string) =>
     case FIELD_TYPE.STRING:
       return "string";
     case FIELD_TYPE.OBJECT:
-      return format;
+      return projectModels.find((model) => model.id === format)?.name;
   }
+};
+
+export const convertInterfacesToCode = (interfaces: Interface[]) => {
+  let result = "";
+  interfaces.forEach((item) => {
+    result = `${result}\nexport interface ${item.name} {\n`;
+    item.fields.forEach((field) => {
+      result = `${result}  ${field.name}${field.isRequired ? "" : "?"}: ${field.type}${
+        field.isArray ? "[];" : ";"
+      }\n`;
+    });
+    result = `${result}}\n`;
+  });
+  return result;
 };

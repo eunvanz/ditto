@@ -133,14 +133,10 @@ const useModelTableProps = ({ model, modelFields }: UseModelTablePropsParams) =>
   }, []);
 
   const onShowTypescriptInterfaceModal = useCallback(() => {
-    dispatch(
-      UiActions.showCodeModal({
-        title: "Typescript interface",
-        mode: "typescript",
-        value: "",
-      }),
-    );
-  }, [dispatch]);
+    if (model) {
+      dispatch(ProjectActions.generateTypescriptInterface(model));
+    }
+  }, [dispatch, model]);
 
   return {
     model,
