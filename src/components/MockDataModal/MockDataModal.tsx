@@ -76,9 +76,11 @@ export const MockDataModal: React.FC<MockDataModalProps> = ({
 
   useEffect(() => {
     if (!restProps.isVisible) {
-      setIsArray(false);
-      setLength(3);
-      setResult(undefined);
+      return () => {
+        setIsArray(false);
+        setLength(3);
+        setResult(undefined);
+      };
     }
   }, [restProps.isVisible]);
 
