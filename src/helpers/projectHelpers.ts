@@ -307,11 +307,13 @@ export const generateInterfaceFieldData = (
   } else if (type === FIELD_TYPE.STRING) {
     if (format === FORMAT.NONE) {
       switch (true) {
-        case name.toUpperCase().endsWith("IMAGEURL"):
-        case name.toUpperCase().endsWith("IMGURL"):
+        case name.toUpperCase().includes("IMAGEURL"):
+        case name.toUpperCase().includes("IMGURL"):
+        case name.toUpperCase().includes("PHOTOURL"):
           return "https://via.placeholder.com/150";
-        case name.toUpperCase().endsWith("URL"):
-          return "https://placeholder.com";
+        case name.toUpperCase().includes("URL"):
+        case name.toUpperCase().includes("LINK"):
+          return "https://ditt.to";
         case name.toUpperCase().includes("PHONE"):
           return `0${random(2, 99)}-${random(100, 9999)}-${random(1000, 9999)}`;
         case name.toUpperCase().includes("MOBILE"):
