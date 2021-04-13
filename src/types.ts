@@ -497,6 +497,7 @@ export type ModelFieldDocLike =
 export interface Interface {
   name: string;
   fields: InterfaceField[];
+  description?: string;
 }
 
 export interface InterfaceField {
@@ -505,4 +506,6 @@ export interface InterfaceField {
   isArray: boolean;
   type: string;
   hasEnumeration: boolean;
+  examples?: string[] | number[];
+  description?: string;
 }

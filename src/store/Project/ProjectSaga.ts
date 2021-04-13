@@ -2398,6 +2398,7 @@ async function generateInterface({
   result.push({
     name: model.name,
     fields: [] as InterfaceField[],
+    description: model.description,
   });
 
   const docs: ModelFieldDoc[] = [];
@@ -2416,6 +2417,8 @@ async function generateInterface({
     const enumeration = hasEnumValue
       ? projectEnumerations.find((item) => item.id === data.enum.value)?.name
       : undefined;
+    const examples = data.examples?.[type as FieldTypeHasExamples];
+    const description = data.description.value;
 
     targetInterface.fields.push({
       name: data.fieldName.value,
@@ -2423,6 +2426,8 @@ async function generateInterface({
       isArray: data.isArray.value,
       type: enumeration || type || "Object",
       hasEnumeration: hasEnumValue,
+      examples,
+      description,
     });
 
     if (!fieldTypes.includes(type)) {

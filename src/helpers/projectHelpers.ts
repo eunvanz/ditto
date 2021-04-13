@@ -216,8 +216,23 @@ export const convertInterfacesToCode = (
   let result = "";
   const enumerationsToDefine: string[] = [];
   interfaces.forEach((item) => {
-    result = `${result}\nexport interface ${item.name} {\n`;
+    if (item.description) {
+      result = `${result}\n/**\n * ${item.description}\n */`;
+    } else {
+      result = `${result}\n`;
+    }
+    result = `${result}export interface ${item.name} {\n`;
     item.fields.forEach((field) => {
+      if (field.description || field.examples) {
+        result = `${result}  /**\n`;
+        if (field.description) {
+          result = `${result}   * ${field.description}\n`;
+        }
+        if (field.examples) {
+          result = `${result}   * example: ${field.examples.join(", ")}\n`;
+        }
+        result = `${result}   */\n`;
+      }
       result = `${result}  ${field.name}${field.isRequired ? "" : "?"}: ${field.type}${
         field.isArray ? "[];" : ";"
       }\n`;
