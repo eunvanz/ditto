@@ -66,6 +66,8 @@ const selectExampleFormModal = (state: RootState) => state.ui.exampleFormModal;
 
 const selectCodeModal = (state: RootState) => state.ui.codeModal;
 
+const selectMockDataModal = (state: RootState) => state.ui.mockDataModal;
+
 const UiSelectors = {
   selectTheme,
   selectProjectFormModal,
@@ -83,6 +85,7 @@ const UiSelectors = {
   selectConfirmSnackbar,
   selectExampleFormModal,
   selectCodeModal,
+  selectMockDataModal,
 };
 
 export default UiSelectors;

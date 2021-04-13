@@ -129,8 +129,10 @@ const useModelTableProps = ({ model, modelFields }: UseModelTablePropsParams) =>
   );
 
   const onShowMockDataModal = useCallback(() => {
-    // TODO:
-  }, []);
+    if (model) {
+      dispatch(ProjectActions.generateMockData(model));
+    }
+  }, [dispatch, model]);
 
   const onShowTypescriptInterfaceModal = useCallback(() => {
     if (model) {

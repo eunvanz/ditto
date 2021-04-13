@@ -2428,6 +2428,7 @@ async function generateInterface({
       hasEnumeration: hasEnumValue,
       examples,
       description,
+      format: data.format.value,
     });
 
     if (!fieldTypes.includes(type)) {
@@ -2490,6 +2491,42 @@ export function* generateTypescriptInterfaceFlow() {
   }
 }
 
+export function* generateMockDataFlow() {
+  while (true) {
+    const { type, payload } = yield* take(ProjectActions.generateMockData);
+    yield* put(ProgressActions.startProgress(type));
+    yield* put(UiActions.showDelayedLoading({ taskName: type }));
+    const currentProject = yield* call(selectAndCheckProject);
+    if (!currentProject) {
+      continue;
+    }
+    const projectModels = yield* select(
+      FirebaseSelectors.createProjectModelsSelector(currentProject.id),
+    );
+    const projectEnumerations = yield* select(
+      FirebaseSelectors.createProjectEnumerationsSelector(currentProject.id),
+    );
+    if (!projectModels || !projectEnumerations) {
+      continue;
+    }
+    const targetModel = payload;
+    const result: Interface[] = yield* call(generateInterface, {
+      model: targetModel,
+      projectModels,
+      projectEnumerations,
+    });
+    yield* put(
+      UiActions.showMockDataModal({
+        targetInterface: result[0],
+        interfaces: result,
+        enumerations: projectEnumerations,
+      }),
+    );
+    yield* put(ProgressActions.finishProgress(type));
+    yield* put(UiActions.hideLoading(type));
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -2526,5 +2563,6 @@ export function* watchProjectActions() {
     takeEvery(ProjectActions.refreshModelField, handleRefreshModelField),
     fork(submitExamplesFlow),
     fork(generateTypescriptInterfaceFlow),
+    fork(generateMockDataFlow),
   ]);
 }

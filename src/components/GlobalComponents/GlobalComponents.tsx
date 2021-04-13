@@ -5,6 +5,7 @@ import CriticalConfirmModal from "../CriticalConfirmModal";
 import ExampleFormModal from "../ExampleFormModal";
 import GlobalLoading from "../GlobalLoading";
 import GroupFormModal from "../GroupFormModal";
+import MockDataModal from "../MockDataModal";
 import Notifier from "../Notifier";
 import ProjectFormModal from "../ProjectFormModal";
 import QuickEnumFormModal from "../QuickEnumFormModal";
@@ -27,6 +28,7 @@ const GlobalComponents: React.FC = () => {
       <ConfirmSnackbar />
       <ExampleFormModal />
       <CodeModal />
+      <MockDataModal />
     </>
   );
 };

@@ -1,5 +1,7 @@
 import firebase from "firebase/app";
+import random from "lodash/random";
 import { FieldError } from "react-hook-form";
+import shortid from "shortid";
 import {
   REQUEST_METHOD,
   MemberRole,
@@ -14,6 +16,8 @@ import {
   ModelDoc,
   Interface,
   EnumerationDoc,
+  InterfaceField,
+  FORMAT,
 } from "../types";
 
 export const patterns = {
@@ -266,5 +270,106 @@ export const convertInterfacesToCode = (
     }
   });
 
+  return result;
+};
+
+export const getMockString = (wordCnt: number = 2) => {
+  const loremIpsum =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ipsum suspendisse ultrices gravida dictum fusce ut placerat orci nulla. Sit amet mauris commodo quis. Feugiat in ante metus dictum. Neque aliquam vestibulum morbi blandit cursus risus at. Sit amet luctus venenatis lectus. Adipiscing vitae proin sagittis nisl. Quis enim lobortis scelerisque fermentum dui faucibus in ornare quam. Egestas fringilla phasellus faucibus scelerisque eleifend donec pretium vulputate. Nunc mattis enim ut tellus elementum. Pharetra convallis posuere morbi leo urna molestie at elementum. Donec ac odio tempor orci dapibus ultrices in iaculis. Quis lectus nulla at volutpat. Sed viverra ipsum nunc aliquet bibendum enim facilisis gravida. Dolor sed viverra ipsum nunc aliquet. Pulvinar neque laoreet suspendisse interdum consectetur libero id faucibus. Integer feugiat scelerisque varius morbi enim nunc faucibus a. Nam libero justo laoreet sit amet. Ut tortor pretium viverra suspendisse potenti nullam ac. Ut venenatis tellus in metus";
+  const splitLoremIpsum = loremIpsum.split(" ");
+  const startIndex = random(0, splitLoremIpsum.length - wordCnt - 1);
+  return splitLoremIpsum.slice(startIndex, startIndex + wordCnt).join(" ");
+};
+
+export const generateInterfaceFieldData = (
+  field: InterfaceField,
+  enumerations: EnumerationDoc[],
+) => {
+  const { type, hasEnumeration, format, examples, name } = field;
+  if (examples) {
+    return examples[random(0, examples.length - 1)];
+  } else if (hasEnumeration) {
+    const enumeration = enumerations.find((item) => item.id === format);
+    return enumeration?.items?.[random(0, enumeration.items.length - 1)];
+  } else if (type === FIELD_TYPE.STRING) {
+    if (format === FORMAT.NONE) {
+      if (name.toUpperCase().endsWith("URL")) {
+        return "https://mock.diit.to/url";
+      }
+      return getMockString();
+    } else if (format === FORMAT.PASSWORD) {
+      return shortid.generate();
+    } else if (format === FORMAT.BINARY) {
+      return "mockBinaryString";
+    } else if (format === FORMAT.BYTE) {
+      return "mockByteString";
+    } else if (format === FORMAT.DATE) {
+      return "2021-12-31";
+    } else if (format === FORMAT.DATE_TIME) {
+      return "2021-12-31 23:59:59";
+    }
+  } else if (type === FIELD_TYPE.BOOLEAN) {
+    return [false, true][random(0, 1)];
+  } else if (type === FIELD_TYPE.INTEGER) {
+    return random(0, 100);
+  } else if (type === FIELD_TYPE.NUMBER) {
+    return random(0.0, 100.0);
+  }
+};
+
+export const convertInterfaceToMockData = ({
+  targetInterface,
+  interfaces,
+  enumerations,
+}: {
+  targetInterface: Interface;
+  interfaces: Interface[];
+  enumerations: EnumerationDoc[];
+}) => {
+  const result: any = {};
+  targetInterface.fields.forEach((field) => {
+    const { isArray, isRequired, type, name } = field;
+    let hasToSetData = true;
+    if (!isRequired) {
+      const decision = random(0, 10);
+      if (decision < 4) {
+        hasToSetData = false;
+      }
+    }
+    if (!hasToSetData) {
+      return;
+    }
+    if (["boolean", "number", "string"].includes(type)) {
+      if (isArray) {
+        const length = random(1, 3);
+        result[name] = Array.from({ length }).map(() =>
+          generateInterfaceFieldData(field, enumerations),
+        );
+      } else {
+        result[name] = generateInterfaceFieldData(field, enumerations);
+      }
+    } else {
+      const subInterface = interfaces.find((item) => item.name === type);
+      if (!subInterface) {
+        return;
+      }
+      if (isArray) {
+        const length = random(1, 3);
+        result[name] = Array.from({ length }).map(() =>
+          convertInterfaceToMockData({
+            targetInterface: subInterface,
+            interfaces,
+            enumerations,
+          }),
+        );
+      } else {
+        result[name] = convertInterfaceToMockData({
+          targetInterface: subInterface,
+          interfaces,
+          enumerations,
+        });
+      }
+    }
+  });
   return result;
 };

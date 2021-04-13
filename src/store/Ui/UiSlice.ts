@@ -5,6 +5,7 @@ import {
   ExampleFormModalProps,
   EXAMPLE_TYPES,
 } from "../../components/ExampleFormModal/ExampleFormModal";
+import { MockDataModalProps } from "../../components/MockDataModal/MockDataModal";
 import {
   THEMES,
   ProjectDoc,
@@ -45,6 +46,7 @@ export type UiState = {
   confirmSnackbar: ConfirmSnackbarState;
   exampleFormModal: ExampleFormModalState;
   codeModal: CodeModalState;
+  mockDataModal: MockDataModalState;
 };
 
 export interface ConfirmSnackbarState {
@@ -112,6 +114,11 @@ export type CodeModalState = Pick<
   "isVisible" | "mode" | "value" | "title"
 >;
 
+export type MockDataModalState = Pick<
+  MockDataModalProps,
+  "isVisible" | "targetInterface" | "interfaces" | "enumerations"
+>;
+
 export const initialUiState: UiState = {
   theme: window.matchMedia?.("(prefers-color-scheme: dark)").matches
     ? THEMES.DARK
@@ -172,6 +179,11 @@ export const initialUiState: UiState = {
     mode: "javascript",
     value: "",
     title: "",
+  },
+  mockDataModal: {
+    isVisible: false,
+    interfaces: [],
+    enumerations: [],
   },
 };
 
@@ -355,6 +367,20 @@ const UiSlice = createSlice({
     },
     hideCodeModal: (state, _action: PayloadAction<void>) => {
       state.codeModal.isVisible = false;
+    },
+    showMockDataModal: (
+      state,
+      action: PayloadAction<
+        Pick<MockDataModalState, "interfaces" | "targetInterface" | "enumerations">
+      >,
+    ) => {
+      state.mockDataModal.isVisible = true;
+      state.mockDataModal.enumerations = action.payload.enumerations;
+      state.mockDataModal.interfaces = action.payload.interfaces;
+      state.mockDataModal.targetInterface = action.payload.targetInterface;
+    },
+    hideMockDataModal: (state, _action: PayloadAction<void>) => {
+      state.mockDataModal.isVisible = false;
     },
   },
 });

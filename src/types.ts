@@ -508,4 +508,5 @@ export interface InterfaceField {
   hasEnumeration: boolean;
   examples?: string[] | number[];
   description?: string;
+  format?: string;
 }
