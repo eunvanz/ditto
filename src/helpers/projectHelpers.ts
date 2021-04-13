@@ -281,6 +281,19 @@ export const getMockString = (wordCnt: number = 2) => {
   return splitLoremIpsum.slice(startIndex, startIndex + wordCnt).join(" ");
 };
 
+export const getMockDate = () => {
+  return `${random(2000, 2021)}-${String(random(1, 12)).padStart(2, "0")}-${String(
+    random(1, 30),
+  ).padStart(2, "0")}`;
+};
+
+export const getMockTime = () => {
+  return `${String(random(0, 23)).padStart(2, "0")}:${String(random(0, 59)).padStart(
+    2,
+    "0",
+  )}:${String(random(0, 59)).padStart(2, "0")}`;
+};
+
 export const generateInterfaceFieldData = (
   field: InterfaceField,
   enumerations: EnumerationDoc[],
@@ -293,8 +306,16 @@ export const generateInterfaceFieldData = (
     return enumeration?.items?.[random(0, enumeration.items.length - 1)];
   } else if (type === FIELD_TYPE.STRING) {
     if (format === FORMAT.NONE) {
-      if (name.toUpperCase().endsWith("URL")) {
-        return "https://mock.diit.to/url";
+      switch (true) {
+        case name.toUpperCase().endsWith("IMAGEURL"):
+        case name.toUpperCase().endsWith("IMGURL"):
+          return "https://via.placeholder.com/150";
+        case name.toUpperCase().endsWith("URL"):
+          return "https://placeholder.com";
+        case name.toUpperCase().includes("PHONE"):
+          return `0${random(2, 99)}-${random(100, 9999)}-${random(1000, 9999)}`;
+        case name.toUpperCase().includes("MOBILE"):
+          return `010-${random(1000, 9999)}-${random(1000, 9999)}`;
       }
       return getMockString();
     } else if (format === FORMAT.PASSWORD) {
@@ -304,9 +325,9 @@ export const generateInterfaceFieldData = (
     } else if (format === FORMAT.BYTE) {
       return "mockByteString";
     } else if (format === FORMAT.DATE) {
-      return "2021-12-31";
+      return getMockDate();
     } else if (format === FORMAT.DATE_TIME) {
-      return "2021-12-31 23:59:59";
+      return `${getMockDate()} ${getMockTime()}`;
     }
   } else if (type === FIELD_TYPE.BOOLEAN) {
     return [false, true][random(0, 1)];
