@@ -302,7 +302,7 @@ export const generateInterfaceFieldData = (
   } else if (hasEnumeration) {
     const enumeration = enumerations.find((item) => item.id === format);
     return enumeration?.items?.[random(0, enumeration.items.length - 1)];
-  } else if (type === FIELD_TYPE.STRING) {
+  } else if (type === "string") {
     if (format === FORMAT.NONE) {
       switch (true) {
         case name.toUpperCase().includes("IMAGEURL"):
@@ -329,12 +329,10 @@ export const generateInterfaceFieldData = (
     } else if (format === FORMAT.DATE_TIME) {
       return `${getMockDate()} ${getMockTime()}`;
     }
-  } else if (type === FIELD_TYPE.BOOLEAN) {
+  } else if (type === "boolean") {
     return [false, true][random(0, 1)];
-  } else if (type === FIELD_TYPE.INTEGER) {
+  } else if (type === "number") {
     return random(0, 999999);
-  } else if (type === FIELD_TYPE.NUMBER) {
-    return random(0.0, 999999.9);
   }
 };
 
