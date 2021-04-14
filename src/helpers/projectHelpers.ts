@@ -332,9 +332,9 @@ export const generateInterfaceFieldData = (
   } else if (type === FIELD_TYPE.BOOLEAN) {
     return [false, true][random(0, 1)];
   } else if (type === FIELD_TYPE.INTEGER) {
-    return random(0, 100);
+    return random(0, 999999);
   } else if (type === FIELD_TYPE.NUMBER) {
-    return random(0.0, 100.0);
+    return random(0.0, 999999.9);
   }
 };
 
