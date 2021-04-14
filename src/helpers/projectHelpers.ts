@@ -228,14 +228,12 @@ export const convertInterfacesToCode = (
     result = `${result}export interface ${item.name} {\n`;
     item.fields.forEach((field) => {
       if (field.description || field.examples) {
-        result = `${result}  /**\n`;
         if (field.description) {
-          result = `${result}   * ${field.description}\n`;
+          result = `${result}  /** ${field.description} */\n`;
         }
         if (field.examples) {
-          result = `${result}   * example: ${field.examples.join(", ")}\n`;
+          result = `${result}  /** example: ${field.examples.join(", ")} */\n`;
         }
-        result = `${result}   */\n`;
       }
       result = `${result}  ${field.name}${field.isRequired ? "" : "?"}: ${field.type}${
         field.isArray ? "[];" : ";"
@@ -313,7 +311,7 @@ export const generateInterfaceFieldData = (
           return "https://via.placeholder.com/150";
         case name.toUpperCase().includes("URL"):
         case name.toUpperCase().includes("LINK"):
-          return "https://ditt.to";
+          return "https://diit.to";
         case name.toUpperCase().includes("PHONE"):
           return `0${random(2, 99)}-${random(100, 9999)}-${random(1000, 9999)}`;
         case name.toUpperCase().includes("MOBILE"):
