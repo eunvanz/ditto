@@ -81,8 +81,13 @@ export const MockDataModal: React.FC<MockDataModalProps> = ({
         setLength(3);
         setResult(undefined);
       };
+    } else {
+      targetInterface &&
+        setResult(
+          convertInterfaceToMockData({ targetInterface, interfaces, enumerations }),
+        );
     }
-  }, [restProps.isVisible]);
+  }, [enumerations, interfaces, restProps.isVisible, targetInterface]);
 
   return (
     <Modal
