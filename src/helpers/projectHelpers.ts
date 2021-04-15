@@ -232,7 +232,7 @@ export const convertInterfacesToCode = (
           result = `${result}  /** ${field.description} */\n`;
         }
         if (field.examples) {
-          result = `${result}  /** example: ${field.examples.join(", ")} */\n`;
+          result = `${result}  /** @examples: ${field.examples.join(", ")} */\n`;
         }
       }
       result = `${result}  ${field.name}${field.isRequired ? "" : "?"}: ${field.type}${
