@@ -24,6 +24,9 @@ const useAuth = (options?: UseAuthOptions) => {
     }
     if (options?.isUserRequired && auth.isEmpty) {
       dispatch(UiActions.showSignInModal());
+      return () => {
+        dispatch(UiActions.hideSignInModal());
+      };
     } else if (options?.isNoUserRequired && !auth.isEmpty) {
       history.push(ROUTE.ROOT);
     }

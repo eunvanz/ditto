@@ -68,13 +68,16 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
   }, [auth.isEmpty, auth.isLoaded, dispatch, userProfile.screenMode, userProfile.theme]);
 
   useEffect(() => {
+    if (auth.isEmpty) {
+      return;
+    }
     if (isLoaded(projects)) {
       setIsDataInitialized(true);
       dispatch(UiActions.hideLoading("loadingProjects"));
     } else {
       dispatch(UiActions.showLoading("loadingProjects"));
     }
-  }, [dispatch, projects]);
+  }, [auth.isEmpty, dispatch, projects]);
 
   useEffect(() => {
     if (appInfo && cmp(appInfo.version, APP_VERSION) > 0) {
