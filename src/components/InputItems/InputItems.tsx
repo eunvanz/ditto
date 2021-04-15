@@ -14,7 +14,9 @@ import { Theme } from "../../theme";
 
 const useStyles = makeStyles((theme: Theme) => ({
   itemChip: {
-    marginRight: theme.spacing(1),
+    margin: theme.spacing(1),
+    marginRight: 0,
+    marginBottom: 0,
   },
   textWrapper: {
     display: "flex",
@@ -29,8 +31,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   itemsPaper: {
-    padding: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
     background: theme.palette.background.dark,
+  },
+  noItemsWrapper: {
+    padding: theme.spacing(1),
+    paddingBottom: 0,
   },
 }));
 
@@ -83,7 +89,7 @@ export const InputItems: React.FC<InputItemsProps> = ({
         <Button
           onClick={onAddItem}
           className={clsx(classes.addButton, { flat: !variant })}
-          variant="contained"
+          variant={buttonColor ? "contained" : "outlined"}
           color={buttonColor}
         >
           Add
@@ -99,12 +105,15 @@ export const InputItems: React.FC<InputItemsProps> = ({
                 color="default"
                 label={item}
                 onDelete={() => onDeleteItem(item)}
+                variant="outlined"
               />
             ))
           ) : (
-            <Typography component="i" color="textSecondary">
-              No added items
-            </Typography>
+            <div className={classes.noItemsWrapper}>
+              <Typography component="i" color="textSecondary">
+                No items
+              </Typography>
+            </div>
           )}
         </Paper>
       </Box>

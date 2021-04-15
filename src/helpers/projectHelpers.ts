@@ -316,6 +316,9 @@ export const generateInterfaceFieldData = (
           return `0${random(2, 99)}-${random(100, 9999)}-${random(1000, 9999)}`;
         case name.toUpperCase().includes("MOBILE"):
           return `010-${random(1000, 9999)}-${random(1000, 9999)}`;
+        case name.endsWith("Id"):
+        case name.toUpperCase().endsWith("UUID"):
+          return shortid.generate();
       }
       return getMockString();
     } else if (format === FORMAT.PASSWORD) {
