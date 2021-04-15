@@ -44,6 +44,7 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
     getValues,
     reset,
     watch,
+    setError,
   } = useForm<EnumFormValues>({
     mode: "onChange",
     defaultValues,
@@ -125,6 +126,11 @@ const QuickEnumForm: React.FC<QuickEnumFormProps> = ({
             if (isValid && value) {
               setItems((items) => [...items, value]);
               setValue("itemInput", "");
+            } else {
+              setError("itemInput", {
+                type: "required",
+                message: "Please input valid value.",
+              });
             }
           }}
           onDeleteItem={(itemToDelete) =>

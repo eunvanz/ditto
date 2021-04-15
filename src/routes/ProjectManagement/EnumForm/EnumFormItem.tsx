@@ -35,6 +35,7 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
     reset,
     control,
     setValue,
+    setError,
   } = formProps;
 
   const watchedItems = watch("items");
@@ -160,6 +161,11 @@ const EnumFormItem: React.FC<EnumFormItemProps> = ({
             if (isValid && value) {
               setItems((items) => [...items, value]);
               setValue("itemInput", "");
+            } else {
+              setError("itemInput", {
+                type: "required",
+                message: "Please input valid value.",
+              });
             }
           }}
           onDeleteItem={(itemToDelete) =>

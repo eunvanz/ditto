@@ -59,6 +59,7 @@ export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
     getValues,
     formState,
     handleSubmit,
+    setError,
   } = useForm<ExampleFormValues>({
     mode: "onChange",
     defaultValues,
@@ -114,6 +115,11 @@ export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
               if (isValid && value) {
                 setItems((items) => [...items, value]);
                 setValue("itemInput", "");
+              } else {
+                setError("itemInput", {
+                  type: "required",
+                  message: "Please input valid value.",
+                });
               }
             }}
             onDeleteItem={(itemToDelete) =>
