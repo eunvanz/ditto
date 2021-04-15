@@ -65,7 +65,8 @@ const useModelFormProps: (defaultModelId?: string) => any = (defaultModelId) => 
       : undefined;
   }, [editingModelField, formId]);
 
-  useLoading(modelFields, `loadingModelFields-${model?.id}`, !model);
+  // 로딩을 보여주지 않는게 더 빠르게 느껴져서 보여주지 않음
+  // useLoading(modelFields, `loadingModelFields-${model?.id}`, !model, true);
   useLoading(projectModels, `loadingProjectModels-${projectId}`);
 
   const role = useProjectRole(project);
