@@ -454,6 +454,10 @@ async function runTaskForEachDocs(
 ) {
   return new Promise((resolve) => {
     collectionRef.onSnapshot((snapshot) => {
+      // length가 0일 경우에도 resolve 해줘야 함
+      if (snapshot.docs.length === 0) {
+        resolve(undefined);
+      }
       snapshot.docs.forEach((doc, index) => {
         task(doc);
         if (index === snapshot.docs.length - 1) {

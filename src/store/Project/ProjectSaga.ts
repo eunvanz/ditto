@@ -1286,18 +1286,18 @@ export function* deleteGroupFlow() {
           batchItems.push({ operation: "delete", ref: doc.ref }),
         );
         yield* call(Firework.runBatch, batchItems);
-        yield* put(
-          UiActions.showNotification({
-            message: "The group has been deleted.",
-            type: "success",
-          }),
-        );
         yield* call(
           sendNotificationsToProjectMembers,
           `The group {${payload.name}} has been deleted by {${userProfile.name}}.`,
         );
         yield* put(UiActions.hideGroupFormModal());
         yield* put(UiActions.hideCriticalConfirmModal());
+        yield* put(
+          UiActions.showNotification({
+            message: "The group has been deleted.",
+            type: "success",
+          }),
+        );
       } catch (error) {
         yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
       } finally {
