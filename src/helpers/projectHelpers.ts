@@ -297,11 +297,11 @@ export const generateInterfaceFieldData = (
   enumerations: EnumerationDoc[],
 ) => {
   const { type, hasEnumeration, format, examples, name } = field;
-  if (examples) {
-    return examples[random(0, examples.length - 1)];
-  } else if (hasEnumeration) {
-    const enumeration = enumerations.find((item) => item.id === format);
+  if (hasEnumeration) {
+    const enumeration = enumerations.find((item) => item.name === type);
     return enumeration?.items?.[random(0, enumeration.items.length - 1)];
+  } else if (examples) {
+    return examples[random(0, examples.length - 1)];
   } else if (type === "string") {
     if (format === FORMAT.NONE) {
       switch (true) {
@@ -347,7 +347,7 @@ export const convertInterfaceToMockData = ({
 }) => {
   const result: any = {};
   targetInterface.fields.forEach((field) => {
-    const { isArray, isRequired, type, name } = field;
+    const { isArray, isRequired, type, name, hasEnumeration } = field;
     let hasToSetData = true;
     if (!isRequired) {
       const decision = random(0, 10);
@@ -358,7 +358,7 @@ export const convertInterfaceToMockData = ({
     if (!hasToSetData) {
       return;
     }
-    if (["boolean", "number", "string"].includes(type)) {
+    if (["boolean", "number", "string"].includes(type) || hasEnumeration) {
       if (isArray) {
         const length = random(1, 3);
         result[name] = Array.from({ length }).map(() =>
