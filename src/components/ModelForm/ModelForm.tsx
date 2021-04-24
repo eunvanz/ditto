@@ -14,6 +14,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import useModalKeyControl from "../../hooks/useModalKeyControl";
 import ModelTable from "../ModelTable";
 import { SCREEN_MODE } from "../../store/Ui/UiSlice";
+import ModelCodeButton from "../ModelCodeButton";
 
 const useStyles = makeStyles((theme) => ({
   fieldNameCell: {
@@ -45,6 +46,9 @@ const useStyles = makeStyles((theme) => ({
   tableContainer: {
     maxHeight: "calc(100vh - 200px)",
     overflow: "auto",
+  },
+  codeButton: {
+    padding: 0,
   },
 }));
 
@@ -93,7 +97,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
   editingModelFieldId,
   isVisible,
   role,
-  onClickExample
+  onClickExample,
 }) => {
   const classes = useStyles();
 
@@ -153,7 +157,12 @@ const ModelForm: React.FC<ModelFormProps> = ({
     return (
       <Card>
         <CardHeader
-          title="Modify model"
+          title={
+            <>
+              Modify model{" "}
+              {model && <ModelCodeButton className={classes.codeButton} model={model} />}
+            </>
+          }
           action={
             onClose ? (
               <IconButton size="small" onClick={onClose}>
@@ -187,8 +196,14 @@ const ModelForm: React.FC<ModelFormProps> = ({
     );
   } else {
     return (
-      <ModelTable model={model} modelFields={modelFields} depth={depth} role={role}
-      isExampleAvailable onClickExample={onClickExample} />
+      <ModelTable
+        model={model}
+        modelFields={modelFields}
+        depth={depth}
+        role={role}
+        isExampleAvailable
+        onClickExample={onClickExample}
+      />
     );
   }
 };
