@@ -1,16 +1,14 @@
 import {
   Button,
   makeStyles,
-  Menu,
-  MenuItem,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { EditOutlined, ArrowDropDown, ArrowRight, Add, Code } from "@material-ui/icons";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import { EditOutlined, ArrowDropDown, ArrowRight, Add } from "@material-ui/icons";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   checkHasAuthorization,
   checkHasUpdatedFields,
@@ -30,6 +28,7 @@ import ModelFieldFormItem, {
 } from "../ModelForm/ModelFieldFormItem";
 import { ModelFieldFormValues } from "../ModelForm/ModelForm";
 import { EXAMPLE_PROJECT_ID } from "../../constants";
+import ModelCodeButton from "../ModelCodeButton";
 
 const useStyles = makeStyles((theme: Theme) => ({
   fieldNameCell: {
@@ -91,8 +90,6 @@ export type ModelTableProps = {
   checkIsNewFormDisabled?: () => boolean;
   role: MemberRole;
   userProfile: UserProfileDoc;
-  onShowMockDataModal: () => void;
-  onShowTypescriptInterfaceModal: () => void;
 } & Pick<
   ModelFieldFormItemProps,
   | "customFieldName"
@@ -130,8 +127,6 @@ const ModelTable: React.FC<ModelTableProps> = ({
   onShowQuickEnumFormModal,
   isExampleAvailable,
   onClickExample,
-  onShowMockDataModal,
-  onShowTypescriptInterfaceModal,
 }) => {
   const classes = useStyles();
 
@@ -188,8 +183,6 @@ const ModelTable: React.FC<ModelTableProps> = ({
       role={role}
       modelFields={modelFields}
       userProfile={userProfile}
-      onShowMockDataModal={onShowMockDataModal}
-      onShowTypescriptInterfaceModal={onShowTypescriptInterfaceModal}
     >
       {modelFields.map((modelField) => (
         <ModelFieldFormItem
@@ -295,8 +288,6 @@ type WrapperProps = Pick<
   | "role"
   | "modelFields"
   | "userProfile"
-  | "onShowMockDataModal"
-  | "onShowTypescriptInterfaceModal"
 > & {
   existingModelNames: string[];
   children: React.ReactNode;
@@ -311,8 +302,6 @@ const Wrapper: React.FC<WrapperProps> = ({
   role,
   modelFields,
   userProfile,
-  onShowMockDataModal,
-  onShowTypescriptInterfaceModal,
 }) => {
   const classes = useStyles();
 
@@ -399,9 +388,10 @@ const Wrapper: React.FC<WrapperProps> = ({
                 </>
               )}
               {model && (
-                <CodeButton
-                  onShowMockDataModal={onShowMockDataModal}
-                  onShowTypescriptInterfaceModal={onShowTypescriptInterfaceModal}
+                <ModelCodeButton
+                  className={classes.subButton}
+                  size="small"
+                  model={model}
                 />
               )}
             </Button>
@@ -411,73 +401,6 @@ const Wrapper: React.FC<WrapperProps> = ({
       </>
     );
   }
-};
-
-type CodeButtonProps = Pick<
-  ModelTableProps,
-  "onShowMockDataModal" | "onShowTypescriptInterfaceModal"
->;
-
-const CodeButton: React.FC<CodeButtonProps> = ({
-  onShowMockDataModal,
-  onShowTypescriptInterfaceModal,
-}) => {
-  const classes = useStyles();
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const closeMenu = useCallback((e: Event) => {
-    e.stopPropagation();
-    setIsMenuOpen(false);
-  }, []);
-
-  const toggleMenu = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen((isMenuOpen) => !isMenuOpen);
-  }, []);
-
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
-
-  const showMockDataModal = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setIsMenuOpen(false);
-      onShowMockDataModal();
-    },
-    [onShowMockDataModal],
-  );
-
-  const showTypescriptInterfaceModal = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setIsMenuOpen(false);
-      onShowTypescriptInterfaceModal();
-    },
-    [onShowTypescriptInterfaceModal],
-  );
-
-  return (
-    <>
-      <Button
-        className={classes.subButton}
-        size="small"
-        ref={buttonRef}
-        onClick={toggleMenu}
-      >
-        <Code fontSize="small" />
-      </Button>
-      <Menu
-        onClose={closeMenu}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        getContentAnchorEl={null}
-        anchorEl={buttonRef.current}
-        open={isMenuOpen}
-      >
-        <MenuItem onClick={showMockDataModal}>JSON mock data</MenuItem>
-        <MenuItem onClick={showTypescriptInterfaceModal}>Typescript interface</MenuItem>
-      </Menu>
-    </>
-  );
 };
 
 export default ModelTable;
