@@ -7,6 +7,7 @@ import { EnumerationDoc, Interface, ModalBase, THEMES } from "../../types";
 import Modal from "../Modal";
 import { Theme } from "../../theme";
 import "ace-builds/src-noconflict/mode-json";
+import useModalKeyControl from "../../hooks/useModalKeyControl";
 
 const useStyles = makeStyles((theme: Theme) => ({
   modalRoot: {
@@ -38,6 +39,8 @@ export const MockDataModal: React.FC<MockDataModalProps> = ({
   targetInterface,
   interfaces,
   enumerations,
+  isVisible,
+  onClose,
   ...restProps
 }) => {
   const classes = useStyles();
@@ -75,7 +78,7 @@ export const MockDataModal: React.FC<MockDataModalProps> = ({
   }, [enumerations, interfaces, isArray, length, targetInterface]);
 
   useEffect(() => {
-    if (!restProps.isVisible) {
+    if (!isVisible) {
       return () => {
         setIsArray(false);
         setLength(3);
@@ -87,13 +90,21 @@ export const MockDataModal: React.FC<MockDataModalProps> = ({
           convertInterfaceToMockData({ targetInterface, interfaces, enumerations }),
         );
     }
-  }, [enumerations, interfaces, restProps.isVisible, targetInterface]);
+  }, [enumerations, interfaces, isVisible, targetInterface]);
+
+  useModalKeyControl({
+    isVisible,
+    onClose,
+    name: "MockDataModal",
+  });
 
   return (
     <Modal
       className={classes.modalRoot}
       title="JSON mock data"
       maxWidth="lg"
+      isVisible={isVisible}
+      onClose={onClose}
       {...restProps}
     >
       <Box padding={2}>

@@ -7,6 +7,7 @@ import { getTextFieldErrorProps } from "../../helpers/projectHelpers";
 import { FieldTypeHasExamples, FIELD_TYPE, ModelFieldDocLike } from "../../types";
 import InputItems from "../InputItems";
 import Modal from "../Modal";
+import useModalKeyControl from "../../hooks/useModalKeyControl";
 
 export enum EXAMPLE_TYPES {
   MODEL_FIELD = "MODEL_FIELD",
@@ -91,6 +92,12 @@ export const ExampleFormModal: React.FC<ExampleFormModalProps> = ({
       setItems(defaultValues.examples);
     }
   }, [defaultValues.examples]);
+
+  useModalKeyControl({
+    isVisible,
+    onClose,
+    name: "ExampleFormModal",
+  });
 
   return (
     <Modal title="Example data" isVisible={isVisible} onClose={onClose}>

@@ -5,6 +5,7 @@ import { getEditorTheme } from "../../helpers/projectHelpers";
 import { ModalBase, THEMES } from "../../types";
 import Modal from "../Modal";
 import "ace-builds/src-noconflict/mode-typescript";
+import useModalKeyControl from "../../hooks/useModalKeyControl";
 
 const useStyles = makeStyles(() => ({
   modalRoot: {
@@ -26,12 +27,27 @@ export const CodeModal: React.FC<CodeModalProps> = ({
   mode,
   theme,
   title,
+  isVisible,
+  onClose,
   ...restProps
 }) => {
   const classes = useStyles();
 
+  useModalKeyControl({
+    isVisible,
+    onClose,
+    name: "CodeModal",
+  });
+
   return (
-    <Modal className={classes.modalRoot} title={title} maxWidth="lg" {...restProps}>
+    <Modal
+      className={classes.modalRoot}
+      title={title}
+      maxWidth="lg"
+      isVisible={isVisible}
+      onClose={onClose}
+      {...restProps}
+    >
       <Editor
         mode={mode}
         theme={getEditorTheme(theme)}
