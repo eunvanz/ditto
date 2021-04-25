@@ -7,7 +7,6 @@ import { EnumerationDoc, Interface, ModalBase, THEMES } from "../../types";
 import Modal from "../Modal";
 import { Theme } from "../../theme";
 import "ace-builds/src-noconflict/mode-json";
-import useModalKeyControl from "../../hooks/useModalKeyControl";
 
 const useStyles = makeStyles((theme: Theme) => ({
   modalRoot: {
@@ -91,12 +90,6 @@ export const MockDataModal: React.FC<MockDataModalProps> = ({
         );
     }
   }, [enumerations, interfaces, isVisible, targetInterface]);
-
-  useModalKeyControl({
-    isVisible,
-    onClose,
-    name: "MockDataModal",
-  });
 
   return (
     <Modal

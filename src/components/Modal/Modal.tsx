@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   makeStyles,
@@ -11,7 +11,9 @@ import {
   DialogProps,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
+import shortid from "shortid";
 import { Theme } from "../../theme";
+import useModalKeyControl from "../../hooks/useModalKeyControl";
 
 const useStyles = makeStyles((_: Theme) => ({
   cardHeader: {
@@ -60,6 +62,17 @@ const Modal: React.FC<ModalProps> = ({
       }
     };
   }, []);
+
+  const modalName = useMemo(() => {
+    return `${title}-${shortid.generate()}`;
+    // eslint-disable-next-line
+  }, []);
+
+  useModalKeyControl({
+    isVisible,
+    onClose,
+    name: modalName,
+  });
 
   return hasToRender
     ? createPortal(
