@@ -49,6 +49,13 @@ const useStyles = makeStyles((theme) => ({
   },
   codeButton: {
     padding: 0,
+    color: theme.palette.text.hint,
+  },
+  cardHeader: {
+    "& .MuiCardHeader-action": {
+      marginTop: 0,
+      marginRight: 0,
+    },
   },
 }));
 
@@ -157,6 +164,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
     return (
       <Card>
         <CardHeader
+          className={classes.cardHeader}
           title={
             <>
               Modify model{" "}
