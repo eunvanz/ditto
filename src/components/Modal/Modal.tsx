@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   makeStyles,
@@ -42,26 +42,17 @@ const Modal: React.FC<ModalProps> = ({
 
   const [hasToRender, setHasToRender] = useState(isVisible);
 
-  const timeoutRef = useRef<number | null>(null);
-
   useEffect(() => {
     if (isVisible) {
       setHasToRender(true);
     } else {
       // 다이얼로그가 사라지는 애니메이션 이후 컴포넌트 삭제 (200ms)
-      timeoutRef.current = setTimeout(() => {
+      const timeout = setTimeout(() => {
         setHasToRender(false);
       }, 200);
+      return () => clearTimeout(timeout);
     }
   }, [isVisible]);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
 
   const modalName = useMemo(() => {
     return `${title}-${shortid.generate()}`;
