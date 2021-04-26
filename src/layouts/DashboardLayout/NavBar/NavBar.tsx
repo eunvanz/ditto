@@ -1,7 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { FC, ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import {
+  DragDropContext,
+  Draggable,
+  DragStart,
+  Droppable,
+  DropResult,
+  ResponderProvided,
+} from "react-beautiful-dnd";
 import { Box, Drawer, Hidden, List, ListSubheader, makeStyles } from "@material-ui/core";
 import NavItem, { NavItemProps } from "./NavItem";
 import { SCREEN_MODE } from "../../../store/Ui/UiSlice";
@@ -41,8 +49,8 @@ function renderNavItems({
   return (
     <List disablePadding>
       {items.reduce(
-        (acc: any[], item: SectionItem) =>
-          reduceChildRoutes({ acc, item, pathname, depth }),
+        (acc: any[], item: SectionItem, index: number) =>
+          reduceChildRoutes({ acc, item, pathname, depth, index }),
         [],
       )}
     </List>
@@ -54,23 +62,37 @@ function reduceChildRoutes({
   pathname,
   item,
   depth,
+  index,
 }: {
   acc: any[];
   item: SectionItem;
   pathname: string;
   depth: number;
+  index: number;
 }) {
   const key = item.title + depth;
-
+  console.log("===== item", item);
+  console.log("===== index", index);
   if (item.items) {
     acc.push(
-      <NavItem depth={depth} key={key} {...item}>
-        {renderNavItems({
-          depth: depth + 1,
-          pathname,
-          items: item.items,
-        })}
-      </NavItem>,
+      <Draggable draggableId={key} key={key} index={index}>
+        {(dragProvided, dragSnapshot) => (
+          <NavItem
+            depth={depth}
+            key={key}
+            ref={dragProvided.innerRef}
+            dragHandleProps={dragProvided.dragHandleProps}
+            draggableProps={dragProvided.draggableProps}
+            {...item}
+          >
+            {renderNavItems({
+              depth: depth + 1,
+              pathname,
+              items: item.items!,
+            })}
+          </NavItem>
+        )}
+      </Draggable>,
     );
   } else {
     acc.push(<NavItem depth={depth} href={item.href} key={key} {...item} />);
@@ -112,34 +134,53 @@ const NavBar: FC<NavBarProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
+  const handleOnDragEnd = useCallback(
+    (result: DropResult, provided: ResponderProvided) => {},
+    [],
+  );
+
+  const handleOnDragStart = useCallback(
+    (initial: DragStart, provided: ResponderProvided) => {},
+    [],
+  );
+
   const content = (
-    <Box height="100%" display="flex" flexDirection="column">
-      <PerfectScrollbar options={{ suppressScrollX: true }}>
-        <Box p={2}>
-          {sections.map((section) => (
-            <List
-              key={section.subheader}
-              subheader={
-                <ListSubheader disableGutters disableSticky>
-                  {section.subheader}
-                </ListSubheader>
-              }
-            >
-              {renderNavItems({
-                items: section.items,
-                pathname: location.pathname,
-              })}
-              <NavItem
-                type="add"
-                depth={0}
-                title="ADD NEW PROJECT"
-                onClick={onClickAddNewProject}
-              />
-            </List>
-          ))}
-        </Box>
-      </PerfectScrollbar>
-    </Box>
+    <DragDropContext onDragEnd={handleOnDragEnd} onDragStart={handleOnDragStart}>
+      <Box height="100%" display="flex" flexDirection="column">
+        <PerfectScrollbar options={{ suppressScrollX: true }}>
+          <Box p={2}>
+            {sections.map((section) => (
+              <List
+                key={section.subheader}
+                subheader={
+                  <ListSubheader disableGutters disableSticky>
+                    {section.subheader}
+                  </ListSubheader>
+                }
+              >
+                <Droppable droppableId="projectScope">
+                  {(dropProvided) => (
+                    <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
+                      {renderNavItems({
+                        items: section.items,
+                        pathname: location.pathname,
+                      })}
+                      {dropProvided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+                <NavItem
+                  type="add"
+                  depth={0}
+                  title="ADD NEW PROJECT"
+                  onClick={onClickAddNewProject}
+                />
+              </List>
+            ))}
+          </Box>
+        </PerfectScrollbar>
+      </Box>
+    </DragDropContext>
   );
 
   return (

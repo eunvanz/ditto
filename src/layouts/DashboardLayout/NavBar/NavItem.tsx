@@ -1,4 +1,11 @@
-import React, { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+  forwardRef,
+} from "react";
 import { FC, ReactNode } from "react";
 import { NavLink as RouterLink } from "react-router-dom";
 import clsx from "clsx";
@@ -25,6 +32,11 @@ import Label from "../../../components/Label";
 import NewBadge from "../../../components/NewBadge";
 import { assertNotEmpty } from "../../../helpers/commonHelpers";
 import { getRequestMethodColor } from "../../../helpers/projectHelpers";
+import {
+  DraggableProvidedDraggableProps,
+  DraggableProvidedDragHandleProps,
+} from "react-beautiful-dnd";
+import { DragIndicator } from "@material-ui/icons";
 
 export interface NavItemProps {
   children?: ReactNode;
@@ -43,6 +55,8 @@ export interface NavItemProps {
   onClick?: () => void;
   isDeprecated?: boolean;
   hasNoAuth?: boolean;
+  dragHandleProps?: DraggableProvidedDragHandleProps;
+  draggableProps?: DraggableProvidedDraggableProps;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -134,213 +148,232 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const NavItem: FC<NavItemProps> = ({
-  children,
-  className,
-  depth,
-  href,
-  isOpen: isInitiallyOpen = false,
-  title,
-  requestMethod,
-  hasNew = false,
-  childrenCount,
-  onClickConfig,
-  onClickAddGroup,
-  onClickAddRequest,
-  onClick,
-  type,
-  isDeprecated,
-  hasNoAuth,
-  ...restProps
-}) => {
-  if (type === "group") {
-    assertNotEmpty(childrenCount);
-  }
-
-  const classes = useStyles();
-
-  const [isOpen, setIsOpen] = useState<boolean>(isInitiallyOpen);
-
-  useEffect(() => {
-    // 데이터 로딩에 따라 뒤늦게 열리는 경우가 있어서 추가된 로직
-    if (isInitiallyOpen) {
-      setIsOpen(isInitiallyOpen);
-    }
-  }, [isInitiallyOpen]);
-
-  const handleToggle = (): void => {
-    setIsOpen((prevOpen) => !prevOpen);
-  };
-
-  let paddingLeft = 8;
-
-  if (depth > 0) {
-    paddingLeft = 16 + 8 * depth;
-  }
-
-  const style = { paddingLeft };
-
-  const Icon = useMemo(() => {
-    switch (type) {
-      case "project":
-        return EmojiObjectsOutlinedIcon as any;
-      case "group":
-        return FolderOutlined;
-      case "add":
-        return AddIcon;
-      default:
-        return undefined;
-    }
-  }, [type]);
-
-  const [isNewItemMenuOpen, setIsNewItemMenuOpen] = useState(false);
-
-  const handleOnClickNewItem = useCallback(() => {
-    if (type === "project") {
-      setIsNewItemMenuOpen(true);
-    } else {
-      onClickAddRequest?.();
-    }
-  }, [onClickAddRequest, type]);
-
-  const handleOnClickAddRequest = useCallback(
-    (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-      e.stopPropagation();
-      onClickAddRequest?.();
-      setIsNewItemMenuOpen(false);
+const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
+  (
+    {
+      children,
+      className,
+      depth,
+      href,
+      isOpen: isInitiallyOpen = false,
+      title,
+      requestMethod,
+      hasNew = false,
+      childrenCount,
+      onClickConfig,
+      onClickAddGroup,
+      onClickAddRequest,
+      onClick,
+      type,
+      isDeprecated,
+      hasNoAuth,
+      dragHandleProps,
+      draggableProps,
+      ...restProps
     },
-    [onClickAddRequest],
-  );
+    ref,
+  ) => {
+    if (type === "group") {
+      assertNotEmpty(childrenCount);
+    }
 
-  const handleOnClickAddGroup = useCallback(
-    (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-      e.stopPropagation();
-      onClickAddGroup?.();
-      setIsNewItemMenuOpen(false);
-    },
-    [onClickAddGroup],
-  );
+    const classes = useStyles();
 
-  const addNewItemButtonRef = useRef<HTMLDivElement>(null);
+    const [isOpen, setIsOpen] = useState<boolean>(isInitiallyOpen);
 
-  if (["project", "group"].includes(type)) {
-    return (
-      <ListItem
-        className={clsx(classes.item, className)}
-        disableGutters
-        key={title}
-        {...restProps}
-      >
-        <Button className={classes.button} onClick={handleToggle} style={style}>
-          <Icon className={classes.icon} size="20" />
-          <span className={clsx(classes.title, hasNew ? "has-new" : undefined)}>
-            {title}
-            {childrenCount ? (
-              <Chip className={classes.countChip} label={childrenCount} />
-            ) : null}
-          </span>
-          {(type === "group" ? !hasNoAuth : true) && (
-            <Button
-              className={classes.insideButton}
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                onClickConfig?.();
-              }}
-            >
-              <SettingsIcon fontSize="small" />
-            </Button>
-          )}
-          {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </Button>
-        <Collapse in={isOpen}>
-          {children}
-          {!hasNoAuth && (
-            <>
-              <RootRef rootRef={addNewItemButtonRef}>
-                <NavItem
-                  type="add"
-                  depth={depth + 1}
-                  title={depth === 0 ? "ADD NEW GROUP OR OPERATION" : "ADD NEW OPERATION"}
-                  onClick={handleOnClickNewItem}
-                />
-              </RootRef>
-              {type === "project" && (
-                <Menu
-                  className={classes.configMenu}
-                  keepMounted
-                  open={isNewItemMenuOpen}
-                  onClose={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    useEffect(() => {
+      // 데이터 로딩에 따라 뒤늦게 열리는 경우가 있어서 추가된 로직
+      if (isInitiallyOpen) {
+        setIsOpen(isInitiallyOpen);
+      }
+    }, [isInitiallyOpen]);
+
+    const handleToggle = (): void => {
+      setIsOpen((prevOpen) => !prevOpen);
+    };
+
+    let paddingLeft = 8;
+
+    if (depth > 0) {
+      paddingLeft = 16 + 8 * depth;
+    }
+
+    const style = { paddingLeft };
+
+    const Icon = useMemo(() => {
+      switch (type) {
+        case "project":
+          return EmojiObjectsOutlinedIcon as any;
+        case "group":
+          return FolderOutlined;
+        case "add":
+          return AddIcon;
+        default:
+          return undefined;
+      }
+    }, [type]);
+
+    const [isNewItemMenuOpen, setIsNewItemMenuOpen] = useState(false);
+
+    const handleOnClickNewItem = useCallback(() => {
+      if (type === "project") {
+        setIsNewItemMenuOpen(true);
+      } else {
+        onClickAddRequest?.();
+      }
+    }, [onClickAddRequest, type]);
+
+    const handleOnClickAddRequest = useCallback(
+      (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+        e.stopPropagation();
+        onClickAddRequest?.();
+        setIsNewItemMenuOpen(false);
+      },
+      [onClickAddRequest],
+    );
+
+    const handleOnClickAddGroup = useCallback(
+      (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+        e.stopPropagation();
+        onClickAddGroup?.();
+        setIsNewItemMenuOpen(false);
+      },
+      [onClickAddGroup],
+    );
+
+    const addNewItemButtonRef = useRef<HTMLDivElement>(null);
+
+    if (["project", "group"].includes(type)) {
+      return (
+        <div {...draggableProps} ref={ref}>
+          <ListItem
+            className={clsx(classes.item, className)}
+            disableGutters
+            key={title}
+            {...restProps}
+          >
+            <Button className={classes.button} onClick={handleToggle} style={style}>
+              <div
+                {...dragHandleProps}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <DragIndicator />
+              </div>
+              <Icon className={classes.icon} size="20" />
+              <span className={clsx(classes.title, hasNew ? "has-new" : undefined)}>
+                {title}
+                {childrenCount ? (
+                  <Chip className={classes.countChip} label={childrenCount} />
+                ) : null}
+              </span>
+              {(type === "group" ? !hasNoAuth : true) && (
+                <Button
+                  className={classes.insideButton}
+                  size="small"
+                  onClick={(e) => {
                     e.stopPropagation();
-                    setIsNewItemMenuOpen(false);
+                    onClickConfig?.();
                   }}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: 45,
-                  }}
-                  anchorEl={addNewItemButtonRef.current}
-                  getContentAnchorEl={null}
                 >
-                  <MenuItem onClick={handleOnClickAddGroup}>Group</MenuItem>
-                  <MenuItem onClick={handleOnClickAddRequest}>Operation</MenuItem>
-                </Menu>
+                  <SettingsIcon fontSize="small" />
+                </Button>
               )}
-            </>
-          )}
-        </Collapse>
-      </ListItem>
-    );
-  } else if (["request"].includes(type)) {
-    return (
-      <ListItem
-        className={clsx(classes.itemLeaf, className)}
-        disableGutters
-        key={title}
-        {...restProps}
-      >
-        <Button
-          activeClassName={classes.active}
-          className={clsx(classes.buttonLeaf, `depth-${depth}`)}
-          component={RouterLink}
-          exact
-          style={style}
-          to={href!}
+              {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </Button>
+            <Collapse in={isOpen}>
+              {children}
+              {!hasNoAuth && (
+                <>
+                  <RootRef rootRef={addNewItemButtonRef}>
+                    <NavItem
+                      type="add"
+                      depth={depth + 1}
+                      title={
+                        depth === 0 ? "ADD NEW GROUP OR OPERATION" : "ADD NEW OPERATION"
+                      }
+                      onClick={handleOnClickNewItem}
+                    />
+                  </RootRef>
+                  {type === "project" && (
+                    <Menu
+                      className={classes.configMenu}
+                      keepMounted
+                      open={isNewItemMenuOpen}
+                      onClose={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                        e.stopPropagation();
+                        setIsNewItemMenuOpen(false);
+                      }}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: 45,
+                      }}
+                      anchorEl={addNewItemButtonRef.current}
+                      getContentAnchorEl={null}
+                    >
+                      <MenuItem onClick={handleOnClickAddGroup}>Group</MenuItem>
+                      <MenuItem onClick={handleOnClickAddRequest}>Operation</MenuItem>
+                    </Menu>
+                  )}
+                </>
+              )}
+            </Collapse>
+          </ListItem>
+        </div>
+      );
+    } else if (["request"].includes(type)) {
+      return (
+        <ListItem
+          className={clsx(classes.itemLeaf, className)}
+          disableGutters
+          key={title}
+          {...restProps}
         >
-          {!!requestMethod && <RequestMethodBadge requestMethod={requestMethod} />}
-          <NewBadge isVisible={hasNew} className={classes.newBadge}>
-            <span className={classes.title}>
-              {isDeprecated ? <del>{title}</del> : title}
-            </span>
-          </NewBadge>
-        </Button>
-      </ListItem>
-    );
-  } else if (["add"].includes(type)) {
-    return (
-      <ListItem
-        className={clsx(classes.itemLeaf, className)}
-        disableGutters
-        key="add"
-        {...restProps}
-      >
-        <Button
-          className={clsx(classes.buttonLeaf, `depth-${depth}`)}
-          style={style}
-          onClick={onClick}
+          <Button
+            activeClassName={classes.active}
+            className={clsx(classes.buttonLeaf, `depth-${depth}`)}
+            component={RouterLink}
+            exact
+            style={style}
+            to={href!}
+          >
+            {!!requestMethod && <RequestMethodBadge requestMethod={requestMethod} />}
+            <NewBadge isVisible={hasNew} className={classes.newBadge}>
+              <span className={classes.title}>
+                {isDeprecated ? <del>{title}</del> : title}
+              </span>
+            </NewBadge>
+          </Button>
+        </ListItem>
+      );
+    } else if (["add"].includes(type)) {
+      return (
+        <ListItem
+          className={clsx(classes.itemLeaf, className)}
+          disableGutters
+          key="add"
+          {...restProps}
         >
-          <Chip
-            variant="outlined"
-            className={classes.addNewChip}
-            size="small"
-            label={title}
-            icon={<Icon />}
-          />
-        </Button>
-      </ListItem>
-    );
-  }
-  return null;
-};
+          <Button
+            className={clsx(classes.buttonLeaf, `depth-${depth}`)}
+            style={style}
+            onClick={onClick}
+          >
+            <Chip
+              variant="outlined"
+              className={classes.addNewChip}
+              size="small"
+              label={title}
+              icon={<Icon />}
+            />
+          </Button>
+        </ListItem>
+      );
+    }
+    return null;
+  },
+);
 
 export interface RequestMethodBadgeProps {
   requestMethod: REQUEST_METHOD;
