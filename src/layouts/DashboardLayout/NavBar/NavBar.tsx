@@ -137,13 +137,14 @@ function reduceChildRoutes({
             droppableId={`groupScope-${key}`}
             type={`requests-${item.projectId}`}
           >
-            {(dropProvided) => (
+            {(dropProvided, dropSnapshot) => (
               <NavItem
                 depth={depth}
                 key={key}
                 ref={dragProvided.innerRef}
                 dragHandleProps={dragProvided.dragHandleProps}
                 draggableProps={dragProvided.draggableProps}
+                isDraggingOver={dropSnapshot.isDraggingOver}
                 {...item}
               >
                 <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>

@@ -56,6 +56,7 @@ export interface NavItemProps {
   dragHandleProps?: DraggableProvidedDragHandleProps;
   draggableProps?: DraggableProvidedDraggableProps;
   index?: number;
+  isDraggingOver?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -152,6 +153,9 @@ const useStyles = makeStyles((theme: Theme) => ({
       fontSize: "0.85rem",
     },
   },
+  draggingOver: {
+    backgroundColor: theme.palette.background.dark,
+  },
 }));
 
 const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
@@ -176,6 +180,7 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
       dragHandleProps,
       draggableProps,
       index,
+      isDraggingOver,
       ...restProps
     },
     ref,
@@ -234,7 +239,11 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
       return (
         <div {...draggableProps} ref={ref}>
           <ListItem
-            className={clsx(classes.item, className)}
+            className={clsx(
+              classes.item,
+              className,
+              isDraggingOver ? classes.draggingOver : undefined,
+            )}
             disableGutters
             key={title}
             {...restProps}
