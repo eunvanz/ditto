@@ -14,6 +14,22 @@ import { Box, Drawer, Hidden, List, ListSubheader, makeStyles } from "@material-
 import NavItem, { NavItemProps } from "./NavItem";
 import { SCREEN_MODE } from "../../../store/Ui/UiSlice";
 
+const useStyles = makeStyles(() => ({
+  mobileDrawer: {
+    width: 300,
+  },
+  desktopDrawer: {
+    width: 300,
+    top: 64,
+    height: "calc(100% - 64px)",
+  },
+  avatar: {
+    cursor: "pointer",
+    width: 64,
+    height: 64,
+  },
+}));
+
 export interface NavBarProps {
   onMobileClose: () => void;
   isOpenMobile: boolean;
@@ -55,7 +71,7 @@ function renderNavItems({
   };
   return (
     <List disablePadding>
-      {items.reduce((acc: any[], item: SectionItem) => {
+      {items.reduce((acc: ReactNode[], item: SectionItem) => {
         return reduceChildRoutes({
           acc,
           item,
@@ -75,7 +91,7 @@ function reduceChildRoutes({
   depth,
   index,
 }: {
-  acc: any[];
+  acc: ReactNode[];
   item: SectionItem;
   pathname: string;
   depth: number;
@@ -85,7 +101,7 @@ function reduceChildRoutes({
   if (item.items && item.type === "project") {
     acc.push(
       <Draggable draggableId={key} key={key} index={index}>
-        {(dragProvided) => (
+        {(dragProvided, _dragSnapshot) => (
           <NavItem
             depth={depth}
             key={key}
@@ -98,7 +114,7 @@ function reduceChildRoutes({
               droppableId={`projectScope-${item.projectId}`}
               type={`groups-${item.projectId}`}
             >
-              {(dropProvided) => (
+              {(dropProvided, _dropSnapshot) => (
                 <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
                   {renderNavItems({
                     depth: depth + 1,
@@ -117,19 +133,19 @@ function reduceChildRoutes({
     acc.push(
       <Draggable draggableId={key} key={key} index={index}>
         {(dragProvided) => (
-          <NavItem
-            depth={depth}
-            key={key}
-            ref={dragProvided.innerRef}
-            dragHandleProps={dragProvided.dragHandleProps}
-            draggableProps={dragProvided.draggableProps}
-            {...item}
+          <Droppable
+            droppableId={`groupScope-${key}`}
+            type={`requests-${item.projectId}`}
           >
-            <Droppable
-              droppableId={`groupScope-${item.projectId}`}
-              type={`requests-${item.projectId}`}
-            >
-              {(dropProvided) => (
+            {(dropProvided) => (
+              <NavItem
+                depth={depth}
+                key={key}
+                ref={dragProvided.innerRef}
+                dragHandleProps={dragProvided.dragHandleProps}
+                draggableProps={dragProvided.draggableProps}
+                {...item}
+              >
                 <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
                   {renderNavItems({
                     depth: depth + 1,
@@ -138,9 +154,9 @@ function reduceChildRoutes({
                   })}
                   {dropProvided.placeholder}
                 </div>
-              )}
-            </Droppable>
-          </NavItem>
+              </NavItem>
+            )}
+          </Droppable>
         )}
       </Draggable>,
     );
@@ -164,22 +180,6 @@ function reduceChildRoutes({
 
   return acc;
 }
-
-const useStyles = makeStyles(() => ({
-  mobileDrawer: {
-    width: 300,
-  },
-  desktopDrawer: {
-    width: 300,
-    top: 64,
-    height: "calc(100% - 64px)",
-  },
-  avatar: {
-    cursor: "pointer",
-    width: 64,
-    height: 64,
-  },
-}));
 
 const NavBar: FC<NavBarProps> = ({
   onMobileClose,

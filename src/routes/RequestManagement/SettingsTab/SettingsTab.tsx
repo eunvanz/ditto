@@ -54,7 +54,7 @@ export interface RequestSettingFormValues {
 }
 
 const SettingTab: React.FC<SettingsTabProps> = ({
-  projectGroups,
+  // projectGroups,
   request,
   requests,
   onSubmit,
@@ -191,7 +191,7 @@ const SettingTab: React.FC<SettingsTabProps> = ({
               disabled={!hasManagerAuthorization}
             />
           </Box>
-          <Box mt={2}>
+          {/* <Box mt={2}>
             <TextField
               label="Group"
               name="groupId"
@@ -209,7 +209,7 @@ const SettingTab: React.FC<SettingsTabProps> = ({
                 </option>
               ))}
             </TextField>
-          </Box>
+          </Box> */}
           <Box mt={2}>
             <FormControlLabel
               label="Deprecated"

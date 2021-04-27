@@ -16,8 +16,6 @@ import {
   makeStyles,
   styled,
   Chip,
-  Menu,
-  MenuItem,
   RootRef,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -222,33 +220,13 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
       }
     }, [type]);
 
-    const [isNewItemMenuOpen, setIsNewItemMenuOpen] = useState(false);
+    const handleOnClickAddRequest = useCallback(() => {
+      onClickAddRequest?.();
+    }, [onClickAddRequest]);
 
-    const handleOnClickNewItem = useCallback(() => {
-      if (type === "project") {
-        setIsNewItemMenuOpen(true);
-      } else {
-        onClickAddRequest?.();
-      }
-    }, [onClickAddRequest, type]);
-
-    const handleOnClickAddRequest = useCallback(
-      (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-        e.stopPropagation();
-        onClickAddRequest?.();
-        setIsNewItemMenuOpen(false);
-      },
-      [onClickAddRequest],
-    );
-
-    const handleOnClickAddGroup = useCallback(
-      (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-        e.stopPropagation();
-        onClickAddGroup?.();
-        setIsNewItemMenuOpen(false);
-      },
-      [onClickAddGroup],
-    );
+    const handleOnClickAddGroup = useCallback(() => {
+      onClickAddGroup?.();
+    }, [onClickAddGroup]);
 
     const addNewItemButtonRef = useRef<HTMLDivElement>(null);
 
@@ -299,32 +277,12 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
                     <NavItem
                       type="add"
                       depth={depth + 1}
-                      title={
-                        depth === 0 ? "ADD NEW GROUP OR OPERATION" : "ADD NEW OPERATION"
+                      title={depth === 0 ? "ADD NEW GROUP" : "ADD NEW OPERATION"}
+                      onClick={
+                        depth === 0 ? handleOnClickAddGroup : handleOnClickAddRequest
                       }
-                      onClick={handleOnClickNewItem}
                     />
                   </RootRef>
-                  {type === "project" && (
-                    <Menu
-                      className={classes.configMenu}
-                      keepMounted
-                      open={isNewItemMenuOpen}
-                      onClose={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-                        e.stopPropagation();
-                        setIsNewItemMenuOpen(false);
-                      }}
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: 45,
-                      }}
-                      anchorEl={addNewItemButtonRef.current}
-                      getContentAnchorEl={null}
-                    >
-                      <MenuItem onClick={handleOnClickAddGroup}>Group</MenuItem>
-                      <MenuItem onClick={handleOnClickAddRequest}>Operation</MenuItem>
-                    </Menu>
-                  )}
                 </>
               )}
             </Collapse>
