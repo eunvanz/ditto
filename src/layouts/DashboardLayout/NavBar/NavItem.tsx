@@ -65,6 +65,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: "block",
     paddingTop: 0,
     paddingBottom: 0,
+    "& .MuiSvgIcon-root": {
+      fontSize: "1rem",
+    },
   },
   itemLeaf: {
     display: "flex",
@@ -100,14 +103,18 @@ const useStyles = makeStyles((theme: Theme) => ({
   icon: {
     display: "flex",
     alignItems: "center",
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(0.5),
+  },
+  handle: {
+    display: "flex",
+    alignItems: "center",
   },
   title: {
     marginRight: "auto",
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-    maxWidth: 160,
+    maxWidth: 190,
     "&.has-new": {
       color: theme.palette.error.main,
     },
@@ -194,10 +201,10 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
       setIsOpen((prevOpen) => !prevOpen);
     };
 
-    let paddingLeft = 8;
+    let paddingLeft = 4;
 
     if (depth > 0) {
-      paddingLeft = 16 + 8 * depth;
+      paddingLeft = 8 + 4 * depth;
     }
 
     const style = { paddingLeft };
@@ -261,7 +268,7 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
                   e.stopPropagation();
                 }}
               >
-                <DragIndicator />
+                <DragIndicator className={classes.handle} />
               </div>
               <Icon className={classes.icon} size="20" />
               <span className={clsx(classes.title, hasNew ? "has-new" : undefined)}>
@@ -347,7 +354,7 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
                   e.stopPropagation();
                 }}
               >
-                <DragIndicator />
+                <DragIndicator className={classes.handle} />
               </div>
               {!!requestMethod && <RequestMethodBadge requestMethod={requestMethod} />}
               <NewBadge isVisible={hasNew} className={classes.newBadge}>
