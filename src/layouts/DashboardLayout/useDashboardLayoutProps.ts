@@ -81,6 +81,7 @@ const useDashboardLayoutProps = () => {
       href: `${ROUTE.PROJECTS}/${projectId}${ROUTE.REQUESTS}/${request.id}`,
       requestMethod: request.method,
       isDeprecated: request.isDeprecated,
+      projectId,
     };
   }, []);
 
@@ -112,6 +113,7 @@ const useDashboardLayoutProps = () => {
           ),
           items,
           hasNoAuth,
+          projectId: project.id,
         });
       });
       groupedProjectRequests[project.id]
@@ -152,6 +154,7 @@ const useDashboardLayoutProps = () => {
               type: "project" as const,
               hasNoAuth,
               items,
+              projectId: project.id,
               isOpen: items.some(
                 (item) =>
                   item.isOpen ||

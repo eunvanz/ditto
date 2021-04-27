@@ -30,6 +30,7 @@ export interface SectionItem
   title: string;
   type: "request" | "project" | "group";
   isDeprecated?: boolean;
+  projectId: string;
 }
 
 export interface Section {
@@ -93,7 +94,10 @@ function reduceChildRoutes({
             draggableProps={dragProvided.draggableProps}
             {...item}
           >
-            <Droppable droppableId={`projectScope-${key}-${index}`} type="groups">
+            <Droppable
+              droppableId={`projectScope-${item.projectId}`}
+              type={`groups-${item.projectId}`}
+            >
               {(dropProvided) => (
                 <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
                   {renderNavItems({
@@ -121,7 +125,10 @@ function reduceChildRoutes({
             draggableProps={dragProvided.draggableProps}
             {...item}
           >
-            <Droppable droppableId={`groupScope-${key}-${index}`} type="requests">
+            <Droppable
+              droppableId={`groupScope-${item.projectId}`}
+              type={`requests-${item.projectId}`}
+            >
               {(dropProvided) => (
                 <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
                   {renderNavItems({

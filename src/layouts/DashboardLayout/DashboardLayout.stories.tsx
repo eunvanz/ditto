@@ -18,24 +18,28 @@ const defaultProps: Partial<DashboardLayoutProps> = {
           hasNew: true,
           childrenCount: 5,
           type: "project",
+          projectId: "1",
           items: [
             {
               title: "내보험 탭 데이터 조회",
               href: "/projects/insurances/main/1",
               requestMethod: REQUEST_METHOD.GET,
               type: "request",
+              projectId: "1",
             },
             {
               title: "보험메인",
               hasNew: true,
               childrenCount: 5,
               type: "group",
+              projectId: "1",
               items: [
                 {
                   title: "내보험 탭 데이터 조회 내보험 탭 데이터 조회",
                   href: "/projects/insurances/main/1",
                   requestMethod: REQUEST_METHOD.GET,
                   type: "request",
+                  projectId: "1",
                 },
                 {
                   title: "내보험 탭 데이터 조회",
@@ -43,24 +47,28 @@ const defaultProps: Partial<DashboardLayoutProps> = {
                   requestMethod: REQUEST_METHOD.PUT,
                   hasNew: true,
                   type: "request",
+                  projectId: "1",
                 },
                 {
                   title: "내보험 탭 데이터 조회",
                   href: "/projects/insurances/main/3",
                   requestMethod: REQUEST_METHOD.POST,
                   type: "request",
+                  projectId: "1",
                 },
                 {
                   title: "내보험 탭 데이터 조회",
                   href: "/projects/insurances/main/4",
                   requestMethod: REQUEST_METHOD.DELETE,
                   type: "request",
+                  projectId: "1",
                 },
                 {
                   title: "내보험 탭 데이터 조회",
                   href: "/projects/insurances/main/5",
                   requestMethod: REQUEST_METHOD.PATCH,
                   type: "request",
+                  projectId: "1",
                 },
               ],
             },
