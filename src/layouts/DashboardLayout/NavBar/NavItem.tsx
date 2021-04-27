@@ -194,6 +194,12 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
     const [isOpen, setIsOpen] = useState<boolean>(isInitiallyOpen);
 
     useEffect(() => {
+      if (isDraggingOver && !isOpen) {
+        setIsOpen(true);
+      }
+    }, [isDraggingOver, isOpen]);
+
+    useEffect(() => {
       // 데이터 로딩에 따라 뒤늦게 열리는 경우가 있어서 추가된 로직
       if (isInitiallyOpen) {
         setIsOpen(isInitiallyOpen);

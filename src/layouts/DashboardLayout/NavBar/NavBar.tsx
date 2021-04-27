@@ -138,24 +138,24 @@ function reduceChildRoutes({
             type={`requests-${item.projectId}`}
           >
             {(dropProvided, dropSnapshot) => (
-              <NavItem
-                depth={depth}
-                key={key}
-                ref={dragProvided.innerRef}
-                dragHandleProps={dragProvided.dragHandleProps}
-                draggableProps={dragProvided.draggableProps}
-                isDraggingOver={dropSnapshot.isDraggingOver}
-                {...item}
-              >
-                <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
+              <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
+                <NavItem
+                  depth={depth}
+                  key={key}
+                  ref={dragProvided.innerRef}
+                  dragHandleProps={dragProvided.dragHandleProps}
+                  draggableProps={dragProvided.draggableProps}
+                  isDraggingOver={dropSnapshot.isDraggingOver}
+                  {...item}
+                >
                   {renderNavItems({
                     depth: depth + 1,
                     pathname,
                     items: item.items!,
                   })}
                   {dropProvided.placeholder}
-                </div>
-              </NavItem>
+                </NavItem>
+              </div>
             )}
           </Droppable>
         )}
