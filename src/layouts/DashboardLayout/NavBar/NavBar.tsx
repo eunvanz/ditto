@@ -46,13 +46,23 @@ function renderNavItems({
   pathname: string;
   depth?: number;
 }) {
+  const indexByType = {
+    project: 0,
+    group: 0,
+    request: 0,
+    add: 0,
+  };
   return (
     <List disablePadding>
-      {items.reduce(
-        (acc: any[], item: SectionItem, index: number) =>
-          reduceChildRoutes({ acc, item, pathname, depth, index }),
-        [],
-      )}
+      {items.reduce((acc: any[], item: SectionItem) => {
+        return reduceChildRoutes({
+          acc,
+          item,
+          pathname,
+          depth,
+          index: indexByType[item.type]++,
+        });
+      }, [])}
     </List>
   );
 }
@@ -71,12 +81,10 @@ function reduceChildRoutes({
   index: number;
 }) {
   const key = item.title + depth;
-  console.log("===== item", item);
-  console.log("===== index", index);
-  if (item.items) {
+  if (item.items && item.type === "project") {
     acc.push(
       <Draggable draggableId={key} key={key} index={index}>
-        {(dragProvided, dragSnapshot) => (
+        {(dragProvided) => (
           <NavItem
             depth={depth}
             key={key}
@@ -85,17 +93,66 @@ function reduceChildRoutes({
             draggableProps={dragProvided.draggableProps}
             {...item}
           >
-            {renderNavItems({
-              depth: depth + 1,
-              pathname,
-              items: item.items!,
-            })}
+            <Droppable droppableId={`projectScope-${key}-${index}`} type="groups">
+              {(dropProvided) => (
+                <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
+                  {renderNavItems({
+                    depth: depth + 1,
+                    pathname,
+                    items: item.items!,
+                  })}
+                  {dropProvided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </NavItem>
+        )}
+      </Draggable>,
+    );
+  } else if (item.items && item.type === "group") {
+    acc.push(
+      <Draggable draggableId={key} key={key} index={index}>
+        {(dragProvided) => (
+          <NavItem
+            depth={depth}
+            key={key}
+            ref={dragProvided.innerRef}
+            dragHandleProps={dragProvided.dragHandleProps}
+            draggableProps={dragProvided.draggableProps}
+            {...item}
+          >
+            <Droppable droppableId={`groupScope-${key}-${index}`} type="requests">
+              {(dropProvided) => (
+                <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
+                  {renderNavItems({
+                    depth: depth + 1,
+                    pathname,
+                    items: item.items!,
+                  })}
+                  {dropProvided.placeholder}
+                </div>
+              )}
+            </Droppable>
           </NavItem>
         )}
       </Draggable>,
     );
   } else {
-    acc.push(<NavItem depth={depth} href={item.href} key={key} {...item} />);
+    acc.push(
+      <Draggable draggableId={key} key={key} index={index}>
+        {(dragProvided) => (
+          <NavItem
+            depth={depth}
+            href={item.href}
+            key={key}
+            ref={dragProvided.innerRef}
+            dragHandleProps={dragProvided.dragHandleProps}
+            draggableProps={dragProvided.draggableProps}
+            {...item}
+          />
+        )}
+      </Draggable>,
+    );
   }
 
   return acc;
@@ -158,7 +215,7 @@ const NavBar: FC<NavBarProps> = ({
                   </ListSubheader>
                 }
               >
-                <Droppable droppableId="projectScope">
+                <Droppable droppableId="userScope" type="project">
                   {(dropProvided) => (
                     <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
                       {renderNavItems({

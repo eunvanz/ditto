@@ -57,6 +57,7 @@ export interface NavItemProps {
   hasNoAuth?: boolean;
   dragHandleProps?: DraggableProvidedDragHandleProps;
   draggableProps?: DraggableProvidedDraggableProps;
+  index?: number;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -106,7 +107,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-    maxWidth: 190,
+    maxWidth: 160,
     "&.has-new": {
       color: theme.palette.error.main,
     },
@@ -169,6 +170,7 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
       hasNoAuth,
       dragHandleProps,
       draggableProps,
+      index,
       ...restProps
     },
     ref,
@@ -324,28 +326,38 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
       );
     } else if (["request"].includes(type)) {
       return (
-        <ListItem
-          className={clsx(classes.itemLeaf, className)}
-          disableGutters
-          key={title}
-          {...restProps}
-        >
-          <Button
-            activeClassName={classes.active}
-            className={clsx(classes.buttonLeaf, `depth-${depth}`)}
-            component={RouterLink}
-            exact
-            style={style}
-            to={href!}
+        <div {...draggableProps} ref={ref}>
+          <ListItem
+            className={clsx(classes.itemLeaf, className)}
+            disableGutters
+            key={title}
+            {...restProps}
           >
-            {!!requestMethod && <RequestMethodBadge requestMethod={requestMethod} />}
-            <NewBadge isVisible={hasNew} className={classes.newBadge}>
-              <span className={classes.title}>
-                {isDeprecated ? <del>{title}</del> : title}
-              </span>
-            </NewBadge>
-          </Button>
-        </ListItem>
+            <Button
+              activeClassName={classes.active}
+              className={clsx(classes.buttonLeaf, `depth-${depth}`)}
+              component={RouterLink}
+              exact
+              style={style}
+              to={href!}
+            >
+              <div
+                {...dragHandleProps}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <DragIndicator />
+              </div>
+              {!!requestMethod && <RequestMethodBadge requestMethod={requestMethod} />}
+              <NewBadge isVisible={hasNew} className={classes.newBadge}>
+                <span className={classes.title}>
+                  {isDeprecated ? <del>{title}</del> : title}
+                </span>
+              </NewBadge>
+            </Button>
+          </ListItem>
+        </div>
       );
     } else if (["add"].includes(type)) {
       return (
