@@ -1,5 +1,11 @@
+import { fade, Theme } from "@material-ui/core";
 import firebase from "firebase/app";
 import random from "lodash/random";
+import {
+  DraggableProvidedDraggableProps,
+  DraggableStateSnapshot,
+  DroppableStateSnapshot,
+} from "react-beautiful-dnd";
 import { FieldError } from "react-hook-form";
 import shortid from "shortid";
 import {
@@ -394,4 +400,26 @@ export const convertInterfaceToMockData = ({
     }
   });
   return result;
+};
+
+export const getDroppableStyles = (snapshot: DroppableStateSnapshot, theme: Theme) => {
+  if (snapshot.isDraggingOver) {
+    return { backgroundColor: fade(theme.palette.primary.main, 0.2) };
+  }
+  return undefined;
+};
+
+export const getDraggableStyles = ({
+  snapshot,
+  draggableProps,
+  theme,
+}: {
+  snapshot?: DraggableStateSnapshot;
+  draggableProps?: DraggableProvidedDraggableProps;
+  theme: Theme;
+}) => {
+  if (snapshot?.isDragging) {
+    return { ...draggableProps?.style, backgroundColor: theme.palette.background.paper };
+  }
+  return undefined;
 };

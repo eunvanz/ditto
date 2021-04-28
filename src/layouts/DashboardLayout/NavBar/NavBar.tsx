@@ -10,9 +10,19 @@ import {
   DropResult,
   ResponderProvided,
 } from "react-beautiful-dnd";
-import { Box, Drawer, Hidden, List, ListSubheader, makeStyles } from "@material-ui/core";
+import {
+  Box,
+  Drawer,
+  Hidden,
+  List,
+  ListSubheader,
+  makeStyles,
+  Theme,
+  useTheme,
+} from "@material-ui/core";
 import NavItem, { NavItemProps } from "./NavItem";
 import { SCREEN_MODE } from "../../../store/Ui/UiSlice";
+import { getDroppableStyles } from "../../../helpers/projectHelpers";
 
 const useStyles = makeStyles(() => ({
   mobileDrawer: {
@@ -58,10 +68,12 @@ function renderNavItems({
   items,
   pathname,
   depth = 0,
+  theme,
 }: {
   items: SectionItem[];
   pathname: string;
   depth?: number;
+  theme: Theme;
 }) {
   const indexByType = {
     project: 0,
@@ -78,6 +90,7 @@ function renderNavItems({
           pathname,
           depth,
           index: indexByType[item.type]++,
+          theme,
         });
       }, [])}
     </List>
@@ -90,36 +103,44 @@ function reduceChildRoutes({
   item,
   depth,
   index,
+  theme,
 }: {
   acc: ReactNode[];
   item: SectionItem;
   pathname: string;
   depth: number;
   index: number;
+  theme: Theme;
 }) {
   const key = item.title + depth;
   if (item.items && item.type === "project") {
     acc.push(
       <Draggable draggableId={key} key={key} index={index}>
-        {(dragProvided, _dragSnapshot) => (
+        {(dragProvided, dragSnapshot) => (
           <NavItem
             depth={depth}
             key={key}
             ref={dragProvided.innerRef}
             dragHandleProps={dragProvided.dragHandleProps}
             draggableProps={dragProvided.draggableProps}
+            dragSnapshot={dragSnapshot}
             {...item}
           >
             <Droppable
               droppableId={`projectScope-${item.projectId}`}
               type={`groups-${item.projectId}`}
             >
-              {(dropProvided, _dropSnapshot) => (
-                <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
+              {(dropProvided, dropSnapshot) => (
+                <div
+                  ref={dropProvided.innerRef}
+                  {...dropProvided.droppableProps}
+                  style={getDroppableStyles(dropSnapshot, theme)}
+                >
                   {renderNavItems({
                     depth: depth + 1,
                     pathname,
                     items: item.items!,
+                    theme,
                   })}
                   {dropProvided.placeholder}
                 </div>
@@ -132,26 +153,31 @@ function reduceChildRoutes({
   } else if (item.items && item.type === "group") {
     acc.push(
       <Draggable draggableId={key} key={key} index={index}>
-        {(dragProvided) => (
+        {(dragProvided, dragSnapshot) => (
           <Droppable
             droppableId={`groupScope-${key}`}
             type={`requests-${item.projectId}`}
           >
             {(dropProvided, dropSnapshot) => (
-              <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
+              <div
+                ref={dropProvided.innerRef}
+                {...dropProvided.droppableProps}
+                style={getDroppableStyles(dropSnapshot, theme)}
+              >
                 <NavItem
                   depth={depth}
                   key={key}
                   ref={dragProvided.innerRef}
                   dragHandleProps={dragProvided.dragHandleProps}
                   draggableProps={dragProvided.draggableProps}
-                  isDraggingOver={dropSnapshot.isDraggingOver}
+                  dragSnapshot={dragSnapshot}
                   {...item}
                 >
                   {renderNavItems({
                     depth: depth + 1,
                     pathname,
                     items: item.items!,
+                    theme,
                   })}
                   {dropProvided.placeholder}
                 </NavItem>
@@ -164,7 +190,7 @@ function reduceChildRoutes({
   } else {
     acc.push(
       <Draggable draggableId={key} key={key} index={index}>
-        {(dragProvided) => (
+        {(dragProvided, dragSnapshot) => (
           <NavItem
             depth={depth}
             href={item.href}
@@ -172,6 +198,7 @@ function reduceChildRoutes({
             ref={dragProvided.innerRef}
             dragHandleProps={dragProvided.dragHandleProps}
             draggableProps={dragProvided.draggableProps}
+            dragSnapshot={dragSnapshot}
             {...item}
           />
         )}
@@ -191,6 +218,7 @@ const NavBar: FC<NavBarProps> = ({
 }) => {
   const classes = useStyles();
   const location = useLocation();
+  const theme = useTheme();
 
   useEffect(() => {
     if (isOpenMobile && onMobileClose) {
@@ -224,11 +252,16 @@ const NavBar: FC<NavBarProps> = ({
                 }
               >
                 <Droppable droppableId="userScope" type="project">
-                  {(dropProvided) => (
-                    <div ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
+                  {(dropProvided, dropSnapshot) => (
+                    <div
+                      ref={dropProvided.innerRef}
+                      {...dropProvided.droppableProps}
+                      style={getDroppableStyles(dropSnapshot, theme)}
+                    >
                       {renderNavItems({
                         items: section.items,
                         pathname: location.pathname,
+                        theme,
                       })}
                       {dropProvided.placeholder}
                     </div>

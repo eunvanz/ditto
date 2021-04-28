@@ -18,6 +18,7 @@ import {
   Chip,
   RootRef,
   fade,
+  useTheme,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
@@ -30,10 +31,15 @@ import { REQUEST_METHOD } from "../../../types";
 import Label from "../../../components/Label";
 import NewBadge from "../../../components/NewBadge";
 import { assertNotEmpty } from "../../../helpers/commonHelpers";
-import { getRequestMethodColor } from "../../../helpers/projectHelpers";
+import {
+  getDraggableStyles,
+  getRequestMethodColor,
+} from "../../../helpers/projectHelpers";
 import {
   DraggableProvidedDraggableProps,
   DraggableProvidedDragHandleProps,
+  DraggableStateSnapshot,
+  DroppableStateSnapshot,
 } from "react-beautiful-dnd";
 import { DragIndicator } from "@material-ui/icons";
 
@@ -57,7 +63,8 @@ export interface NavItemProps {
   dragHandleProps?: DraggableProvidedDragHandleProps;
   draggableProps?: DraggableProvidedDraggableProps;
   index?: number;
-  isDraggingOver?: boolean;
+  dropSnapshot?: DroppableStateSnapshot;
+  dragSnapshot?: DraggableStateSnapshot;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -160,6 +167,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   draggingOver: {
     backgroundColor: fade(theme.palette.primary.main, 0.2),
   },
+  dragging: {
+    backgroundColor: theme.palette.background.paper,
+  },
 }));
 
 const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
@@ -184,7 +194,8 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
       dragHandleProps,
       draggableProps,
       index,
-      isDraggingOver,
+      dropSnapshot,
+      dragSnapshot,
       ...restProps
     },
     ref,
@@ -194,6 +205,8 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
     }
 
     const classes = useStyles();
+
+    const theme = useTheme();
 
     const [isOpen, setIsOpen] = useState<boolean>(isInitiallyOpen);
 
@@ -260,13 +273,13 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
 
     if (["project", "group"].includes(type)) {
       return (
-        <div {...draggableProps} ref={ref}>
+        <div
+          {...draggableProps}
+          ref={ref}
+          style={getDraggableStyles({ snapshot: dragSnapshot, draggableProps, theme })}
+        >
           <ListItem
-            className={clsx(
-              classes.item,
-              className,
-              isDraggingOver ? classes.draggingOver : undefined,
-            )}
+            className={clsx(classes.item, className)}
             disableGutters
             key={title}
             {...restProps}
