@@ -81,6 +81,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     textTransform: "none",
     letterSpacing: 0,
     width: "100%",
+    "&:hover": {
+      backgroundColor: "unset",
+    },
   },
   buttonLeaf: {
     color: theme.palette.text.secondary,
