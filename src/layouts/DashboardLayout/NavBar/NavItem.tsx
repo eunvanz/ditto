@@ -336,7 +336,11 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
       );
     } else if (["request"].includes(type)) {
       return (
-        <div {...draggableProps} ref={ref}>
+        <div
+          {...draggableProps}
+          ref={ref}
+          style={getDraggableStyles({ snapshot: dragSnapshot, draggableProps, theme })}
+        >
           <ListItem
             className={clsx(classes.itemLeaf, className)}
             disableGutters
