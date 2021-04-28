@@ -17,6 +17,7 @@ import {
   styled,
   Chip,
   RootRef,
+  fade,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
@@ -154,7 +155,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   draggingOver: {
-    backgroundColor: theme.palette.background.dark,
+    backgroundColor: fade(theme.palette.primary.main, 0.2),
   },
 }));
 
@@ -193,11 +194,10 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
 
     const [isOpen, setIsOpen] = useState<boolean>(isInitiallyOpen);
 
-    useEffect(() => {
-      if (isDraggingOver && !isOpen) {
-        setIsOpen(true);
-      }
-    }, [isDraggingOver, isOpen]);
+    // drag and drop 이슈로 인해 추가
+    const [hasToRenderChildren, setHasToRenderChildren] = useState(
+      type === "group" ? isInitiallyOpen : true,
+    );
 
     useEffect(() => {
       // 데이터 로딩에 따라 뒤늦게 열리는 경우가 있어서 추가된 로직
@@ -240,6 +240,20 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
     }, [onClickAddGroup]);
 
     const addNewItemButtonRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      if (type !== "group") {
+        return;
+      }
+      if (isOpen) {
+        setHasToRenderChildren(true);
+      } else {
+        const timer = setTimeout(() => {
+          setHasToRenderChildren(false);
+        }, 200);
+        return () => clearTimeout(timer);
+      }
+    }, [isOpen, type]);
 
     if (["project", "group"].includes(type)) {
       return (
@@ -285,7 +299,7 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
               {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </Button>
             <Collapse in={isOpen}>
-              {children}
+              {hasToRenderChildren ? children : null}
               {!hasNoAuth && (
                 <>
                   <RootRef rootRef={addNewItemButtonRef}>
