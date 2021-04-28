@@ -421,7 +421,7 @@ export const getDraggableStyles = ({
   if (snapshot?.isDragging) {
     return {
       ...draggableProps?.style,
-      backgroundColor: fade(theme.palette.background.paper, 0.5),
+      backgroundColor: fade(theme.palette.background.paper, 0.8),
     };
   }
   return draggableProps?.style;
