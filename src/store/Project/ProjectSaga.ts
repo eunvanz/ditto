@@ -226,7 +226,14 @@ export function* deleteProjectFlow() {
     if (isConfirmed) {
       try {
         yield* put(UiActions.showLoading("deleteProject"));
+        const projects = yield* select(FirebaseSelectors.selectMyProjects);
         const projectRef = yield* call(Firework.getProjectRef, project.id);
+        const prevProject = projects.find(
+          (item) => item.settingsByMember[userProfile.uid].nextItemId === project.id,
+        );
+        const nextProject = projects.find(
+          (item) => item.id === project.settingsByMember[userProfile.uid].nextItemId,
+        );
         const userRef = yield* call(Firework.getUserRef, userProfile.uid);
         const batchItems: RunBatchItem[] = [
           {
@@ -241,6 +248,29 @@ export function* deleteProjectFlow() {
             },
           },
         ];
+        if (prevProject) {
+          const prevProjectRef = yield* call(Firework.getProjectRef, prevProject.id);
+          batchItems.push({
+            ref: prevProjectRef,
+            operation: "update",
+            data: nextProject
+              ? {
+                  [`settingsByMember.${userProfile.uid}.nextItemId`]: nextProject.id,
+                }
+              : {
+                  [`settingsByMember.${userProfile.uid}.isLastItem`]: true,
+                },
+          });
+        } else if (nextProject) {
+          const nextProjectRef = yield* call(Firework.getProjectRef, nextProject.id);
+          batchItems.push({
+            ref: nextProjectRef,
+            operation: "update",
+            data: {
+              [`settingsByMember.${userProfile.uid}.isFirstItem`]: true,
+            },
+          });
+        }
         yield* call(Firework.runBatch, batchItems);
         const recordableDocProps = yield* call(getRecordableDocProps);
         const members = getTrueKeys(project.members);
