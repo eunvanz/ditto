@@ -259,6 +259,7 @@ export function* deleteProjectFlow() {
                 }
               : {
                   [`settingsByMember.${userProfile.uid}.isLastItem`]: true,
+                  [`settingsByMember.${userProfile.uid}.nextItemId`]: false,
                 },
           });
         } else if (nextProject) {

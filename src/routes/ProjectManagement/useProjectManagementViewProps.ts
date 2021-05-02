@@ -24,7 +24,7 @@ const useProjectManagementViewProps = () => {
         storeAs: `projectMembers/${projectId}`,
       };
     } else {
-      return {};
+      return [];
     }
   }, [project, projectId]);
 
