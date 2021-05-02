@@ -127,7 +127,7 @@ function reduceChildRoutes({
             {...item}
           >
             <Droppable
-              droppableId={`projectScope-${item.projectId}`}
+              droppableId={`groupScope-${item.projectId}`}
               type={`groups-${item.projectId}`}
             >
               {(dropProvided, dropSnapshot) => (
@@ -155,7 +155,7 @@ function reduceChildRoutes({
       <Draggable draggableId={key} key={key} index={index}>
         {(dragProvided, dragSnapshot) => (
           <Droppable
-            droppableId={`groupScope-${key}`}
+            droppableId={`requestScope-${key}`}
             type={`requests-${item.projectId}`}
           >
             {(dropProvided, dropSnapshot) => (
@@ -251,7 +251,7 @@ const NavBar: FC<NavBarProps> = ({
                   </ListSubheader>
                 }
               >
-                <Droppable droppableId="userScope" type="project">
+                <Droppable droppableId="projectScope" type="project">
                   {(dropProvided, dropSnapshot) => (
                     <div
                       ref={dropProvided.innerRef}
