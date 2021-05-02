@@ -11,6 +11,7 @@ import {
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { AuthActions } from "../../store/Auth/AuthSlice";
 import { APP_VERSION, EXAMPLE_PROJECT_ID } from "../../constants";
+import { ProjectActions } from "../../store/Project/ProjectSlice";
 
 /**
  * 필수적인 데이터들을 로딩후에 하위 컴포넌트들을 렌더링
@@ -73,11 +74,15 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
     }
     if (isLoaded(projects)) {
       setIsDataInitialized(true);
+      // 프로젝트들이 seq 기반의 정렬을 사용할 경우 linkedList 방식으로 리팩토링
+      if (!projects.some((project) => project.settingsByMember[auth.uid]?.isFirstItem)) {
+        dispatch(ProjectActions.refactorProjectsAsLinkedList());
+      }
       dispatch(UiActions.hideLoading("loadingProjects"));
     } else {
       dispatch(UiActions.showLoading("loadingProjects"));
     }
-  }, [auth.isEmpty, dispatch, projects]);
+  }, [auth.isEmpty, auth.uid, dispatch, projects]);
 
   useEffect(() => {
     if (appInfo && cmp(appInfo.version, APP_VERSION) > 0) {

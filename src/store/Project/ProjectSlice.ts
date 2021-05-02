@@ -180,6 +180,7 @@ const ProjectSlice = createSlice({
     submitExamples: (_, _action: PayloadAction<ExampleFormValues>) => {},
     generateTypescriptInterface: (_, _action: PayloadAction<ModelDoc>) => {},
     generateMockData: (_, _action: PayloadAction<ModelDoc>) => {},
+    refactorProjectsAsLinkedList: (_, _action: PayloadAction<void>) => {},
   },
 });
 

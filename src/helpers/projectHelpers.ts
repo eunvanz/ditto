@@ -1,5 +1,6 @@
 import { fade, Theme } from "@material-ui/core";
 import firebase from "firebase/app";
+import orderBy from "lodash/orderBy";
 import random from "lodash/random";
 import {
   DraggableProvidedDraggableProps,
@@ -425,4 +426,25 @@ export const getDraggableStyles = ({
     };
   }
   return draggableProps?.style;
+};
+
+export const getOrderedItems = (orderableItems: ProjectDoc[], uid: string) => {
+  const firstItem = orderableItems?.find(
+    (item) => item.settingsByMember[uid].isFirstItem,
+  );
+  if (firstItem) {
+    const result = [firstItem];
+    while (true) {
+      const nextItemId = result[result.length - 1].settingsByMember[uid].nextItemId;
+      if (nextItemId) {
+        const nextItem = orderableItems.find((item) => item.id === nextItemId);
+        nextItem && result.push(nextItem);
+      } else {
+        break;
+      }
+    }
+    return result;
+  } else {
+    return orderBy(orderableItems, [`settingsByMember.${uid}.seq`], ["asc"]);
+  }
 };

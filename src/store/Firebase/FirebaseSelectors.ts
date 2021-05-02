@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
-import orderBy from "lodash/orderBy";
 import { RootState } from "..";
+import { getOrderedItems } from "../../helpers/projectHelpers";
 import {
   AppInfo,
   EnumerationDoc,
@@ -51,7 +51,7 @@ const selectOrderedMyProjects = createSelector(
             : exampleProject
             ? [exampleProject]
             : []),
-          ...orderBy(projects, [`settingsByMember.${auth.uid}.seq`], ["asc"]),
+          ...getOrderedItems(projects, auth.uid),
         ]
       : [];
   },

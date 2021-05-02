@@ -2527,6 +2527,29 @@ export function* generateMockDataFlow() {
   }
 }
 
+export function* refactorProjectsAsLinkedListFlow() {
+  while (true) {
+    yield* take(ProjectActions.refactorProjectsAsLinkedList);
+    const projects = yield* select(FirebaseSelectors.selectMyProjects);
+    const auth = yield* select(AuthSelectors.selectAuth);
+    yield* all(
+      projects.map((project, idx) => {
+        const isFirstProject = idx === 0;
+        const isLastProject = idx + 1 === projects.length;
+        const updatedProject: any = {
+          [`settingsByMember.${auth.uid}.isFirstItem`]: isFirstProject,
+          [`settingsByMember.${auth.uid}.isLastItem`]: isLastProject,
+        };
+        if (!isLastProject) {
+          updatedProject[`settingsByMember.${auth.uid}.nextItemId`] =
+            projects[idx + 1].id;
+        }
+        return call(Firework.updateProject, project.id, updatedProject);
+      }),
+    );
+  }
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -2564,5 +2587,6 @@ export function* watchProjectActions() {
     fork(submitExamplesFlow),
     fork(generateTypescriptInterfaceFlow),
     fork(generateMockDataFlow),
+    fork(refactorProjectsAsLinkedListFlow),
   ]);
 }

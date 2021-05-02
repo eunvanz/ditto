@@ -74,7 +74,7 @@ export interface ProjectItem extends Recordable {
   owners: Record<string, boolean>;
   managers: Record<string, boolean>;
   guests: Record<string, boolean>;
-  settingsByMember: Record<string, ProjectSettings>;
+  settingsByMember: Record<string, OrderableSettings>;
   invitees?: Record<string, boolean>;
 }
 
@@ -82,8 +82,11 @@ export interface BaseSettings {
   updatedAt: firebase.firestore.FieldValue;
 }
 
-export interface ProjectSettings extends BaseSettings {
-  seq: number;
+export interface OrderableSettings extends BaseSettings {
+  seq?: number;
+  isFirstItem?: boolean;
+  nextItemId?: string;
+  isLastItem?: boolean;
 }
 
 export interface DocTimestamp {
@@ -109,7 +112,7 @@ export type Doc<T extends Recordable, S extends BaseSettings> = Omit<
 /**
  * 읽을 때의 프로젝트
  */
-export type ProjectDoc = Doc<ProjectItem, ProjectSettings>;
+export type ProjectDoc = Doc<ProjectItem, OrderableSettings>;
 
 export interface ProjectUrlSettings extends BaseSettings {}
 
