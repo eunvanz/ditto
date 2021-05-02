@@ -43,6 +43,12 @@ function batch() {
   return db.batch();
 }
 
+function runTransaction(
+  callback: (transaction: firebase.firestore.Transaction) => Promise<unknown>,
+) {
+  return db.runTransaction(callback);
+}
+
 function getMyProjectsRef(uid: string) {
   return db.collection("projects").where(`members.${uid}`, "==", true);
 }
@@ -543,6 +549,7 @@ export const realFirework = {
   updateRequestBodyExamples,
   updateResponseBodyExamples,
   updateResponseHeaderExamples,
+  runTransaction,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

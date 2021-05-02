@@ -125,8 +125,6 @@ export function* submitProjectFormFlow() {
       put(UiActions.showLoading("submitProject")),
     ]);
     const timestamp = yield* call(getTimestamp);
-    const lastProjectSeq =
-      projects[projects.length - 1]?.settingsByMember[auth.uid]?.seq || 0;
     try {
       if (isModification) {
         assertNotEmpty(project);
@@ -171,9 +169,16 @@ export function* submitProjectFormFlow() {
           settingsByMember: {
             [auth.uid]: {
               updatedAt: timestamp,
-              seq: lastProjectSeq + 1,
+              isLastItem: true,
             },
           },
+        });
+        const lastProject = projects.find(
+          (project) => project.settingsByMember[auth.uid].isLastItem,
+        );
+        yield* call(Firework.updateProject, lastProject!.id, {
+          [`settingsByMember.${auth.uid}.isLastItem`]: false,
+          [`settingsByMember.${auth.uid}.nextItemId`]: projectRef.id,
         });
         yield* call(Firework.updateUserProfile, userProfile.uid, {
           projects: {
