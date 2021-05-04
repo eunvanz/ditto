@@ -228,7 +228,6 @@ const NavBar: FC<NavBarProps> = ({
 
   const handleOnDragEnd = useCallback(
     (result: DropResult, _provided: ResponderProvided) => {
-      console.log("===== result", result);
       const isOrderChanged =
         result.destination &&
         (result.destination.droppableId !== result.source.droppableId ||

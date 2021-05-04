@@ -2567,7 +2567,6 @@ export function* generateMockDataFlow() {
 export function* refactorProjectsAsLinkedListFlow() {
   while (true) {
     yield* take(ProjectActions.refactorProjectsAsLinkedList);
-    console.log("===== refactor init");
     const projects = yield* select(FirebaseSelectors.selectMyProjects);
     const auth = yield* select(AuthSelectors.selectAuth);
     try {
@@ -2717,7 +2716,6 @@ export function* reorderNavBarItemFlow() {
             draft.settingsByMember[auth.uid].isFirstItem = false;
           });
         }
-        console.log("===== newProjects", newProjects);
         yield* put(ProjectActions.receiveMyProjects(newProjects));
         yield* call(Firework.runBatch, batchItems);
       }

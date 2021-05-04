@@ -51,7 +51,7 @@ const selectOrderedMyProjects = createSelector(
             : exampleProject
             ? [exampleProject]
             : []),
-          ...getOrderedItems(projects, auth.uid),
+          ...(projects || []),
         ]
       : [];
   },
