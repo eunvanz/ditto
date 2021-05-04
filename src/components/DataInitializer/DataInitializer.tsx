@@ -49,7 +49,7 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
 
   useFirestoreConnect(firestoreQuery);
 
-  const projects = useSelector(FirebaseSelectors.selectMyProjects);
+  const projects = useSelector(FirebaseSelectors.selectOrderedMyProjects);
   const appInfo = useSelector(FirebaseSelectors.selectAppInfo);
 
   const dispatch = useDispatch();
@@ -82,6 +82,7 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
       ) {
         dispatch(ProjectActions.refactorProjectsAsLinkedList());
       }
+      dispatch(ProjectActions.receiveMyProjects(projects));
       dispatch(UiActions.hideLoading("loadingProjects"));
     } else {
       dispatch(UiActions.showLoading("loadingProjects"));

@@ -5,6 +5,7 @@ import { matchPath, useHistory, useLocation } from "react-router-dom";
 import { checkHasAuthorization, getProjectRole } from "../../helpers/projectHelpers";
 import ROUTE from "../../paths";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
+import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import UiSelectors from "../../store/Ui/UiSelectors";
 import { UiActions } from "../../store/Ui/UiSlice";
@@ -14,7 +15,7 @@ import { SectionItem } from "./NavBar/NavBar";
 const useDashboardLayoutProps = () => {
   const dispatch = useDispatch();
 
-  const projects = useSelector(FirebaseSelectors.selectOrderedMyProjects);
+  const projects = useSelector(ProjectSelectors.selectMyProjects);
   const userProfile = useSelector(FirebaseSelectors.selectUserProfile);
 
   const firestoreQuery = useMemo(() => {

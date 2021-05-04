@@ -9,6 +9,7 @@ import {
   putResolve,
   takeEvery,
 } from "typed-redux-saga";
+import produce from "immer";
 import { ProjectActions } from "./ProjectSlice";
 import { ProgressActions } from "../Progress/ProgressSlice";
 import Firework, { RunBatchItem } from "../Firework";
@@ -2600,7 +2601,6 @@ export function* reorderNavBarItemFlow() {
       if (type === "project") {
         const projects = yield* select(FirebaseSelectors.selectOrderedMyProjects);
         const sourceProject = projects.find((item) => item.id === itemId);
-        console.log("===== sourceProject", sourceProject);
 
         assertNotEmpty(sourceProject);
 
@@ -2610,10 +2610,6 @@ export function* reorderNavBarItemFlow() {
           (item) => item.settingsByMember[auth.uid].nextItemId === itemId,
         );
         const sourceIndex = projects.findIndex((item) => item.id === itemId);
-        console.log("===== sourceNextItem", sourceNextItem);
-        console.log("===== sourcePrevItem", sourcePrevItem);
-
-        console.log("===== projects", projects);
         const destinationNextItem =
           destinationIndex < projects.length - 1
             ? projects[destinationIndex + (sourceIndex < destinationIndex ? 1 : 0)]
@@ -2623,16 +2619,15 @@ export function* reorderNavBarItemFlow() {
             ? projects[destinationIndex - (sourceIndex < destinationIndex ? 0 : 1)]
             : undefined;
 
-        console.log("===== destinationNextItem", destinationNextItem);
-        console.log("===== destinationPrevItem", destinationPrevItem);
-
         const batchItems: RunBatchItem[] = [];
 
         const sourceItemRef = yield* call(Firework.getProjectRef, sourceProject.id);
 
+        const newProjects = [...projects];
         if (sourcePrevItem) {
           // 현재 아이템의 nextItemId 및 isLastItem을 넘겨받음
           const prevItemRef = yield* call(Firework.getProjectRef, sourcePrevItem.id);
+
           batchItems.push({
             operation: "update",
             ref: prevItemRef,
@@ -2641,13 +2636,16 @@ export function* reorderNavBarItemFlow() {
               [`settingsByMember.${auth.uid}.isLastItem`]: !sourceNextItem,
             },
           });
-          console.log(`===== ${sourcePrevItem.title}의 data`, {
-            [`settingsByMember.${auth.uid}.nextItemId`]: sourceNextItem?.id || false,
-            [`settingsByMember.${auth.uid}.isLastItem`]: !sourceNextItem,
+
+          const index = newProjects.findIndex((item) => item.id === sourcePrevItem.id);
+          newProjects[index] = produce(newProjects[index], (draft) => {
+            draft.settingsByMember[auth.uid].nextItemId = sourceNextItem?.id;
+            draft.settingsByMember[auth.uid].isLastItem = !sourceNextItem;
           });
         } else if (sourceNextItem) {
           // sourcePrevItem이 없는경우 isFirstItem을 true
           const nextItemRef = yield* call(Firework.getProjectRef, sourceNextItem.id);
+
           batchItems.push({
             operation: "update",
             ref: nextItemRef,
@@ -2656,9 +2654,11 @@ export function* reorderNavBarItemFlow() {
               [`settingsByMember.${auth.uid}.isLastItem`]: false,
             },
           });
-          console.log(`===== ${sourceNextItem.title}의 data`, {
-            [`settingsByMember.${auth.uid}.isFirstItem`]: true,
-            [`settingsByMember.${auth.uid}.isLastItem`]: false,
+
+          const index = newProjects.findIndex((item) => item.id === sourceNextItem.id);
+          newProjects[index] = produce(newProjects[index], (draft) => {
+            draft.settingsByMember[auth.uid].isFirstItem = true;
+            draft.settingsByMember[auth.uid].isLastItem = false;
           });
         }
 
@@ -2671,15 +2671,18 @@ export function* reorderNavBarItemFlow() {
             [`settingsByMember.${auth.uid}.isFirstItem`]: !destinationPrevItem,
           },
         });
-        console.log(`===== ${sourceProject.title}의 data`, {
-          [`settingsByMember.${auth.uid}.nextItemId`]: destinationNextItem?.id || false,
-          [`settingsByMember.${auth.uid}.isLastItem`]: !destinationNextItem,
-          [`settingsByMember.${auth.uid}.isFirstItem`]: !destinationPrevItem,
+
+        const index = newProjects.findIndex((item) => item.id === sourceProject.id);
+        newProjects[index] = produce(newProjects[index], (draft) => {
+          draft.settingsByMember[auth.uid].nextItemId = destinationNextItem?.id;
+          draft.settingsByMember[auth.uid].isLastItem = !destinationNextItem;
+          draft.settingsByMember[auth.uid].isFirstItem = !destinationPrevItem;
         });
 
         if (destinationPrevItem) {
           // nextItem을 sourceProject.id로 세팅
           const prevItemRef = yield* call(Firework.getProjectRef, destinationPrevItem.id);
+
           batchItems.push({
             operation: "update",
             ref: prevItemRef,
@@ -2687,13 +2690,18 @@ export function* reorderNavBarItemFlow() {
               [`settingsByMember.${auth.uid}.nextItemId`]: sourceProject.id,
             },
           });
-          console.log(`===== ${destinationPrevItem.title}의 data`, {
-            [`settingsByMember.${auth.uid}.nextItemId`]: sourceProject.id,
+
+          const index = newProjects.findIndex(
+            (item) => item.id === destinationPrevItem.id,
+          );
+          newProjects[index] = produce(newProjects[index], (draft) => {
+            draft.settingsByMember[auth.uid].nextItemId = sourceProject.id;
           });
         }
         if (destinationNextItem) {
           // firstItem이 무조건 아니게 됨
           const nextItemRef = yield* call(Firework.getProjectRef, destinationNextItem.id);
+
           batchItems.push({
             operation: "update",
             ref: nextItemRef,
@@ -2701,10 +2709,16 @@ export function* reorderNavBarItemFlow() {
               [`settingsByMember.${auth.uid}.isFirstItem`]: false,
             },
           });
-          console.log(`===== ${destinationNextItem.title}의 data`, {
-            [`settingsByMember.${auth.uid}.isFirstItem`]: false,
+
+          const index = newProjects.findIndex(
+            (item) => item.id === destinationNextItem.id,
+          );
+          newProjects[index] = produce(newProjects[index], (draft) => {
+            draft.settingsByMember[auth.uid].isFirstItem = false;
           });
         }
+        console.log("===== newProjects", newProjects);
+        yield* put(ProjectActions.receiveMyProjects(newProjects));
         yield* call(Firework.runBatch, batchItems);
       }
     } catch (error) {

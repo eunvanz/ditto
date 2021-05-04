@@ -449,7 +449,6 @@ export const getOrderedItems = (orderableItems: ProjectDoc[], uid: string) => {
         break;
       }
     }
-    console.log("===== result", result);
     return result;
   } else {
     return orderBy(orderableItems, [`settingsByMember.${uid}.seq`], ["asc"]);

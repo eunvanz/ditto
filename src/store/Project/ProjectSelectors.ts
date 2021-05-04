@@ -1,5 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "..";
+import { getOrderedItems } from "../../helpers/projectHelpers";
+import AuthSelectors from "../Auth/AuthSelector";
 
 const selectCurrentProject = createSelector(
   (state: RootState) => state.project.currentProject,
@@ -21,11 +23,18 @@ const selectEditingModelField = createSelector(
   (editingModelField) => editingModelField,
 );
 
+const selectMyProjects = createSelector(
+  (state: RootState) => state.project.myProjects,
+  AuthSelectors.selectAuth,
+  (myProjects, auth) => getOrderedItems(myProjects, auth.uid),
+);
+
 const ProjectSelectors = {
   selectCurrentProject,
   selectFieldTypeToCreate,
   selectCurrentModel,
   selectEditingModelField,
+  selectMyProjects,
 };
 
 export default ProjectSelectors;

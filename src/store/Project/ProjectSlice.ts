@@ -41,9 +41,12 @@ export type ProjectState = {
   fieldTypeToCreate?: FIELD_TYPE;
   currentProject?: ProjectDoc;
   currentModel?: ModelDoc;
+  myProjects: ProjectDoc[];
 };
 
-export const initialProjectState: ProjectState = {};
+export const initialProjectState: ProjectState = {
+  myProjects: [],
+};
 
 export interface SubmitProjectFormPayload {
   data: ProjectBasicFormValues | ProjectFormValues;
@@ -90,6 +93,12 @@ const ProjectSlice = createSlice({
     },
     clearCurrentModel: (state, _action: PayloadAction<void>) => {
       state.currentModel = undefined;
+    },
+    receiveMyProjects: (state, action: PayloadAction<ProjectDoc[]>) => {
+      state.myProjects = action.payload;
+    },
+    clearMyProjects: (state, _action: PayloadAction<void>) => {
+      state.myProjects = [];
     },
     submitProjectForm: (_, _action: PayloadAction<SubmitProjectFormPayload>) => {},
     deleteProject: (_, _action: PayloadAction<ProjectDoc>) => {},

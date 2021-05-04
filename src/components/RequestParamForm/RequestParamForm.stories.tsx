@@ -20,7 +20,7 @@ export default {
   decorators: [
     withRedux({
       ...initialRootState,
-      project: { currentProject: mockProject.project },
+      project: { ...initialRootState.project, currentProject: mockProject.project },
     }),
   ],
 } as Meta;
