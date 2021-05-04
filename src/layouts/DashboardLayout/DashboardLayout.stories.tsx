@@ -19,6 +19,7 @@ const defaultProps: Partial<DashboardLayoutProps> = {
           childrenCount: 5,
           type: "project",
           projectId: "1",
+          id: "1",
           items: [
             {
               title: "내보험 탭 데이터 조회",
@@ -26,6 +27,7 @@ const defaultProps: Partial<DashboardLayoutProps> = {
               requestMethod: REQUEST_METHOD.GET,
               type: "request",
               projectId: "1",
+              id: "2",
             },
             {
               title: "보험메인",
@@ -33,6 +35,7 @@ const defaultProps: Partial<DashboardLayoutProps> = {
               childrenCount: 5,
               type: "group",
               projectId: "1",
+              id: "3",
               items: [
                 {
                   title: "내보험 탭 데이터 조회 내보험 탭 데이터 조회",
@@ -40,6 +43,7 @@ const defaultProps: Partial<DashboardLayoutProps> = {
                   requestMethod: REQUEST_METHOD.GET,
                   type: "request",
                   projectId: "1",
+                  id: "4",
                 },
                 {
                   title: "내보험 탭 데이터 조회",
@@ -48,6 +52,7 @@ const defaultProps: Partial<DashboardLayoutProps> = {
                   hasNew: true,
                   type: "request",
                   projectId: "1",
+                  id: "5",
                 },
                 {
                   title: "내보험 탭 데이터 조회",
@@ -55,6 +60,7 @@ const defaultProps: Partial<DashboardLayoutProps> = {
                   requestMethod: REQUEST_METHOD.POST,
                   type: "request",
                   projectId: "1",
+                  id: "6",
                 },
                 {
                   title: "내보험 탭 데이터 조회",
@@ -62,6 +68,7 @@ const defaultProps: Partial<DashboardLayoutProps> = {
                   requestMethod: REQUEST_METHOD.DELETE,
                   type: "request",
                   projectId: "1",
+                  id: "7",
                 },
                 {
                   title: "내보험 탭 데이터 조회",
@@ -69,6 +76,7 @@ const defaultProps: Partial<DashboardLayoutProps> = {
                   requestMethod: REQUEST_METHOD.PATCH,
                   type: "request",
                   projectId: "1",
+                  id: "8",
                 },
               ],
             },

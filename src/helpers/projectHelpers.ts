@@ -26,6 +26,7 @@ import {
   InterfaceField,
   FORMAT,
 } from "../types";
+import { assertNotEmpty } from "./commonHelpers";
 
 export const patterns = {
   wordsWithNoSpace: {
@@ -438,11 +439,17 @@ export const getOrderedItems = (orderableItems: ProjectDoc[], uid: string) => {
       const nextItemId = result[result.length - 1].settingsByMember[uid].nextItemId;
       if (nextItemId) {
         const nextItem = orderableItems.find((item) => item.id === nextItemId);
-        nextItem && result.push(nextItem);
+        assertNotEmpty(nextItem);
+        if (result.find((item) => item.id === nextItem!.id)) {
+          break;
+        } else {
+          result.push(nextItem);
+        }
       } else {
         break;
       }
     }
+    console.log("===== result", result);
     return result;
   } else {
     return orderBy(orderableItems, [`settingsByMember.${uid}.seq`], ["asc"]);

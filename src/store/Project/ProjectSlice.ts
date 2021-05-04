@@ -6,6 +6,7 @@ import { ModelNameFormValues } from "../../components/ModelForm/ModelNameForm";
 import { ProjectFormValues } from "../../components/ProjectForm/ProjectForm";
 import { RequestFormValues } from "../../components/RequestFormModal/RequestFormModal";
 import { ResponseStatusFormValues } from "../../components/ResponseStatusFormModal/ResponseStatusFormModal";
+import { SectionItemType } from "../../layouts/DashboardLayout/NavBar/NavBar";
 import { EnumFormValues } from "../../routes/ProjectManagement/EnumForm/EnumForm";
 import { ProjectBasicFormValues } from "../../routes/ProjectManagement/ProjectBasicForm/ProjectBasicForm";
 import { ProjectUrlFormValues } from "../../routes/ProjectManagement/ProjectUrlForm/ProjectUrlForm";
@@ -47,6 +48,13 @@ export const initialProjectState: ProjectState = {};
 export interface SubmitProjectFormPayload {
   data: ProjectBasicFormValues | ProjectFormValues;
   type: "create" | "modify";
+}
+
+export interface ReorderNavBarItemPayload {
+  type: SectionItemType;
+  itemId: string;
+  destinationId: string;
+  destinationIndex: number;
 }
 
 const ProjectSlice = createSlice({
@@ -181,6 +189,7 @@ const ProjectSlice = createSlice({
     generateTypescriptInterface: (_, _action: PayloadAction<ModelDoc>) => {},
     generateMockData: (_, _action: PayloadAction<ModelDoc>) => {},
     refactorProjectsAsLinkedList: (_, _action: PayloadAction<void>) => {},
+    reorderNavBarItem: (_, _action: PayloadAction<ReorderNavBarItemPayload>) => {},
   },
 });
 

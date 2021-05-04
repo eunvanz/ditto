@@ -5,7 +5,6 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   DragDropContext,
   Draggable,
-  DragStart,
   Droppable,
   DropResult,
   ResponderProvided,
@@ -23,6 +22,7 @@ import {
 import NavItem, { NavItemProps } from "./NavItem";
 import { SCREEN_MODE } from "../../../store/Ui/UiSlice";
 import { getDroppableStyles } from "../../../helpers/projectHelpers";
+import { ReorderNavBarItemPayload } from "../../../store/Project/ProjectSlice";
 
 const useStyles = makeStyles(() => ({
   mobileDrawer: {
@@ -46,7 +46,10 @@ export interface NavBarProps {
   sections: Section[];
   onClickAddNewProject: () => void;
   screenMode: SCREEN_MODE;
+  onDragItemEnd: (payload: ReorderNavBarItemPayload) => void;
 }
+
+export type SectionItemType = "project" | "group" | "request";
 
 export interface SectionItem
   extends Omit<NavItemProps, "depth" | "children" | "onClick"> {
@@ -54,9 +57,10 @@ export interface SectionItem
   info?: ReactNode;
   items?: SectionItem[];
   title: string;
-  type: "request" | "project" | "group";
+  type: SectionItemType;
   isDeprecated?: boolean;
   projectId: string;
+  id: string;
 }
 
 export interface Section {
@@ -115,7 +119,7 @@ function reduceChildRoutes({
   const key = item.title + depth;
   if (item.items && item.type === "project") {
     acc.push(
-      <Draggable draggableId={key} key={key} index={index}>
+      <Draggable draggableId={item.id} key={key} index={index}>
         {(dragProvided, dragSnapshot) => (
           <NavItem
             depth={depth}
@@ -126,10 +130,7 @@ function reduceChildRoutes({
             dragSnapshot={dragSnapshot}
             {...item}
           >
-            <Droppable
-              droppableId={`groupScope-${item.projectId}`}
-              type={`groups-${item.projectId}`}
-            >
+            <Droppable droppableId={item.id} type={`group-${item.projectId}`}>
               {(dropProvided, dropSnapshot) => (
                 <div
                   ref={dropProvided.innerRef}
@@ -152,12 +153,9 @@ function reduceChildRoutes({
     );
   } else if (item.items && item.type === "group") {
     acc.push(
-      <Draggable draggableId={key} key={key} index={index}>
+      <Draggable draggableId={item.id} key={key} index={index}>
         {(dragProvided, dragSnapshot) => (
-          <Droppable
-            droppableId={`requestScope-${key}`}
-            type={`requests-${item.projectId}`}
-          >
+          <Droppable droppableId={item.id} type={`request-${item.projectId}`}>
             {(dropProvided, dropSnapshot) => (
               <div
                 ref={dropProvided.innerRef}
@@ -189,7 +187,7 @@ function reduceChildRoutes({
     );
   } else {
     acc.push(
-      <Draggable draggableId={key} key={key} index={index}>
+      <Draggable draggableId={item.id} key={key} index={index}>
         {(dragProvided, dragSnapshot) => (
           <NavItem
             depth={depth}
@@ -215,6 +213,7 @@ const NavBar: FC<NavBarProps> = ({
   sections,
   onClickAddNewProject,
   screenMode,
+  onDragItemEnd,
 }) => {
   const classes = useStyles();
   const location = useLocation();
@@ -228,17 +227,27 @@ const NavBar: FC<NavBarProps> = ({
   }, [location.pathname]);
 
   const handleOnDragEnd = useCallback(
-    (result: DropResult, provided: ResponderProvided) => {},
-    [],
-  );
-
-  const handleOnDragStart = useCallback(
-    (initial: DragStart, provided: ResponderProvided) => {},
-    [],
+    (result: DropResult, _provided: ResponderProvided) => {
+      console.log("===== result", result);
+      const isOrderChanged =
+        result.destination &&
+        (result.destination.droppableId !== result.source.droppableId ||
+          (result.destination.droppableId === result.source.droppableId &&
+            result.destination.index !== result.source.index));
+      if (isOrderChanged) {
+        onDragItemEnd({
+          type: result.type.split("-")[0] as SectionItemType,
+          itemId: result.draggableId,
+          destinationId: result.destination!.droppableId,
+          destinationIndex: result.destination!.index,
+        });
+      }
+    },
+    [onDragItemEnd],
   );
 
   const content = (
-    <DragDropContext onDragEnd={handleOnDragEnd} onDragStart={handleOnDragStart}>
+    <DragDropContext onDragEnd={handleOnDragEnd}>
       <Box height="100%" display="flex" flexDirection="column">
         <PerfectScrollbar options={{ suppressScrollX: true }}>
           <Box p={2}>

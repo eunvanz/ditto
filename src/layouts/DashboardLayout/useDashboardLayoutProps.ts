@@ -82,6 +82,7 @@ const useDashboardLayoutProps = () => {
       requestMethod: request.method,
       isDeprecated: request.isDeprecated,
       projectId,
+      id: request.id,
     };
   }, []);
 
@@ -114,6 +115,7 @@ const useDashboardLayoutProps = () => {
           items,
           hasNoAuth,
           projectId: project.id,
+          id: group.id,
         });
       });
       groupedProjectRequests[project.id]
@@ -155,6 +157,7 @@ const useDashboardLayoutProps = () => {
               hasNoAuth,
               items,
               projectId: project.id,
+              id: project.id,
               isOpen: items.some(
                 (item) =>
                   item.isOpen ||

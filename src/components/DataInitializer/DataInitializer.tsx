@@ -75,7 +75,11 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
     if (isLoaded(projects)) {
       setIsDataInitialized(true);
       // 프로젝트들이 seq 기반의 정렬을 사용할 경우 linkedList 방식으로 리팩토링
-      if (!projects.some((project) => project.settingsByMember[auth.uid]?.isFirstItem)) {
+      if (
+        projects.some(
+          (project) => project.settingsByMember[auth.uid]?.isFirstItem === undefined,
+        )
+      ) {
         dispatch(ProjectActions.refactorProjectsAsLinkedList());
       }
       dispatch(UiActions.hideLoading("loadingProjects"));
