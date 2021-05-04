@@ -2599,7 +2599,7 @@ export function* reorderNavBarItemFlow() {
     const auth = yield* select(AuthSelectors.selectAuth);
     try {
       if (type === "project") {
-        const projects = yield* select(FirebaseSelectors.selectOrderedMyProjects);
+        const projects = yield* select(ProjectSelectors.selectMyProjects);
         const sourceProject = projects.find((item) => item.id === itemId);
 
         assertNotEmpty(sourceProject);
