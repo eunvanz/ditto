@@ -25,6 +25,7 @@ import {
   EnumerationDoc,
   InterfaceField,
   FORMAT,
+  Orderable,
 } from "../types";
 import { assertNotEmpty } from "./commonHelpers";
 
@@ -429,14 +430,36 @@ export const getDraggableStyles = ({
   return draggableProps?.style;
 };
 
-export const getOrderedItems = (orderableItems: ProjectDoc[], uid: string) => {
-  const firstItem = orderableItems?.find(
-    (item) => item.settingsByMember[uid].isFirstItem,
-  );
+export const getOrderedProjects = (project: ProjectDoc[], uid: string) => {
+  const firstItem = project?.find((item) => item.settingsByMember[uid].isFirstItem);
   if (firstItem) {
     const result = [firstItem];
     while (true) {
       const nextItemId = result[result.length - 1].settingsByMember[uid].nextItemId;
+      if (nextItemId) {
+        const nextItem = project.find((item) => item.id === nextItemId);
+        assertNotEmpty(nextItem);
+        if (result.find((item) => item.id === nextItem!.id)) {
+          break;
+        } else {
+          result.push(nextItem);
+        }
+      } else {
+        break;
+      }
+    }
+    return result;
+  } else {
+    return orderBy(project, [`settingsByMember.${uid}.seq`], ["asc"]);
+  }
+};
+
+export const getOrderedItems = <T extends Orderable>(orderableItems: T[]) => {
+  const firstItem = orderableItems.find((item) => item.isFirstItem);
+  if (firstItem) {
+    const result = [firstItem];
+    while (true) {
+      const nextItemId = result[result.length - 1].nextItemId;
       if (nextItemId) {
         const nextItem = orderableItems.find((item) => item.id === nextItemId);
         assertNotEmpty(nextItem);
@@ -451,6 +474,6 @@ export const getOrderedItems = (orderableItems: ProjectDoc[], uid: string) => {
     }
     return result;
   } else {
-    return orderBy(orderableItems, [`settingsByMember.${uid}.seq`], ["asc"]);
+    return orderableItems;
   }
 };
