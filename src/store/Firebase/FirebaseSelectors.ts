@@ -1,6 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "..";
-import { getOrderedItems } from "../../helpers/projectHelpers";
 import {
   AppInfo,
   EnumerationDoc,

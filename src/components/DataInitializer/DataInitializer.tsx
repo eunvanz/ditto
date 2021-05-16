@@ -82,7 +82,7 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
       ) {
         dispatch(ProjectActions.refactorProjectsAsLinkedList());
       }
-      dispatch(ProjectActions.receiveMyProjects(projects));
+      dispatch(ProjectActions.receiveLatestMyProjects(projects));
       dispatch(UiActions.hideLoading("loadingProjects"));
     } else {
       dispatch(UiActions.showLoading("loadingProjects"));

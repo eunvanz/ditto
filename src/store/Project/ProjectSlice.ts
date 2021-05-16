@@ -42,10 +42,14 @@ export type ProjectState = {
   currentProject?: ProjectDoc;
   currentModel?: ModelDoc;
   myProjects: ProjectDoc[];
+  groups: { [projectId: string]: GroupDoc[] };
+  requests: { [projectId: string]: RequestDoc[] };
 };
 
 export const initialProjectState: ProjectState = {
   myProjects: [],
+  groups: {},
+  requests: {},
 };
 
 export interface SubmitProjectFormPayload {
@@ -99,6 +103,20 @@ const ProjectSlice = createSlice({
     },
     clearMyProjects: (state, _action: PayloadAction<void>) => {
       state.myProjects = [];
+    },
+    receiveGroups: (
+      state,
+      action: PayloadAction<{ projectId: string; data: GroupDoc[] }>,
+    ) => {
+      const { projectId, data } = action.payload;
+      state.groups[projectId] = data;
+    },
+    receiveRequests: (
+      state,
+      action: PayloadAction<{ projectId: string; data: RequestDoc[] }>,
+    ) => {
+      const { projectId, data } = action.payload;
+      state.requests[projectId] = data;
     },
     submitProjectForm: (_, _action: PayloadAction<SubmitProjectFormPayload>) => {},
     deleteProject: (_, _action: PayloadAction<ProjectDoc>) => {},
@@ -199,6 +217,7 @@ const ProjectSlice = createSlice({
     generateMockData: (_, _action: PayloadAction<ModelDoc>) => {},
     refactorProjectsAsLinkedList: (_, _action: PayloadAction<void>) => {},
     reorderNavBarItem: (_, _action: PayloadAction<ReorderNavBarItemPayload>) => {},
+    receiveLatestMyProjects: (_, _action: PayloadAction<ProjectDoc[]>) => {},
   },
 });
 

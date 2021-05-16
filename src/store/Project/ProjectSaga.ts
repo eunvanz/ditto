@@ -8,6 +8,8 @@ import {
   race,
   putResolve,
   takeEvery,
+  takeLatest,
+  delay,
 } from "typed-redux-saga";
 import produce from "immer";
 import { ProjectActions } from "./ProjectSlice";
@@ -117,7 +119,7 @@ export function* submitProjectFormFlow() {
     }
 
     const project = yield* select(ProjectSelectors.selectCurrentProject);
-    const projects = yield* select(FirebaseSelectors.selectOrderedMyProjects);
+    const projects = yield* select(ProjectSelectors.selectMyProjects);
 
     const isModification = payload.type === "modify";
 
@@ -153,40 +155,58 @@ export function* submitProjectFormFlow() {
             }),
         );
       } else {
-        const projectRef = yield* call(Firework.addProject, {
-          ...payload.data,
-          members: {
-            [auth.uid]: true,
-          },
-          owners: {
-            [auth.uid]: true,
-          },
-          managers: {},
-          guests: {},
-          createdAt: timestamp,
-          updatedAt: timestamp,
-          createdBy: auth.uid,
-          updatedBy: auth.uid,
-          settingsByMember: {
-            [auth.uid]: {
-              updatedAt: timestamp,
-              isLastItem: true,
+        const batchItems: RunBatchItem[] = [];
+
+        const newProjectRef = yield* call(Firework.getProjectRef);
+        batchItems.push({
+          operation: "set",
+          ref: newProjectRef,
+          data: {
+            ...payload.data,
+            members: {
+              [auth.uid]: true,
+            },
+            owners: {
+              [auth.uid]: true,
+            },
+            managers: {},
+            guests: {},
+            createdAt: timestamp,
+            updatedAt: timestamp,
+            createdBy: auth.uid,
+            updatedBy: auth.uid,
+            settingsByMember: {
+              [auth.uid]: {
+                updatedAt: timestamp,
+                isLastItem: true,
+                isFirstItem: projects.length === 0,
+              },
             },
           },
         });
         const lastProject = projects.find(
           (project) => project.settingsByMember[auth.uid].isLastItem,
         );
-        yield* call(Firework.updateProject, lastProject!.id, {
-          [`settingsByMember.${auth.uid}.isLastItem`]: false,
-          [`settingsByMember.${auth.uid}.nextItemId`]: projectRef.id,
-        });
-        yield* call(Firework.updateUserProfile, userProfile.uid, {
-          projects: {
-            ...userProfile.projects,
-            [projectRef.id]: true,
+        const lastProjectRef = yield* call(Firework.getProjectRef, lastProject!.id);
+        batchItems.push({
+          operation: "update",
+          ref: lastProjectRef,
+          data: {
+            [`settingsByMember.${auth.uid}.isLastItem`]: false,
+            [`settingsByMember.${auth.uid}.nextItemId`]: newProjectRef.id,
           },
         });
+        console.log("===== lastProjectUpdated");
+        const userRef = yield* call(Firework.getUserRef, auth.uid);
+        batchItems.push({
+          operation: "update",
+          ref: userRef,
+          data: {
+            ...userProfile.projects,
+            [newProjectRef.id]: true,
+          },
+        });
+        yield* call(Firework.runBatch, batchItems);
       }
       yield* all([
         put(
@@ -227,7 +247,7 @@ export function* deleteProjectFlow() {
     if (isConfirmed) {
       try {
         yield* put(UiActions.showLoading("deleteProject"));
-        const projects = yield* select(FirebaseSelectors.selectMyProjects);
+        const projects = yield* select(ProjectSelectors.selectMyProjects);
         const projectRef = yield* call(Firework.getProjectRef, project.id);
         const prevProject = projects.find(
           (item) => item.settingsByMember[userProfile.uid].nextItemId === project.id,
@@ -249,14 +269,26 @@ export function* deleteProjectFlow() {
             },
           },
         ];
+        const newProjects = projects.filter((item) => item.id !== project.id);
         if (prevProject) {
           const prevProjectRef = yield* call(Firework.getProjectRef, prevProject.id);
+          const index = newProjects.findIndex((item) => item.id === prevProject.id);
+          newProjects[index] = produce(newProjects[index], (draft) => {
+            if (nextProject) {
+              draft.settingsByMember[userProfile.uid].nextItemId = nextProject.id;
+              draft.settingsByMember[userProfile.uid].isLastItem = false;
+            } else {
+              delete draft.settingsByMember[userProfile.uid].nextItemId;
+              draft.settingsByMember[userProfile.uid].isLastItem = true;
+            }
+          });
           batchItems.push({
             ref: prevProjectRef,
             operation: "update",
             data: nextProject
               ? {
                   [`settingsByMember.${userProfile.uid}.nextItemId`]: nextProject.id,
+                  [`settingsByMember.${userProfile.uid}.isLastItem`]: false,
                 }
               : {
                   [`settingsByMember.${userProfile.uid}.isLastItem`]: true,
@@ -265,11 +297,19 @@ export function* deleteProjectFlow() {
           });
         } else if (nextProject) {
           const nextProjectRef = yield* call(Firework.getProjectRef, nextProject.id);
+          const index = newProjects.findIndex((item) => item.id === nextProject.id);
+          newProjects[index] = produce(newProjects[index], (draft) => {
+            draft.settingsByMember[userProfile.uid].isFirstItem = true;
+            draft.settingsByMember[userProfile.uid].isLastItem = !nextProject
+              .settingsByMember[userProfile.uid].nextItemId;
+          });
           batchItems.push({
             ref: nextProjectRef,
             operation: "update",
             data: {
               [`settingsByMember.${userProfile.uid}.isFirstItem`]: true,
+              [`settingsByMember.${userProfile.uid}.isLastItem`]: !nextProject
+                .settingsByMember[userProfile.uid].nextItemId,
             },
           });
         }
@@ -2638,8 +2678,13 @@ export function* reorderNavBarItemFlow() {
 
           const index = newProjects.findIndex((item) => item.id === sourcePrevItem.id);
           newProjects[index] = produce(newProjects[index], (draft) => {
-            draft.settingsByMember[auth.uid].nextItemId = sourceNextItem?.id;
-            draft.settingsByMember[auth.uid].isLastItem = !sourceNextItem;
+            const isLastItem = !sourceNextItem;
+            if (isLastItem) {
+              delete draft.settingsByMember[auth.uid].nextItemId;
+            } else {
+              draft.settingsByMember[auth.uid].nextItemId = sourceNextItem?.id;
+            }
+            draft.settingsByMember[auth.uid].isLastItem = isLastItem;
           });
         } else if (sourceNextItem) {
           // sourcePrevItem이 없는경우 isFirstItem을 true
@@ -2673,7 +2718,12 @@ export function* reorderNavBarItemFlow() {
 
         const index = newProjects.findIndex((item) => item.id === sourceProject.id);
         newProjects[index] = produce(newProjects[index], (draft) => {
-          draft.settingsByMember[auth.uid].nextItemId = destinationNextItem?.id;
+          const isLastItem = !destinationNextItem;
+          if (isLastItem) {
+            delete draft.settingsByMember[auth.uid].nextItemId;
+          } else {
+            draft.settingsByMember[auth.uid].nextItemId = destinationNextItem?.id;
+          }
           draft.settingsByMember[auth.uid].isLastItem = !destinationNextItem;
           draft.settingsByMember[auth.uid].isFirstItem = !destinationPrevItem;
         });
@@ -2718,11 +2768,24 @@ export function* reorderNavBarItemFlow() {
         }
         yield* put(ProjectActions.receiveMyProjects(newProjects));
         yield* call(Firework.runBatch, batchItems);
+      } else if (type === "group") {
+      } else if (type === "request") {
       }
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
     }
   }
+}
+
+/**
+ * 프로젝트 순서 변경 시 가장 최종 버전의 modification을 반영하기 위해 작성
+ */
+export function* handleReceiveLatestMyProjects(
+  action: ReturnType<typeof ProjectActions.receiveMyProjects>,
+) {
+  const { payload } = action;
+  yield* delay(200);
+  yield* put(ProjectActions.receiveMyProjects(payload));
 }
 
 export function* watchProjectActions() {
@@ -2764,5 +2827,6 @@ export function* watchProjectActions() {
     fork(generateMockDataFlow),
     fork(refactorProjectsAsLinkedListFlow),
     fork(reorderNavBarItemFlow),
+    takeLatest(ProjectActions.receiveLatestMyProjects, handleReceiveLatestMyProjects),
   ]);
 }

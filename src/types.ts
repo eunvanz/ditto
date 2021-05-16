@@ -82,6 +82,12 @@ export interface BaseSettings {
   updatedAt: firebase.firestore.FieldValue;
 }
 
+export interface Orderable {
+  isFirstItem?: boolean;
+  nextItemId?: string;
+  isLastItem?: boolean;
+}
+
 export interface OrderableSettings extends BaseSettings {
   seq?: number;
   isFirstItem?: boolean;
@@ -265,7 +271,7 @@ export interface EnumerationItem extends Recordable {
 
 export type EnumerationDoc = Doc<EnumerationItem, BaseSettings>;
 
-export interface GroupItem extends Recordable {
+export interface GroupItem extends Recordable, Orderable {
   projectId: string;
   name: string;
 }

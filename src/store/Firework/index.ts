@@ -53,8 +53,13 @@ function getMyProjectsRef(uid: string) {
   return db.collection("projects").where(`members.${uid}`, "==", true);
 }
 
-function getProjectRef(id: string) {
-  return db.collection("projects").doc(id);
+function getProjectRef(id?: string) {
+  if (id) {
+    return db.collection("projects").doc(id);
+  } else {
+    // 새로운 프로젝트의 ref를 생성
+    return db.collection("projects").doc();
+  }
 }
 
 function getUserRef(uid: string) {
