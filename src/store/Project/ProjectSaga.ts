@@ -196,7 +196,6 @@ export function* submitProjectFormFlow() {
             [`settingsByMember.${auth.uid}.nextItemId`]: newProjectRef.id,
           },
         });
-        console.log("===== lastProjectUpdated");
         const userRef = yield* call(Firework.getUserRef, auth.uid);
         batchItems.push({
           operation: "update",
@@ -269,19 +268,8 @@ export function* deleteProjectFlow() {
             },
           },
         ];
-        const newProjects = projects.filter((item) => item.id !== project.id);
         if (prevProject) {
           const prevProjectRef = yield* call(Firework.getProjectRef, prevProject.id);
-          const index = newProjects.findIndex((item) => item.id === prevProject.id);
-          newProjects[index] = produce(newProjects[index], (draft) => {
-            if (nextProject) {
-              draft.settingsByMember[userProfile.uid].nextItemId = nextProject.id;
-              draft.settingsByMember[userProfile.uid].isLastItem = false;
-            } else {
-              delete draft.settingsByMember[userProfile.uid].nextItemId;
-              draft.settingsByMember[userProfile.uid].isLastItem = true;
-            }
-          });
           batchItems.push({
             ref: prevProjectRef,
             operation: "update",
@@ -297,12 +285,6 @@ export function* deleteProjectFlow() {
           });
         } else if (nextProject) {
           const nextProjectRef = yield* call(Firework.getProjectRef, nextProject.id);
-          const index = newProjects.findIndex((item) => item.id === nextProject.id);
-          newProjects[index] = produce(newProjects[index], (draft) => {
-            draft.settingsByMember[userProfile.uid].isFirstItem = true;
-            draft.settingsByMember[userProfile.uid].isLastItem = !nextProject
-              .settingsByMember[userProfile.uid].nextItemId;
-          });
           batchItems.push({
             ref: nextProjectRef,
             operation: "update",
