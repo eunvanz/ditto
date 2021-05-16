@@ -104,19 +104,11 @@ const ProjectSlice = createSlice({
     clearMyProjects: (state, _action: PayloadAction<void>) => {
       state.myProjects = [];
     },
-    receiveGroups: (
-      state,
-      action: PayloadAction<{ projectId: string; data: GroupDoc[] }>,
-    ) => {
-      const { projectId, data } = action.payload;
-      state.groups[projectId] = data;
+    receiveGroups: (state, action: PayloadAction<Record<string, GroupDoc[]>>) => {
+      state.groups = action.payload;
     },
-    receiveRequests: (
-      state,
-      action: PayloadAction<{ projectId: string; data: RequestDoc[] }>,
-    ) => {
-      const { projectId, data } = action.payload;
-      state.requests[projectId] = data;
+    receiveRequests: (state, action: PayloadAction<Record<string, RequestDoc[]>>) => {
+      state.requests = action.payload;
     },
     submitProjectForm: (_, _action: PayloadAction<SubmitProjectFormPayload>) => {},
     deleteProject: (_, _action: PayloadAction<ProjectDoc>) => {},
@@ -216,8 +208,14 @@ const ProjectSlice = createSlice({
     generateTypescriptInterface: (_, _action: PayloadAction<ModelDoc>) => {},
     generateMockData: (_, _action: PayloadAction<ModelDoc>) => {},
     refactorProjectsAsLinkedList: (_, _action: PayloadAction<void>) => {},
+    refactorGroupsAsLinkedList: (_, _action: PayloadAction<void>) => {},
     reorderNavBarItem: (_, _action: PayloadAction<ReorderNavBarItemPayload>) => {},
     receiveLatestMyProjects: (_, _action: PayloadAction<ProjectDoc[]>) => {},
+    receiveLatestGroups: (_, _action: PayloadAction<Record<string, GroupDoc[]>>) => {},
+    receiveLatestRequests: (
+      _,
+      _action: PayloadAction<Record<string, RequestDoc[]>>,
+    ) => {},
   },
 });
 

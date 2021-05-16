@@ -2613,6 +2613,12 @@ export function* refactorProjectsAsLinkedListFlow() {
   }
 }
 
+export function* refactorGroupsAsLinkedListFlow() {
+  while (true) {
+    yield* take(ProjectActions.refactorGroupsAsLinkedList);
+  }
+}
+
 export function* reorderNavBarItemFlow() {
   while (true) {
     const { payload } = yield* take(ProjectActions.reorderNavBarItem);
@@ -2770,6 +2776,22 @@ export function* handleReceiveLatestMyProjects(
   yield* put(ProjectActions.receiveMyProjects(payload));
 }
 
+export function* handleReceiveLatestGroups(
+  action: ReturnType<typeof ProjectActions.receiveGroups>,
+) {
+  const { payload } = action;
+  yield* delay(200);
+  yield* put(ProjectActions.receiveGroups(payload));
+}
+
+export function* handleReceiveLatestRequests(
+  action: ReturnType<typeof ProjectActions.receiveRequests>,
+) {
+  const { payload } = action;
+  yield* delay(200);
+  yield* put(ProjectActions.receiveRequests(payload));
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
@@ -2808,7 +2830,10 @@ export function* watchProjectActions() {
     fork(generateTypescriptInterfaceFlow),
     fork(generateMockDataFlow),
     fork(refactorProjectsAsLinkedListFlow),
+    fork(refactorGroupsAsLinkedListFlow),
     fork(reorderNavBarItemFlow),
     takeLatest(ProjectActions.receiveLatestMyProjects, handleReceiveLatestMyProjects),
+    takeLatest(ProjectActions.receiveLatestGroups, handleReceiveLatestGroups),
+    takeLatest(ProjectActions.receiveLatestRequests, handleReceiveLatestRequests),
   ]);
 }

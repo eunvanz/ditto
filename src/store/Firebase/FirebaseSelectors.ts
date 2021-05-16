@@ -87,11 +87,9 @@ const createProjectGroupsSelector = (projectId: string) =>
 
 const createGroupedProjectGroupsSelector = (projectIds: string[]) =>
   createSelector(
-    (state: RootState) =>
-      projectIds.map(
-        (projectId) => state.firestore.ordered[`projects/${projectId}/groups`],
-      ),
-    (projectGroupsArray: GroupDoc[][]) => {
+    ...projectIds.map((projectId) => createProjectGroupsSelector(projectId)),
+    // @ts-ignore
+    (...projectGroupsArray: GroupDoc[][]) => {
       const groupedProjectGroups: Record<string, GroupDoc[]> = {};
       projectGroupsArray.forEach((projectGroups) => {
         if (projectGroups?.length) {
@@ -105,11 +103,9 @@ const createGroupedProjectGroupsSelector = (projectIds: string[]) =>
 
 const createGroupedProjectRequestsSelector = (projectIds: string[]) =>
   createSelector(
-    (state: RootState) =>
-      projectIds.map(
-        (projectId) => state.firestore.ordered[`projects/${projectId}/requests`],
-      ),
-    (projectRequestsArray: RequestDoc[][]) => {
+    ...projectIds.map((projectId) => createProjectRequestsSelector(projectId)),
+    // @ts-ignore
+    (...projectRequestsArray: RequestDoc[][]) => {
       const groupedProjectRequests: Record<string, RequestDoc[]> = {};
       projectRequestsArray.forEach((projectRequests) => {
         if (projectRequests?.length) {

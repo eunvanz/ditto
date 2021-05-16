@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import { matchPath, useHistory, useLocation } from "react-router-dom";
@@ -55,11 +55,23 @@ const useDashboardLayoutProps = () => {
     ),
   );
 
+  useEffect(() => {
+    if (groupedProjectGroups) {
+      dispatch(ProjectActions.receiveLatestGroups(groupedProjectGroups));
+    }
+  }, [dispatch, groupedProjectGroups]);
+
   const groupedProjectRequests = useSelector(
     FirebaseSelectors.createGroupedProjectRequestsSelector(
       projects.map((project) => project.id),
     ),
   );
+
+  useEffect(() => {
+    if (groupedProjectRequests) {
+      dispatch(ProjectActions.receiveLatestRequests(groupedProjectRequests));
+    }
+  }, [dispatch, groupedProjectRequests]);
 
   const showRequestFormModal = useCallback(
     (project: ProjectDoc, group?: any) => {
