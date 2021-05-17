@@ -81,7 +81,6 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
     if (groups) {
       const keys = Object.keys(groups);
       if (
-        // true
         keys.some((key) => groups[key].some((group) => group.isFirstItem === undefined))
       ) {
         dispatch(ProjectActions.refactorGroupsAsLinkedList());
@@ -105,7 +104,7 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
       if (
         keys.some((key) => {
           const groupIds = Object.keys(requests[key]);
-          groupIds.some((groupId) => {
+          return groupIds.some((groupId) => {
             return requests[key][groupId].some(
               (request) => request.isFirstItem === undefined,
             );
