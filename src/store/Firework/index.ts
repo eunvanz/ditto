@@ -160,8 +160,12 @@ function getModelFieldsRef(model: ModelDoc) {
   return db.collection(`projects/${model.projectId}/models/${model.id}/modelFields`);
 }
 
-function getGroupRef(projectId: string, groupId: string) {
-  return db.collection(`projects/${projectId}/groups`).doc(groupId);
+function getGroupRef(projectId: string, groupId?: string) {
+  if (groupId) {
+    return db.collection(`projects/${projectId}/groups`).doc(groupId);
+  } else {
+    return db.collection(`projects/${projectId}/groups`).doc();
+  }
 }
 
 function* deleteModelField(modelField: ModelFieldDoc) {

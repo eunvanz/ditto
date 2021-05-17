@@ -83,7 +83,7 @@ export interface BaseSettings {
 }
 
 export interface Orderable {
-  id: string;
+  id?: string;
   isFirstItem?: boolean;
   nextItemId?: string | boolean;
   isLastItem?: boolean;
@@ -279,7 +279,7 @@ export interface GroupItem extends Recordable, Orderable {
 
 export type GroupDoc = Doc<GroupItem, BaseSettings>;
 
-export interface RequestItem extends Recordable {
+export interface RequestItem extends Recordable, Orderable {
   projectId: string;
   groupId?: string;
   name: string;

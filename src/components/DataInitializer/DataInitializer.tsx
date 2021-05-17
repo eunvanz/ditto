@@ -99,6 +99,19 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
   }, [dispatch, groupedProjectRequests]);
 
   useEffect(() => {
+    if (requests) {
+      const keys = Object.keys(requests);
+      if (
+        keys.some((key) =>
+          requests[key].some((request) => request.isFirstItem === undefined),
+        )
+      ) {
+        dispatch(ProjectActions.refactorRequestsAsLinkedList());
+      }
+    }
+  }, [dispatch, requests]);
+
+  useEffect(() => {
     if (auth.isLoaded) {
       if (auth.isEmpty) {
         setIsDataInitialized(true);

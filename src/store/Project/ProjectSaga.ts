@@ -57,6 +57,7 @@ import {
   InterfaceField,
   Interface,
   fieldTypes,
+  GroupDoc,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -187,15 +188,17 @@ export function* submitProjectFormFlow() {
         const lastProject = projects.find(
           (project) => project.settingsByMember[auth.uid].isLastItem,
         );
-        const lastProjectRef = yield* call(Firework.getProjectRef, lastProject!.id);
-        batchItems.push({
-          operation: "update",
-          ref: lastProjectRef,
-          data: {
-            [`settingsByMember.${auth.uid}.isLastItem`]: false,
-            [`settingsByMember.${auth.uid}.nextItemId`]: newProjectRef.id,
-          },
-        });
+        if (lastProject) {
+          const lastProjectRef = yield* call(Firework.getProjectRef, lastProject.id);
+          batchItems.push({
+            operation: "update",
+            ref: lastProjectRef,
+            data: {
+              [`settingsByMember.${auth.uid}.isLastItem`]: false,
+              [`settingsByMember.${auth.uid}.nextItemId`]: newProjectRef.id,
+            },
+          });
+        }
         const userRef = yield* call(Firework.getUserRef, auth.uid);
         batchItems.push({
           operation: "update",
@@ -1280,6 +1283,10 @@ export function* submitGroupFormFlow() {
     const { target } = payload;
     const newGroup = yield* call(getProperDoc, payload);
     const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
+    const groups = yield* select(ProjectSelectors.selectGroups);
+
+    const { projectId } = newGroup as GroupItem;
+    const targetGroups: GroupDoc[] | undefined = groups[projectId];
 
     try {
       yield* put(UiActions.showLoading("submitGroupForm"));
@@ -1290,7 +1297,34 @@ export function* submitGroupFormFlow() {
           `Group name has been changed from {${target.name}} to {${payload.name}} by {${userProfile.name}}.`,
         );
       } else {
-        yield* call(Firework.addGroup, newGroup as GroupItem);
+        const batchItems: RunBatchItem[] = [];
+        const newGroupRef = yield* call(Firework.getGroupRef, projectId);
+        batchItems.push({
+          operation: "set",
+          ref: newGroupRef,
+          data: {
+            ...newGroup,
+            isLastItem: true,
+            isFirstItem: !targetGroups || targetGroups.length === 0,
+          },
+        });
+        const lastGroup = targetGroups?.find((group) => group.isLastItem);
+        if (lastGroup) {
+          const lastGroupRef = yield* call(
+            Firework.getGroupRef,
+            lastGroup.projectId,
+            lastGroup.id,
+          );
+          batchItems.push({
+            operation: "update",
+            ref: lastGroupRef,
+            data: {
+              isLastItem: false,
+              nextItemId: newGroupRef.id,
+            },
+          });
+        }
+        yield* call(Firework.runBatch, batchItems);
         yield* call(
           sendNotificationsToProjectMembers,
           `New group {${payload.name}} has been added by {${userProfile.name}}.`,
@@ -1334,7 +1368,11 @@ export function* deleteGroupFlow() {
       yield* put(UiActions.showLoading("deleteGroup"));
       try {
         yield* put(ProgressActions.startProgress(type));
+        const groups = yield* select(ProjectSelectors.selectGroups);
+        const targetGroups = groups[payload.projectId];
         const groupRef = yield* call(Firework.getGroupRef, payload.projectId, payload.id);
+        const prevGroup = targetGroups.find((item) => item.nextItemId === payload.id);
+        const nextGroup = targetGroups.find((item) => item.id === payload.nextItemId);
         const requestGroupRef = yield* call(
           Firework.getGroupRequestsRef,
           payload.projectId,
@@ -1344,6 +1382,40 @@ export function* deleteGroupFlow() {
         yield* call(Firework.runTaskForEachDocs, requestGroupRef, (doc) =>
           batchItems.push({ operation: "delete", ref: doc.ref }),
         );
+        if (prevGroup) {
+          const prevGroupRef = yield* call(
+            Firework.getGroupRef,
+            prevGroup.projectId,
+            prevGroup.id,
+          );
+          batchItems.push({
+            ref: prevGroupRef,
+            operation: "update",
+            data: nextGroup
+              ? {
+                  nextItemId: nextGroup.id,
+                  isLastItem: false,
+                }
+              : {
+                  isLastItem: true,
+                  nextItemId: false,
+                },
+          });
+        } else if (nextGroup) {
+          const nextGroupRef = yield* call(
+            Firework.getGroupRef,
+            nextGroup.projectId,
+            nextGroup.id,
+          );
+          batchItems.push({
+            ref: nextGroupRef,
+            operation: "update",
+            data: {
+              isFirstItem: true,
+              isLastItem: !nextGroup.nextItemId,
+            },
+          });
+        }
         yield* call(Firework.runBatch, batchItems);
         yield* call(
           sendNotificationsToProjectMembers,
@@ -1379,9 +1451,16 @@ export function* submitRequestFormFlow() {
       continue;
     }
 
+    const requests = yield* select(ProjectSelectors.selectRequests);
+    const targetRequests = requests[projectId].filter(
+      (request) => request.groupId === groupId,
+    );
+
     const recordableDocProps = yield* call(getRecordableDocProps);
     const newRequest: RequestItem = {
       projectId,
+      isLastItem: true,
+      isFirstItem: targetRequests.length === 0,
       ...payload,
       ...recordableDocProps,
     };
@@ -2642,6 +2721,35 @@ export function* refactorGroupsAsLinkedListFlow() {
   }
 }
 
+export function* refactorRequestsAsLinkedListFlow() {
+  while (true) {
+    yield* take(ProjectActions.refactorRequestsAsLinkedList);
+    const requests = yield* select(ProjectSelectors.selectRequests);
+    const keys = Object.keys(requests);
+    try {
+      const proms: any[] = [];
+      keys.forEach((key) => {
+        const keyRequests = requests[key];
+        keyRequests.forEach((request, idx) => {
+          const isFirstRequest = idx === 0;
+          const isLastRequest = idx + 1 === keyRequests.length;
+          proms.push(
+            call(Firework.updateRequest, request.id, {
+              projectId: request.projectId,
+              isFirstItem: isFirstRequest,
+              isLastItem: isLastRequest,
+              nextItemId: isLastRequest ? false : keyRequests[idx + 1].id,
+            }),
+          );
+        });
+      });
+      yield* all(proms);
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    }
+  }
+}
+
 export function* reorderNavBarItemFlow() {
   while (true) {
     const { payload } = yield* take(ProjectActions.reorderNavBarItem);
@@ -3014,6 +3122,7 @@ export function* watchProjectActions() {
     fork(generateMockDataFlow),
     fork(refactorProjectsAsLinkedListFlow),
     fork(refactorGroupsAsLinkedListFlow),
+    fork(refactorRequestsAsLinkedListFlow),
     fork(reorderNavBarItemFlow),
     takeLatest(ProjectActions.receiveLatestMyProjects, handleReceiveLatestMyProjects),
     takeLatest(ProjectActions.receiveLatestGroups, handleReceiveLatestGroups),

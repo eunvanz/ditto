@@ -209,6 +209,7 @@ const ProjectSlice = createSlice({
     generateMockData: (_, _action: PayloadAction<ModelDoc>) => {},
     refactorProjectsAsLinkedList: (_, _action: PayloadAction<void>) => {},
     refactorGroupsAsLinkedList: (_, _action: PayloadAction<void>) => {},
+    refactorRequestsAsLinkedList: (_, _action: PayloadAction<void>) => {},
     reorderNavBarItem: (_, _action: PayloadAction<ReorderNavBarItemPayload>) => {},
     receiveLatestMyProjects: (_, _action: PayloadAction<ProjectDoc[]>) => {},
     receiveLatestGroups: (_, _action: PayloadAction<Record<string, GroupDoc[]>>) => {},
