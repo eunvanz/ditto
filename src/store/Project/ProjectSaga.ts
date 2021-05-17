@@ -3080,7 +3080,6 @@ export function* reorderNavBarItemFlow() {
                   (!isCrossGroup && sourceIndex < destinationIndex ? 1 : 0)
               ]
             : undefined;
-        console.log("===== destinationNextItem", destinationNextItem);
         const destinationPrevItem =
           destinationIndex > 0
             ? destRequests[
@@ -3088,7 +3087,6 @@ export function* reorderNavBarItemFlow() {
                   (!isCrossGroup && sourceIndex < destinationIndex ? 0 : 1)
               ]
             : undefined;
-        console.log("===== destinationPrevItem", destinationPrevItem);
 
         const batchItems: RunBatchItem[] = [];
         const sourceItemRef = yield* call(
