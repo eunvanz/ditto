@@ -85,37 +85,41 @@ const createModelFieldsSelector = (projectId: string, modelId?: string) =>
 const createProjectGroupsSelector = (projectId: string) =>
   createOrderedSelector<GroupDoc[]>(`projects/${projectId}/groups`);
 
-const createGroupedProjectGroupsSelector = (projectIds: string[]) =>
-  createSelector(
-    ...projectIds.map((projectId) => createProjectGroupsSelector(projectId)),
-    // @ts-ignore
-    (...projectGroupsArray: GroupDoc[][]) => {
-      const groupedProjectGroups: Record<string, GroupDoc[]> = {};
-      projectGroupsArray.forEach((projectGroups) => {
-        if (projectGroups?.length) {
-          const projectId = projectGroups[0].projectId;
-          groupedProjectGroups[projectId] = projectGroups;
-        }
-      });
-      return groupedProjectGroups;
-    },
-  );
+const selectGroupedProjectGroups = createSelector(
+  selectOrderedMyProjects,
+  (state: RootState) => state.firestore.ordered,
+  (myProjects, ordered) => {
+    const projectGroupsArray = myProjects.map(
+      (project) => ordered[`projects/${project.id}/groups`],
+    );
+    const groupedProjectGroups: Record<string, GroupDoc[]> = {};
+    projectGroupsArray.forEach((projectGroups) => {
+      if (projectGroups?.length) {
+        const projectId = projectGroups[0].projectId;
+        groupedProjectGroups[projectId] = projectGroups;
+      }
+    });
+    return groupedProjectGroups;
+  },
+);
 
-const createGroupedProjectRequestsSelector = (projectIds: string[]) =>
-  createSelector(
-    ...projectIds.map((projectId) => createProjectRequestsSelector(projectId)),
-    // @ts-ignore
-    (...projectRequestsArray: RequestDoc[][]) => {
-      const groupedProjectRequests: Record<string, RequestDoc[]> = {};
-      projectRequestsArray.forEach((projectRequests) => {
-        if (projectRequests?.length) {
-          const projectId = projectRequests[0].projectId;
-          groupedProjectRequests[projectId] = projectRequests;
-        }
-      });
-      return groupedProjectRequests;
-    },
-  );
+const selectGroupedProjectRequests = createSelector(
+  selectOrderedMyProjects,
+  (state: RootState) => state.firestore.ordered,
+  (myProjects, ordered) => {
+    const projectRequestsArray = myProjects.map(
+      (project) => ordered[`projects/${project.id}/requests`],
+    );
+    const groupedProjectRequests: Record<string, RequestDoc[]> = {};
+    projectRequestsArray.forEach((projectRequests) => {
+      if (projectRequests?.length) {
+        const projectId = projectRequests[0].projectId;
+        groupedProjectRequests[projectId] = projectRequests;
+      }
+    });
+    return groupedProjectRequests;
+  },
+);
 
 const createRequestSelectorByProjectIdAndRequestId = (
   projectId: string,
@@ -479,8 +483,6 @@ const FirebaseSelectors = {
   createModelFieldsSelector,
   createProjectModelsSelector,
   createProjectGroupsSelector,
-  createGroupedProjectGroupsSelector,
-  createGroupedProjectRequestsSelector,
   createRequestSelectorByProjectIdAndRequestId,
   createProjectRequestsSelector,
   createRequestParamsSelector,
@@ -499,6 +501,8 @@ const FirebaseSelectors = {
   createProjectResponseStatuses,
   createProjectModelFieldsSelector,
   selectProgress,
+  selectGroupedProjectGroups,
+  selectGroupedProjectRequests,
 };
 
 export default FirebaseSelectors;

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import cmp from "semver-compare";
-import isEqual from "lodash/isEqual";
 import AuthSelectors from "../../store/Auth/AuthSelector";
 import { UiActions } from "../../store/Ui/UiSlice";
 import {
@@ -70,14 +69,10 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
 
   const dispatch = useDispatch();
 
-  const groupedProjectGroups = useSelector(
-    FirebaseSelectors.createGroupedProjectGroupsSelector(
-      projects.map((project) => project.id),
-    ),
-  );
+  const groupedProjectGroups = useSelector(FirebaseSelectors.selectGroupedProjectGroups);
 
   useEffect(() => {
-    if (!isEqual(groupedProjectGroups, groups)) {
+    if (groupedProjectGroups) {
       dispatch(ProjectActions.receiveLatestGroups(groupedProjectGroups));
     }
   }, [dispatch, groupedProjectGroups, groups]);
@@ -94,16 +89,14 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
   }, [dispatch, groups]);
 
   const groupedProjectRequests = useSelector(
-    FirebaseSelectors.createGroupedProjectRequestsSelector(
-      projects.map((project) => project.id),
-    ),
+    FirebaseSelectors.selectGroupedProjectRequests,
   );
 
   useEffect(() => {
-    if (!isEqual(groupedProjectRequests, requests)) {
+    if (groupedProjectRequests) {
       dispatch(ProjectActions.receiveLatestRequests(groupedProjectRequests));
     }
-  }, [dispatch, groupedProjectRequests, requests]);
+  }, [dispatch, groupedProjectRequests]);
 
   useEffect(() => {
     if (auth.isLoaded) {
