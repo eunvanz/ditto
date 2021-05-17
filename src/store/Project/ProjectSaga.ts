@@ -3074,7 +3074,8 @@ export function* reorderNavBarItemFlow() {
         const sourceIndex = srcRequests.findIndex((item) => item.id === itemId);
 
         const destinationNextItem =
-          destinationIndex < destRequests.length - 1
+          destinationIndex <
+          (!isCrossGroup ? destRequests.length - 1 : destRequests.length)
             ? destRequests[
                 destinationIndex +
                   (!isCrossGroup && sourceIndex < destinationIndex ? 1 : 0)
@@ -3217,7 +3218,7 @@ export function* reorderNavBarItemFlow() {
             [projectId]: newTargetRequests,
           }),
         );
-        // yield* call(Firework.runBatch, batchItems);
+        yield* call(Firework.runBatch, batchItems);
       }
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
