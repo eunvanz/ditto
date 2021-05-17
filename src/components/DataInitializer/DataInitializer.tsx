@@ -12,6 +12,7 @@ import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import { AuthActions } from "../../store/Auth/AuthSlice";
 import { APP_VERSION, EXAMPLE_PROJECT_ID } from "../../constants";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
+import ProjectSelectors from "../../store/Project/ProjectSelectors";
 
 /**
  * 필수적인 데이터들을 로딩후에 하위 컴포넌트들을 렌더링
@@ -28,6 +29,8 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
 
   const projects = useSelector(FirebaseSelectors.selectOrderedMyProjects);
   const appInfo = useSelector(FirebaseSelectors.selectAppInfo);
+  const groups = useSelector(ProjectSelectors.selectGroups);
+  const requests = useSelector(ProjectSelectors.selectRequests);
 
   const firestoreQuery = useMemo(() => {
     const query: ReduxFirestoreQuerySetting[] = [
@@ -77,6 +80,17 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
       dispatch(ProjectActions.receiveLatestGroups(groupedProjectGroups));
     }
   }, [dispatch, groupedProjectGroups]);
+
+  useEffect(() => {
+    if (groups) {
+      const keys = Object.keys(groups);
+      if (
+        keys.some((key) => groups[key].some((group) => group.isFirstItem === undefined))
+      ) {
+        dispatch(ProjectActions.refactorGroupsAsLinkedList());
+      }
+    }
+  }, [dispatch, groups]);
 
   const groupedProjectRequests = useSelector(
     FirebaseSelectors.createGroupedProjectRequestsSelector(
