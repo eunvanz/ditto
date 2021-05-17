@@ -26,6 +26,9 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
 
   const [isDataInitialized, setIsDataInitialized] = useState(false);
 
+  const projects = useSelector(FirebaseSelectors.selectOrderedMyProjects);
+  const appInfo = useSelector(FirebaseSelectors.selectAppInfo);
+
   const firestoreQuery = useMemo(() => {
     const query: ReduxFirestoreQuerySetting[] = [
       {
@@ -44,15 +47,48 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
         storeAs: "exampleProject",
       });
     }
+    projects.forEach((project) => {
+      if (project) {
+        query.push({
+          collection: `projects/${project.id}/groups`,
+          orderBy: ["createdAt", "asc"],
+        });
+        query.push({
+          collection: `projects/${project.id}/requests`,
+          orderBy: ["createdAt", "asc"],
+        });
+      }
+    });
     return query;
-  }, [auth.uid]);
+  }, [auth.uid, projects]);
 
   useFirestoreConnect(firestoreQuery);
 
-  const projects = useSelector(FirebaseSelectors.selectOrderedMyProjects);
-  const appInfo = useSelector(FirebaseSelectors.selectAppInfo);
-
   const dispatch = useDispatch();
+
+  const groupedProjectGroups = useSelector(
+    FirebaseSelectors.createGroupedProjectGroupsSelector(
+      projects.map((project) => project.id),
+    ),
+  );
+
+  useEffect(() => {
+    if (groupedProjectGroups) {
+      dispatch(ProjectActions.receiveLatestGroups(groupedProjectGroups));
+    }
+  }, [dispatch, groupedProjectGroups]);
+
+  const groupedProjectRequests = useSelector(
+    FirebaseSelectors.createGroupedProjectRequestsSelector(
+      projects.map((project) => project.id),
+    ),
+  );
+
+  useEffect(() => {
+    if (groupedProjectRequests) {
+      dispatch(ProjectActions.receiveLatestRequests(groupedProjectRequests));
+    }
+  }, [dispatch, groupedProjectRequests]);
 
   useEffect(() => {
     if (auth.isLoaded) {

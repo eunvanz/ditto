@@ -85,7 +85,7 @@ export interface BaseSettings {
 export interface Orderable {
   id: string;
   isFirstItem?: boolean;
-  nextItemId?: string;
+  nextItemId?: string | boolean;
   isLastItem?: boolean;
 }
 

@@ -2616,6 +2616,29 @@ export function* refactorProjectsAsLinkedListFlow() {
 export function* refactorGroupsAsLinkedListFlow() {
   while (true) {
     yield* take(ProjectActions.refactorGroupsAsLinkedList);
+    const groups = yield* select(ProjectSelectors.selectGroups);
+    const keys = Object.keys(groups);
+    try {
+      const proms: any[] = [];
+      keys.forEach((key) => {
+        const keyGroups = groups[key];
+        keyGroups.forEach((group, idx) => {
+          const isFirstGroup = idx === 0;
+          const isLastGroup = idx + 1 === keyGroups.length;
+          proms.push(
+            call(Firework.updateGroup, group.id, {
+              projectId: group.projectId,
+              isFirstItem: isFirstGroup,
+              isLastItem: isLastGroup,
+              nextItemId: isLastGroup ? false : keyGroups[idx + 1].id,
+            }),
+          );
+        });
+      });
+      yield* all(proms);
+    } catch (error) {
+      yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
+    }
   }
 }
 
