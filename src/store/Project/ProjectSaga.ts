@@ -3217,7 +3217,7 @@ export function* reorderNavBarItemFlow() {
             [projectId]: newTargetRequests,
           }),
         );
-        yield* call(Firework.runBatch, batchItems);
+        // yield* call(Firework.runBatch, batchItems);
       }
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));
