@@ -62,6 +62,7 @@ export interface ReorderNavBarItemPayload {
   itemId: string;
   destinationId: string;
   destinationIndex: number;
+  projectId: string;
 }
 
 const ProjectSlice = createSlice({

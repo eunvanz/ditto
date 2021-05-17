@@ -239,6 +239,7 @@ const NavBar: FC<NavBarProps> = ({
           itemId: result.draggableId,
           destinationId: result.destination!.droppableId,
           destinationIndex: result.destination!.index,
+          projectId: result.type.split("-")[1],
         });
       }
     },

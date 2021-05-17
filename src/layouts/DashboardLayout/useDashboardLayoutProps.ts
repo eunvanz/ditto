@@ -1,3 +1,4 @@
+import { group } from "console";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { matchPath, useHistory, useLocation } from "react-router-dom";
@@ -37,7 +38,7 @@ const useDashboardLayoutProps = () => {
         UiActions.showRequestFormModal({
           projectId: project.id,
           groupId: group?.id,
-          requests: requests[project.id] || [],
+          requests: requests?.[project.id]?.[group?.id] || [],
         }),
       );
     },
@@ -59,7 +60,7 @@ const useDashboardLayoutProps = () => {
 
   const getGroupSubItems = useCallback(
     (project: ProjectDoc, group: GroupDoc) => {
-      return requests[project.id]
+      return requests?.[project.id]?.[group.id]
         ?.filter((request) => request.groupId === group.id)
         .map((request) => getRequestSectionItem(project.id, request));
     },
@@ -89,18 +90,11 @@ const useDashboardLayoutProps = () => {
           id: group.id,
         });
       });
-      requests[project.id]
-        ?.filter((request) => !request.groupId)
-        .forEach((request) => {
-          subItems.push(getRequestSectionItem(project.id, request));
-        });
       return subItems;
     },
     [
       getGroupSubItems,
-      getRequestSectionItem,
       groups,
-      requests,
       location.pathname,
       showGroupFormModal,
       showRequestFormModal,

@@ -1,4 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
+import groupBy from "lodash/groupBy";
 import { RootState } from "..";
 import { getOrderedItems, getOrderedProjects } from "../../helpers/projectHelpers";
 import { GroupDoc, RequestDoc } from "../../types";
@@ -46,9 +47,16 @@ const selectRequests = createSelector(
   (state: RootState) => state.project.requests,
   (requests) => {
     const keys = Object.keys(requests);
-    const result: Record<string, RequestDoc[]> = {};
+    const result: Record<string, Record<string, RequestDoc[]>> = {};
     keys.forEach((key) => {
-      result[key] = getOrderedItems(requests[key]);
+      const grouped = groupBy(requests[key], "groupId");
+      console.log("===== grouped", grouped);
+      const groupIds = Object.keys(grouped);
+      groupIds.forEach((groupId) => {
+        if (!result[key]) result[key] = {};
+        result[key][groupId] = getOrderedItems(grouped[groupId]);
+        // result[key][groupId] = grouped[groupId];
+      });
     });
     return result;
   },

@@ -81,6 +81,7 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
     if (groups) {
       const keys = Object.keys(groups);
       if (
+        // true
         keys.some((key) => groups[key].some((group) => group.isFirstItem === undefined))
       ) {
         dispatch(ProjectActions.refactorGroupsAsLinkedList());
@@ -94,6 +95,7 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
 
   useEffect(() => {
     if (groupedProjectRequests) {
+      console.log("===== groupedProjectRequests", groupedProjectRequests);
       dispatch(ProjectActions.receiveLatestRequests(groupedProjectRequests));
     }
   }, [dispatch, groupedProjectRequests]);
@@ -102,9 +104,14 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
     if (requests) {
       const keys = Object.keys(requests);
       if (
-        keys.some((key) =>
-          requests[key].some((request) => request.isFirstItem === undefined),
-        )
+        keys.some((key) => {
+          const groupIds = Object.keys(requests[key]);
+          groupIds.some((groupId) => {
+            return requests[key][groupId].some(
+              (request) => request.isFirstItem === undefined,
+            );
+          });
+        })
       ) {
         dispatch(ProjectActions.refactorRequestsAsLinkedList());
       }
