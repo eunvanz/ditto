@@ -50,12 +50,10 @@ const selectRequests = createSelector(
     const result: Record<string, Record<string, RequestDoc[]>> = {};
     keys.forEach((key) => {
       const grouped = groupBy(requests[key], "groupId");
-      console.log("===== grouped", grouped);
       const groupIds = Object.keys(grouped);
       groupIds.forEach((groupId) => {
         if (!result[key]) result[key] = {};
         result[key][groupId] = getOrderedItems(grouped[groupId]);
-        // result[key][groupId] = grouped[groupId];
       });
     });
     return result;

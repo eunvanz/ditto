@@ -95,7 +95,6 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
 
   useEffect(() => {
     if (groupedProjectRequests) {
-      console.log("===== groupedProjectRequests", groupedProjectRequests);
       dispatch(ProjectActions.receiveLatestRequests(groupedProjectRequests));
     }
   }, [dispatch, groupedProjectRequests]);

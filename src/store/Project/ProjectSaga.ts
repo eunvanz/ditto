@@ -3053,154 +3053,173 @@ export function* reorderNavBarItemFlow() {
         );
         yield* call(Firework.runBatch, batchItems);
       } else if (type === "request") {
-        //   const destGroupId = destinationId;
-        //   const requests = yield* select(ProjectSelectors.selectRequests);
-        //   const groups = yield* select(ProjectSelectors.selectGroups);
-        //   const targetRequests = requests[projectId];
-        //   const sourceRequest = targetRequests.find((item) => item.id === itemId);
-        //   assertNotEmpty(sourceRequest);
-        //   const srcGroupId = sourceRequest.groupId;
-        //   const isCrossGroup = srcGroupId !== destGroupId;
-        //   const sourceNextItemId = sourceRequest.nextItemId;
-        //   const sourceNextItem = targetRequests.find(
-        //     (item) => item.id === sourceNextItemId,
-        //   );
-        //   const sourcePrevItem = targetRequests.find((item) => item.nextItemId === itemId);
-        //   const sourceIndex = targetRequests.findIndex((item) => item.id === itemId);
-        //   const destinationNextItem =
-        //     destinationIndex < targetRequests.length - 1
-        //       ? targetRequests[destinationIndex + (sourceIndex < destinationIndex ? 1 : 0)]
-        //       : undefined;
-        //   const destinationPrevItem =
-        //     destinationIndex > 0
-        //       ? targetRequests[destinationIndex - (sourceIndex < destinationIndex ? 0 : 1)]
-        //       : undefined;
-        //   const batchItems: RunBatchItem[] = [];
-        //   const sourceItemRef = yield* call(
-        //     Firework.getGroupRef,
-        //     sourceRequest.projectId,
-        //     sourceRequest.id,
-        //   );
-        //   const newTargetGroups = [...targetGroups];
-        //   if (sourcePrevItem) {
-        //     // 현재 아이템의 nextItemId 및 isLastItem을 넘겨받음
-        //     const prevItemRef = yield* call(
-        //       Firework.getGroupRef,
-        //       sourcePrevItem.projectId,
-        //       sourcePrevItem.id,
-        //     );
-        //     batchItems.push({
-        //       operation: "update",
-        //       ref: prevItemRef,
-        //       data: {
-        //         nextItemId: sourceNextItem?.id || false,
-        //         isLastItem: !sourceNextItem,
-        //       },
-        //     });
-        //     const index = newTargetGroups.findIndex(
-        //       (item) => item.id === sourcePrevItem.id,
-        //     );
-        //     newTargetGroups[index] = produce(newTargetGroups[index], (draft) => {
-        //       const isLastItem = !sourceNextItem;
-        //       if (isLastItem) {
-        //         delete draft.nextItemId;
-        //       } else {
-        //         draft.nextItemId = sourceNextItem?.id;
-        //       }
-        //       draft.isLastItem = isLastItem;
-        //     });
-        //   } else if (sourceNextItem) {
-        //     // sourcePrevItem이 없는경우 isFirstItem을 true
-        //     const nextItemRef = yield* call(
-        //       Firework.getGroupRef,
-        //       sourceNextItem.projectId,
-        //       sourceNextItem.id,
-        //     );
-        //     batchItems.push({
-        //       operation: "update",
-        //       ref: nextItemRef,
-        //       data: {
-        //         isFirstItem: true,
-        //         isLastItem: false,
-        //       },
-        //     });
-        //     const index = newTargetGroups.findIndex(
-        //       (item) => item.id === sourceNextItem.id,
-        //     );
-        //     newTargetGroups[index] = produce(newTargetGroups[index], (draft) => {
-        //       draft.isFirstItem = true;
-        //       draft.isLastItem = false;
-        //     });
-        //   }
-        //   batchItems.push({
-        //     operation: "update",
-        //     ref: sourceItemRef,
-        //     data: {
-        //       nextItemId: destinationNextItem?.id || false,
-        //       isLastItem: !destinationNextItem,
-        //       isFirstItem: !destinationPrevItem,
-        //     },
-        //   });
-        //   const index = newTargetGroups.findIndex((item) => item.id === sourceGroup.id);
-        //   newTargetGroups[index] = produce(newTargetGroups[index], (draft) => {
-        //     const isLastItem = !destinationNextItem;
-        //     if (isLastItem) {
-        //       delete draft.nextItemId;
-        //     } else {
-        //       draft.nextItemId = destinationNextItem?.id;
-        //     }
-        //     draft.isLastItem = !destinationNextItem;
-        //     draft.isFirstItem = !destinationPrevItem;
-        //   });
-        //   if (destinationPrevItem) {
-        //     // nextItem을 sourceGroup.id로 세팅
-        //     const prevItemRef = yield* call(
-        //       Firework.getGroupRef,
-        //       destinationPrevItem.projectId,
-        //       destinationPrevItem.id,
-        //     );
-        //     batchItems.push({
-        //       operation: "update",
-        //       ref: prevItemRef,
-        //       data: {
-        //         nextItemId: sourceGroup.id,
-        //       },
-        //     });
-        //     const index = newTargetGroups.findIndex(
-        //       (item) => item.id === destinationPrevItem.id,
-        //     );
-        //     newTargetGroups[index] = produce(newTargetGroups[index], (draft) => {
-        //       draft.nextItemId = sourceGroup.id;
-        //     });
-        //   }
-        //   if (destinationNextItem) {
-        //     // firstItem이 무조건 아니게 됨
-        //     const nextItemRef = yield* call(
-        //       Firework.getGroupRef,
-        //       destinationNextItem.projectId,
-        //       destinationNextItem.id,
-        //     );
-        //     batchItems.push({
-        //       operation: "update",
-        //       ref: nextItemRef,
-        //       data: {
-        //         isFirstItem: false,
-        //       },
-        //     });
-        //     const index = newTargetGroups.findIndex(
-        //       (item) => item.id === destinationNextItem.id,
-        //     );
-        //     newTargetGroups[index] = produce(newTargetGroups[index], (draft) => {
-        //       draft.isFirstItem = false;
-        //     });
-        //   }
-        //   yield* put(
-        //     ProjectActions.receiveGroups({
-        //       ...groups,
-        //       [projectId]: newTargetGroups,
-        //     }),
-        //   );
-        //   yield* call(Firework.runBatch, batchItems);
+        const destGroupId = destinationId;
+        const requests = yield* select(ProjectSelectors.selectRequests);
+        const flatRequests = yield* select((state: RootState) => state.project.requests);
+        const targetRequests = flatRequests[projectId];
+        const sourceRequest = targetRequests.find((item) => item.id === itemId);
+        assertNotEmpty(sourceRequest);
+
+        const srcGroupId = sourceRequest.groupId as string;
+
+        const srcRequests = requests[projectId][srcGroupId];
+        const destRequests = requests[projectId][destGroupId];
+
+        const isCrossGroup = srcGroupId !== destGroupId;
+
+        const sourceNextItemId = sourceRequest.nextItemId;
+        const sourceNextItem = srcRequests.find((item) => item.id === sourceNextItemId);
+
+        const sourcePrevItem = srcRequests.find((item) => item.nextItemId === itemId);
+        const sourceIndex = srcRequests.findIndex((item) => item.id === itemId);
+
+        const destinationNextItem =
+          destinationIndex < destRequests.length - 1
+            ? destRequests[
+                destinationIndex +
+                  (!isCrossGroup && sourceIndex < destinationIndex ? 1 : 0)
+              ]
+            : undefined;
+        console.log("===== destinationNextItem", destinationNextItem);
+        const destinationPrevItem =
+          destinationIndex > 0
+            ? destRequests[
+                destinationIndex -
+                  (!isCrossGroup && sourceIndex < destinationIndex ? 0 : 1)
+              ]
+            : undefined;
+        console.log("===== destinationPrevItem", destinationPrevItem);
+
+        const batchItems: RunBatchItem[] = [];
+        const sourceItemRef = yield* call(
+          Firework.getRequestRef,
+          sourceRequest.projectId,
+          sourceRequest.id,
+        );
+
+        const newTargetRequests = [...targetRequests];
+
+        if (sourcePrevItem) {
+          // 현재 아이템의 nextItemId 및 isLastItem을 넘겨받음
+          const prevItemRef = yield* call(
+            Firework.getRequestRef,
+            sourcePrevItem.projectId,
+            sourcePrevItem.id,
+          );
+          batchItems.push({
+            operation: "update",
+            ref: prevItemRef,
+            data: {
+              nextItemId: sourceNextItem?.id || false,
+              isLastItem: !sourceNextItem,
+            },
+          });
+          const index = newTargetRequests.findIndex(
+            (item) => item.id === sourcePrevItem.id,
+          );
+          newTargetRequests[index] = produce(newTargetRequests[index], (draft) => {
+            const isLastItem = !sourceNextItem;
+            if (isLastItem) {
+              delete draft.nextItemId;
+            } else {
+              draft.nextItemId = sourceNextItem?.id;
+            }
+            draft.isLastItem = isLastItem;
+          });
+        } else if (sourceNextItem) {
+          // sourcePrevItem이 없는경우 isFirstItem을 true
+          const nextItemRef = yield* call(
+            Firework.getRequestRef,
+            sourceNextItem.projectId,
+            sourceNextItem.id,
+          );
+          batchItems.push({
+            operation: "update",
+            ref: nextItemRef,
+            data: {
+              isFirstItem: true,
+              isLastItem: isCrossGroup ? sourceNextItem.isLastItem : false,
+            },
+          });
+          const index = newTargetRequests.findIndex(
+            (item) => item.id === sourceNextItem.id,
+          );
+          newTargetRequests[index] = produce(newTargetRequests[index], (draft) => {
+            draft.isFirstItem = true;
+            draft.isLastItem = isCrossGroup ? sourceNextItem.isLastItem : false;
+          });
+        }
+        batchItems.push({
+          operation: "update",
+          ref: sourceItemRef,
+          data: {
+            nextItemId: destinationNextItem?.id || false,
+            isLastItem: !destinationNextItem,
+            isFirstItem: !destinationPrevItem,
+            groupId: isCrossGroup ? destGroupId : srcGroupId,
+          },
+        });
+        const index = newTargetRequests.findIndex((item) => item.id === sourceRequest.id);
+        newTargetRequests[index] = produce(newTargetRequests[index], (draft) => {
+          const isLastItem = !destinationNextItem;
+          if (isLastItem) {
+            delete draft.nextItemId;
+          } else {
+            draft.nextItemId = destinationNextItem?.id;
+          }
+          draft.isLastItem = !destinationNextItem;
+          draft.isFirstItem = !destinationPrevItem;
+          draft.groupId = isCrossGroup ? destGroupId : srcGroupId;
+        });
+        if (destinationPrevItem) {
+          // nextItem을 sourceGroup.id로 세팅
+          const prevItemRef = yield* call(
+            Firework.getRequestRef,
+            destinationPrevItem.projectId,
+            destinationPrevItem.id,
+          );
+          batchItems.push({
+            operation: "update",
+            ref: prevItemRef,
+            data: {
+              nextItemId: sourceRequest.id,
+            },
+          });
+          const index = newTargetRequests.findIndex(
+            (item) => item.id === destinationPrevItem.id,
+          );
+          newTargetRequests[index] = produce(newTargetRequests[index], (draft) => {
+            draft.nextItemId = sourceRequest.id;
+          });
+        }
+        if (destinationNextItem) {
+          // firstItem이 무조건 아니게 됨
+          const nextItemRef = yield* call(
+            Firework.getRequestRef,
+            destinationNextItem.projectId,
+            destinationNextItem.id,
+          );
+          batchItems.push({
+            operation: "update",
+            ref: nextItemRef,
+            data: {
+              isFirstItem: false,
+            },
+          });
+          const index = newTargetRequests.findIndex(
+            (item) => item.id === destinationNextItem.id,
+          );
+          newTargetRequests[index] = produce(newTargetRequests[index], (draft) => {
+            draft.isFirstItem = false;
+          });
+        }
+        yield* put(
+          ProjectActions.receiveRequests({
+            ...flatRequests,
+            [projectId]: newTargetRequests,
+          }),
+        );
+        yield* call(Firework.runBatch, batchItems);
       }
     } catch (error) {
       yield* put(ErrorActions.catchError({ error, isAlertOnly: true }));

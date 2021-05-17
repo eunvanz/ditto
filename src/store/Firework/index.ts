@@ -168,6 +168,14 @@ function getGroupRef(projectId: string, groupId?: string) {
   }
 }
 
+function getRequestRef(projectId: string, requestId?: string) {
+  if (requestId) {
+    return db.collection(`projects/${projectId}/requests`).doc(requestId);
+  } else {
+    return db.collection(`projects/${projectId}/requests`).doc();
+  }
+}
+
 function* deleteModelField(modelField: ModelFieldDoc) {
   yield* call(
     deleteDocument,
@@ -559,6 +567,7 @@ export const realFirework = {
   updateResponseBodyExamples,
   updateResponseHeaderExamples,
   runTransaction,
+  getRequestRef,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";
