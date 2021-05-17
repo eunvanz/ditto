@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import cmp from "semver-compare";
+import isEqual from "lodash/isEqual";
 import AuthSelectors from "../../store/Auth/AuthSelector";
 import { UiActions } from "../../store/Ui/UiSlice";
 import {
@@ -76,10 +77,10 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
   );
 
   useEffect(() => {
-    if (groupedProjectGroups) {
+    if (!isEqual(groupedProjectGroups, groups)) {
       dispatch(ProjectActions.receiveLatestGroups(groupedProjectGroups));
     }
-  }, [dispatch, groupedProjectGroups]);
+  }, [dispatch, groupedProjectGroups, groups]);
 
   useEffect(() => {
     if (groups) {
@@ -99,10 +100,10 @@ const DataInitializer: React.FC<DataInitializerProps> = ({ children }) => {
   );
 
   useEffect(() => {
-    if (groupedProjectRequests) {
+    if (!isEqual(groupedProjectRequests, requests)) {
       dispatch(ProjectActions.receiveLatestRequests(groupedProjectRequests));
     }
-  }, [dispatch, groupedProjectRequests]);
+  }, [dispatch, groupedProjectRequests, requests]);
 
   useEffect(() => {
     if (auth.isLoaded) {
