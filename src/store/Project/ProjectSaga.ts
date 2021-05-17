@@ -3063,7 +3063,7 @@ export function* reorderNavBarItemFlow() {
         const srcGroupId = sourceRequest.groupId as string;
 
         const srcRequests = requests[projectId][srcGroupId];
-        const destRequests = requests[projectId][destGroupId];
+        const destRequests = requests[projectId][destGroupId] || [];
 
         const isCrossGroup = srcGroupId !== destGroupId;
 

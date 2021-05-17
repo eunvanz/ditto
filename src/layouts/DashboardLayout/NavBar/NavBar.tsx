@@ -117,7 +117,7 @@ function reduceChildRoutes({
   theme: Theme;
 }) {
   const key = item.title + depth;
-  if (item.items && item.type === "project") {
+  if (item.type === "project") {
     acc.push(
       <Draggable draggableId={item.id} key={key} index={index}>
         {(dragProvided, dragSnapshot) => (
@@ -137,12 +137,13 @@ function reduceChildRoutes({
                   {...dropProvided.droppableProps}
                   style={getDroppableStyles(dropSnapshot, theme)}
                 >
-                  {renderNavItems({
-                    depth: depth + 1,
-                    pathname,
-                    items: item.items!,
-                    theme,
-                  })}
+                  {!!item.items &&
+                    renderNavItems({
+                      depth: depth + 1,
+                      pathname,
+                      items: item.items,
+                      theme,
+                    })}
                   {dropProvided.placeholder}
                 </div>
               )}
@@ -151,7 +152,7 @@ function reduceChildRoutes({
         )}
       </Draggable>,
     );
-  } else if (item.items && item.type === "group") {
+  } else if (item.type === "group") {
     acc.push(
       <Draggable draggableId={item.id} key={key} index={index}>
         {(dragProvided, dragSnapshot) => (
@@ -171,12 +172,13 @@ function reduceChildRoutes({
                   dragSnapshot={dragSnapshot}
                   {...item}
                 >
-                  {renderNavItems({
-                    depth: depth + 1,
-                    pathname,
-                    items: item.items!,
-                    theme,
-                  })}
+                  {!!item.items &&
+                    renderNavItems({
+                      depth: depth + 1,
+                      pathname,
+                      items: item.items,
+                      theme,
+                    })}
                   {dropProvided.placeholder}
                 </NavItem>
               </div>
