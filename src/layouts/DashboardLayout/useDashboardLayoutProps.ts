@@ -44,24 +44,29 @@ const useDashboardLayoutProps = () => {
     [dispatch, requests],
   );
 
-  const getRequestSectionItem = useCallback((projectId: string, request: RequestDoc) => {
-    return {
-      title: request.name,
-      type: "request" as const,
-      hasNew: false,
-      href: `${ROUTE.PROJECTS}/${projectId}${ROUTE.REQUESTS}/${request.id}`,
-      requestMethod: request.method,
-      isDeprecated: request.isDeprecated,
-      projectId,
-      id: request.id,
-    };
-  }, []);
+  const getRequestSectionItem = useCallback(
+    (project: ProjectDoc, request: RequestDoc) => {
+      const role = getProjectRole({ userProfile, project });
+      return {
+        title: request.name,
+        type: "request" as const,
+        hasNew: false,
+        href: `${ROUTE.PROJECTS}/${project.id}${ROUTE.REQUESTS}/${request.id}`,
+        requestMethod: request.method,
+        isDeprecated: request.isDeprecated,
+        projectId: project.id,
+        id: request.id,
+        hasNoAuth: !checkHasAuthorization(role, "manager"),
+      };
+    },
+    [userProfile],
+  );
 
   const getGroupSubItems = useCallback(
     (project: ProjectDoc, group: GroupDoc) => {
-      return requests?.[project.id]?.[group.id]
-        ?.filter((request) => request.groupId === group.id)
-        .map((request) => getRequestSectionItem(project.id, request));
+      return requests?.[project.id]?.[group.id]?.map((request) =>
+        getRequestSectionItem(project, request),
+      );
     },
     [getRequestSectionItem, requests],
   );

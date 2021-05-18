@@ -285,14 +285,16 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
             {...restProps}
           >
             <Button className={classes.button} onClick={handleToggle} style={style}>
-              <div
-                {...dragHandleProps}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <DragIndicator className={classes.handle} />
-              </div>
+              {(type === "project" || !hasNoAuth) && (
+                <div
+                  {...dragHandleProps}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <DragIndicator className={classes.handle} />
+                </div>
+              )}
               <Icon className={classes.icon} size="20" />
               <span className={clsx(classes.title, hasNew ? "has-new" : undefined)}>
                 {title}
@@ -355,14 +357,16 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
               style={style}
               to={href!}
             >
-              <div
-                {...dragHandleProps}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <DragIndicator className={classes.handle} />
-              </div>
+              {!hasNoAuth && (
+                <div
+                  {...dragHandleProps}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <DragIndicator className={classes.handle} />
+                </div>
+              )}
               {!!requestMethod && <RequestMethodBadge requestMethod={requestMethod} />}
               <NewBadge isVisible={hasNew} className={classes.newBadge}>
                 <span className={classes.title}>
