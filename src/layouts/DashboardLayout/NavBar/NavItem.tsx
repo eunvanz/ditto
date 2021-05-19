@@ -252,7 +252,6 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
     }, [onClickAddRequest]);
 
     const handleOnClickAddGroup = useCallback(() => {
-      console.log("===== handleOnClickAddGroup");
       onClickAddGroup?.();
     }, [onClickAddGroup]);
 
