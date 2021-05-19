@@ -1464,7 +1464,7 @@ export function* submitRequestFormFlow() {
       const newRequest: RequestItem = {
         projectId,
         isLastItem: true,
-        isFirstItem: targetRequests.length === 0,
+        isFirstItem: !targetRequests || targetRequests.length === 0,
         groupId,
         ...payload,
         ...recordableDocProps,
