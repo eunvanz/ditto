@@ -6,9 +6,16 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  makeStyles,
   TextField,
 } from "@material-ui/core";
 import { useForm } from "react-hook-form";
+import { Theme } from "../../theme";
+import { getDangerButtonStyle } from "../../styles";
+
+const useStyles = makeStyles((theme: Theme) => ({
+  confirmButton: getDangerButtonStyle(theme),
+}));
 
 export interface CriticalConfirmModalProps {
   isVisible: boolean;
@@ -31,11 +38,16 @@ const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
   keyword,
   onSubmit,
 }) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    CriticalConfirmModalFormValues
-  >({
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<CriticalConfirmModalFormValues>({
     mode: "onChange",
   });
+
+  const classes = useStyles();
 
   return (
     <Dialog open={isVisible} onClose={onClose} aria-labelledby="form-dialog-title">
@@ -71,7 +83,12 @@ const CriticalConfirmModal: React.FC<CriticalConfirmModalProps> = ({
           <Button onClick={onClose} type="button" color="primary">
             Cancel
           </Button>
-          <Button disabled={!formState.isValid} type="submit" color="primary">
+          <Button
+            className={classes.confirmButton}
+            variant="contained"
+            disabled={!formState.isValid}
+            type="submit"
+          >
             I understand the caution, proceed
           </Button>
         </DialogActions>

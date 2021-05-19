@@ -72,7 +72,7 @@ const Alert = ({
           </Button>
         )}
         {okText && (
-          <Button color="secondary" onClick={onOk || onClose}>
+          <Button variant="contained" color="secondary" onClick={onOk || onClose}>
             {okText}
           </Button>
         )}
