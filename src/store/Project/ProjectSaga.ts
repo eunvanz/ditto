@@ -1450,6 +1450,10 @@ export function* submitRequestFormFlow() {
     if (!projectId || !groupId) {
       continue;
     }
+    const projects = yield* select(ProjectSelectors.selectMyProjects);
+    const project = projects.find((project) => project.id === projectId);
+    assertNotEmpty(project);
+    yield* put(ProjectActions.receiveCurrentProject(project));
 
     const requests = yield* select(ProjectSelectors.selectRequests);
     const targetRequests = requests?.[projectId]?.[groupId]?.filter(
