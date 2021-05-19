@@ -176,6 +176,22 @@ function getRequestRef(projectId: string, requestId?: string) {
   }
 }
 
+function getResponseStatusRef(
+  projectId: string,
+  requestId: string,
+  responseStatusId?: string,
+) {
+  if (responseStatusId) {
+    return db
+      .collection(`projects/${projectId}/requests/${requestId}/responseStatuses`)
+      .doc(responseStatusId);
+  } else {
+    return db
+      .collection(`projects/${projectId}/requests/${requestId}/responseStatuses`)
+      .doc();
+  }
+}
+
 function* deleteModelField(modelField: ModelFieldDoc) {
   yield* call(
     deleteDocument,
@@ -568,6 +584,7 @@ export const realFirework = {
   updateResponseHeaderExamples,
   runTransaction,
   getRequestRef,
+  getResponseStatusRef,
 };
 
 const isMockMode = process.env.REACT_APP_MOCK === "true";

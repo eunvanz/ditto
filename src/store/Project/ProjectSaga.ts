@@ -1452,24 +1452,52 @@ export function* submitRequestFormFlow() {
     }
 
     const requests = yield* select(ProjectSelectors.selectRequests);
-    const targetRequests = requests[projectId][groupId].filter(
+    const targetRequests = requests?.[projectId]?.[groupId]?.filter(
       (request) => request.groupId === groupId,
     );
 
     const recordableDocProps = yield* call(getRecordableDocProps);
-    const newRequest: RequestItem = {
-      projectId,
-      isLastItem: true,
-      isFirstItem: targetRequests.length === 0,
-      ...payload,
-      ...recordableDocProps,
-    };
-    if (groupId) {
-      newRequest.groupId = groupId;
-    }
 
     try {
-      const newRequestRef = yield* call(Firework.addRequest, newRequest);
+      const batchItems: RunBatchItem[] = [];
+      const newRequestRef = yield* call(Firework.getRequestRef, projectId);
+      const newRequest: RequestItem = {
+        projectId,
+        isLastItem: true,
+        isFirstItem: targetRequests.length === 0,
+        groupId,
+        ...payload,
+        ...recordableDocProps,
+      };
+
+      batchItems.push({
+        operation: "set",
+        ref: newRequestRef,
+        data: {
+          ...newRequest,
+          isLastItem: true,
+          isFirstItem: !targetRequests || targetRequests.length === 0,
+        },
+      });
+
+      const lastRequest = targetRequests?.find((request) => request.isLastItem);
+
+      if (lastRequest) {
+        const lastRequestRef = yield* call(
+          Firework.getRequestRef,
+          lastRequest.projectId,
+          lastRequest.id,
+        );
+        batchItems.push({
+          operation: "update",
+          ref: lastRequestRef,
+          data: {
+            isLastItem: false,
+            nextItemId: newRequestRef.id,
+          },
+        });
+      }
+
       const newResponseStatus = {
         projectId,
         requestId: newRequestRef.id,
@@ -1477,7 +1505,18 @@ export function* submitRequestFormFlow() {
         description: "OK",
         ...recordableDocProps,
       };
-      yield* call(Firework.addResponseStatus, newResponseStatus);
+
+      const newResponseStatusRef = yield* call(
+        Firework.getResponseStatusRef,
+        projectId,
+        newRequestRef.id,
+      );
+      batchItems.push({
+        operation: "set",
+        ref: newResponseStatusRef,
+        data: newResponseStatus,
+      });
+      yield* call(Firework.runBatch, batchItems);
       yield* call(
         sendNotificationsToProjectMembers,
         `New operation {${payload.name}} has been added by {${userProfile.name}}`,
@@ -1769,7 +1808,51 @@ export function* deleteRequestFlow() {
     if (isConfirmed) {
       try {
         yield* put(UiActions.showDelayedLoading({ taskName: "deleteRequest" }));
-        yield* call(Firework.deleteRequest, payload);
+        const requests = yield* select(ProjectSelectors.selectRequests);
+        const targetRequests = requests[payload.projectId][payload.groupId!];
+        const requestRef = yield* call(
+          Firework.getRequestRef,
+          payload.projectId,
+          payload.id,
+        );
+        const prevRequest = targetRequests.find((item) => item.nextItemId === payload.id);
+        const nextRequest = targetRequests.find((item) => item.id === payload.nextItemId);
+        const batchItems: RunBatchItem[] = [{ operation: "delete", ref: requestRef }];
+        if (prevRequest) {
+          const prevRequestRef = yield* call(
+            Firework.getRequestRef,
+            prevRequest.projectId,
+            prevRequest.id,
+          );
+          batchItems.push({
+            ref: prevRequestRef,
+            operation: "update",
+            data: nextRequest
+              ? {
+                  nextItemId: nextRequest.id,
+                  isLastItem: false,
+                }
+              : {
+                  isLastItem: true,
+                  nextItemId: false,
+                },
+          });
+        } else if (nextRequest) {
+          const nextRequestRef = yield* call(
+            Firework.getRequestRef,
+            nextRequest.projectId,
+            nextRequest.id,
+          );
+          batchItems.push({
+            ref: nextRequestRef,
+            operation: "update",
+            data: {
+              isFirstItem: true,
+              isLastItem: !nextRequest.nextItemId,
+            },
+          });
+        }
+        yield* call(Firework.runBatch, batchItems);
         yield* call(
           sendNotificationsToProjectMembers,
           `The operation {${payload.name}} has been deleted by {${userProfile.name}}.`,
