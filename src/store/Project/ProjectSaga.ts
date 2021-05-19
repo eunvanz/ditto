@@ -1284,8 +1284,12 @@ export function* submitGroupFormFlow() {
     const newGroup = yield* call(getProperDoc, payload);
     const userProfile = yield* select(FirebaseSelectors.selectUserProfile);
     const groups = yield* select(ProjectSelectors.selectGroups);
+    const projects = yield* select(ProjectSelectors.selectMyProjects);
 
     const { projectId } = newGroup as GroupItem;
+    const project = projects.find((project) => projectId === project.id);
+    assertNotEmpty(project);
+    yield* put(ProjectActions.receiveCurrentProject(project));
     const targetGroups: GroupDoc[] | undefined = groups[projectId];
 
     try {
