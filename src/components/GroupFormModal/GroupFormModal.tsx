@@ -34,15 +34,20 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
   isSubmitting,
   isVisible,
   onClose,
-  existingGroupNames,
+  existingGroupNames = [],
   onDelete,
   role,
 }) => {
   const classes = useStyles();
 
-  const { register, handleSubmit, errors, watch, formState, reset } = useForm<
-    GroupFormValues
-  >({
+  const {
+    register,
+    handleSubmit,
+    errors,
+    watch,
+    formState,
+    reset,
+  } = useForm<GroupFormValues>({
     mode: "onChange",
     defaultValues,
   });
