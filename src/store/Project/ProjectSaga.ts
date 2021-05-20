@@ -3213,7 +3213,7 @@ export function* handleReceiveLatestMyProjects(
   action: ReturnType<typeof ProjectActions.receiveMyProjects>,
 ) {
   const { payload } = action;
-  yield* delay(200);
+  yield* delay(50);
   yield* put(ProjectActions.receiveMyProjects(payload));
 }
 
@@ -3221,7 +3221,7 @@ export function* handleReceiveLatestGroups(
   action: ReturnType<typeof ProjectActions.receiveGroups>,
 ) {
   const { payload } = action;
-  yield* delay(200);
+  yield* delay(50);
   yield* put(ProjectActions.receiveGroups(payload));
 }
 
@@ -3229,7 +3229,7 @@ export function* handleReceiveLatestRequests(
   action: ReturnType<typeof ProjectActions.receiveRequests>,
 ) {
   const { payload } = action;
-  yield* delay(200);
+  yield* delay(50);
   yield* put(ProjectActions.receiveRequests(payload));
 }
 
