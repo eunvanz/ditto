@@ -293,8 +293,8 @@ export function* deleteProjectFlow() {
             operation: "update",
             data: {
               [`settingsByMember.${userProfile.uid}.isFirstItem`]: true,
-              [`settingsByMember.${userProfile.uid}.isLastItem`]: !nextProject
-                .settingsByMember[userProfile.uid].nextItemId,
+              [`settingsByMember.${userProfile.uid}.isLastItem`]:
+                !nextProject.settingsByMember[userProfile.uid].nextItemId,
             },
           });
         }
@@ -751,7 +751,7 @@ export function* getUpdatedModelField({
 
 export interface CommonModelFieldFormFlowParams<
   T extends CommonModelFieldItem,
-  FormValues extends ModelFieldFormValues
+  FormValues extends ModelFieldFormValues,
 > {
   actionToTrigger: ActionCreatorWithPayload<FormValues>;
   checkIsNotEmpty?: (payload: FormValues) => boolean;
@@ -769,12 +769,12 @@ export interface CommonModelFieldFormFlowParams<
 
 export type CommonModelFieldFormFlow<
   CustomModelFieldItem extends CommonModelFieldItem,
-  FormValues extends ModelFieldFormValues
+  FormValues extends ModelFieldFormValues,
 > = (args: CommonModelFieldFormFlowParams<CustomModelFieldItem, FormValues>) => Generator;
 
 export function* commonModelFieldFormFlow<
   CustomModelFieldItem extends CommonModelFieldItem,
-  FormValues extends ModelFieldFormValues
+  FormValues extends ModelFieldFormValues,
 >({
   actionToTrigger,
   checkIsNotEmpty,
@@ -2450,24 +2450,24 @@ export function* handleRefreshModelField(
     const newModelField = {
       [`settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
       [`fieldName.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`fieldName.settingsByMember.${userProfile.uid}.value`]: latestModelField.fieldName
-        .value,
+      [`fieldName.settingsByMember.${userProfile.uid}.value`]:
+        latestModelField.fieldName.value,
       [`isRequired.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`isRequired.settingsByMember.${userProfile.uid}.value`]: latestModelField
-        .isRequired.value,
+      [`isRequired.settingsByMember.${userProfile.uid}.value`]:
+        latestModelField.isRequired.value,
       [`isArray.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`isArray.settingsByMember.${userProfile.uid}.value`]: latestModelField.isArray
-        .value,
+      [`isArray.settingsByMember.${userProfile.uid}.value`]:
+        latestModelField.isArray.value,
       [`fieldType.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`fieldType.settingsByMember.${userProfile.uid}.value`]: latestModelField.fieldType
-        .value,
+      [`fieldType.settingsByMember.${userProfile.uid}.value`]:
+        latestModelField.fieldType.value,
       [`format.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
       [`format.settingsByMember.${userProfile.uid}.value`]: latestModelField.format.value,
       [`enum.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
       [`enum.settingsByMember.${userProfile.uid}.value`]: latestModelField.enum.value,
       [`description.settingsByMember.${userProfile.uid}.updatedAt`]: timestamp,
-      [`description.settingsByMember.${userProfile.uid}.value`]: latestModelField
-        .description.value,
+      [`description.settingsByMember.${userProfile.uid}.value`]:
+        latestModelField.description.value,
     };
     if (modelFieldType === "modelField") {
       yield* call(
@@ -2759,7 +2759,7 @@ export function* generateMockDataFlow() {
 export function* refactorProjectsAsLinkedListFlow() {
   while (true) {
     yield* take(ProjectActions.refactorProjectsAsLinkedList);
-    const projects = yield* select(FirebaseSelectors.selectMyProjects);
+    const projects = yield* select(FirebaseSelectors.selectOrderedMyProjects);
     const auth = yield* select(AuthSelectors.selectAuth);
     try {
       yield* all(
