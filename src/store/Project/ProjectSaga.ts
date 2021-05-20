@@ -18,7 +18,7 @@ import Firework, { RunBatchItem } from "../Firework";
 import { UiActions } from "../Ui/UiSlice";
 import AuthSelectors from "../Auth/AuthSelector";
 import Alert from "../../components/Alert";
-import { getTimestamp } from "../../firebase";
+import firebase, { getTimestamp } from "../../firebase";
 import { ErrorActions } from "../Error/ErrorSlice";
 import {
   ProjectDoc,
@@ -58,6 +58,7 @@ import {
   Interface,
   fieldTypes,
   GroupDoc,
+  Orderable,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -1301,33 +1302,16 @@ export function* submitGroupFormFlow() {
           `Group name has been changed from {${target.name}} to {${payload.name}} by {${userProfile.name}}.`,
         );
       } else {
-        const batchItems: RunBatchItem[] = [];
         const newGroupRef = yield* call(Firework.getGroupRef, projectId);
-        batchItems.push({
-          operation: "set",
-          ref: newGroupRef,
-          data: {
-            ...newGroup,
-            isLastItem: true,
-            isFirstItem: !targetGroups || targetGroups.length === 0,
+        const batchItems = yield* call<GetNewOrderableItemBatch<GroupItem>>(
+          getNewOrderableItemBatch,
+          {
+            newItemRef: newGroupRef,
+            getLastItemRef: (item) => Firework.getGroupRef(item.projectId, item.id),
+            newItemData: newGroup,
+            items: targetGroups,
           },
-        });
-        const lastGroup = targetGroups?.find((group) => group.isLastItem);
-        if (lastGroup) {
-          const lastGroupRef = yield* call(
-            Firework.getGroupRef,
-            lastGroup.projectId,
-            lastGroup.id,
-          );
-          batchItems.push({
-            operation: "update",
-            ref: lastGroupRef,
-            data: {
-              isLastItem: false,
-              nextItemId: newGroupRef.id,
-            },
-          });
-        }
+        );
         yield* call(Firework.runBatch, batchItems);
         yield* call(
           sendNotificationsToProjectMembers,
@@ -1374,52 +1358,14 @@ export function* deleteGroupFlow() {
         yield* put(ProgressActions.startProgress(type));
         const groups = yield* select(ProjectSelectors.selectGroups);
         const targetGroups = groups[payload.projectId];
-        const groupRef = yield* call(Firework.getGroupRef, payload.projectId, payload.id);
-        const prevGroup = targetGroups.find((item) => item.nextItemId === payload.id);
-        const nextGroup = targetGroups.find((item) => item.id === payload.nextItemId);
-        const requestGroupRef = yield* call(
-          Firework.getGroupRequestsRef,
-          payload.projectId,
-          payload.id,
+        const batchItems = yield* call<GetDeleteOrderableItemBatch<GroupDoc>>(
+          getDeleteOrderableItemBatch,
+          {
+            targetItem: payload,
+            items: targetGroups,
+            getItemRef: (item) => Firework.getGroupRef(item.projectId, item.id),
+          },
         );
-        const batchItems: RunBatchItem[] = [{ operation: "delete", ref: groupRef }];
-        yield* call(Firework.runTaskForEachDocs, requestGroupRef, (doc) =>
-          batchItems.push({ operation: "delete", ref: doc.ref }),
-        );
-        if (prevGroup) {
-          const prevGroupRef = yield* call(
-            Firework.getGroupRef,
-            prevGroup.projectId,
-            prevGroup.id,
-          );
-          batchItems.push({
-            ref: prevGroupRef,
-            operation: "update",
-            data: nextGroup
-              ? {
-                  nextItemId: nextGroup.id,
-                  isLastItem: false,
-                }
-              : {
-                  isLastItem: true,
-                  nextItemId: false,
-                },
-          });
-        } else if (nextGroup) {
-          const nextGroupRef = yield* call(
-            Firework.getGroupRef,
-            nextGroup.projectId,
-            nextGroup.id,
-          );
-          batchItems.push({
-            ref: nextGroupRef,
-            operation: "update",
-            data: {
-              isFirstItem: true,
-              isLastItem: !nextGroup.nextItemId,
-            },
-          });
-        }
         yield* call(Firework.runBatch, batchItems);
         yield* call(
           sendNotificationsToProjectMembers,
@@ -1467,44 +1413,21 @@ export function* submitRequestFormFlow() {
     const recordableDocProps = yield* call(getRecordableDocProps);
 
     try {
-      const batchItems: RunBatchItem[] = [];
       const newRequestRef = yield* call(Firework.getRequestRef, projectId);
-      const newRequest: RequestItem = {
-        projectId,
-        isLastItem: true,
-        isFirstItem: !targetRequests || targetRequests.length === 0,
-        groupId,
-        ...payload,
-        ...recordableDocProps,
-      };
-
-      batchItems.push({
-        operation: "set",
-        ref: newRequestRef,
-        data: {
-          ...newRequest,
-          isLastItem: true,
-          isFirstItem: !targetRequests || targetRequests.length === 0,
-        },
-      });
-
-      const lastRequest = targetRequests?.find((request) => request.isLastItem);
-
-      if (lastRequest) {
-        const lastRequestRef = yield* call(
-          Firework.getRequestRef,
-          lastRequest.projectId,
-          lastRequest.id,
-        );
-        batchItems.push({
-          operation: "update",
-          ref: lastRequestRef,
-          data: {
-            isLastItem: false,
-            nextItemId: newRequestRef.id,
+      const batchItems = yield* call<GetNewOrderableItemBatch<RequestItem>>(
+        getNewOrderableItemBatch,
+        {
+          newItemRef: newRequestRef,
+          getLastItemRef: (item) => Firework.getRequestRef(item.projectId, item.id),
+          newItemData: {
+            projectId,
+            groupId,
+            ...payload,
+            ...recordableDocProps,
           },
-        });
-      }
+          items: targetRequests,
+        },
+      );
 
       const newResponseStatus = {
         projectId,
@@ -1818,48 +1741,14 @@ export function* deleteRequestFlow() {
         yield* put(UiActions.showDelayedLoading({ taskName: "deleteRequest" }));
         const requests = yield* select(ProjectSelectors.selectRequests);
         const targetRequests = requests[payload.projectId][payload.groupId!];
-        const requestRef = yield* call(
-          Firework.getRequestRef,
-          payload.projectId,
-          payload.id,
+        const batchItems = yield* call<GetDeleteOrderableItemBatch<RequestDoc>>(
+          getDeleteOrderableItemBatch,
+          {
+            items: targetRequests,
+            targetItem: payload,
+            getItemRef: (item) => Firework.getRequestRef(item.projectId, item.id),
+          },
         );
-        const prevRequest = targetRequests.find((item) => item.nextItemId === payload.id);
-        const nextRequest = targetRequests.find((item) => item.id === payload.nextItemId);
-        const batchItems: RunBatchItem[] = [{ operation: "delete", ref: requestRef }];
-        if (prevRequest) {
-          const prevRequestRef = yield* call(
-            Firework.getRequestRef,
-            prevRequest.projectId,
-            prevRequest.id,
-          );
-          batchItems.push({
-            ref: prevRequestRef,
-            operation: "update",
-            data: nextRequest
-              ? {
-                  nextItemId: nextRequest.id,
-                  isLastItem: false,
-                }
-              : {
-                  isLastItem: true,
-                  nextItemId: false,
-                },
-          });
-        } else if (nextRequest) {
-          const nextRequestRef = yield* call(
-            Firework.getRequestRef,
-            nextRequest.projectId,
-            nextRequest.id,
-          );
-          batchItems.push({
-            ref: nextRequestRef,
-            operation: "update",
-            data: {
-              isFirstItem: true,
-              isLastItem: !nextRequest.nextItemId,
-            },
-          });
-        }
         yield* call(Firework.runBatch, batchItems);
         yield* call(
           sendNotificationsToProjectMembers,
@@ -3342,6 +3231,108 @@ export function* handleReceiveLatestRequests(
   const { payload } = action;
   yield* delay(200);
   yield* put(ProjectActions.receiveRequests(payload));
+}
+
+type GetNewOrderableItemBatch<T extends Orderable & Recordable> = (param: {
+  newItemRef: firebase.firestore.DocumentReference<firebase.firestore.DocumentData>;
+  getLastItemRef: (
+    item: Doc<T, BaseSettings>,
+  ) => firebase.firestore.DocumentReference<firebase.firestore.DocumentData>;
+  newItemData: Partial<T>;
+  items?: Doc<T, BaseSettings>[];
+}) => Generator<any, RunBatchItem[], unknown>;
+
+export function* getNewOrderableItemBatch<T extends Orderable & Recordable>({
+  newItemRef,
+  getLastItemRef,
+  newItemData,
+  items,
+}: {
+  newItemRef: firebase.firestore.DocumentReference<firebase.firestore.DocumentData>;
+  getLastItemRef: (
+    item: Doc<T, BaseSettings>,
+  ) => firebase.firestore.DocumentReference<firebase.firestore.DocumentData>;
+  newItemData: Partial<T>;
+  items?: Doc<T, BaseSettings>[];
+}) {
+  const batchItems: RunBatchItem[] = [];
+  batchItems.push({
+    operation: "set",
+    ref: newItemRef,
+    data: {
+      ...newItemData,
+      isLastItem: true,
+      isFirstItem: !items || items.length === 0,
+    },
+  });
+  const lastItem = items?.find((item) => item.isLastItem);
+  if (lastItem) {
+    const lastItemRef = yield* call(getLastItemRef, lastItem);
+    batchItems.push({
+      operation: "update",
+      ref: lastItemRef,
+      data: {
+        isLastItem: false,
+        nextItemId: newItemRef.id,
+      },
+    });
+  }
+  return batchItems;
+}
+
+type GetDeleteOrderableItemBatch<T extends Doc<Orderable & Recordable, BaseSettings>> =
+  (param: {
+    targetItem: T;
+    items: T[];
+    getItemRef: (
+      item: T,
+    ) => firebase.firestore.DocumentReference<firebase.firestore.DocumentData>;
+  }) => Generator<any, RunBatchItem[], unknown>;
+
+export function* getDeleteOrderableItemBatch<
+  T extends Doc<Orderable & Recordable, BaseSettings>,
+>({
+  items,
+  targetItem,
+  getItemRef,
+}: {
+  targetItem: T;
+  items?: T[];
+  getItemRef: (
+    item: T,
+  ) => firebase.firestore.DocumentReference<firebase.firestore.DocumentData>;
+}) {
+  const targetItemRef = getItemRef(targetItem);
+  const batchItems: RunBatchItem[] = [{ operation: "delete", ref: targetItemRef }];
+  const prevItem = items?.find((item) => item.nextItemId === targetItem.id);
+  const nextItem = items?.find((item) => item.id === targetItem.nextItemId);
+  if (prevItem) {
+    const prevItemRef = yield* call(getItemRef, prevItem);
+    batchItems.push({
+      ref: prevItemRef,
+      operation: "update",
+      data: nextItem
+        ? {
+            nextItemId: nextItem.id,
+            isLastItem: false,
+          }
+        : {
+            isLastItem: true,
+            nextItemId: false,
+          },
+    });
+  } else if (nextItem) {
+    const nextItemRef = yield* call(getItemRef, nextItem);
+    batchItems.push({
+      ref: nextItemRef,
+      operation: "update",
+      data: {
+        isFirstItem: true,
+        isLastItem: !nextItem.nextItemId,
+      },
+    });
+  }
+  return batchItems;
 }
 
 export function* watchProjectActions() {
