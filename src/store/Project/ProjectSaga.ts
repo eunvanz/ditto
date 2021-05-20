@@ -3335,6 +3335,107 @@ export function* getDeleteOrderableItemBatch<
   return batchItems;
 }
 
+export function* getReorderOrderableItemBatch<T extends Orderable>({
+  destId,
+  srcItem,
+  srcItems,
+  srcId,
+  destItems,
+  destIndex,
+  getItemRef,
+  targetItems,
+  parentIdFieldName,
+}: {
+  destId: string;
+  srcId: string;
+  srcItem: T;
+  srcItems: T[];
+  destItems: T[];
+  destIndex: number;
+  getItemRef: (
+    item: T,
+  ) => firebase.firestore.DocumentReference<firebase.firestore.DocumentData>;
+  targetItems: T[];
+  parentIdFieldName?: keyof T;
+}) {
+  const isCross = srcId !== destId;
+  const srcNextItemId = srcItem.nextItemId;
+  const srcNextItem = srcItems.find((item) => item.id === srcNextItemId);
+  const srcPrevItem = srcItems.find((item) => item.nextItemId === srcItem.id);
+  const srcIndex = srcItems.findIndex((item) => item.id === srcItem.id);
+  const destNextItem =
+    destIndex < (!isCross ? destItems.length - 1 : destItems.length)
+      ? destItems[destIndex + (!isCross && srcIndex < destIndex ? 1 : 0)]
+      : undefined;
+  const destPrevItem =
+    destIndex > 0
+      ? destItems[destIndex - (!isCross && srcIndex < destIndex ? 0 : 1)]
+      : undefined;
+  const batchItems: RunBatchItem[] = [];
+  const srcItemRef = yield* call(getItemRef, srcItem);
+  const newTargetItems = [...targetItems];
+  if (srcPrevItem) {
+    const prevItemRef = yield* call(getItemRef, srcPrevItem);
+    batchItems.push({
+      operation: "update",
+      ref: prevItemRef,
+      data: {
+        nextItemId: srcNextItem?.id || false,
+        isLastItem: !srcNextItem,
+      },
+    });
+    const index = newTargetItems.findIndex((item) => item.id === srcPrevItem.id);
+    newTargetItems[index] = produce(newTargetItems[index], (draft) => {
+      const isLastItem = !srcNextItem;
+      if (isLastItem) {
+        delete draft.nextItemId;
+      } else {
+        draft.nextItemId = srcNextItem?.id;
+      }
+      draft.isLastItem = isLastItem;
+    });
+  } else if (srcNextItem) {
+    const nextItemRef = yield* call(getItemRef, srcNextItem);
+    batchItems.push({
+      operation: "update",
+      ref: nextItemRef,
+      data: {
+        isFirstItem: true,
+        isLastItem: isCross ? srcNextItem.isLastItem : false,
+      },
+    });
+    const index = newTargetItems.findIndex((item) => item.id === srcNextItem.id);
+    newTargetItems[index] = produce(newTargetItems[index], (draft) => {
+      draft.isFirstItem = true;
+      draft.isLastItem = isCross ? srcNextItem.isLastItem : false;
+    });
+  }
+  batchItems.push({
+    operation: "update",
+    ref: srcItemRef,
+    data: {
+      nextItemId: destNextItem?.id || false,
+      isLastItem: !destNextItem,
+      isFirstItem: !destPrevItem,
+      groupId: isCross ? destId : srcId,
+    },
+  });
+  const index = newTargetItems.findIndex((item) => item.id === srcItem.id);
+  newTargetItems[index] = produce(newTargetItems[index], (draft) => {
+    const isLastItem = !destNextItem;
+    if (isLastItem) {
+      delete draft.nextItemId;
+    } else {
+      draft.nextItemId = destNextItem?.id;
+    }
+    draft.isLastItem = !destNextItem;
+    draft.isFirstItem = !destPrevItem;
+    if (parentIdFieldName) {
+      draft[parentIdFieldName as any] = isCross ? destId : srcId;
+    }
+  });
+}
+
 export function* watchProjectActions() {
   yield* all([
     fork(submitProjectFormFlow),
