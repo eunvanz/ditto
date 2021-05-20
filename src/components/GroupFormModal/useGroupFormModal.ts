@@ -71,7 +71,9 @@ const useGroupFormModal = () => {
     defaultValues,
     isVisible,
     onClose,
-    existingGroupNames: existingGroups?.map((group) => group.name),
+    existingGroupNames: existingGroups
+      ?.filter((group) => group.name !== defaultValues?.name)
+      .map((group) => group.name),
     onSubmit,
     isSubmitting,
     onDelete,

@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo } from "react";
 import { Box, Button, makeStyles, TextField, Theme } from "@material-ui/core";
-import isEqual from "lodash/isEqual";
 import { useForm } from "react-hook-form";
 import { checkHasAuthorization } from "../../helpers/projectHelpers";
 import useSyncDefaultValues from "../../hooks/useSyncDefaultValues";
@@ -40,17 +39,11 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
 }) => {
   const classes = useStyles();
 
-  const {
-    register,
-    handleSubmit,
-    errors,
-    watch,
-    formState,
-    reset,
-  } = useForm<GroupFormValues>({
-    mode: "onChange",
-    defaultValues,
-  });
+  const { register, handleSubmit, errors, watch, formState, reset } =
+    useForm<GroupFormValues>({
+      mode: "onChange",
+      defaultValues,
+    });
 
   useSyncDefaultValues(reset, defaultValues);
 
@@ -61,7 +54,7 @@ const GroupFormModal: React.FC<GroupFormModalProps> = ({
   }, [isSubmitting]);
 
   const isNotModified = useMemo(() => {
-    return isEqual(defaultValues, watchedValues);
+    return defaultValues?.name === watchedValues.name;
   }, [defaultValues, watchedValues]);
 
   useEffect(() => {
