@@ -431,7 +431,7 @@ export const getDraggableStyles = ({
 };
 
 export const getOrderedProjects = (project: ProjectDoc[], uid: string) => {
-  const firstItem = project?.find((item) => item.settingsByMember[uid].isFirstItem);
+  const firstItem = project?.find((item) => item.settingsByMember[uid]?.isFirstItem);
   if (firstItem) {
     const result = [firstItem];
     while (true) {
