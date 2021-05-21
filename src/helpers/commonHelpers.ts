@@ -18,13 +18,15 @@ export function assertNotEmpty(value: any): asserts value {
 
 export const regExps = {
   url: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/,
-  pathParamUrl: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//={}]*)$/,
+  pathParamUrl:
+    /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//={}]*)$/,
   enumValue: {
-    string: /^[a-zA-Z0-9()@:%_+.~#?&//={}가-힣]*$/,
-    integer: /^[0-9]*$/
+    string: /^[-a-zA-Z0-9()@:%_+.~#?&//={}가-힣]*$/,
+    integer: /^[0-9]*$/,
   },
   enumValues: {
-    string: /^[a-zA-Z0-9()@:%_+.~#?&//={}가-힣]+(,[a-zA-Z0-9()@:%_+.~#?&//={}가-힣]+)*$/,
+    string:
+      /^[-a-zA-Z0-9()@:%_+.~#?&//={}가-힣]+(,[-a-zA-Z0-9()@:%_+.~#?&//={}가-힣]+)*$/,
     integer: /^[0-9]+(,[0-9]+)*$/,
   },
 };
