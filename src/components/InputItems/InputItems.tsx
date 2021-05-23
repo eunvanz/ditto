@@ -1,4 +1,4 @@
-import React, { KeyboardEvent, useCallback, useState } from "react";
+import React, { KeyboardEvent, useCallback, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -57,11 +57,18 @@ export const InputItems: React.FC<InputItemsProps> = ({
 }) => {
   const classes = useStyles();
 
+  // 한글의 경우 keyUp 이벤트가 두번 발생하는 버그로 인한 조치
+  const isAddingRef = useRef<boolean>(false);
+
   const handleOnKeyUp = useCallback(
     (e: KeyboardEvent<HTMLDivElement>) => {
       e.stopPropagation();
-      if (e.key === "Enter") {
+      if (e.key === "Enter" && !isAddingRef.current) {
         onAddItem();
+        isAddingRef.current = true;
+        setTimeout(() => {
+          isAddingRef.current = false;
+        }, 100);
       }
     },
     [onAddItem],
