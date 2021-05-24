@@ -21,7 +21,7 @@ export const regExps = {
   pathParamUrl:
     /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//={}]*)$/,
   enumValue: {
-    string: /^[-a-zA-Z0-9()@:%_+.~#?&//={}가-힣]*$/,
+    string: /^[-a-zA-Z0-9()@:%_+.~#?&//={}가-힣 ]*$/,
     integer: /^[0-9]*$/,
   },
   enumValues: {
