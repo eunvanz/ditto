@@ -309,7 +309,7 @@ export const generateInterfaceFieldData = (
   if (hasEnumeration) {
     const enumeration = enumerations.find((item) => item.name === type);
     return enumeration?.items?.[random(0, enumeration.items.length - 1)];
-  } else if (examples) {
+  } else if (examples?.length) {
     return examples[random(0, examples.length - 1)];
   } else if (type === "string") {
     if (format === FORMAT.NONE) {
