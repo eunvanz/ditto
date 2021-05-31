@@ -384,6 +384,7 @@ export interface SchemaObject {
   required?: string[];
   properties?: Record<string, SchemaObject>;
   items?: SchemaObject;
+  example?: string | number;
 }
 
 export interface ReferenceObject {

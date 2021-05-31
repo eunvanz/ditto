@@ -240,7 +240,7 @@ export const convertInterfacesToCode = (
         if (field.description) {
           result = `${result}  /** ${field.description} */\n`;
         }
-        if (field.examples) {
+        if (field.examples?.length) {
           result = `${result}  /** @examples: ${field.examples.join(", ")} */\n`;
         }
       }

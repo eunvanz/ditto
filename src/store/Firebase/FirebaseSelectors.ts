@@ -192,9 +192,8 @@ const selectUserProfile = createSelector(
 const createProjectMembersSelector = (projectId: string) =>
   createOrderedSelector<UserProfileDoc[]>(`projectMembers/${projectId}`);
 
-const selectSearchUserResult = createOrderedSelector<UserProfileDoc[]>(
-  "searchUserResult",
-);
+const selectSearchUserResult =
+  createOrderedSelector<UserProfileDoc[]>("searchUserResult");
 
 const selectNotifications = createOrderedSelector<NotificationDoc[]>("notifications");
 
@@ -297,6 +296,10 @@ const createProjectOpenApiSpecSelector = (projectId: string) =>
               enum: modelField.enum.value
                 ? getEnum(modelField.enum.value)?.items
                 : undefined,
+              example:
+                modelField.examples?.[
+                  modelField.fieldType.value as "string" | "number" | "integer"
+                ]?.[0],
             };
         return schema;
       };
