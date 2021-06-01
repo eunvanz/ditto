@@ -44,12 +44,18 @@ export type ProjectState = {
   myProjects: ProjectDoc[];
   groups: { [projectId: string]: GroupDoc[] };
   requests: { [projectId: string]: RequestDoc[] };
+  modelFields: {
+    [projectId: string]: {
+      [modelId: string]: ModelFieldDoc[];
+    };
+  };
 };
 
 export const initialProjectState: ProjectState = {
   myProjects: [],
   groups: {},
   requests: {},
+  modelFields: {},
 };
 
 export interface SubmitProjectFormPayload {
@@ -110,6 +116,17 @@ const ProjectSlice = createSlice({
     },
     receiveRequests: (state, action: PayloadAction<Record<string, RequestDoc[]>>) => {
       state.requests = action.payload;
+    },
+    receiveModelFields: (
+      state,
+      action: PayloadAction<{
+        projectId: string;
+        modelId: string;
+        modelFields: ModelFieldDoc[];
+      }>,
+    ) => {
+      const { projectId, modelId, modelFields } = action.payload;
+      state.modelFields[projectId][modelId] = modelFields;
     },
     submitProjectForm: (_, _action: PayloadAction<SubmitProjectFormPayload>) => {},
     deleteProject: (_, _action: PayloadAction<ProjectDoc>) => {},
