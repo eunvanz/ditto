@@ -26,6 +26,8 @@ import {
   InterfaceField,
   FORMAT,
   Orderable,
+  CommonModelFieldItem,
+  ModelCellDoc,
 } from "../types";
 import { assertNotEmpty } from "./commonHelpers";
 
@@ -476,4 +478,40 @@ export const getOrderedItems = <T extends Orderable>(orderableItems: T[]) => {
   } else {
     return orderableItems;
   }
+};
+
+export const convertModelFieldItemToModelFieldDoc = (
+  modelFieldItem: CommonModelFieldItem,
+) => {
+  const tempId = "tempId";
+  const tempUuid = "tempUuid";
+  const tempTimestamp = {
+    seconds: 0,
+    nanoseconds: 0,
+  };
+  const createField: <T>(value: T) => ModelCellDoc<T> = (value) => {
+    return {
+      id: tempId,
+      value,
+      createdBy: tempUuid,
+      updatedBy: tempUuid,
+      createdAt: tempTimestamp,
+      updatedAt: tempTimestamp,
+      settingsByMember: {},
+    };
+  };
+  // @ts-ignore
+  const result: ModelFieldDoc = {
+    id: tempId,
+    fieldName: createField(modelFieldItem.fieldName.value),
+    isRequired: createField(modelFieldItem.isRequired.value),
+    isArray: createField(modelFieldItem.isArray.value),
+    fieldType: createField(modelFieldItem.fieldType.value as FIELD_TYPE),
+    format: createField(modelFieldItem.format.value),
+    enum: createField(modelFieldItem.enum.value),
+    description: createField(modelFieldItem.description.value),
+    createdBy: tempUuid,
+    projectId: modelFieldItem.projectId,
+  };
+  return result;
 };
