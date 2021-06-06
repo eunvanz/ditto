@@ -481,9 +481,17 @@ export const getOrderedItems = <T extends Orderable>(orderableItems: T[]) => {
   }
 };
 
-export const convertModelFieldItemToModelFieldDoc = (
-  modelFieldItem: CommonModelFieldItem,
-) => {
+export const convertModelFieldItemToModelFieldDoc = ({
+  fieldName,
+  isRequired,
+  isArray,
+  fieldType,
+  format,
+  enum: enumeration,
+  description,
+  projectId,
+  ...rest
+}: CommonModelFieldItem) => {
   const tempId = "tempId";
   const tempUuid = "tempUuid";
   const tempTimestamp = {
@@ -504,15 +512,15 @@ export const convertModelFieldItemToModelFieldDoc = (
   // @ts-ignore
   const result: ModelFieldDocLike = {
     id: tempId,
-    fieldName: createField(modelFieldItem.fieldName.value),
-    isRequired: createField(modelFieldItem.isRequired.value),
-    isArray: createField(modelFieldItem.isArray.value),
-    fieldType: createField(modelFieldItem.fieldType.value as FIELD_TYPE),
-    format: createField(modelFieldItem.format.value),
-    enum: createField(modelFieldItem.enum.value),
-    description: createField(modelFieldItem.description.value),
-    createdBy: tempUuid,
-    projectId: modelFieldItem.projectId,
+    fieldName: createField(fieldName.value),
+    isRequired: createField(isRequired.value),
+    isArray: createField(isArray.value),
+    fieldType: createField(fieldType.value as FIELD_TYPE),
+    format: createField(format.value),
+    enum: createField(enumeration.value),
+    description: createField(description.value),
+    projectId: projectId,
+    ...rest,
   };
   return result;
 };

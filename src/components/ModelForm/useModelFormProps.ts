@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import shortId from "shortid";
@@ -7,6 +7,7 @@ import useProjectByParam from "../../hooks/useProjectByParam";
 import useProjectRole from "../../hooks/useProjectRole";
 import { RootState } from "../../store";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
+import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import UiSelectors from "../../store/Ui/UiSelectors";
 import { UiActions } from "../../store/Ui/UiSlice";
@@ -40,7 +41,7 @@ const useModelFormProps: (defaultModelId?: string) => any = (defaultModelId) => 
     FirebaseSelectors.createProjectModelsSelector(projectId),
   );
 
-  const modelFields = useSelector(
+  const modelFieldsFromFirestore = useSelector(
     FirebaseSelectors.createModelFieldsSelector(projectId, defaultModelId),
   );
 
@@ -83,6 +84,21 @@ const useModelFormProps: (defaultModelId?: string) => any = (defaultModelId) => 
       );
     },
     [dispatch],
+  );
+
+  useEffect(() => {
+    if (defaultModelId && modelFieldsFromFirestore) {
+      dispatch(
+        ProjectActions.receiveModelFields({
+          modelId: defaultModelId,
+          modelFields: modelFieldsFromFirestore,
+        }),
+      );
+    }
+  }, [defaultModelId, dispatch, modelFieldsFromFirestore]);
+
+  const modelFields = useSelector(
+    ProjectSelectors.createModelFieldsSelector(defaultModelId),
   );
 
   return {
