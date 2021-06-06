@@ -148,6 +148,12 @@ const ProjectSlice = createSlice({
     pushModelField: (state, action: PayloadAction<ModelFieldDoc>) => {
       state.modelFields[action.payload.modelId].push(action.payload);
     },
+    replaceModelField: (state, action: PayloadAction<ModelFieldDoc>) => {
+      const index = state.modelFields[action.payload.modelId].findIndex(
+        (item) => item.id === action.payload.id,
+      );
+      state.modelFields[action.payload.modelId][index] = action.payload;
+    },
     receiveResponseStatuses: (
       state,
       action: PayloadAction<{

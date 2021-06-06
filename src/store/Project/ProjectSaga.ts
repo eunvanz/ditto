@@ -768,7 +768,8 @@ export interface CommonModelFieldFormFlowParams<
     project: ProjectDoc;
     request?: RequestDoc;
   }) => void;
-  updateOptimistically?: (doc: ModelFieldDocLike) => Action<any>;
+  pushOptimistically?: (doc: ModelFieldDocLike) => Action<any>;
+  replaceOptimistically?: (doc: ModelFieldDocLike) => Action<any>;
 }
 
 export type CommonModelFieldFormFlow<
@@ -787,7 +788,8 @@ export function* commonModelFieldFormFlow<
   updateModelField,
   hasToBlurFormAlways,
   sendNotifications,
-  updateOptimistically,
+  pushOptimistically,
+  replaceOptimistically,
 }: CommonModelFieldFormFlowParams<CustomModelFieldItem, FormValues>) {
   while (true) {
     const { type, payload } = yield* take(actionToTrigger);
@@ -869,6 +871,9 @@ export function* commonModelFieldFormFlow<
             );
             yield* put(UiActions.hideQuickModelNameFormModal());
             yield* put(ProjectActions.receiveEditingModelField(undefined));
+            if (replaceOptimistically) {
+              yield* put(replaceOptimistically({ ...target, ...newModelField }));
+            }
             yield* call(updateModelField, target.id, {
               ...newModelField,
               "format.value": createdModelId,
@@ -898,6 +903,9 @@ export function* commonModelFieldFormFlow<
               }),
             );
             yield* put(UiActions.hideQuickEnumFormModal());
+            if (replaceOptimistically) {
+              yield* put(replaceOptimistically({ ...target, ...newModelField }));
+            }
             yield* call(updateModelField, target.id, {
               ...newModelField,
               "enum.value": createdEnumId,
@@ -913,6 +921,9 @@ export function* commonModelFieldFormFlow<
           );
           yield* put(ProjectActions.receiveEditingModelField(undefined));
           hasToBlurForm = true;
+          if (replaceOptimistically) {
+            yield* put(replaceOptimistically({ ...target, ...newModelField }));
+          }
           yield* call(updateModelField, target.id, newModelField);
         }
       } else {
@@ -1024,9 +1035,9 @@ export function* commonModelFieldFormFlow<
               yield* put(ProjectActions.receiveEditingModelField(undefined));
             }
 
-            if (updateOptimistically) {
+            if (pushOptimistically) {
               yield* put(
-                updateOptimistically(convertModelFieldItemToModelFieldDoc(newModelField)),
+                pushOptimistically(convertModelFieldItemToModelFieldDoc(newModelField)),
               );
             }
 
@@ -1068,9 +1079,9 @@ export function* commonModelFieldFormFlow<
             );
             yield* put(UiActions.hideQuickEnumFormModal());
 
-            if (updateOptimistically) {
+            if (pushOptimistically) {
               yield* put(
-                updateOptimistically(convertModelFieldItemToModelFieldDoc(newModelField)),
+                pushOptimistically(convertModelFieldItemToModelFieldDoc(newModelField)),
               );
             }
 
@@ -1101,9 +1112,9 @@ export function* commonModelFieldFormFlow<
           yield* put(ProjectActions.receiveEditingModelField(undefined));
           hasToBlurForm = Boolean(hasToBlurFormAlways);
 
-          if (updateOptimistically) {
+          if (pushOptimistically) {
             yield* put(
-              updateOptimistically(convertModelFieldItemToModelFieldDoc(newModelField)),
+              pushOptimistically(convertModelFieldItemToModelFieldDoc(newModelField)),
             );
           }
 
@@ -1155,7 +1166,8 @@ export function* submitModelFieldFormFlow() {
         );
       }
     },
-    updateOptimistically: ProjectActions.pushModelField,
+    pushOptimistically: ProjectActions.pushModelField,
+    replaceOptimistically: ProjectActions.replaceModelField,
   });
 }
 
