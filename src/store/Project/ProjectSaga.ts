@@ -998,12 +998,6 @@ export function* commonModelFieldFormFlow<
           ...recordableDocProps,
         };
 
-        if (updateOptimistically) {
-          yield* put(
-            updateOptimistically(convertModelFieldItemToModelFieldDoc(newModelField)),
-          );
-        }
-
         if (isNewModel) {
           hasToBlurForm = false;
           yield* put(UiActions.showQuickModelNameFormModal());
@@ -1029,6 +1023,13 @@ export function* commonModelFieldFormFlow<
             if (hasToBlurFormAlways) {
               yield* put(ProjectActions.receiveEditingModelField(undefined));
             }
+
+            if (updateOptimistically) {
+              yield* put(
+                updateOptimistically(convertModelFieldItemToModelFieldDoc(newModelField)),
+              );
+            }
+
             yield* call(addModelField, {
               ...newModelField,
               format: {
@@ -1066,6 +1067,13 @@ export function* commonModelFieldFormFlow<
               }),
             );
             yield* put(UiActions.hideQuickEnumFormModal());
+
+            if (updateOptimistically) {
+              yield* put(
+                updateOptimistically(convertModelFieldItemToModelFieldDoc(newModelField)),
+              );
+            }
+
             yield* call(addModelField, {
               ...newModelField,
               enum: {
@@ -1092,6 +1100,13 @@ export function* commonModelFieldFormFlow<
           );
           yield* put(ProjectActions.receiveEditingModelField(undefined));
           hasToBlurForm = Boolean(hasToBlurFormAlways);
+
+          if (updateOptimistically) {
+            yield* put(
+              updateOptimistically(convertModelFieldItemToModelFieldDoc(newModelField)),
+            );
+          }
+
           yield* call(addModelField, newModelField);
         }
       }
