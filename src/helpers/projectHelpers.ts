@@ -28,6 +28,7 @@ import {
   Orderable,
   CommonModelFieldItem,
   ModelCellDoc,
+  ModelFieldDocLike,
 } from "../types";
 import { assertNotEmpty } from "./commonHelpers";
 
@@ -501,7 +502,7 @@ export const convertModelFieldItemToModelFieldDoc = (
     };
   };
   // @ts-ignore
-  const result: ModelFieldDoc = {
+  const result: ModelFieldDocLike = {
     id: tempId,
     fieldName: createField(modelFieldItem.fieldName.value),
     isRequired: createField(modelFieldItem.isRequired.value),

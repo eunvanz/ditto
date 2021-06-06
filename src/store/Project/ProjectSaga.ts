@@ -59,6 +59,7 @@ import {
   fieldTypes,
   GroupDoc,
   Orderable,
+  ModelFieldDocLike,
 } from "../../types";
 import { RootState } from "..";
 import { requireSignIn } from "../Auth/AuthSaga";
@@ -68,10 +69,11 @@ import ROUTE from "../../paths";
 import ProjectSelectors from "./ProjectSelectors";
 import FirebaseSelectors from "../Firebase/FirebaseSelectors";
 import UiSelectors from "../Ui/UiSelectors";
-import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
+import { Action, ActionCreatorWithPayload } from "@reduxjs/toolkit";
 import { ModelFieldFormValues } from "../../components/ModelForm/ModelForm";
 import {
   convertInterfacesToCode,
+  convertModelFieldItemToModelFieldDoc,
   getProjectKeyByRole,
   getRequestParamLocationName,
   getTrueKeys,
@@ -766,6 +768,7 @@ export interface CommonModelFieldFormFlowParams<
     project: ProjectDoc;
     request?: RequestDoc;
   }) => void;
+  updateOptimistically?: (doc: ModelFieldDocLike) => Action<any>;
 }
 
 export type CommonModelFieldFormFlow<
@@ -784,6 +787,7 @@ export function* commonModelFieldFormFlow<
   updateModelField,
   hasToBlurFormAlways,
   sendNotifications,
+  updateOptimistically,
 }: CommonModelFieldFormFlowParams<CustomModelFieldItem, FormValues>) {
   while (true) {
     const { type, payload } = yield* take(actionToTrigger);
@@ -994,6 +998,12 @@ export function* commonModelFieldFormFlow<
           ...recordableDocProps,
         };
 
+        if (updateOptimistically) {
+          yield* put(
+            updateOptimistically(convertModelFieldItemToModelFieldDoc(newModelField)),
+          );
+        }
+
         if (isNewModel) {
           hasToBlurForm = false;
           yield* put(UiActions.showQuickModelNameFormModal());
@@ -1130,6 +1140,7 @@ export function* submitModelFieldFormFlow() {
         );
       }
     },
+    updateOptimistically: ProjectActions.pushModelField,
   });
 }
 

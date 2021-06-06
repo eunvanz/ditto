@@ -145,6 +145,9 @@ const ProjectSlice = createSlice({
       const { modelId, modelFields } = action.payload;
       state.modelFields[modelId] = modelFields;
     },
+    pushModelField: (state, action: PayloadAction<ModelFieldDoc>) => {
+      state.modelFields[action.payload.modelId].push(action.payload);
+    },
     receiveResponseStatuses: (
       state,
       action: PayloadAction<{
@@ -154,6 +157,9 @@ const ProjectSlice = createSlice({
     ) => {
       const { requestId, responseStatuses } = action.payload;
       state.responseStatuses[requestId] = responseStatuses;
+    },
+    pushResponseStatus: (state, action: PayloadAction<ResponseStatusDoc>) => {
+      state.responseStatuses[action.payload.requestId].push(action.payload);
     },
     submitProjectForm: (_, _action: PayloadAction<SubmitProjectFormPayload>) => {},
     deleteProject: (_, _action: PayloadAction<ProjectDoc>) => {},
