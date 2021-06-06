@@ -49,6 +49,35 @@ export type ProjectState = {
       [modelId: string]: ModelFieldDoc[];
     };
   };
+  requestParams: {
+    [projectId: string]: {
+      [requestId: string]: RequestParamDoc[];
+    };
+  };
+  responseStatuses: {
+    [projectId: string]: {
+      [requestId: string]: ResponseStatusDoc[];
+    };
+  };
+  responseBodies: {
+    [projectId: string]: {
+      [requestId: string]: {
+        [responseStatusId: string]: ResponseBodyDoc[];
+      };
+    };
+  };
+  responseHeaders: {
+    [projectId: string]: {
+      [requestId: string]: {
+        [responseStatusId: string]: ResponseHeaderDoc[];
+      };
+    };
+  };
+  requestBodies: {
+    [projectId: string]: {
+      [requestId: string]: RequestBodyDoc[];
+    };
+  };
 };
 
 export const initialProjectState: ProjectState = {
@@ -56,6 +85,11 @@ export const initialProjectState: ProjectState = {
   groups: {},
   requests: {},
   modelFields: {},
+  requestParams: {},
+  requestBodies: {},
+  responseStatuses: {},
+  responseBodies: {},
+  responseHeaders: {},
 };
 
 export interface SubmitProjectFormPayload {
