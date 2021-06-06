@@ -498,6 +498,7 @@ export const convertModelFieldItemToModelFieldDoc = ({
     seconds: 0,
     nanoseconds: 0,
   };
+  // @ts-ignore
   const createField: <T>(value: T) => ModelCellDoc<T> = (value) => {
     return {
       id: tempId,
@@ -506,7 +507,12 @@ export const convertModelFieldItemToModelFieldDoc = ({
       updatedBy: tempUuid,
       createdAt: tempTimestamp,
       updatedAt: tempTimestamp,
-      settingsByMember: {},
+      settingsByMember: {
+        [Object.keys(fieldName.settingsByMember)[0]]: {
+          updatedAt: tempTimestamp,
+          value,
+        },
+      },
     };
   };
   // @ts-ignore
