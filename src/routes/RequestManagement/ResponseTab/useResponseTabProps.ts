@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFirestoreConnect } from "react-redux-firebase";
 import { ResponseStatusFormValues } from "../../../components/ResponseStatusFormModal/ResponseStatusFormModal";
@@ -26,6 +26,17 @@ const useResponseTabProps = () => {
   );
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (responseStatuses) {
+      dispatch(
+        ProjectActions.receiveResponseStatuses({
+          requestId,
+          responseStatuses,
+        }),
+      );
+    }
+  }, [dispatch, projectId, requestId, responseStatuses]);
 
   const onSubmitResponseStatusForm = useCallback(
     (values: ResponseStatusFormValues) => {

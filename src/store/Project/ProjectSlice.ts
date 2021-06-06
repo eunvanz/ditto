@@ -45,38 +45,22 @@ export type ProjectState = {
   groups: { [projectId: string]: GroupDoc[] };
   requests: { [projectId: string]: RequestDoc[] };
   modelFields: {
-    [projectId: string]: {
-      [modelId: string]: ModelFieldDoc[];
-    };
+    [modelId: string]: ModelFieldDoc[];
   };
   requestParams: {
-    [projectId: string]: {
-      [requestId: string]: RequestParamDoc[];
-    };
+    [requestId: string]: RequestParamDoc[];
   };
   responseStatuses: {
-    [projectId: string]: {
-      [requestId: string]: ResponseStatusDoc[];
-    };
+    [requestId: string]: ResponseStatusDoc[];
   };
   responseBodies: {
-    [projectId: string]: {
-      [requestId: string]: {
-        [responseStatusId: string]: ResponseBodyDoc[];
-      };
-    };
+    [responseStatusId: string]: ResponseBodyDoc[];
   };
   responseHeaders: {
-    [projectId: string]: {
-      [requestId: string]: {
-        [responseStatusId: string]: ResponseHeaderDoc[];
-      };
-    };
+    [responseStatusId: string]: ResponseHeaderDoc[];
   };
   requestBodies: {
-    [projectId: string]: {
-      [requestId: string]: RequestBodyDoc[];
-    };
+    [requestId: string]: RequestBodyDoc[];
   };
 };
 
@@ -154,13 +138,22 @@ const ProjectSlice = createSlice({
     receiveModelFields: (
       state,
       action: PayloadAction<{
-        projectId: string;
         modelId: string;
         modelFields: ModelFieldDoc[];
       }>,
     ) => {
-      const { projectId, modelId, modelFields } = action.payload;
-      state.modelFields[projectId][modelId] = modelFields;
+      const { modelId, modelFields } = action.payload;
+      state.modelFields[modelId] = modelFields;
+    },
+    receiveResponseStatuses: (
+      state,
+      action: PayloadAction<{
+        requestId: string;
+        responseStatuses: ResponseStatusDoc[];
+      }>,
+    ) => {
+      const { requestId, responseStatuses } = action.payload;
+      state.responseStatuses[requestId] = responseStatuses;
     },
     submitProjectForm: (_, _action: PayloadAction<SubmitProjectFormPayload>) => {},
     deleteProject: (_, _action: PayloadAction<ProjectDoc>) => {},
