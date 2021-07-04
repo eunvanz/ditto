@@ -68,6 +68,14 @@ const createModelFieldsSelector = (modelId?: string) =>
     },
   );
 
+const createRequestParamsSelector = (requestId?: string) =>
+  createSelector(
+    (state: RootState) => state.project.requestParams,
+    (requestParams) => {
+      return requestId ? requestParams[requestId] : [];
+    },
+  );
+
 const ProjectSelectors = {
   selectCurrentProject,
   selectFieldTypeToCreate,
@@ -77,6 +85,7 @@ const ProjectSelectors = {
   selectGroups,
   selectRequests,
   createModelFieldsSelector,
+  createRequestParamsSelector,
 };
 
 export default ProjectSelectors;

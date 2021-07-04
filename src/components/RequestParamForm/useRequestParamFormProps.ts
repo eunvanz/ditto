@@ -1,10 +1,11 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useProjectByParam from "../../hooks/useProjectByParam";
 import useProjectRole from "../../hooks/useProjectRole";
 import useRequestByParam from "../../hooks/useRequestByParam";
 import FirebaseSelectors from "../../store/Firebase/FirebaseSelectors";
 import ProgressSelectors from "../../store/Progress/ProgressSelectors";
+import ProjectSelectors from "../../store/Project/ProjectSelectors";
 import { ProjectActions } from "../../store/Project/ProjectSlice";
 import { UiActions } from "../../store/Ui/UiSlice";
 import { ModelFieldDoc, RequestParamDoc, REQUEST_PARAM_LOCATION } from "../../types";
@@ -22,7 +23,7 @@ const useRequestParamFormProps: (
   const { projectId, project } = useProjectByParam();
   const { requestId } = useRequestByParam();
 
-  const requestParams = useSelector(
+  const requestParamsFromFirestore = useSelector(
     FirebaseSelectors.createRequestParamsSelector(projectId, requestId, location),
   );
 
@@ -75,6 +76,21 @@ const useRequestParamFormProps: (
       );
     },
     [dispatch],
+  );
+
+  useEffect(() => {
+    if (requestParamsFromFirestore) {
+      dispatch(
+        ProjectActions.receiveRequestParams({
+          requestId,
+          requestParams: requestParamsFromFirestore,
+        }),
+      );
+    }
+  }, [dispatch, requestId, requestParamsFromFirestore]);
+
+  const requestParams = useSelector(
+    ProjectSelectors.createRequestParamsSelector(requestId),
   );
 
   return {
