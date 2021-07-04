@@ -167,25 +167,6 @@ const ProjectSlice = createSlice({
     pushResponseStatus: (state, action: PayloadAction<ResponseStatusDoc>) => {
       state.responseStatuses[action.payload.requestId].push(action.payload);
     },
-    receiveRequestParams: (
-      state,
-      action: PayloadAction<{
-        requestId: string;
-        requestParams: RequestParamDoc[];
-      }>,
-    ) => {
-      const { requestId, requestParams } = action.payload;
-      state.requestParams[requestId] = requestParams;
-    },
-    pushRequestParam: (state, action: PayloadAction<RequestParamDoc>) => {
-      state.requestParams[action.payload.requestId].push(action.payload);
-    },
-    replaceRequestParam: (state, action: PayloadAction<RequestParamDoc>) => {
-      const index = state.requestParams[action.payload.requestId].findIndex(
-        (item) => item.id === action.payload.id,
-      );
-      state.requestParams[action.payload.requestId][index] = action.payload;
-    },
     submitProjectForm: (_, _action: PayloadAction<SubmitProjectFormPayload>) => {},
     deleteProject: (_, _action: PayloadAction<ProjectDoc>) => {},
     submitProjectUrlForm: (_, _action: PayloadAction<ProjectUrlFormValues>) => {},
